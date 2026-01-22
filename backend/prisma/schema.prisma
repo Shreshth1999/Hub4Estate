@@ -1,0 +1,1144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER MANAGEMENT
+// ============================================
+
+enum UserRole {
+  INDIVIDUAL_HOME_BUILDER
+  RENOVATION_HOMEOWNER
+  ARCHITECT
+  INTERIOR_DESIGNER
+  CONTRACTOR
+  ELECTRICIAN
+  SMALL_BUILDER
+  DEVELOPER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+model User {
+  id            String      @id @default(uuid())
+  email         String?     @unique
+  googleId      String?     @unique
+  phone         String?     @unique
+  name          String
+  role          UserRole?
+  city          String?
+  purpose       String?     // new build / renovation
+  status        UserStatus  @default(ACTIVE)
+  profileImage  String?
+  isPhoneVerified Boolean   @default(false)
+  isEmailVerified Boolean   @default(false)
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  rfqs          RFQ[]
+  communityPosts CommunityPost[]
+  communityComments CommunityComment[]
+  savedProducts SavedProduct[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([googleId])
+  @@index([city])
+}
+
+// OTP for phone/email verification
+model OTP {
+  id          String   @id @default(uuid())
+  identifier  String   // phone number or email
+  code        String   // 6-digit OTP
+  type        String   // login, signup
+  expiresAt   DateTime
+  verified    Boolean  @default(false)
+  attempts    Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  @@index([identifier])
+  @@index([expiresAt])
+}
+
+// ============================================
+// DEALER MANAGEMENT
+// ============================================
+
+enum DealerStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  REJECTED
+  SUSPENDED
+  DELETED
+}
+
+model Dealer {
+  id                String        @id @default(uuid())
+  email             String        @unique
+  password          String?
+  businessName      String
+  ownerName         String
+  phone             String
+  gstNumber         String        @unique
+  panNumber         String
+  shopAddress       String
+  city              String
+  state             String
+  pincode           String
+
+  // Verification documents
+  gstDocument       String?
+  panDocument       String?
+  shopPhoto         String?
+  brandAuthProofs   String[]      // Array of URLs
+
+  status            DealerStatus  @default(PENDING_VERIFICATION)
+  verificationNotes String?
+  verifiedAt        DateTime?
+  verifiedBy        String?       // Admin ID
+
+  // Performance metrics
+  totalRFQsReceived Int           @default(0)
+  totalQuotesSubmitted Int        @default(0)
+  totalConversions  Int           @default(0)
+  conversionRate    Float         @default(0)
+  avgResponseTime   Int?          // In minutes
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  brandMappings     DealerBrandMapping[]
+  categoryMappings  DealerCategoryMapping[]
+  serviceAreas      DealerServiceArea[]
+  quotes            Quote[]
+  reviews           DealerReview[]
+
+  @@index([email])
+  @@index([gstNumber])
+  @@index([city])
+  @@index([status])
+}
+
+model DealerServiceArea {
+  id        String   @id @default(uuid())
+  dealerId  String
+  pincode   String
+  dealer    Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([dealerId, pincode])
+  @@index([pincode])
+}
+
+model DealerReview {
+  id          String   @id @default(uuid())
+  dealerId    String
+  userId      String
+  rfqId       String
+  rating      Int      // 1-5
+  comment     String?
+
+  dealer      Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@index([dealerId])
+  @@index([rfqId])
+}
+
+// ============================================
+// PRODUCT CATALOG (Platform-Owned)
+// ============================================
+
+model Category {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  slug        String        @unique
+  description String?
+  icon        String?
+  sortOrder   Int           @default(0)
+  isActive    Boolean       @default(true)
+
+  // SEO & Education
+  seoTitle    String?
+  seoDescription String?
+  whatIsIt    String?       // Explanation text
+  whereUsed   String?       // Where in house
+  whyQualityMatters String?
+  commonMistakes String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  subCategories SubCategory[]
+  dealerMappings DealerCategoryMapping[]
+
+  @@index([slug])
+}
+
+model SubCategory {
+  id          String        @id @default(uuid())
+  categoryId  String
+  name        String
+  slug        String
+  description String?
+  sortOrder   Int           @default(0)
+  isActive    Boolean       @default(true)
+
+  category    Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  productTypes ProductType[]
+
+  @@unique([categoryId, slug])
+  @@index([slug])
+}
+
+model ProductType {
+  id            String        @id @default(uuid())
+  subCategoryId String
+  name          String
+  slug          String
+  description   String?
+  technicalInfo String?       // JSON string with technical details
+  useCases      String?       // JSON array
+  sortOrder     Int           @default(0)
+  isActive      Boolean       @default(true)
+
+  subCategory   SubCategory   @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  products      Product[]
+
+  @@unique([subCategoryId, slug])
+  @@index([slug])
+}
+
+model Brand {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  logo        String?
+  description String?
+  website     String?
+  isActive    Boolean  @default(true)
+  isPremium   Boolean  @default(false)
+
+  // Brand positioning
+  priceSegment String? // Budget, Mid-range, Premium
+  qualityRating Float? // 1-5
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  products    Product[]
+  dealerMappings DealerBrandMapping[]
+
+  @@index([slug])
+}
+
+model Product {
+  id            String      @id @default(uuid())
+  productTypeId String
+  brandId       String
+  name          String
+  modelNumber   String?
+  sku           String?     @unique
+  description   String?
+
+  // Technical specifications (JSON)
+  specifications String?   // Voltage, load, material, compliance standards, etc.
+
+  // Media
+  images        String[]    // Array of image URLs
+  datasheetUrl  String?
+  manualUrl     String?
+
+  // Compliance & Warranty
+  certifications String[]  // ISI, IEC, etc.
+  warrantyYears Int?
+
+  // Metadata
+  isActive      Boolean     @default(true)
+
+  productType   ProductType @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+  brand         Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  rfqItems      RFQItem[]
+  savedProducts SavedProduct[]
+
+  @@index([brandId])
+  @@index([productTypeId])
+  @@index([sku])
+}
+
+model DealerBrandMapping {
+  id              String   @id @default(uuid())
+  dealerId        String
+  brandId         String
+  authProofUrl    String?  // URL to authorization document
+  isVerified      Boolean  @default(false)
+
+  dealer          Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  brand           Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+
+  @@unique([dealerId, brandId])
+  @@index([dealerId])
+  @@index([brandId])
+}
+
+model DealerCategoryMapping {
+  id          String   @id @default(uuid())
+  dealerId    String
+  categoryId  String
+
+  dealer      Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([dealerId, categoryId])
+  @@index([dealerId])
+  @@index([categoryId])
+}
+
+// ============================================
+// RFQ SYSTEM
+// ============================================
+
+enum RFQStatus {
+  DRAFT
+  PUBLISHED
+  QUOTES_RECEIVED
+  DEALER_SELECTED
+  COMPLETED
+  CANCELLED
+}
+
+model RFQ {
+  id              String      @id @default(uuid())
+  userId          String
+  title           String
+  description     String?
+
+  // Location & Timeline
+  deliveryCity    String
+  deliveryPincode String
+  deliveryAddress String?
+  estimatedDate   DateTime?   // When user needs products
+
+  // Preferences
+  deliveryPreference String   // delivery, pickup, both
+  urgency         String?     // normal, urgent
+
+  status          RFQStatus   @default(DRAFT)
+  publishedAt     DateTime?
+  selectedDealerId String?
+  selectedQuoteId  String?
+  completedAt     DateTime?
+
+  // AI-assisted data
+  aiSuggestions   String?     // JSON with AI suggestions
+  aiFlags         String?     // JSON with warnings/flags
+
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  items           RFQItem[]
+  quotes          Quote[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([deliveryPincode])
+  @@index([publishedAt])
+}
+
+model RFQItem {
+  id          String   @id @default(uuid())
+  rfqId       String
+  productId   String
+  quantity    Int
+  notes       String?
+
+  rfq         RFQ      @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@index([rfqId])
+  @@index([productId])
+}
+
+// ============================================
+// QUOTE SYSTEM
+// ============================================
+
+enum QuoteStatus {
+  SUBMITTED
+  SELECTED
+  REJECTED
+  EXPIRED
+}
+
+model Quote {
+  id              String      @id @default(uuid())
+  rfqId           String
+  dealerId        String
+
+  // Pricing
+  totalAmount     Float
+  shippingCost    Float       @default(0)
+  notes           String?
+
+  // Timeline
+  deliveryDate    DateTime?   // For delivery option
+  pickupDate      DateTime?   // For pickup option
+  validUntil      DateTime    // Quote expiry
+
+  status          QuoteStatus @default(SUBMITTED)
+
+  // Performance tracking
+  submittedAt     DateTime    @default(now())
+  viewedAt        DateTime?
+  selectedAt      DateTime?
+
+  // Loss analysis (if not selected)
+  lossReason      String?     // price, timing, distance
+  rankPosition    Int?        // Where this quote ranked
+
+  rfq             RFQ         @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  dealer          Dealer      @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  items           QuoteItem[]
+
+  @@unique([rfqId, dealerId])
+  @@index([rfqId])
+  @@index([dealerId])
+  @@index([status])
+}
+
+model QuoteItem {
+  id          String   @id @default(uuid())
+  quoteId     String
+  productId   String
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
+
+  quote       Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@index([quoteId])
+}
+
+// ============================================
+// COMMUNITY & KNOWLEDGE
+// ============================================
+
+enum PostStatus {
+  PUBLISHED
+  HIDDEN
+  DELETED
+}
+
+model CommunityPost {
+  id          String      @id @default(uuid())
+  userId      String
+  title       String
+  content     String
+  city        String?
+  category    String?     // Discussion category
+  tags        String[]
+
+  upvotes     Int         @default(0)
+  status      PostStatus  @default(PUBLISHED)
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  comments    CommunityComment[]
+
+  @@index([userId])
+  @@index([city])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CommunityComment {
+  id          String        @id @default(uuid())
+  postId      String
+  userId      String
+  content     String
+  parentId    String?       // For nested comments
+
+  upvotes     Int           @default(0)
+
+  post        CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent      CommunityComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     CommunityComment[] @relation("CommentReplies")
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([postId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model KnowledgeArticle {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String   // Rich text / Markdown
+  category    String
+  tags        String[]
+
+  // SEO
+  metaTitle   String?
+  metaDescription String?
+
+  // Media
+  coverImage  String?
+
+  views       Int      @default(0)
+  isPublished Boolean  @default(false)
+
+  authorId    String   // Admin ID
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+
+  @@index([slug])
+  @@index([category])
+  @@index([isPublished])
+}
+
+// ============================================
+// USER INTERACTIONS
+// ============================================
+
+model SavedProduct {
+  id          String   @id @default(uuid())
+  userId      String
+  productId   String
+  notes       String?
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+// ============================================
+// ADMIN & AUDIT
+// ============================================
+
+model Admin {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  name        String
+  role        String   @default("admin") // admin, super_admin
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+}
+
+enum AuditAction {
+  DEALER_VERIFIED
+  DEALER_REJECTED
+  DEALER_SUSPENDED
+  PRODUCT_CREATED
+  PRODUCT_UPDATED
+  CATEGORY_CREATED
+  USER_SUSPENDED
+  RFQ_FLAGGED
+  QUOTE_FLAGGED
+}
+
+model AuditLog {
+  id          String      @id @default(uuid())
+  action      AuditAction
+  entityType  String      // dealer, product, rfq, etc.
+  entityId    String
+  performedBy String      // Admin ID
+  details     String?     // JSON with additional info
+
+  createdAt   DateTime    @default(now())
+
+  @@index([entityType, entityId])
+  @@index([performedBy])
+  @@index([createdAt])
+}
+
+// ============================================
+// ANTI-FRAUD & SECURITY
+// ============================================
+
+model FraudFlag {
+  id          String   @id @default(uuid())
+  entityType  String   // user, dealer, rfq, quote
+  entityId    String
+  flagType    String   // duplicate_gst, fake_quote, spam_rfq, etc.
+  severity    String   // low, medium, high, critical
+  description String
+  status      String   @default("open") // open, investigating, resolved, false_positive
+
+  flaggedBy   String?  // System or admin ID
+  resolvedBy  String?
+  resolvedAt  DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([severity])
+}
+
+// ============================================
+// CONTACT SUBMISSIONS (CRM/Leads)
+// ============================================
+
+model ContactSubmission {
+  id          String    @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  role        String    // homeowner, contractor, dealer, brand, other
+  message     String    @db.Text
+  source      String    @default("contact_form") // contact_form, ai_assistant, etc.
+
+  // Status tracking
+  status      String    @default("new") // new, contacted, qualified, converted, closed
+  assignedTo  String?   // Admin ID
+  notes       String?   @db.Text // Internal notes
+
+  // Email tracking
+  emailSent   Boolean   @default(false)
+  emailSentAt DateTime?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ============================================
+// AI CHAT SESSIONS
+// ============================================
+
+model ChatSession {
+  id            String    @id @default(uuid())
+
+  // Optional user association
+  userId        String?
+  userEmail     String?   // For anonymous users who provide email
+  userName      String?
+
+  // Session metadata
+  title         String?   // Auto-generated from first message
+  status        String    @default("active") // active, closed
+
+  // Analytics
+  messageCount  Int       @default(0)
+  lastMessageAt DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  messages      ChatMessage[]
+
+  @@index([userId])
+  @@index([userEmail])
+  @@index([createdAt])
+}
+
+model ChatMessage {
+  id          String      @id @default(uuid())
+  sessionId   String
+
+  role        String      // user, assistant
+  content     String      @db.Text
+
+  // Metadata
+  tokenCount  Int?        // For tracking API usage
+
+  session     ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+
+  @@index([sessionId])
+  @@index([createdAt])
+}
+
+// ============================================
+// B2B EMAIL TEMPLATES
+// ============================================
+
+model EmailTemplate {
+  id           String   @id @default(uuid())
+  name         String   @unique // internal name for selection
+  subject      String
+  body         String   @db.Text // HTML template with placeholders
+  category     String   // outreach, follow_up, partnership, etc.
+
+  // Placeholders: {{company_name}}, {{contact_name}}, {{custom_message}}
+  placeholders String[] // List of available placeholders
+
+  isActive     Boolean  @default(true)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([category])
+}
+
+// ============================================
+// CRM - COMPANY MANAGEMENT
+// ============================================
+
+enum CompanyType {
+  MANUFACTURER
+  DISTRIBUTOR
+  DEALER
+  BRAND
+  OTHER
+}
+
+enum CompanySegment {
+  PREMIUM
+  MID_RANGE
+  BUDGET
+  ALL_SEGMENTS
+}
+
+model CRMCompany {
+  id              String          @id @default(uuid())
+  name            String
+  slug            String          @unique
+  type            CompanyType     @default(MANUFACTURER)
+  segment         CompanySegment  @default(ALL_SEGMENTS)
+
+  // Contact Info
+  website         String?
+  email           String?         // General company email
+  phone           String?
+  linkedIn        String?
+
+  // Address
+  address         String?
+  city            String?
+  state           String?
+  country         String          @default("India")
+
+  // Business Info
+  description     String?         @db.Text
+  productCategories String[]      // e.g., ["Wires", "MCBs", "Lighting"]
+  yearEstablished Int?
+  employeeCount   String?         // "1-50", "50-200", "200-500", "500+"
+  annualRevenue   String?         // Revenue range
+
+  // Digital Presence
+  hasApi          Boolean         @default(false)
+  digitalMaturity String?         // low, medium, high
+  dealerNetworkSize String?       // small, medium, large
+
+  // Status
+  status          String          @default("prospect") // prospect, contacted, interested, partner, inactive
+  priority        String          @default("medium")   // low, medium, high
+  tags            String[]
+
+  // Notes
+  notes           String?         @db.Text
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  contacts        CRMContact[]
+  outreaches      CRMOutreach[]
+
+  @@index([status])
+  @@index([type])
+  @@index([segment])
+  @@index([city])
+}
+
+// ============================================
+// CRM - CONTACT MANAGEMENT
+// ============================================
+
+model CRMContact {
+  id              String      @id @default(uuid())
+  companyId       String
+  company         CRMCompany  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Personal Info
+  name            String
+  email           String?
+  phone           String?
+  linkedIn        String?
+
+  // Role Info
+  designation     String?     // CEO, CTO, Head of Sales, etc.
+  department      String?     // Sales, Technology, Marketing, Operations
+  decisionMaker   Boolean     @default(false)
+  isPrimary       Boolean     @default(false) // Primary contact for this company
+
+  // Status
+  status          String      @default("active") // active, left_company, do_not_contact
+
+  // Notes
+  notes           String?     @db.Text
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  outreaches      CRMOutreach[]
+
+  @@index([companyId])
+  @@index([email])
+  @@index([designation])
+}
+
+// ============================================
+// CRM - OUTREACH TRACKING
+// ============================================
+
+enum OutreachType {
+  EMAIL
+  LINKEDIN
+  PHONE_CALL
+  MEETING
+  WHATSAPP
+  OTHER
+}
+
+enum OutreachStatus {
+  SCHEDULED
+  SENT
+  DELIVERED
+  OPENED
+  REPLIED
+  MEETING_SCHEDULED
+  NOT_INTERESTED
+  BOUNCED
+  FAILED
+}
+
+model CRMOutreach {
+  id              String          @id @default(uuid())
+  companyId       String
+  contactId       String?
+  company         CRMCompany      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  contact         CRMContact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  // Outreach Details
+  type            OutreachType    @default(EMAIL)
+  subject         String?
+  content         String          @db.Text
+  templateUsed    String?         // Email template name if used
+
+  // Scheduling
+  scheduledAt     DateTime?
+  sentAt          DateTime?
+
+  // Status & Tracking
+  status          OutreachStatus  @default(SCHEDULED)
+  openedAt        DateTime?
+  repliedAt       DateTime?
+
+  // Response
+  responseContent String?         @db.Text
+  responseSentiment String?       // positive, neutral, negative
+
+  // Follow-up
+  followUpDate    DateTime?
+  followUpNumber  Int             @default(1) // 1st, 2nd, 3rd follow-up
+
+  // Notes
+  notes           String?         @db.Text
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([companyId])
+  @@index([contactId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([type])
+}
+
+// ============================================
+// CRM - MEETINGS
+// ============================================
+
+model CRMMeeting {
+  id              String      @id @default(uuid())
+  companyId       String
+  title           String
+  description     String?     @db.Text
+
+  // Scheduling
+  scheduledAt     DateTime
+  duration        Int         @default(30) // minutes
+  meetingLink     String?     // Zoom/Google Meet link
+  location        String?
+
+  // Attendees (stored as JSON array of {name, email, role})
+  attendees       String?     @db.Text
+
+  // Status
+  status          String      @default("scheduled") // scheduled, completed, cancelled, rescheduled
+
+  // Notes & Outcomes
+  agenda          String?     @db.Text
+  notes           String?     @db.Text  // Meeting notes
+  outcome         String?     // positive, follow_up_needed, not_interested
+  nextSteps       String?     @db.Text
+
+  // Reminders (stored as JSON array of reminder times)
+  reminders       String?
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([companyId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+// ============================================
+// CRM - PIPELINE STAGES
+// ============================================
+
+model CRMPipelineStage {
+  id          String   @id @default(uuid())
+  name        String   @unique // prospect, contacted, interested, negotiating, partner, churned
+  displayName String
+  color       String   // Hex color for UI
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+// ============================================
+// PRODUCT SCRAPING SYSTEM
+// ============================================
+
+enum ScrapeStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  PARTIAL
+}
+
+// Brand websites to scrape
+model ScrapeBrand {
+  id              String        @id @default(uuid())
+  name            String        @unique
+  slug            String        @unique
+  website         String
+  logoUrl         String?
+
+  // Scraping configuration
+  isActive        Boolean       @default(true)
+  scrapeFrequency String        @default("weekly") // daily, weekly, monthly
+  lastScrapedAt   DateTime?
+  nextScrapeAt    DateTime?
+
+  // Scraping URLs and selectors (JSON)
+  catalogUrls     String?       @db.Text // JSON array of category URLs to scrape
+  selectors       String?       @db.Text // JSON object with CSS selectors for product data
+
+  // Stats
+  totalProducts   Int           @default(0)
+  lastScrapeCount Int           @default(0)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  scrapeJobs      ScrapeJob[]
+  scrapedProducts ScrapedProduct[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+// Individual scrape job runs
+model ScrapeJob {
+  id              String        @id @default(uuid())
+  brandId         String
+  brand           ScrapeBrand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  status          ScrapeStatus  @default(PENDING)
+  startedAt       DateTime?
+  completedAt     DateTime?
+
+  // Results
+  productsFound   Int           @default(0)
+  productsCreated Int           @default(0)
+  productsUpdated Int           @default(0)
+  errors          Int           @default(0)
+
+  // Logs
+  logs            String?       @db.Text // JSON array of log entries
+  errorDetails    String?       @db.Text // JSON array of error details
+
+  // Configuration used
+  configSnapshot  String?       @db.Text // JSON snapshot of selectors used
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([brandId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Raw scraped product data (before normalization)
+model ScrapedProduct {
+  id              String        @id @default(uuid())
+  brandId         String
+  brand           ScrapeBrand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  // Source info
+  sourceUrl       String        @db.Text
+  scrapedAt       DateTime      @default(now())
+
+  // Raw data
+  rawName         String
+  rawCategory     String?
+  rawSubCategory  String?
+  rawModelNumber  String?
+  rawSku          String?
+  rawDescription  String?       @db.Text
+  rawSpecifications String?     @db.Text // JSON object of all specs
+  rawImages       String[]      // Array of image URLs
+  rawDatasheetUrl String?
+  rawManualUrl    String?
+  rawPrice        String?       // MRP if available
+  rawCertifications String[]
+  rawWarranty     String?
+
+  // Processing status
+  isProcessed     Boolean       @default(false)
+  processedAt     DateTime?
+  productId       String?       // Link to normalized Product if created
+
+  // Validation
+  isValid         Boolean       @default(true)
+  validationErrors String?      @db.Text // JSON array of validation issues
+
+  // Deduplication
+  contentHash     String?       // Hash of key fields for deduplication
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([brandId])
+  @@index([isProcessed])
+  @@index([contentHash])
+  @@index([rawModelNumber])
+  @@index([sourceUrl])
+}
+
+// Scraping rules for mapping raw data to categories
+model ScrapeMapping {
+  id              String   @id @default(uuid())
+
+  // Matching rules
+  brandPattern    String?  // Regex pattern for brand name
+  categoryPattern String?  // Regex pattern for raw category
+  namePattern     String?  // Regex pattern for product name
+
+  // Target mapping
+  targetCategoryId    String?
+  targetSubCategoryId String?
+  targetProductTypeId String?
+
+  // Priority (higher = checked first)
+  priority        Int      @default(0)
+  isActive        Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([priority])
+  @@index([isActive])
+}
+
+// Scraping configuration templates
+model ScrapeTemplate {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+
+  // Common selectors (JSON)
+  selectors   String   @db.Text
+
+  // Brands using this template
+  brandIds    String[] // Array of brand IDs
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

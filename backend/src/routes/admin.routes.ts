@@ -1,0 +1,325 @@
+import { Router } from 'express';
+import { z } from 'zod';
+import prisma from '../config/database';
+import { authenticateAdmin, AuthRequest } from '../middleware/auth';
+import { validateBody } from '../middleware/validation';
+
+const router = Router();
+
+// ============================================
+// DEALER VERIFICATION
+// ============================================
+
+// Get pending dealers
+router.get('/dealers/pending', authenticateAdmin, async (req, res) => {
+  try {
+    const dealers = await prisma.dealer.findMany({
+      where: { status: 'PENDING_VERIFICATION' },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return res.json({ dealers });
+  } catch (error) {
+    console.error('Get pending dealers error:', error);
+    return res.status(500).json({ error: 'Failed to fetch dealers' });
+  }
+});
+
+// Verify or reject dealer
+const verifyDealerSchema = z.object({
+  action: z.enum(['verify', 'reject']),
+  notes: z.string().optional(),
+});
+
+router.post('/dealers/:id/verify', authenticateAdmin, validateBody(verifyDealerSchema), async (req: AuthRequest, res) => {
+  try {
+    const dealerId = req.params.id;
+    const adminId = req.user!.id;
+    const { action, notes } = req.body;
+
+    const dealer = await prisma.dealer.findUnique({
+      where: { id: dealerId },
+    });
+
+    if (!dealer) {
+      return res.status(404).json({ error: 'Dealer not found' });
+    }
+
+    const newStatus = action === 'verify' ? 'VERIFIED' : 'REJECTED';
+
+    const updatedDealer = await prisma.dealer.update({
+      where: { id: dealerId },
+      data: {
+        status: newStatus,
+        verifiedAt: action === 'verify' ? new Date() : null,
+        verifiedBy: adminId,
+        verificationNotes: notes,
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: action === 'verify' ? 'DEALER_VERIFIED' : 'DEALER_REJECTED',
+        entityType: 'dealer',
+        entityId: dealerId,
+        performedBy: adminId,
+        details: JSON.stringify({ notes }),
+      },
+    });
+
+    return res.json({ dealer: updatedDealer });
+  } catch (error) {
+    console.error('Verify dealer error:', error);
+    return res.status(500).json({ error: 'Failed to verify dealer' });
+  }
+});
+
+// Suspend dealer
+router.post('/dealers/:id/suspend', authenticateAdmin, async (req: AuthRequest, res) => {
+  try {
+    const dealerId = req.params.id;
+    const adminId = req.user!.id;
+    const { reason } = req.body;
+
+    const dealer = await prisma.dealer.update({
+      where: { id: dealerId },
+      data: {
+        status: 'SUSPENDED',
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'DEALER_SUSPENDED',
+        entityType: 'dealer',
+        entityId: dealerId,
+        performedBy: adminId,
+        details: JSON.stringify({ reason }),
+      },
+    });
+
+    return res.json({ dealer });
+  } catch (error) {
+    console.error('Suspend dealer error:', error);
+    return res.status(500).json({ error: 'Failed to suspend dealer' });
+  }
+});
+
+// ============================================
+// PRODUCT CATALOG MANAGEMENT
+// ============================================
+
+// Create category
+const createCategorySchema = z.object({
+  name: z.string().min(2),
+  slug: z.string().min(2),
+  description: z.string().optional(),
+  icon: z.string().optional(),
+  sortOrder: z.number().int().default(0),
+  whatIsIt: z.string().optional(),
+  whereUsed: z.string().optional(),
+  whyQualityMatters: z.string().optional(),
+  commonMistakes: z.string().optional(),
+});
+
+router.post('/categories', authenticateAdmin, validateBody(createCategorySchema), async (req: AuthRequest, res) => {
+  try {
+    const adminId = req.user!.id;
+
+    const category = await prisma.category.create({
+      data: req.body,
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'CATEGORY_CREATED',
+        entityType: 'category',
+        entityId: category.id,
+        performedBy: adminId,
+      },
+    });
+
+    return res.status(201).json({ category });
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Category slug already exists' });
+    }
+    console.error('Create category error:', error);
+    return res.status(500).json({ error: 'Failed to create category' });
+  }
+});
+
+// Create brand
+const createBrandSchema = z.object({
+  name: z.string().min(2),
+  slug: z.string().min(2),
+  logo: z.string().url().optional(),
+  description: z.string().optional(),
+  website: z.string().url().optional(),
+  priceSegment: z.enum(['Budget', 'Mid-range', 'Premium']).optional(),
+  qualityRating: z.number().min(1).max(5).optional(),
+  isPremium: z.boolean().default(false),
+});
+
+router.post('/brands', authenticateAdmin, validateBody(createBrandSchema), async (req: AuthRequest, res) => {
+  try {
+    const brand = await prisma.brand.create({
+      data: req.body,
+    });
+
+    return res.status(201).json({ brand });
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Brand already exists' });
+    }
+    console.error('Create brand error:', error);
+    return res.status(500).json({ error: 'Failed to create brand' });
+  }
+});
+
+// Create product
+const createProductSchema = z.object({
+  productTypeId: z.string().uuid(),
+  brandId: z.string().uuid(),
+  name: z.string().min(2),
+  modelNumber: z.string().optional(),
+  sku: z.string().optional(),
+  description: z.string().optional(),
+  specifications: z.string().optional(),
+  images: z.array(z.string().url()).default([]),
+  datasheetUrl: z.string().url().optional(),
+  manualUrl: z.string().url().optional(),
+  certifications: z.array(z.string()).default([]),
+  warrantyYears: z.number().int().optional(),
+});
+
+router.post('/products', authenticateAdmin, validateBody(createProductSchema), async (req: AuthRequest, res) => {
+  try {
+    const adminId = req.user!.id;
+
+    const product = await prisma.product.create({
+      data: req.body,
+      include: {
+        brand: true,
+        productType: true,
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'PRODUCT_CREATED',
+        entityType: 'product',
+        entityId: product.id,
+        performedBy: adminId,
+      },
+    });
+
+    return res.status(201).json({ product });
+  } catch (error) {
+    console.error('Create product error:', error);
+    return res.status(500).json({ error: 'Failed to create product' });
+  }
+});
+
+// ============================================
+// DASHBOARD STATS
+// ============================================
+
+router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
+  try {
+    const [
+      totalUsers,
+      totalDealers,
+      pendingDealers,
+      totalRFQs,
+      totalQuotes,
+      totalProducts,
+    ] = await Promise.all([
+      prisma.user.count(),
+      prisma.dealer.count({ where: { status: 'VERIFIED' } }),
+      prisma.dealer.count({ where: { status: 'PENDING_VERIFICATION' } }),
+      prisma.rFQ.count(),
+      prisma.quote.count(),
+      prisma.product.count({ where: { isActive: true } }),
+    ]);
+
+    const recentRFQs = await prisma.rFQ.findMany({
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            city: true,
+          },
+        },
+      },
+    });
+
+    return res.json({
+      stats: {
+        totalUsers,
+        totalDealers,
+        pendingDealers,
+        totalRFQs,
+        totalQuotes,
+        totalProducts,
+      },
+      recentRFQs,
+    });
+  } catch (error) {
+    console.error('Get dashboard stats error:', error);
+    return res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
+// ============================================
+// FRAUD FLAGS
+// ============================================
+
+router.get('/fraud-flags', authenticateAdmin, async (req, res) => {
+  try {
+    const flags = await prisma.fraudFlag.findMany({
+      where: { status: 'open' },
+      orderBy: [
+        { severity: 'desc' },
+        { createdAt: 'desc' },
+      ],
+      take: 50,
+    });
+
+    return res.json({ flags });
+  } catch (error) {
+    console.error('Get fraud flags error:', error);
+    return res.status(500).json({ error: 'Failed to fetch fraud flags' });
+  }
+});
+
+// Resolve fraud flag
+const resolveFlagSchema = z.object({
+  status: z.enum(['resolved', 'false_positive']),
+  notes: z.string().optional(),
+});
+
+router.post('/fraud-flags/:id/resolve', authenticateAdmin, validateBody(resolveFlagSchema), async (req: AuthRequest, res) => {
+  try {
+    const adminId = req.user!.id;
+
+    const flag = await prisma.fraudFlag.update({
+      where: { id: req.params.id },
+      data: {
+        status: req.body.status,
+        resolvedBy: adminId,
+        resolvedAt: new Date(),
+      },
+    });
+
+    return res.json({ flag });
+  } catch (error) {
+    console.error('Resolve fraud flag error:', error);
+    return res.status(500).json({ error: 'Failed to resolve flag' });
+  }
+});
+
+export default router;
