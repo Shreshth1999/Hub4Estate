@@ -79,10 +79,21 @@ model OTP {
 
 enum DealerStatus {
   PENDING_VERIFICATION
+  DOCUMENTS_PENDING
+  UNDER_REVIEW
   VERIFIED
   REJECTED
   SUSPENDED
   DELETED
+}
+
+enum DealerType {
+  RETAILER
+  DISTRIBUTOR
+  SYSTEM_INTEGRATOR
+  CONTRACTOR
+  OEM_PARTNER
+  WHOLESALER
 }
 
 model Dealer {
@@ -99,16 +110,27 @@ model Dealer {
   state             String
   pincode           String
 
+  // Dealer classification
+  dealerType        DealerType    @default(RETAILER)
+  yearsInOperation  Int?
+
   // Verification documents
   gstDocument       String?
   panDocument       String?
+  shopLicense       String?
+  cancelledCheque   String?
   shopPhoto         String?
   brandAuthProofs   String[]      // Array of URLs
+
+  // Onboarding progress (0-100)
+  onboardingStep    Int           @default(1)
+  profileComplete   Boolean       @default(false)
 
   status            DealerStatus  @default(PENDING_VERIFICATION)
   verificationNotes String?
   verifiedAt        DateTime?
   verifiedBy        String?       // Admin ID
+  rejectionReason   String?
 
   // Performance metrics
   totalRFQsReceived Int           @default(0)
@@ -256,6 +278,7 @@ model Brand {
   // Relations
   products    Product[]
   dealerMappings DealerBrandMapping[]
+  brandDealers  BrandDealer[]
 
   @@index([slug])
 }
@@ -980,6 +1003,193 @@ model CRMPipelineStage {
 }
 
 // ============================================
+// PRODUCT INQUIRIES (Homepage Quick Form)
+// ============================================
+
+model ProductInquiry {
+  id              String    @id @default(uuid())
+  inquiryNumber   String?   @unique // HUB-HAVELLS-MCB-0001
+  name            String
+  phone           String
+  email           String?
+  productPhoto    String?   // Uploaded image path
+  modelNumber     String?
+  quantity        Int       @default(1)
+  deliveryCity    String
+  notes           String?   @db.Text
+
+  // Status tracking
+  status          String    @default("new") // new, contacted, quoted, closed
+  assignedTo      String?   // Admin ID
+  internalNotes   String?   @db.Text
+
+  // Admin response (quote sent back to user)
+  quotedPrice       Float?    // Price per unit
+  shippingCost      Float?    // Shipping charges
+  totalPrice        Float?    // Total including shipping
+  estimatedDelivery String?   // e.g. "3-5 business days"
+  responseNotes     String?   @db.Text
+  respondedAt       DateTime?
+  respondedBy       String?   // Admin ID who responded
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  pipeline        InquiryPipeline?
+
+  @@index([status])
+  @@index([phone])
+  @@index([createdAt])
+  @@index([inquiryNumber])
+}
+
+// ============================================
+// INQUIRY PIPELINE (Dealer Quote Automation)
+// ============================================
+
+enum PipelineStatus {
+  BRAND_IDENTIFIED
+  DEALERS_FOUND
+  QUOTES_REQUESTED
+  QUOTES_RECEIVED
+  SENT_TO_CUSTOMER
+  CLOSED
+}
+
+enum QuoteResponseStatus {
+  PENDING
+  CONTACTED
+  QUOTED
+  NO_RESPONSE
+  DECLINED
+}
+
+enum ContactMethod {
+  WHATSAPP
+  CALL
+  EMAIL
+  SMS
+}
+
+enum BrandDealerSource {
+  MANUAL
+  SCRAPED
+  BRAND_WEBSITE
+  PLATFORM_DEALER
+}
+
+// External dealer contacts (NOT platform-registered dealers)
+model BrandDealer {
+  id              String            @id @default(uuid())
+  brandId         String
+  brand           Brand             @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  name            String
+  shopName        String?
+  phone           String
+  whatsappNumber  String?
+  email           String?
+
+  city            String
+  state           String?
+  pincode         String?
+  address         String?
+
+  source          BrandDealerSource @default(MANUAL)
+  sourceUrl       String?
+  isVerified      Boolean           @default(false)
+  isActive        Boolean           @default(true)
+  notes           String?           @db.Text
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relations
+  inquiryQuotes   InquiryDealerQuote[]
+
+  @@unique([brandId, phone])
+  @@index([brandId])
+  @@index([city])
+  @@index([isActive])
+}
+
+// One pipeline per inquiry - tracks admin workflow
+model InquiryPipeline {
+  id                  String          @id @default(uuid())
+  inquiryId           String          @unique
+  inquiry             ProductInquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  // AI-identified info
+  identifiedBrandId   String?
+  identifiedBrand     String?
+  identifiedProduct   String?
+  identifiedCategory  String?
+
+  status              PipelineStatus  @default(BRAND_IDENTIFIED)
+
+  // AI analysis result (JSON: brand confidence, product details, WhatsApp template)
+  aiAnalysis          String?         @db.Text
+
+  // Customer notification tracking
+  sentToCustomerAt    DateTime?
+  sentVia             String?         // email, sms, both
+  customerMessage     String?         @db.Text
+
+  createdBy           String?         // Admin ID
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relations
+  dealerQuotes        InquiryDealerQuote[]
+
+  @@index([status])
+  @@index([identifiedBrandId])
+  @@index([createdAt])
+}
+
+// Each dealer contacted for a pipeline
+model InquiryDealerQuote {
+  id              String              @id @default(uuid())
+  pipelineId      String
+  pipeline        InquiryPipeline     @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+
+  // Dealer reference (either external BrandDealer or platform Dealer)
+  brandDealerId   String?
+  brandDealer     BrandDealer?        @relation(fields: [brandDealerId], references: [id], onDelete: SetNull)
+  dealerId        String?             // Platform dealer ID (no FK to keep it flexible)
+
+  // Denormalized dealer info (for history even if dealer is deleted)
+  dealerName      String
+  dealerPhone     String
+  dealerShopName  String?
+  dealerCity      String?
+
+  // Contact tracking
+  contactMethod   ContactMethod       @default(WHATSAPP)
+  contactedAt     DateTime?
+  whatsappMessage String?             @db.Text
+
+  // Quote details
+  quotedPrice     Float?
+  shippingCost    Float?
+  totalQuotedPrice Float?
+  deliveryDays    Int?
+  warrantyInfo    String?
+  quoteNotes      String?             @db.Text
+
+  responseStatus  QuoteResponseStatus @default(PENDING)
+
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([pipelineId])
+  @@index([brandDealerId])
+  @@index([responseStatus])
+}
+
+// ============================================
 // PRODUCT SCRAPING SYSTEM
 // ============================================
 
@@ -1141,4 +1351,96 @@ model ScrapeTemplate {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// USER ACTIVITY TRACKING (Comprehensive Log)
+// ============================================
+
+enum ActivityType {
+  // Auth events
+  USER_SIGNUP
+  USER_LOGIN
+  USER_GOOGLE_SIGNIN
+  USER_GOOGLE_SIGNUP
+  USER_PROFILE_COMPLETED
+  USER_OTP_REQUESTED
+  USER_OTP_VERIFIED
+
+  // Dealer events
+  DEALER_REGISTERED
+  DEALER_LOGIN
+  DEALER_PROFILE_UPDATED
+  DEALER_DOCUMENT_UPLOADED
+  DEALER_DOCUMENT_DELETED
+  DEALER_BRAND_ADDED
+  DEALER_CATEGORY_ADDED
+  DEALER_SERVICE_AREA_ADDED
+  DEALER_SERVICE_AREA_REMOVED
+  DEALER_VERIFIED
+  DEALER_REJECTED
+
+  // Product events
+  PRODUCT_INQUIRY_SUBMITTED
+  PRODUCT_IMAGE_UPLOADED
+  MODEL_NUMBER_SUBMITTED
+  PRODUCT_SAVED
+  PRODUCT_SEARCHED
+
+  // RFQ events
+  RFQ_CREATED
+  RFQ_PUBLISHED
+  RFQ_CANCELLED
+
+  // Quote events
+  QUOTE_SUBMITTED
+  QUOTE_SELECTED
+
+  // Community events
+  POST_CREATED
+  COMMENT_CREATED
+  POST_UPVOTED
+
+  // Contact events
+  CONTACT_FORM_SUBMITTED
+
+  // Chat events
+  CHAT_SESSION_STARTED
+  CHAT_MESSAGE_SENT
+
+  // Admin events
+  ADMIN_LOGIN
+}
+
+model UserActivity {
+  id            String       @id @default(uuid())
+
+  // Who performed the action
+  actorType     String       // user, dealer, admin, anonymous
+  actorId       String?      // User/Dealer/Admin ID (null for anonymous)
+  actorEmail    String?      // Email if available
+  actorName     String?      // Name if available
+
+  // What happened
+  activityType  ActivityType
+  description   String       // Human-readable description
+
+  // Context data (JSON) - stores relevant details
+  metadata      String?      @db.Text // JSON: product details, model numbers, image paths, etc.
+
+  // Related entity
+  entityType    String?      // user, dealer, product, rfq, quote, inquiry, etc.
+  entityId      String?      // ID of the related entity
+
+  // Request context
+  ipAddress     String?
+  userAgent     String?
+
+  createdAt     DateTime     @default(now())
+
+  @@index([actorType, actorId])
+  @@index([activityType])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([actorEmail])
 }

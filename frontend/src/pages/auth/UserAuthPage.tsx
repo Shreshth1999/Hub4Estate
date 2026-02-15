@@ -55,7 +55,7 @@ export function UserAuthPage() {
     if (method === 'google') {
       // Redirect to Google OAuth - construct URL based on current environment
       // In development: use localhost:3001, in production: use same origin or configured API URL
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3000';
       window.location.href = `${apiUrl}/api/auth/google`;
       return;
     }

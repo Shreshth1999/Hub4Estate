@@ -275,6 +275,140 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
 });
 
 // ============================================
+// ADMIN PRODUCTS LISTING
+// ============================================
+
+router.get('/products', authenticateAdmin, async (req, res) => {
+  try {
+    const { search, categoryId, brandId, page = '1', limit = '20' } = req.query;
+
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: String(search), mode: 'insensitive' } },
+        { modelNumber: { contains: String(search), mode: 'insensitive' } },
+        { sku: { contains: String(search), mode: 'insensitive' } },
+      ];
+    }
+
+    if (brandId) {
+      where.brandId = String(brandId);
+    }
+
+    if (categoryId) {
+      where.productType = {
+        subCategory: {
+          categoryId: String(categoryId),
+        },
+      };
+    }
+
+    const skip = (parseInt(String(page)) - 1) * parseInt(String(limit));
+
+    const [products, total, totalBrands, totalCategories] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        include: {
+          brand: { select: { id: true, name: true, slug: true } },
+          productType: {
+            select: {
+              id: true,
+              name: true,
+              subCategory: {
+                select: {
+                  name: true,
+                  category: { select: { id: true, name: true } },
+                },
+              },
+            },
+          },
+        },
+        skip,
+        take: parseInt(String(limit)),
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.product.count({ where }),
+      prisma.brand.count({ where: { isActive: true } }),
+      prisma.category.count({ where: { isActive: true } }),
+    ]);
+
+    return res.json({
+      products,
+      stats: {
+        totalProducts: total,
+        totalBrands,
+        totalCategories,
+      },
+      pagination: {
+        total,
+        page: parseInt(String(page)),
+        limit: parseInt(String(limit)),
+        pages: Math.ceil(total / parseInt(String(limit))),
+      },
+    });
+  } catch (error) {
+    console.error('Get admin products error:', error);
+    return res.status(500).json({ error: 'Failed to fetch products' });
+  }
+});
+
+// ============================================
+// ADMIN RFQs LISTING
+// ============================================
+
+router.get('/rfqs', authenticateAdmin, async (req, res) => {
+  try {
+    const { status, page = '1', limit = '20' } = req.query;
+
+    const where: any = {};
+    if (status) {
+      where.status = String(status);
+    }
+
+    const skip = (parseInt(String(page)) - 1) * parseInt(String(limit));
+
+    const [rfqs, total] = await Promise.all([
+      prisma.rFQ.findMany({
+        where,
+        include: {
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+          items: {
+            include: {
+              product: {
+                select: { id: true, name: true, brand: { select: { name: true } } },
+              },
+            },
+          },
+          quotes: {
+            select: { id: true, status: true },
+          },
+        },
+        skip,
+        take: parseInt(String(limit)),
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.rFQ.count({ where }),
+    ]);
+
+    return res.json({
+      rfqs,
+      pagination: {
+        total,
+        page: parseInt(String(page)),
+        limit: parseInt(String(limit)),
+        pages: Math.ceil(total / parseInt(String(limit))),
+      },
+    });
+  } catch (error) {
+    console.error('Get admin RFQs error:', error);
+    return res.status(500).json({ error: 'Failed to fetch RFQs' });
+  }
+});
+
+// ============================================
 // FRAUD FLAGS
 // ============================================
 

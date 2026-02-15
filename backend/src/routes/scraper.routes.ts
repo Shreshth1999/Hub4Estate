@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authenticateToken, requireAdmin } from '../middleware/auth.middleware';
+import { authenticateAdmin } from '../middleware/auth';
 import scraperService from '../services/scraper/scraper.service';
 import { ALL_BRAND_CONFIGS } from '../services/scraper/brands.config';
 import prisma from '../config/database';
@@ -7,8 +7,7 @@ import prisma from '../config/database';
 const router = Router();
 
 // All routes require admin authentication
-router.use(authenticateToken);
-router.use(requireAdmin);
+router.use(authenticateAdmin);
 
 /**
  * GET /api/scraper/brands
@@ -133,7 +132,8 @@ router.get('/jobs/:id', async (req: Request, res: Response) => {
     });
 
     if (!job) {
-      return res.status(404).json({ error: 'Job not found' });
+      res.status(404).json({ error: 'Job not found' });
+      return;
     }
 
     res.json({
@@ -160,7 +160,8 @@ router.post('/scrape/:brandSlug', async (req: Request, res: Response) => {
     // Check if brand config exists
     const config = ALL_BRAND_CONFIGS.find(b => b.slug === brandSlug);
     if (!config) {
-      return res.status(404).json({ error: 'Brand not found in configuration' });
+      res.status(404).json({ error: 'Brand not found in configuration' });
+      return;
     }
 
     // Check if there's already a running job for this brand
@@ -177,10 +178,11 @@ router.post('/scrape/:brandSlug', async (req: Request, res: Response) => {
       });
 
       if (runningJob) {
-        return res.status(409).json({
+        res.status(409).json({
           error: 'A scrape job is already running for this brand',
           jobId: runningJob.id,
         });
+        return;
       }
     }
 
@@ -319,7 +321,8 @@ router.get('/products/:id', async (req: Request, res: Response) => {
     });
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      res.status(404).json({ error: 'Product not found' });
+      return;
     }
 
     res.json({
@@ -363,7 +366,8 @@ router.post('/products/:id/process', async (req: Request, res: Response) => {
     });
 
     if (!scrapedProduct) {
-      return res.status(404).json({ error: 'Scraped product not found' });
+      res.status(404).json({ error: 'Scraped product not found' });
+      return;
     }
 
     // Create normalized product

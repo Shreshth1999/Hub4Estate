@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
-import { Menu, X, User, LogOut, ArrowRight, Zap } from 'lucide-react';
+import { Menu, X, User, LogOut, ArrowRight, Zap, Search } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from './AIAssistantWidget';
 
@@ -58,6 +58,13 @@ export function Layout() {
                 className="px-4 py-2 text-sm font-bold uppercase tracking-wide text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100 transition-colors"
               >
                 For Dealers
+              </Link>
+              <Link
+                to="/track"
+                className="px-4 py-2 text-sm font-bold uppercase tracking-wide text-accent-600 hover:text-accent-700 hover:bg-accent-50 transition-colors flex items-center gap-1.5"
+              >
+                <Search className="w-3.5 h-3.5" />
+                Track Request
               </Link>
             </nav>
 
@@ -155,6 +162,14 @@ export function Layout() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 For Dealers
+              </Link>
+              <Link
+                to="/track"
+                className="block py-3 text-lg font-bold text-accent-600 border-b border-neutral-100 flex items-center gap-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Search className="w-5 h-5" />
+                Track Request
               </Link>
 
               <div className="pt-4 space-y-3">
@@ -296,6 +311,11 @@ export function Layout() {
                 <li>
                   <Link to="/ai-assistant" className="text-neutral-300 hover:text-white font-medium transition-colors">
                     AI Assistant
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/track" className="text-accent-400 hover:text-accent-300 font-bold transition-colors">
+                    Track Your Request
                   </Link>
                 </li>
               </ul>

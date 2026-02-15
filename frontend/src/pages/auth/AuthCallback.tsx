@@ -12,9 +12,15 @@ export function AuthCallback() {
 
   useEffect(() => {
     const handleCallback = async () => {
+      console.log('[Auth Callback] Starting callback handler');
+      console.log('[Auth Callback] URL:', window.location.href);
+
       // Get token from URL
       const token = searchParams.get('token');
       const errorParam = searchParams.get('error');
+
+      console.log('[Auth Callback] Token present:', !!token);
+      console.log('[Auth Callback] Error param:', errorParam);
 
       if (errorParam) {
         // Decode the error message from the backend
@@ -29,6 +35,7 @@ export function AuthCallback() {
       }
 
       if (!token) {
+        console.error('[Auth Callback] No token in URL');
         setError('No authentication token received.');
         setTimeout(() => navigate('/login'), 3000);
         return;
@@ -36,12 +43,21 @@ export function AuthCallback() {
 
       try {
         // Store token temporarily for the API call
+        console.log('[Auth Callback] Storing token and verifying with backend...');
         localStorage.setItem('token', token);
 
         // CRITICAL: Verify token with backend and get authoritative user data
         // This ensures user type cannot be tampered with on the client side
         const response = await authApi.getMe();
         const serverUser = response.data.user;
+
+        console.log('[Auth Callback] User verified:', {
+          id: serverUser.id,
+          email: serverUser.email,
+          type: serverUser.type,
+          city: serverUser.city,
+          profileComplete: serverUser.profileComplete
+        });
 
         // Set auth state with SERVER-VERIFIED user data
         setAuth(
@@ -58,9 +74,11 @@ export function AuthCallback() {
 
         // Check if profile is complete
         if (!serverUser.profileComplete || serverUser.city === 'Not Set') {
+          console.log('[Auth Callback] Profile incomplete, redirecting to /complete-profile');
           navigate('/complete-profile', { replace: true });
         } else {
           // Redirect to appropriate dashboard based on SERVER-VERIFIED user type
+          console.log('[Auth Callback] Profile complete, redirecting to dashboard');
           if (serverUser.type === 'dealer') {
             navigate('/dealer', { replace: true });
           } else if (serverUser.type === 'admin') {
@@ -70,7 +88,8 @@ export function AuthCallback() {
           }
         }
       } catch (err: any) {
-        console.error('Auth callback error:', err);
+        console.error('[Auth Callback] Error verifying token:', err);
+        console.error('[Auth Callback] Error details:', err.response?.data || err.message);
         // Clear invalid token
         localStorage.removeItem('token');
         setError('Failed to verify authentication. Please try again.');

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Use relative URL to go through Vite proxy in development
 // This avoids CORS issues entirely
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_BACKEND_API_URL || '/api';
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -31,7 +31,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Don't redirect on 401 during auth callback or if on login page
+    // The components will handle auth errors appropriately
+    const isAuthCallbackPage = window.location.pathname === '/auth/callback';
+    const isLoginPage = window.location.pathname === '/login';
+    const isCompleteProfilePage = window.location.pathname === '/complete-profile';
+
+    if (error.response?.status === 401 && !isAuthCallbackPage && !isLoginPage && !isCompleteProfilePage) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
@@ -43,6 +49,7 @@ api.interceptors.response.use(
 export const authApi = {
   // Verify current token and get user data - call this on app mount
   getMe: () => api.get('/auth/me'),
+  consoleLogMe: () => api.get('/auth/me').then(res => console.log(res.data)),
 
   // User Auth - OTP based
   sendOTP: (data: { phone?: string; email?: string; type: 'login' | 'signup' }) =>
@@ -82,6 +89,7 @@ export const productsApi = {
   getCategoryBySlug: (slug: string) => api.get(`/products/categories/${slug}`),
   getProduct: (id: string) => api.get(`/products/${id}`),
   searchProducts: (params: any) => api.get('/products/search/query', { params }),
+  getProductType: (slug: string, params?: any) => api.get(`/products/product-types/${slug}`, { params }),
   saveProduct: (id: string, notes?: string) => api.post(`/products/${id}/save`, { notes }),
   getSavedProducts: () => api.get('/products/saved/list'),
 };
@@ -118,6 +126,16 @@ export const dealerApi = {
   addServiceArea: (data: any) => api.post('/dealer/service-areas', data),
   removeServiceArea: (id: string) => api.delete(`/dealer/service-areas/${id}`),
   getInsights: () => api.get('/dealer/insights'),
+  // Document upload
+  uploadDocument: (documentType: string, file: File) => {
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('documentType', documentType);
+    return api.post('/dealer/documents', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  deleteDocument: (documentType: string) => api.delete(`/dealer/documents/${documentType}`),
 };
 
 // Admin API
@@ -227,4 +245,54 @@ export const crmApi = {
 
   // Pipeline
   getPipeline: () => api.get('/crm/pipeline'),
+};
+
+// Inquiry Pipeline API (admin)
+export const inquiryPipelineApi = {
+  create: (inquiryId: string) =>
+    api.post(`/inquiry-pipeline/${inquiryId}/create`),
+  get: (inquiryId: string) =>
+    api.get(`/inquiry-pipeline/${inquiryId}`),
+  autoMatch: (pipelineId: string) =>
+    api.post(`/inquiry-pipeline/${pipelineId}/auto-match`),
+  addDealer: (pipelineId: string, data: any) =>
+    api.post(`/inquiry-pipeline/${pipelineId}/add-dealer`, data),
+  updateQuote: (pipelineId: string, quoteId: string, data: any) =>
+    api.patch(`/inquiry-pipeline/${pipelineId}/quotes/${quoteId}`, data),
+  removeQuote: (pipelineId: string, quoteId: string) =>
+    api.delete(`/inquiry-pipeline/${pipelineId}/quotes/${quoteId}`),
+  sendToCustomer: (pipelineId: string, data: { sentVia: string; customMessage?: string }) =>
+    api.post(`/inquiry-pipeline/${pipelineId}/send-to-customer`, data),
+};
+
+// Brand Dealer API (admin)
+export const brandDealerApi = {
+  list: (params?: { brandId?: string; city?: string; search?: string; page?: number; limit?: number }) =>
+    api.get('/brand-dealers', { params }),
+  brandsSummary: () =>
+    api.get('/brand-dealers/brands-summary'),
+  create: (data: any) =>
+    api.post('/brand-dealers', data),
+  update: (id: string, data: any) =>
+    api.patch(`/brand-dealers/${id}`, data),
+  remove: (id: string) =>
+    api.delete(`/brand-dealers/${id}`),
+};
+
+// Inquiry API (existing)
+export const inquiryApi = {
+  submit: (data: FormData) =>
+    api.post('/inquiry/submit', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  track: (params: { phone?: string; id?: string; number?: string }) =>
+    api.get('/inquiry/track', { params }),
+  adminList: (params?: { page?: number; limit?: number; status?: string; search?: string }) =>
+    api.get('/inquiry/admin/list', { params }),
+  adminGet: (id: string) =>
+    api.get(`/inquiry/admin/${id}`),
+  adminRespond: (id: string, data: any) =>
+    api.patch(`/inquiry/admin/${id}/respond`, data),
+  adminUpdateStatus: (id: string, status: string) =>
+    api.patch(`/inquiry/admin/${id}/status`, { status }),
 };

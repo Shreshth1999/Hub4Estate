@@ -9,6 +9,7 @@ import { validateBody } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 import { sendOTPEmail } from '../services/email.service';
 import { sendOTPSMS } from '../services/sms.service';
+import { logActivity } from '../services/activity.service';
 
 const router = Router();
 
@@ -89,6 +90,16 @@ router.post('/send-otp', validateBody(sendOTPSchema), async (req, res) => {
         console.log(`[OTP] SMS failed (${smsResult.error}), OTP for ${phone}: ${otpCode}`);
       }
     }
+
+    // Log OTP request activity
+    logActivity({
+      actorType: 'user',
+      actorEmail: email || undefined,
+      activityType: 'USER_OTP_REQUESTED',
+      description: `OTP requested via ${method} for ${type}`,
+      metadata: { identifier, type, method, sent },
+      req,
+    });
 
     return res.json({
       message: method === 'email'
@@ -204,6 +215,20 @@ router.post('/verify-otp', validateBody(verifyOTPSchema), async (req, res) => {
     // Clean up OTP
     await prisma.oTP.delete({ where: { id: otpRecord.id } });
 
+    // Log OTP verification and login
+    logActivity({
+      actorType: 'user',
+      actorId: user.id,
+      actorEmail: user.email,
+      actorName: user.name,
+      activityType: type === 'login' ? 'USER_LOGIN' : 'USER_OTP_VERIFIED',
+      description: `User ${type === 'login' ? 'logged in' : 'verified OTP'} via ${phone ? 'phone' : 'email'}`,
+      metadata: { method: phone ? 'phone' : 'email', identifier },
+      entityType: 'user',
+      entityId: user.id,
+      req,
+    });
+
     return res.json({
       token,
       user: {
@@ -275,6 +300,20 @@ router.post('/user/signup', validateBody(userSignupSchema), async (req, res) => 
       env.JWT_SECRET,
       { expiresIn: '7d' }
     );
+
+    // Log user signup
+    logActivity({
+      actorType: 'user',
+      actorId: user.id,
+      actorEmail: user.email,
+      actorName: user.name,
+      activityType: 'USER_SIGNUP',
+      description: `New user signed up: ${name} (${email || phone})`,
+      metadata: { name, email, phone, city },
+      entityType: 'user',
+      entityId: user.id,
+      req,
+    });
 
     return res.json({
       token,
@@ -444,6 +483,20 @@ router.get(
         { expiresIn: '7d' }
       );
 
+      // Log Google OAuth sign-in
+      logActivity({
+        actorType: 'user',
+        actorId: user.id,
+        actorEmail: user.email,
+        actorName: user.name,
+        activityType: profileComplete ? 'USER_GOOGLE_SIGNIN' : 'USER_GOOGLE_SIGNUP',
+        description: `User ${profileComplete ? 'signed in' : 'signed up'} via Google OAuth: ${user.email}`,
+        metadata: { email: user.email, name: user.name, profileComplete, googleId: user.googleId },
+        entityType: 'user',
+        entityId: user.id,
+        req,
+      });
+
       console.log(`[Google OAuth] Token generated successfully for ${user.email}, profileComplete: ${profileComplete}`);
       res.redirect(`${env.FRONTEND_URL}/auth/callback?token=${token}`);
     } catch (error: any) {
@@ -512,6 +565,19 @@ router.post('/complete-profile', authenticateToken, validateBody(completeProfile
       { expiresIn: '7d' }
     );
 
+    logActivity({
+      actorType: 'user',
+      actorId: user.id,
+      actorEmail: user.email,
+      actorName: user.name,
+      activityType: 'USER_PROFILE_COMPLETED',
+      description: `User completed profile: ${user.name} - Role: ${user.role}, City: ${user.city}`,
+      metadata: { role: user.role, city: user.city, purpose: user.purpose },
+      entityType: 'user',
+      entityId: user.id,
+      req,
+    });
+
     return res.json({
       user: {
         id: user.id,
@@ -542,6 +608,8 @@ const dealerRegistrationSchema = z.object({
   businessName: z.string().min(2, 'Business name is required'),
   ownerName: z.string().min(2, 'Owner name is required'),
   phone: z.string().min(10, 'Phone must be at least 10 digits'),
+  dealerType: z.enum(['RETAILER', 'DISTRIBUTOR', 'SYSTEM_INTEGRATOR', 'CONTRACTOR', 'OEM_PARTNER', 'WHOLESALER']).optional(),
+  yearsInOperation: z.number().optional(),
   gstNumber: z.string().length(15, 'GST number must be exactly 15 characters'),
   panNumber: z.string().length(10, 'PAN number must be exactly 10 characters'),
   shopAddress: z.string().min(5, 'Shop address is required'),
@@ -552,19 +620,25 @@ const dealerRegistrationSchema = z.object({
 
 router.post('/dealer/register', validateBody(dealerRegistrationSchema), async (req, res) => {
   try {
+    console.log('[Dealer Registration] Attempting registration for:', req.body.email);
+
+    // Check existing email
     const existingDealer = await prisma.dealer.findUnique({
       where: { email: req.body.email },
     });
 
     if (existingDealer) {
+      console.log('[Dealer Registration] Email already exists:', req.body.email);
       return res.status(400).json({ error: 'Dealer already exists with this email' });
     }
 
+    // Check existing GST
     const existingGST = await prisma.dealer.findUnique({
       where: { gstNumber: req.body.gstNumber },
     });
 
     if (existingGST) {
+      console.log('[Dealer Registration] GST already exists:', req.body.gstNumber);
       return res.status(400).json({ error: 'GST number already registered' });
     }
 
@@ -572,25 +646,74 @@ router.post('/dealer/register', validateBody(dealerRegistrationSchema), async (r
 
     const dealer = await prisma.dealer.create({
       data: {
-        ...req.body,
+        email: req.body.email,
         password: hashedPassword,
+        businessName: req.body.businessName,
+        ownerName: req.body.ownerName,
+        phone: req.body.phone,
+        dealerType: req.body.dealerType || 'RETAILER',
+        yearsInOperation: req.body.yearsInOperation,
+        gstNumber: req.body.gstNumber,
+        panNumber: req.body.panNumber,
+        shopAddress: req.body.shopAddress,
+        city: req.body.city,
+        state: req.body.state,
+        pincode: req.body.pincode,
         status: 'PENDING_VERIFICATION',
+        onboardingStep: 1,
       },
       select: {
         id: true,
         email: true,
         businessName: true,
         status: true,
+        onboardingStep: true,
       },
     });
 
-    return res.status(201).json({
-      message: 'Dealer registration submitted. Verification pending.',
-      dealer,
+    console.log('[Dealer Registration] Success:', dealer.id);
+
+    // Generate token so dealer can immediately access pending dashboard
+    const token = jwt.sign(
+      { id: dealer.id, email: dealer.email, type: 'dealer' },
+      env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    logActivity({
+      actorType: 'dealer',
+      actorId: dealer.id,
+      actorEmail: dealer.email,
+      actorName: req.body.ownerName,
+      activityType: 'DEALER_REGISTERED',
+      description: `New dealer registered: ${req.body.businessName} (${req.body.email}) - GST: ${req.body.gstNumber}`,
+      metadata: { businessName: req.body.businessName, city: req.body.city, state: req.body.state, gstNumber: req.body.gstNumber, dealerType: req.body.dealerType },
+      entityType: 'dealer',
+      entityId: dealer.id,
+      req,
     });
-  } catch (error) {
-    console.error('Dealer registration error:', error);
-    return res.status(500).json({ error: 'Registration failed' });
+
+    return res.status(201).json({
+      message: 'Registration successful! Complete your profile to get verified faster.',
+      token,
+      dealer: {
+        id: dealer.id,
+        email: dealer.email,
+        businessName: dealer.businessName,
+        status: dealer.status,
+        onboardingStep: dealer.onboardingStep,
+      },
+    });
+  } catch (error: any) {
+    console.error('[Dealer Registration] Error:', error.message || error);
+
+    // Handle Prisma unique constraint errors
+    if (error.code === 'P2002') {
+      const field = error.meta?.target?.[0] || 'field';
+      return res.status(400).json({ error: `This ${field} is already registered` });
+    }
+
+    return res.status(500).json({ error: 'Registration failed. Please try again.' });
   }
 });
 
@@ -603,31 +726,57 @@ router.post('/dealer/login', validateBody(dealerLoginSchema), async (req, res) =
   try {
     const dealer = await prisma.dealer.findUnique({
       where: { email: req.body.email },
+      include: {
+        brandMappings: { select: { id: true, isVerified: true } },
+        categoryMappings: { select: { id: true } },
+      },
     });
 
     if (!dealer || !dealer.password) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const isValidPassword = await bcrypt.compare(req.body.password, dealer.password);
 
     if (!isValidPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    if (dealer.status === 'PENDING_VERIFICATION') {
-      return res.status(403).json({ error: 'Account pending verification' });
+    // Only block if account is explicitly rejected, suspended, or deleted
+    if (dealer.status === 'REJECTED') {
+      return res.status(403).json({
+        error: 'Account rejected',
+        reason: dealer.rejectionReason || 'Your application was not approved. Please contact support.',
+      });
     }
 
-    if (dealer.status === 'REJECTED' || dealer.status === 'SUSPENDED' || dealer.status === 'DELETED') {
-      return res.status(403).json({ error: 'Account access denied' });
+    if (dealer.status === 'SUSPENDED') {
+      return res.status(403).json({ error: 'Account suspended. Please contact support.' });
     }
 
+    if (dealer.status === 'DELETED') {
+      return res.status(403).json({ error: 'Account not found' });
+    }
+
+    // Allow login for PENDING_VERIFICATION, DOCUMENTS_PENDING, UNDER_REVIEW, and VERIFIED
     const token = jwt.sign(
       { id: dealer.id, email: dealer.email, type: 'dealer' },
       env.JWT_SECRET,
       { expiresIn: '7d' }
     );
+
+    logActivity({
+      actorType: 'dealer',
+      actorId: dealer.id,
+      actorEmail: dealer.email,
+      actorName: dealer.ownerName,
+      activityType: 'DEALER_LOGIN',
+      description: `Dealer logged in: ${dealer.businessName} (${dealer.email})`,
+      metadata: { businessName: dealer.businessName, city: dealer.city, status: dealer.status },
+      entityType: 'dealer',
+      entityId: dealer.id,
+      req,
+    });
 
     return res.json({
       token,
@@ -635,13 +784,21 @@ router.post('/dealer/login', validateBody(dealerLoginSchema), async (req, res) =
         id: dealer.id,
         email: dealer.email,
         businessName: dealer.businessName,
+        ownerName: dealer.ownerName,
+        phone: dealer.phone,
         city: dealer.city,
+        state: dealer.state,
         status: dealer.status,
+        onboardingStep: dealer.onboardingStep,
+        profileComplete: dealer.profileComplete,
+        brandCount: dealer.brandMappings.length,
+        verifiedBrandCount: dealer.brandMappings.filter(b => b.isVerified).length,
+        categoryCount: dealer.categoryMappings.length,
       },
     });
   } catch (error) {
-    console.error('Dealer login error:', error);
-    return res.status(500).json({ error: 'Login failed' });
+    console.error('[Dealer Login] Error:', error);
+    return res.status(500).json({ error: 'Login failed. Please try again.' });
   }
 });
 
@@ -679,6 +836,19 @@ router.post('/admin/login', validateBody(adminLoginSchema), async (req, res) => 
       env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+
+    logActivity({
+      actorType: 'admin',
+      actorId: admin.id,
+      actorEmail: admin.email,
+      actorName: admin.name,
+      activityType: 'ADMIN_LOGIN',
+      description: `Admin logged in: ${admin.name} (${admin.email})`,
+      metadata: { role: admin.role },
+      entityType: 'admin',
+      entityId: admin.id,
+      req,
+    });
 
     return res.json({
       token,

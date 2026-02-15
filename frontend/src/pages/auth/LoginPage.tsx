@@ -3,9 +3,8 @@ import { Shield, Users, Zap, CheckCircle } from 'lucide-react';
 
 export function LoginPage() {
   const handleGoogleLogin = () => {
-    // Use environment variable or fallback to localhost for development
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-    window.location.href = `${apiUrl}/auth/google`;
+    // Use the Vite proxy - /api is proxied to backend at localhost:3001
+    window.location.href = '/api/auth/google';
   };
 
   return (

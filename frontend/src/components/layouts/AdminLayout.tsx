@@ -2,7 +2,7 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
   User, LogOut, Zap, Users, Shield, BarChart3,
-  Settings, AlertTriangle, Home, Package, FileText, Building2, MessageSquare, Mail
+  Settings, AlertTriangle, Home, Package, FileText, Building2, MessageSquare, Mail, ClipboardList, BookUser
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
@@ -33,6 +33,8 @@ export function AdminLayout() {
     { path: '/admin', icon: Home, label: 'Dashboard' },
     { path: '/admin/dealers', icon: Users, label: 'Dealers', badge: 'Pending' },
     { path: '/admin/leads', icon: Mail, label: 'Leads' },
+    { path: '/admin/inquiries', icon: ClipboardList, label: 'Inquiries', badge: 'New' },
+    { path: '/admin/brand-dealers', icon: BookUser, label: 'Brand Dealers' },
     { path: '/admin/chats', icon: MessageSquare, label: 'AI Chats' },
     { path: '/admin/crm', icon: Building2, label: 'CRM' },
     { path: '/admin/rfqs', icon: FileText, label: 'RFQs' },
@@ -42,7 +44,7 @@ export function AdminLayout() {
     { path: '/admin/settings', icon: Settings, label: 'Settings' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path || (path !== '/admin' && location.pathname.startsWith(path + '/'));
 
   return (
     <div className="min-h-screen bg-neutral-100 flex">

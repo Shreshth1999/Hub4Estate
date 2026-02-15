@@ -39,3 +39,19 @@ backend/uploads/
 .replit
 replit.nix
 .upm/
+
+# Temporary Office files
+~$*.xlsx
+~$*.docx
+~$*.pptx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+*.py[cod]
+
+# Generated files from scripts
+/*.xlsx
+/*.pdf

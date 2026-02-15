@@ -26,18 +26,18 @@ interface InteractiveCategoryGridProps {
 
 // Static fallback categories to display when API fails or returns empty
 export const STATIC_CATEGORIES: Category[] = [
-  { id: '1', name: 'Electrical Wiring', slug: 'electrical-wiring', description: 'Complete house wiring solutions' },
-  { id: '2', name: 'LED Lighting', slug: 'led-lighting', description: 'Energy-efficient LED solutions' },
+  { id: '1', name: 'Wires & Cables', slug: 'wires-cables', description: 'House wiring and armoured cables' },
+  { id: '2', name: 'Modular Switches & Sockets', slug: 'switches-sockets', description: 'Premium modular switches' },
   { id: '3', name: 'MCBs & Distribution', slug: 'mcbs-distribution', description: 'Circuit breakers and distribution boards' },
-  { id: '4', name: 'Water Heaters', slug: 'water-heaters', description: 'Geysers and water heating solutions' },
-  { id: '5', name: 'Doorbells & Accessories', slug: 'doorbells-accessories', description: 'Wired and wireless doorbells' },
-  { id: '6', name: 'Wires & Cables', slug: 'wires-cables', description: 'House wiring and armoured cables' },
-  { id: '7', name: 'Switchgear & Protection', slug: 'switchgear-protection', description: 'MCBs, RCCBs, and surge protection' },
-  { id: '8', name: 'Modular Switches & Sockets', slug: 'switches-sockets', description: 'Premium modular switches' },
-  { id: '9', name: 'Lighting & Luminaires', slug: 'lighting-luminaires', description: 'LED panels and decorative fixtures' },
-  { id: '10', name: 'Fans & Ventilation', slug: 'fans-ventilation', description: 'Ceiling fans and exhaust systems' },
-  { id: '11', name: 'Earthing & Safety Systems', slug: 'earthing-safety-systems', description: 'Earth pits and lightning protection' },
-  { id: '12', name: 'Power Backup & Solar', slug: 'power-backup-solar', description: 'Inverters, batteries, and solar' },
+  { id: '4', name: 'Switchgear & Protection', slug: 'switchgear-protection', description: 'MCBs, RCCBs, and surge protection' },
+  { id: '5', name: 'Lighting', slug: 'lighting', description: 'LED bulbs, panels, and tubes' },
+  { id: '6', name: 'Lighting & Luminaires', slug: 'lighting-luminaires', description: 'LED panels and decorative fixtures' },
+  { id: '7', name: 'Fans & Ventilation', slug: 'fans-ventilation', description: 'Ceiling fans and exhaust systems' },
+  { id: '8', name: 'Water Heaters', slug: 'water-heaters', description: 'Geysers and water heating solutions' },
+  { id: '9', name: 'Earthing & Safety Systems', slug: 'earthing-safety-systems', description: 'Earth pits and lightning protection' },
+  { id: '10', name: 'Power Backup & Solar', slug: 'power-backup-solar', description: 'Inverters, batteries, and solar' },
+  { id: '11', name: 'Doorbells & Accessories', slug: 'doorbells-accessories', description: 'Wired and wireless doorbells' },
+  { id: '12', name: 'Conduits & Accessories', slug: 'conduits-accessories', description: 'PVC conduits and wiring accessories' },
   { id: '13', name: 'Tools & Testers', slug: 'tools-testers', description: 'Multimeters and hand tools' },
   { id: '14', name: 'Smart Electrical & Automation', slug: 'smart-electrical-automation', description: 'Smart switches and home automation' },
 ];
@@ -998,7 +998,7 @@ export function getIllustrationKey(slug: string): string {
     'smart-electrical-automation': 'smart-electrical-automation',
 
     // Fallback aliases for different naming conventions
-    'lighting': 'lighting-luminaires',
+    'lighting': 'led-lighting',
     'lighting-fixtures': 'led-lighting',
     'circuit-protection': 'mcbs-distribution',
     'water-heating': 'water-heaters',
@@ -1009,6 +1009,16 @@ export function getIllustrationKey(slug: string): string {
     'conduits-accessories': 'electrical-wiring',
     'air-conditioning': 'air-conditioning',
     'modular-switches-sockets': 'modular-switches-sockets',
+
+    // Additional database slugs from earlier seed
+    'mcbs-switchgear': 'mcbs-distribution',
+    'fans': 'fans-ventilation',
+    'earthing-lightning': 'earthing-safety-systems',
+    'smart-home': 'smart-electrical-automation',
+    'solar-renewable': 'power-backup-solar',
+    'ups-power-backup': 'power-backup-solar',
+    'meters-instruments': 'tools-testers',
+    'tools-safety': 'tools-testers',
   };
   return mapping[slug] || 'electrical-wiring';
 }

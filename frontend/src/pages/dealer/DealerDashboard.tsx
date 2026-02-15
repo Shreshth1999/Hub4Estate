@@ -5,20 +5,29 @@ import { useAuthStore } from '../../lib/store';
 import { CardSkeleton, Alert } from '../../components/ui';
 import {
   TrendingUp, FileText, CheckCircle, Clock, ArrowRight,
-  Target, Award, Bell, Zap, Shield, MapPin,
-  IndianRupee, MessageSquare, Eye, Send, ChevronRight, Package
+  Target, Award, Bell, Zap, Shield, MapPin, AlertCircle,
+  IndianRupee, MessageSquare, Eye, Send, ChevronRight, Package,
+  Upload, FileCheck, Building2, Phone, Mail
 } from 'lucide-react';
 
 interface DealerProfile {
   id: string;
   businessName: string;
   ownerName: string;
+  email: string;
+  phone: string;
   city: string;
+  state: string;
   status: string;
+  dealerType?: string;
+  gstNumber?: string;
+  panNumber?: string;
   totalRFQs: number;
   quotesSubmitted: number;
   quotesWon: number;
   conversionRate: number;
+  onboardingStep?: number;
+  profileComplete?: boolean;
 }
 
 interface Analytics {
@@ -141,6 +150,14 @@ export function DealerDashboard() {
         </div>
       </div>
     );
+  }
+
+  // Check if dealer is pending verification
+  const isPending = profile?.status && ['PENDING_VERIFICATION', 'DOCUMENTS_PENDING', 'UNDER_REVIEW'].includes(profile.status);
+
+  // Pending Verification Dashboard
+  if (isPending) {
+    return <PendingDealerDashboard profile={profile} />;
   }
 
   const pendingRFQs = 23; // Mock: would come from API
@@ -412,6 +429,273 @@ export function DealerDashboard() {
               </p>
               <a href="tel:+917690001999" className="btn-secondary w-full justify-center text-sm">
                 Call: +91 76900 01999
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Pending Dealer Dashboard - shown when dealer is awaiting verification
+function PendingDealerDashboard({ profile }: { profile: DealerProfile | null }) {
+  const getStatusInfo = (status: string | undefined) => {
+    switch (status) {
+      case 'PENDING_VERIFICATION':
+        return {
+          label: 'Pending Verification',
+          description: 'Your registration is being reviewed by our team.',
+          color: 'amber',
+          step: 1,
+        };
+      case 'DOCUMENTS_PENDING':
+        return {
+          label: 'Documents Required',
+          description: 'Please upload required documents to complete verification.',
+          color: 'orange',
+          step: 2,
+        };
+      case 'UNDER_REVIEW':
+        return {
+          label: 'Under Review',
+          description: 'Your documents are being verified. This usually takes 24-48 hours.',
+          color: 'blue',
+          step: 3,
+        };
+      default:
+        return {
+          label: 'Processing',
+          description: 'Your application is being processed.',
+          color: 'gray',
+          step: 1,
+        };
+    }
+  };
+
+  const statusInfo = getStatusInfo(profile?.status);
+
+  const verificationSteps = [
+    { label: 'Registration', description: 'Account created', completed: true },
+    { label: 'Documents', description: 'Upload GST & PAN', completed: statusInfo.step > 1 },
+    { label: 'Review', description: 'Verification in progress', completed: statusInfo.step > 2 },
+    { label: 'Verified', description: 'Start receiving RFQs', completed: false },
+  ];
+
+  return (
+    <div className="min-h-screen bg-neutral-50">
+      {/* Header */}
+      <div className="bg-neutral-900 text-white">
+        <div className="container-custom py-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="w-4 h-4 text-amber-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                  {statusInfo.label}
+                </span>
+              </div>
+              <h1 className="text-2xl md:text-3xl font-black">
+                {profile?.businessName || 'Welcome, Dealer'}
+              </h1>
+              <p className="text-neutral-400 mt-1 flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                {profile?.city}, {profile?.state}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status Banner */}
+      <div className={`bg-amber-500 text-neutral-900 py-4`}>
+        <div className="container-custom">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-6 h-6" />
+            <div>
+              <p className="font-bold">{statusInfo.label}</p>
+              <p className="text-sm opacity-80">{statusInfo.description}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container-custom py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Verification Progress */}
+            <div className="bg-white border-2 border-neutral-900 p-6">
+              <h2 className="text-xl font-bold text-neutral-900 mb-6">Verification Progress</h2>
+              <div className="relative">
+                <div className="flex items-center justify-between">
+                  {verificationSteps.map((step, index) => (
+                    <div key={index} className="flex flex-col items-center relative z-10">
+                      <div className={`w-10 h-10 flex items-center justify-center font-bold text-sm ${
+                        step.completed
+                          ? 'bg-green-600 text-white'
+                          : index === statusInfo.step - 1
+                            ? 'bg-amber-500 text-neutral-900'
+                            : 'bg-neutral-200 text-neutral-500'
+                      }`}>
+                        {step.completed ? <CheckCircle className="w-5 h-5" /> : index + 1}
+                      </div>
+                      <span className="text-xs font-bold mt-2 text-neutral-900">{step.label}</span>
+                      <span className="text-xs text-neutral-500 text-center mt-1 max-w-[80px]">{step.description}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Progress line */}
+                <div className="absolute top-5 left-0 right-0 h-0.5 bg-neutral-200 -z-0" style={{ left: '5%', right: '5%' }}>
+                  <div
+                    className="h-full bg-green-600 transition-all"
+                    style={{ width: `${((statusInfo.step - 1) / 3) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* What's Next */}
+            <div className="bg-white border-2 border-neutral-200 p-6">
+              <h2 className="text-xl font-bold text-neutral-900 mb-4">What's Next?</h2>
+              <div className="space-y-4">
+                {profile?.status === 'DOCUMENTS_PENDING' ? (
+                  <>
+                    <div className="flex items-start gap-4 p-4 bg-amber-50 border-2 border-amber-200">
+                      <Upload className="w-6 h-6 text-amber-600 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-neutral-900">Upload Required Documents</h3>
+                        <p className="text-sm text-neutral-600 mt-1">
+                          Please upload your GST certificate and PAN card to complete verification.
+                        </p>
+                        <Link to="/dealer/profile" className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-amber-500 text-neutral-900 font-bold hover:bg-amber-400">
+                          Upload Documents <ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-start gap-4 p-4 bg-blue-50 border-2 border-blue-200">
+                      <FileCheck className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-neutral-900">Verification in Progress</h3>
+                        <p className="text-sm text-neutral-600 mt-1">
+                          Our team is reviewing your application. This typically takes 24-48 hours.
+                          We'll notify you via email once verified.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div className="flex items-start gap-4 p-4 bg-neutral-50 border-2 border-neutral-200">
+                  <Building2 className="w-6 h-6 text-neutral-600 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-bold text-neutral-900">Complete Your Profile</h3>
+                    <p className="text-sm text-neutral-600 mt-1">
+                      Add the brands you deal in and your service areas to get matched with relevant RFQs.
+                    </p>
+                    <Link to="/dealer/profile" className="inline-flex items-center gap-2 mt-3 text-neutral-900 font-bold hover:underline">
+                      Go to Profile <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Your Information */}
+            <div className="bg-white border-2 border-neutral-200 p-6">
+              <h2 className="text-xl font-bold text-neutral-900 mb-4">Your Registration Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-xs font-bold text-neutral-500 uppercase">Business Name</label>
+                  <p className="font-bold text-neutral-900 mt-1">{profile?.businessName}</p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-neutral-500 uppercase">Owner Name</label>
+                  <p className="font-bold text-neutral-900 mt-1">{profile?.ownerName}</p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-neutral-500 uppercase">Email</label>
+                  <p className="font-bold text-neutral-900 mt-1 flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-neutral-400" />
+                    {profile?.email}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-neutral-500 uppercase">Phone</label>
+                  <p className="font-bold text-neutral-900 mt-1 flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-neutral-400" />
+                    {profile?.phone}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-neutral-500 uppercase">GST Number</label>
+                  <p className="font-mono text-neutral-900 mt-1">{profile?.gstNumber || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-neutral-500 uppercase">Location</label>
+                  <p className="text-neutral-900 mt-1">{profile?.city}, {profile?.state}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Status Card */}
+            <div className="bg-amber-50 border-2 border-amber-200 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Clock className="w-6 h-6 text-amber-600" />
+                <h3 className="font-bold text-neutral-900">Verification Status</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-neutral-600">Status</span>
+                  <span className="font-bold text-amber-700">{statusInfo.label}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-neutral-600">Estimated Time</span>
+                  <span className="font-bold text-neutral-900">24-48 hours</span>
+                </div>
+              </div>
+            </div>
+
+            {/* What You Can Do */}
+            <div className="bg-neutral-900 text-white p-6">
+              <h3 className="font-bold mb-4">While You Wait</h3>
+              <ul className="space-y-3 text-sm text-neutral-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Complete your dealer profile</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Add brands you deal in</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Set your service areas</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Browse product catalog</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Help */}
+            <div className="bg-white border-2 border-neutral-200 p-4">
+              <h3 className="font-bold text-neutral-900 mb-2">Need Help?</h3>
+              <p className="text-sm text-neutral-600 mb-4">
+                Questions about verification? Our team is happy to help.
+              </p>
+              <a href="tel:+917690001999" className="block w-full text-center py-3 border-2 border-neutral-900 font-bold hover:bg-neutral-900 hover:text-white transition-colors">
+                Call: +91 76900 01999
+              </a>
+              <a href="mailto:support@hub4estate.com" className="text-sm text-neutral-600 block text-center mt-3 hover:text-neutral-900">
+                support@hub4estate.com
               </a>
             </div>
           </div>

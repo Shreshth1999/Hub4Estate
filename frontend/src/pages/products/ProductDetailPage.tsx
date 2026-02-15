@@ -215,8 +215,19 @@ export function ProductDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Image */}
             <div className="space-y-6">
-              <div className="bg-neutral-100 border-2 border-neutral-200 aspect-square flex items-center justify-center relative">
-                <Package className="w-32 h-32 text-neutral-300" />
+              <div className="bg-neutral-100 border-2 border-neutral-200 aspect-square flex items-center justify-center relative overflow-hidden">
+                {product.images && product.images.length > 0 && product.images[0] ? (
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-full object-contain p-6"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                ) : null}
+                <Package className={`w-32 h-32 text-neutral-300 ${product.images && product.images.length > 0 && product.images[0] ? 'hidden' : ''}`} />
 
                 {/* Badges */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -228,6 +239,22 @@ export function ProductDetailPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Image Gallery */}
+              {product.images && product.images.length > 1 && (
+                <div className="grid grid-cols-4 gap-2">
+                  {product.images.slice(1, 5).map((img, idx) => (
+                    <div key={idx} className="aspect-square bg-neutral-100 border-2 border-neutral-200 flex items-center justify-center overflow-hidden">
+                      <img
+                        src={img}
+                        alt={`${product.name} view ${idx + 2}`}
+                        className="w-full h-full object-contain p-2"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-4">

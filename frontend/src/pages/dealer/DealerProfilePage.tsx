@@ -1,124 +1,319 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowLeft, Upload, FileText, Trash2, Download, CheckCircle,
-  Building2, Phone, Mail, MapPin, Award, Shield, Plus
-} from 'lucide-react';
+import { dealerApi, productsApi } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
+import {
+  ArrowLeft, Upload, FileText, Trash2, CheckCircle, X,
+  Building2, Phone, Mail, MapPin, Award, Shield, Plus, Clock,
+  AlertCircle, Loader2
+} from 'lucide-react';
 
-interface UploadedPDF {
+interface DealerProfile {
+  id: string;
+  businessName: string;
+  ownerName: string;
+  email: string;
+  phone: string;
+  gstNumber: string;
+  panNumber: string;
+  shopAddress: string;
+  city: string;
+  state: string;
+  pincode: string;
+  status: string;
+  dealerType?: string;
+  yearsInOperation?: number;
+  gstDocument?: string;
+  panDocument?: string;
+  shopLicense?: string;
+  brandMappings: Array<{
+    id: string;
+    brand: { id: string; name: string; logo?: string };
+    isVerified: boolean;
+  }>;
+  categoryMappings: Array<{
+    id: string;
+    category: { id: string; name: string; slug: string };
+  }>;
+  serviceAreas: Array<{
+    id: string;
+    pincode: string;
+  }>;
+}
+
+interface Category {
   id: string;
   name: string;
-  size: string;
-  uploadedAt: string;
-  type: 'catalog' | 'pricelist' | 'authorization';
+  slug: string;
+  subCategories?: Category[];
+}
+
+interface Brand {
+  id: string;
+  name: string;
+  logo?: string;
 }
 
 export function DealerProfilePage() {
   const { user } = useAuthStore();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadType, setUploadType] = useState<'catalog' | 'pricelist' | 'authorization'>('catalog');
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [profile, setProfile] = useState<DealerProfile | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - would come from API
-  const [profile] = useState({
-    businessName: 'Krishna Electricals',
-    ownerName: user?.name || 'Dealer',
-    gstNumber: '27AABCU9603R1ZM',
-    phone: '+91 98765 43210',
-    email: 'dealer@example.com',
-    address: '123 Main Street, Mumbai, Maharashtra - 400001',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-    pincode: '400001',
-    establishedYear: '2015',
-    brands: ['Havells', 'Polycab', 'Legrand', 'Schneider Electric'],
-    serviceAreas: ['Mumbai', 'Thane', 'Navi Mumbai'],
-    status: 'verified',
-  });
+  // Document upload state
+  const [uploadingDoc, setUploadingDoc] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const gstInputRef = useRef<HTMLInputElement>(null);
+  const panInputRef = useRef<HTMLInputElement>(null);
+  const licenseInputRef = useRef<HTMLInputElement>(null);
 
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedPDF[]>([
-    {
-      id: '1',
-      name: 'Havells_Catalog_2024.pdf',
-      size: '4.2 MB',
-      uploadedAt: '2024-01-15',
-      type: 'catalog',
-    },
-    {
-      id: '2',
-      name: 'Polycab_PriceList_Jan2024.pdf',
-      size: '1.8 MB',
-      uploadedAt: '2024-01-10',
-      type: 'pricelist',
-    },
-  ]);
+  // Category/Brand selection
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showBrandModal, setShowBrandModal] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
+  const [savingCategories, setSavingCategories] = useState(false);
+  const [savingBrands, setSavingBrands] = useState(false);
 
-  const handleFileSelect = () => {
-    fileInputRef.current?.click();
+  // Service area
+  const [newPincode, setNewPincode] = useState('');
+  const [addingArea, setAddingArea] = useState(false);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const [profileRes, categoriesRes] = await Promise.all([
+        dealerApi.getProfile(),
+        productsApi.getCategories(),
+      ]);
+
+      setProfile(profileRes.data);
+      setCategories(categoriesRes.data.categories || []);
+
+      // Set already selected categories
+      const existingCategoryIds = new Set<string>(
+        profileRes.data.categoryMappings?.map((m: any) => m.category.id as string) || []
+      );
+      setSelectedCategories(existingCategoryIds);
+
+      // Set already selected brands
+      const existingBrandIds = new Set<string>(
+        profileRes.data.brandMappings?.map((m: any) => m.brand.id as string) || []
+      );
+      setSelectedBrands(existingBrandIds);
+
+      // Fetch brands separately
+      // For now using mock brands - you would fetch from API
+      setBrands([
+        { id: '1', name: 'Havells' },
+        { id: '2', name: 'Polycab' },
+        { id: '3', name: 'Legrand' },
+        { id: '4', name: 'Schneider Electric' },
+        { id: '5', name: 'L&T' },
+        { id: '6', name: 'Anchor by Panasonic' },
+        { id: '7', name: 'GM Modular' },
+        { id: '8', name: 'Finolex' },
+        { id: '9', name: 'V-Guard' },
+        { id: '10', name: 'Crompton' },
+        { id: '11', name: 'Syska' },
+        { id: '12', name: 'Philips' },
+        { id: '13', name: 'ABB' },
+        { id: '14', name: 'Siemens' },
+        { id: '15', name: 'KEI' },
+      ]);
+    } catch (err: any) {
+      console.error('Failed to fetch profile:', err);
+      setError(err.response?.data?.error || 'Failed to load profile');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+  const handleDocumentUpload = async (documentType: string, file: File) => {
+    if (!file) return;
 
-    const file = files[0];
-    if (file.type !== 'application/pdf') {
-      alert('Please upload a PDF file');
+    // Validate file type
+    const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    if (!validTypes.includes(file.type)) {
+      setUploadError('Invalid file type. Only PDF, JPG, and PNG are allowed.');
       return;
     }
 
-    setIsUploading(true);
-
-    // Simulate upload
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    const newFile: UploadedPDF = {
-      id: Date.now().toString(),
-      name: file.name,
-      size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-      uploadedAt: new Date().toISOString().split('T')[0],
-      type: uploadType,
-    };
-
-    setUploadedFiles(prev => [...prev, newFile]);
-    setIsUploading(false);
-    setUploadSuccess(true);
-
-    setTimeout(() => setUploadSuccess(false), 3000);
-
-    // Reset input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('File too large. Maximum size is 5MB.');
+      return;
     }
 
-    // Here you would actually send the file to your backend
-    // which would then forward to the founder's email
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', uploadType);
-    formData.append('dealerName', profile.businessName);
-    formData.append('dealerEmail', profile.email);
+    setUploadingDoc(documentType);
+    setUploadError(null);
 
-    // TODO: API call to upload and email to founder
-    console.log('Would upload and send to: shresth.agarwal@hub4estate.com');
-  };
-
-  const handleDeleteFile = (fileId: string) => {
-    if (confirm('Are you sure you want to delete this file?')) {
-      setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
+    try {
+      const response = await dealerApi.uploadDocument(documentType, file);
+      // Update profile with new document URL
+      setProfile(prev => prev ? {
+        ...prev,
+        [documentType]: response.data.url,
+        status: response.data.dealer.status,
+      } : null);
+    } catch (err: any) {
+      setUploadError(err.response?.data?.error || 'Failed to upload document');
+    } finally {
+      setUploadingDoc(null);
     }
   };
 
-  const getFileTypeLabel = (type: string) => {
-    switch (type) {
-      case 'catalog': return 'Product Catalog';
-      case 'pricelist': return 'Price List';
-      case 'authorization': return 'Brand Authorization';
-      default: return type;
+  const handleDeleteDocument = async (documentType: string) => {
+    if (!confirm('Are you sure you want to delete this document?')) return;
+
+    try {
+      await dealerApi.deleteDocument(documentType);
+      setProfile(prev => prev ? { ...prev, [documentType]: null } : null);
+    } catch (err: any) {
+      setUploadError(err.response?.data?.error || 'Failed to delete document');
     }
   };
+
+  const toggleCategory = (categoryId: string) => {
+    const newSelected = new Set(selectedCategories);
+    if (newSelected.has(categoryId)) {
+      newSelected.delete(categoryId);
+    } else {
+      newSelected.add(categoryId);
+    }
+    setSelectedCategories(newSelected);
+  };
+
+  const toggleBrand = (brandId: string) => {
+    const newSelected = new Set(selectedBrands);
+    if (newSelected.has(brandId)) {
+      newSelected.delete(brandId);
+    } else {
+      newSelected.add(brandId);
+    }
+    setSelectedBrands(newSelected);
+  };
+
+  const saveCategories = async () => {
+    setSavingCategories(true);
+    try {
+      // Get current category IDs
+      const currentIds = new Set(profile?.categoryMappings?.map(m => m.category.id) || []);
+
+      // Add new categories
+      for (const categoryId of selectedCategories) {
+        if (!currentIds.has(categoryId)) {
+          await dealerApi.addCategory({ categoryId });
+        }
+      }
+
+      // Refresh profile
+      await fetchData();
+      setShowCategoryModal(false);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to save categories');
+    } finally {
+      setSavingCategories(false);
+    }
+  };
+
+  const saveBrands = async () => {
+    setSavingBrands(true);
+    try {
+      // Get current brand IDs
+      const currentIds = new Set(profile?.brandMappings?.map(m => m.brand.id) || []);
+
+      // Add new brands
+      for (const brandId of selectedBrands) {
+        if (!currentIds.has(brandId)) {
+          await dealerApi.addBrand({ brandId });
+        }
+      }
+
+      // Refresh profile
+      await fetchData();
+      setShowBrandModal(false);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to save brands');
+    } finally {
+      setSavingBrands(false);
+    }
+  };
+
+  const addServiceArea = async () => {
+    if (newPincode.length !== 6) return;
+
+    setAddingArea(true);
+    try {
+      await dealerApi.addServiceArea({ pincode: newPincode });
+      setNewPincode('');
+      await fetchData();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to add service area');
+    } finally {
+      setAddingArea(false);
+    }
+  };
+
+  const removeServiceArea = async (areaId: string) => {
+    try {
+      await dealerApi.removeServiceArea(areaId);
+      await fetchData();
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to remove service area');
+    }
+  };
+
+  const isPending = profile?.status && ['PENDING_VERIFICATION', 'DOCUMENTS_PENDING', 'UNDER_REVIEW'].includes(profile.status);
+
+  const getStatusBadge = () => {
+    switch (profile?.status) {
+      case 'VERIFIED':
+        return { color: 'green', icon: Shield, label: 'Verified Dealer' };
+      case 'PENDING_VERIFICATION':
+        return { color: 'amber', icon: Clock, label: 'Pending Verification' };
+      case 'DOCUMENTS_PENDING':
+        return { color: 'orange', icon: AlertCircle, label: 'Documents Required' };
+      case 'UNDER_REVIEW':
+        return { color: 'blue', icon: Clock, label: 'Under Review' };
+      default:
+        return { color: 'gray', icon: Clock, label: 'Processing' };
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-neutral-400 mx-auto mb-4" />
+          <p className="text-neutral-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !profile) {
+    return (
+      <div className="min-h-screen bg-white py-8">
+        <div className="container-custom">
+          <div className="bg-red-50 border-2 border-red-200 p-6 text-center">
+            <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+            <p className="text-red-800 font-bold">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const statusBadge = getStatusBadge();
+  const StatusIcon = statusBadge.icon;
 
   return (
     <div className="min-h-screen bg-white">
@@ -131,21 +326,48 @@ export function DealerProfilePage() {
           </Link>
           <div className="flex items-start justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white text-sm font-bold uppercase tracking-wider mb-4">
-                <Shield className="w-4 h-4" />
-                Verified Dealer
+              <div className={`inline-flex items-center gap-2 px-4 py-2 bg-${statusBadge.color}-500 text-white text-sm font-bold uppercase tracking-wider mb-4`}>
+                <StatusIcon className="w-4 h-4" />
+                {statusBadge.label}
               </div>
-              <h1 className="text-3xl md:text-4xl font-black">{profile.businessName}</h1>
-              <p className="text-neutral-400 mt-2">{profile.ownerName} • {profile.city}</p>
+              <h1 className="text-3xl md:text-4xl font-black">{profile?.businessName}</h1>
+              <p className="text-neutral-400 mt-2">{profile?.ownerName} • {profile?.city}</p>
             </div>
           </div>
         </div>
       </section>
 
       <div className="container-custom py-12">
+        {error && (
+          <div className="bg-red-50 border-2 border-red-200 p-4 mb-6 flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-500" />
+            <p className="text-red-800">{error}</p>
+            <button onClick={() => setError(null)} className="ml-auto text-red-500 hover:text-red-700">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Pending Status Alert */}
+            {isPending && (
+              <div className="bg-amber-50 border-2 border-amber-200 p-6">
+                <div className="flex items-start gap-4">
+                  <Clock className="w-6 h-6 text-amber-600 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-bold text-neutral-900">Complete Your Profile</h3>
+                    <p className="text-sm text-neutral-600 mt-1">
+                      {profile?.status === 'DOCUMENTS_PENDING'
+                        ? 'Please upload your GST certificate and PAN card to complete verification.'
+                        : 'Your application is being reviewed. Add brands and service areas while you wait.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Business Details */}
             <div className="bg-white border-2 border-neutral-200 shadow-brutal">
               <div className="p-4 bg-neutral-900 text-white">
@@ -157,156 +379,122 @@ export function DealerProfilePage() {
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      Business Name
-                    </label>
-                    <p className="text-lg font-bold text-neutral-900">{profile.businessName}</p>
+                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">Business Name</label>
+                    <p className="text-lg font-bold text-neutral-900">{profile?.businessName}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">GST Number</label>
+                    <p className="text-lg font-bold text-neutral-900 font-mono">{profile?.gstNumber}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      GST Number
+                      <Phone className="w-4 h-4 inline mr-1" />Phone
                     </label>
-                    <p className="text-lg font-bold text-neutral-900">{profile.gstNumber}</p>
+                    <p className="text-lg font-bold text-neutral-900">{profile?.phone}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      <Phone className="w-4 h-4 inline mr-1" />
-                      Phone
+                      <Mail className="w-4 h-4 inline mr-1" />Email
                     </label>
-                    <p className="text-lg font-bold text-neutral-900">{profile.phone}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      <Mail className="w-4 h-4 inline mr-1" />
-                      Email
-                    </label>
-                    <p className="text-lg font-bold text-neutral-900">{profile.email}</p>
+                    <p className="text-lg font-bold text-neutral-900">{profile?.email}</p>
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      <MapPin className="w-4 h-4 inline mr-1" />
-                      Address
+                      <MapPin className="w-4 h-4 inline mr-1" />Address
                     </label>
-                    <p className="text-lg font-bold text-neutral-900">{profile.address}</p>
+                    <p className="text-lg font-bold text-neutral-900">
+                      {profile?.shopAddress}, {profile?.city}, {profile?.state} - {profile?.pincode}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* PDF Upload Section */}
+            {/* Document Upload Section */}
             <div className="bg-white border-2 border-neutral-200 shadow-brutal">
               <div className="p-4 bg-neutral-900 text-white">
                 <h2 className="font-bold uppercase tracking-wider flex items-center gap-2">
                   <FileText className="w-5 h-5" />
-                  Upload Documents
+                  Verification Documents
                 </h2>
               </div>
               <div className="p-6">
-                <p className="text-neutral-600 mb-6">
-                  Upload your product catalogs, price lists, and brand authorizations.
-                  All documents will be reviewed by our team and sent to the founder for verification.
-                </p>
+                {uploadError && (
+                  <div className="bg-red-50 border-2 border-red-200 p-3 mb-4 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-500" />
+                    <p className="text-sm text-red-800">{uploadError}</p>
+                    <button onClick={() => setUploadError(null)} className="ml-auto"><X className="w-4 h-4 text-red-500" /></button>
+                  </div>
+                )}
 
-                {/* Upload Type Selection */}
-                <div className="mb-6">
-                  <label className="block text-sm font-bold text-neutral-900 mb-3">
-                    Document Type
-                  </label>
+                <div className="space-y-4">
+                  {/* GST Document */}
+                  <DocumentUploadRow
+                    label="GST Certificate"
+                    required
+                    documentType="gstDocument"
+                    currentUrl={profile?.gstDocument}
+                    isUploading={uploadingDoc === 'gstDocument'}
+                    inputRef={gstInputRef}
+                    onUpload={(file) => handleDocumentUpload('gstDocument', file)}
+                    onDelete={() => handleDeleteDocument('gstDocument')}
+                  />
+
+                  {/* PAN Document */}
+                  <DocumentUploadRow
+                    label="PAN Card"
+                    required
+                    documentType="panDocument"
+                    currentUrl={profile?.panDocument}
+                    isUploading={uploadingDoc === 'panDocument'}
+                    inputRef={panInputRef}
+                    onUpload={(file) => handleDocumentUpload('panDocument', file)}
+                    onDelete={() => handleDeleteDocument('panDocument')}
+                  />
+
+                  {/* Shop License */}
+                  <DocumentUploadRow
+                    label="Shop License"
+                    documentType="shopLicense"
+                    currentUrl={profile?.shopLicense}
+                    isUploading={uploadingDoc === 'shopLicense'}
+                    inputRef={licenseInputRef}
+                    onUpload={(file) => handleDocumentUpload('shopLicense', file)}
+                    onDelete={() => handleDeleteDocument('shopLicense')}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Categories */}
+            <div className="bg-white border-2 border-neutral-200 shadow-brutal">
+              <div className="p-4 bg-neutral-900 text-white flex items-center justify-between">
+                <h2 className="font-bold uppercase tracking-wider flex items-center gap-2">
+                  <Award className="w-5 h-5" />
+                  Product Categories
+                </h2>
+                <button
+                  onClick={() => setShowCategoryModal(true)}
+                  className="text-sm font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Category
+                </button>
+              </div>
+              <div className="p-6">
+                {profile?.categoryMappings && profile.categoryMappings.length > 0 ? (
                   <div className="flex flex-wrap gap-3">
-                    {(['catalog', 'pricelist', 'authorization'] as const).map(type => (
-                      <button
-                        key={type}
-                        onClick={() => setUploadType(type)}
-                        className={`px-4 py-2 border-2 font-bold text-sm transition-all ${
-                          uploadType === type
-                            ? 'border-neutral-900 bg-neutral-900 text-white'
-                            : 'border-neutral-200 hover:border-neutral-400'
-                        }`}
+                    {profile.categoryMappings.map((mapping) => (
+                      <span
+                        key={mapping.id}
+                        className="px-4 py-2 bg-neutral-100 border-2 border-neutral-200 font-bold text-neutral-900"
                       >
-                        {getFileTypeLabel(type)}
-                      </button>
+                        {mapping.category.name}
+                      </span>
                     ))}
                   </div>
-                </div>
-
-                {/* Upload Area */}
-                <div
-                  onClick={handleFileSelect}
-                  className={`border-2 border-dashed p-8 text-center cursor-pointer transition-all ${
-                    isUploading
-                      ? 'border-accent-500 bg-accent-50'
-                      : 'border-neutral-300 hover:border-neutral-900 hover:bg-neutral-50'
-                  }`}
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  {isUploading ? (
-                    <div>
-                      <div className="w-12 h-12 border-4 border-accent-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                      <p className="font-bold text-neutral-900">Uploading...</p>
-                    </div>
-                  ) : uploadSuccess ? (
-                    <div>
-                      <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                      <p className="font-bold text-green-600">Upload Successful!</p>
-                      <p className="text-sm text-neutral-500 mt-2">
-                        Document sent to our team for review
-                      </p>
-                    </div>
-                  ) : (
-                    <>
-                      <Upload className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
-                      <p className="font-bold text-neutral-900 mb-2">
-                        Click to upload PDF
-                      </p>
-                      <p className="text-sm text-neutral-500">
-                        Maximum file size: 10MB
-                      </p>
-                    </>
-                  )}
-                </div>
-
-                {/* Uploaded Files */}
-                {uploadedFiles.length > 0 && (
-                  <div className="mt-8">
-                    <h3 className="font-bold text-neutral-900 mb-4">Uploaded Documents</h3>
-                    <div className="space-y-3">
-                      {uploadedFiles.map(file => (
-                        <div
-                          key={file.id}
-                          className="flex items-center justify-between p-4 border-2 border-neutral-200 hover:border-neutral-300 transition-colors"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-red-100 flex items-center justify-center">
-                              <FileText className="w-5 h-5 text-red-600" />
-                            </div>
-                            <div>
-                              <p className="font-bold text-neutral-900">{file.name}</p>
-                              <p className="text-sm text-neutral-500">
-                                {getFileTypeLabel(file.type)} • {file.size} • {file.uploadedAt}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors">
-                              <Download className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteFile(file.id)}
-                              className="p-2 text-neutral-400 hover:text-red-600 transition-colors"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                ) : (
+                  <p className="text-neutral-500">No categories added yet. Click "Add Category" to get started.</p>
                 )}
               </div>
             </div>
@@ -318,22 +506,34 @@ export function DealerProfilePage() {
                   <Award className="w-5 h-5" />
                   Authorized Brands
                 </h2>
-                <button className="text-sm font-bold text-accent-400 hover:text-accent-300 flex items-center gap-1">
+                <button
+                  onClick={() => setShowBrandModal(true)}
+                  className="text-sm font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                >
                   <Plus className="w-4 h-4" />
                   Add Brand
                 </button>
               </div>
               <div className="p-6">
-                <div className="flex flex-wrap gap-3">
-                  {profile.brands.map((brand, index) => (
-                    <span
-                      key={index}
-                      className="px-4 py-2 bg-neutral-100 border-2 border-neutral-200 font-bold text-neutral-900"
-                    >
-                      {brand}
-                    </span>
-                  ))}
-                </div>
+                {profile?.brandMappings && profile.brandMappings.length > 0 ? (
+                  <div className="flex flex-wrap gap-3">
+                    {profile.brandMappings.map((mapping) => (
+                      <span
+                        key={mapping.id}
+                        className={`px-4 py-2 border-2 font-bold ${
+                          mapping.isVerified
+                            ? 'bg-green-50 border-green-200 text-green-800'
+                            : 'bg-neutral-100 border-neutral-200 text-neutral-900'
+                        }`}
+                      >
+                        {mapping.brand.name}
+                        {mapping.isVerified && <CheckCircle className="w-4 h-4 inline ml-2" />}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-neutral-500">No brands added yet. Click "Add Brand" to get started.</p>
+                )}
               </div>
             </div>
           </div>
@@ -341,18 +541,19 @@ export function DealerProfilePage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Status Card */}
-            <div className="bg-green-50 border-2 border-green-200 p-6">
+            <div className={`bg-${statusBadge.color}-50 border-2 border-${statusBadge.color}-200 p-6`}>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className={`w-10 h-10 bg-${statusBadge.color}-500 rounded-full flex items-center justify-center`}>
+                  <StatusIcon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-green-800">Verified Dealer</p>
-                  <p className="text-sm text-green-600">Since 2024</p>
+                  <p className={`font-bold text-${statusBadge.color}-800`}>{statusBadge.label}</p>
                 </div>
               </div>
-              <p className="text-sm text-green-700">
-                Your profile is complete and verified. You can receive and respond to RFQs.
+              <p className={`text-sm text-${statusBadge.color}-700`}>
+                {profile?.status === 'VERIFIED'
+                  ? 'Your profile is complete and verified. You can receive and respond to RFQs.'
+                  : 'Complete your profile to get verified and start receiving RFQs.'}
               </p>
             </div>
 
@@ -365,20 +566,43 @@ export function DealerProfilePage() {
                 </h3>
               </div>
               <div className="p-4">
-                <div className="space-y-2">
-                  {profile.serviceAreas.map((area, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 text-sm font-medium text-neutral-700"
-                    >
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      {area}
-                    </div>
-                  ))}
+                <div className="space-y-2 mb-4">
+                  {profile?.serviceAreas && profile.serviceAreas.length > 0 ? (
+                    profile.serviceAreas.map((area) => (
+                      <div key={area.id} className="flex items-center justify-between text-sm">
+                        <span className="font-medium text-neutral-700 flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          {area.pincode}
+                        </span>
+                        <button
+                          onClick={() => removeServiceArea(area.id)}
+                          className="text-neutral-400 hover:text-red-500"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-neutral-500">No service areas added</p>
+                  )}
                 </div>
-                <button className="mt-4 text-sm font-bold text-accent-600 hover:text-accent-700">
-                  + Add more areas
-                </button>
+
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Enter 6-digit pincode"
+                    value={newPincode}
+                    onChange={(e) => setNewPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="flex-1 px-3 py-2 border-2 border-neutral-200 text-sm focus:border-neutral-900 focus:outline-none"
+                  />
+                  <button
+                    onClick={addServiceArea}
+                    disabled={newPincode.length !== 6 || addingArea}
+                    className="px-3 py-2 bg-neutral-900 text-white font-bold text-sm disabled:opacity-50"
+                  >
+                    {addingArea ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -386,20 +610,14 @@ export function DealerProfilePage() {
             <div className="bg-neutral-900 text-white p-6">
               <h3 className="font-bold mb-4">Need Help?</h3>
               <p className="text-sm text-neutral-400 mb-4">
-                Contact our founder directly for any questions about your dealer account.
+                Contact our team for any questions about your dealer account.
               </p>
               <div className="space-y-3 text-sm">
-                <a
-                  href="mailto:shresth.agarwal@hub4estate.com"
-                  className="flex items-center gap-2 text-accent-400 hover:text-accent-300"
-                >
+                <a href="mailto:support@hub4estate.com" className="flex items-center gap-2 text-amber-400 hover:text-amber-300">
                   <Mail className="w-4 h-4" />
-                  shresth.agarwal@hub4estate.com
+                  support@hub4estate.com
                 </a>
-                <a
-                  href="tel:+917690001999"
-                  className="flex items-center gap-2 text-accent-400 hover:text-accent-300"
-                >
+                <a href="tel:+917690001999" className="flex items-center gap-2 text-amber-400 hover:text-amber-300">
                   <Phone className="w-4 h-4" />
                   +91 76900 01999
                 </a>
@@ -407,6 +625,201 @@ export function DealerProfilePage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Category Selection Modal */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="p-4 bg-neutral-900 text-white flex items-center justify-between">
+              <h3 className="font-bold">Select Categories</h3>
+              <button onClick={() => setShowCategoryModal(false)}><X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <p className="text-sm text-neutral-600 mb-4">Select the product categories you deal in:</p>
+              <div className="space-y-2">
+                {categories.map((category) => (
+                  <div key={category.id}>
+                    <button
+                      onClick={() => toggleCategory(category.id)}
+                      className={`w-full flex items-center justify-between p-3 border-2 transition-all ${
+                        selectedCategories.has(category.id)
+                          ? 'border-neutral-900 bg-neutral-50'
+                          : 'border-neutral-200 hover:border-neutral-400'
+                      }`}
+                    >
+                      <span className="font-bold text-neutral-900">{category.name}</span>
+                      {selectedCategories.has(category.id) && <CheckCircle className="w-5 h-5 text-green-600" />}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-4 border-t-2 border-neutral-200 flex gap-3">
+              <button
+                onClick={() => setShowCategoryModal(false)}
+                className="flex-1 px-4 py-2 border-2 border-neutral-200 font-bold hover:bg-neutral-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveCategories}
+                disabled={savingCategories}
+                className="flex-1 px-4 py-2 bg-neutral-900 text-white font-bold disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {savingCategories && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Categories
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Brand Selection Modal */}
+      {showBrandModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="p-4 bg-neutral-900 text-white flex items-center justify-between">
+              <h3 className="font-bold">Select Brands</h3>
+              <button onClick={() => setShowBrandModal(false)}><X className="w-5 h-5" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <p className="text-sm text-neutral-600 mb-4">Select the brands you are authorized to sell:</p>
+              <div className="grid grid-cols-2 gap-2">
+                {brands.map((brand) => (
+                  <button
+                    key={brand.id}
+                    onClick={() => toggleBrand(brand.id)}
+                    className={`flex items-center justify-between p-3 border-2 transition-all text-left ${
+                      selectedBrands.has(brand.id)
+                        ? 'border-neutral-900 bg-neutral-50'
+                        : 'border-neutral-200 hover:border-neutral-400'
+                    }`}
+                  >
+                    <span className="font-bold text-neutral-900 text-sm">{brand.name}</span>
+                    {selectedBrands.has(brand.id) && <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-4 border-t-2 border-neutral-200 flex gap-3">
+              <button
+                onClick={() => setShowBrandModal(false)}
+                className="flex-1 px-4 py-2 border-2 border-neutral-200 font-bold hover:bg-neutral-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveBrands}
+                disabled={savingBrands}
+                className="flex-1 px-4 py-2 bg-neutral-900 text-white font-bold disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {savingBrands && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Brands
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Document Upload Row Component
+function DocumentUploadRow({
+  label,
+  required,
+  documentType,
+  currentUrl,
+  isUploading,
+  inputRef,
+  onUpload,
+  onDelete,
+}: {
+  label: string;
+  required?: boolean;
+  documentType: string;
+  currentUrl?: string | null;
+  isUploading: boolean;
+  inputRef: React.RefObject<HTMLInputElement>;
+  onUpload: (file: File) => void;
+  onDelete: () => void;
+}) {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onUpload(file);
+    }
+    // Reset input
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between p-4 border-2 border-neutral-200">
+      <div className="flex items-center gap-4">
+        <div className={`w-10 h-10 flex items-center justify-center ${currentUrl ? 'bg-green-100' : 'bg-neutral-100'}`}>
+          {currentUrl ? (
+            <CheckCircle className="w-5 h-5 text-green-600" />
+          ) : (
+            <FileText className="w-5 h-5 text-neutral-400" />
+          )}
+        </div>
+        <div>
+          <p className="font-bold text-neutral-900">
+            {label}
+            {required && <span className="text-red-500 ml-1">*</span>}
+          </p>
+          <p className="text-sm text-neutral-500">
+            {currentUrl ? 'Uploaded' : 'Not uploaded'}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          ref={inputRef}
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+        {currentUrl ? (
+          <>
+            <a
+              href={currentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-2 border-2 border-neutral-200 text-sm font-bold hover:bg-neutral-50"
+            >
+              View
+            </a>
+            <button
+              onClick={onDelete}
+              className="p-2 text-neutral-400 hover:text-red-600"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => inputRef.current?.click()}
+            disabled={isUploading}
+            className="px-4 py-2 bg-neutral-900 text-white text-sm font-bold disabled:opacity-50 flex items-center gap-2"
+          >
+            {isUploading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Upload className="w-4 h-4" />
+                Upload
+              </>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

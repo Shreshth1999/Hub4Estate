@@ -19,7 +19,12 @@
     "build:frontend": "cd frontend && npm run build",
     "db:migrate": "cd backend && npm run db:migrate",
     "db:seed": "cd backend && npm run db:seed",
-    "db:studio": "cd backend && npm run db:studio"
+    "db:studio": "cd backend && npm run db:studio",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && eslint src --ext .ts",
+    "lint:frontend": "cd frontend && npm run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

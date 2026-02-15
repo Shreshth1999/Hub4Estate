@@ -1,14 +1,38 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { ArrowRight, Clock, Shield, Zap, CheckCircle, Star, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowRight, Clock, Shield, Zap, CheckCircle, Star, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3, Upload, Camera, X } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
-import { productsApi } from '../lib/api';
+import { productsApi, api } from '../lib/api';
+
+interface InquiryForm {
+  name: string;
+  phone: string;
+  modelNumber: string;
+  quantity: string;
+  deliveryCity: string;
+}
+
+const defaultForm: InquiryForm = { name: '', phone: '', modelNumber: '', quantity: '1', deliveryCity: '' };
 
 export function HomePage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [countdown, setCountdown] = useState({ hours: 23, minutes: 59, seconds: 59 });
+
+  // Inquiry form state - restore from sessionStorage on refresh
+  const savedInquiry = sessionStorage.getItem('hub4estate_inquiry');
+  const savedData = savedInquiry ? JSON.parse(savedInquiry) : null;
+
+  const [inquiryForm, setInquiryForm] = useState<InquiryForm>(
+    savedData?.form || defaultForm
+  );
+  const [productPhoto, setProductPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(!!savedData?.submitted);
+  const [submittedInquiryId, setSubmittedInquiryId] = useState(savedData?.inquiryNumber || '');
+  const [formError, setFormError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     productsApi.getCategories()
@@ -22,29 +46,64 @@ export function HomePage() {
       });
   }, []);
 
-  // Countdown timer
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        }
-        return { hours: 23, minutes: 59, seconds: 59 };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProductPhoto(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
 
-  const stats = [
-    { value: '500+', label: 'Verified Dealers' },
-    { value: '10,000+', label: 'Products' },
-    { value: '60', label: 'Seconds Avg Response' },
-    { value: '50+', label: 'Cities Covered' },
-  ];
+  const removePhoto = () => {
+    setProductPhoto(null);
+    setPhotoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleInquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError('');
+
+    if (!inquiryForm.name || !inquiryForm.phone || !inquiryForm.deliveryCity) {
+      setFormError('Please fill in name, phone, and city.');
+      return;
+    }
+    if (!productPhoto && !inquiryForm.modelNumber) {
+      setFormError('Please upload a product photo or enter a model number.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('name', inquiryForm.name);
+      formData.append('phone', inquiryForm.phone);
+      formData.append('modelNumber', inquiryForm.modelNumber);
+      formData.append('quantity', inquiryForm.quantity);
+      formData.append('deliveryCity', inquiryForm.deliveryCity);
+      if (productPhoto) {
+        formData.append('productPhoto', productPhoto);
+      }
+
+      const response = await api.post('/inquiry/submit', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const inquiryNumber = response.data.inquiryNumber || response.data.inquiryId || '';
+      setSubmittedInquiryId(inquiryNumber);
+      setSubmitted(true);
+      // Save to sessionStorage so refresh doesn't lose the success state
+      sessionStorage.setItem('hub4estate_inquiry', JSON.stringify({
+        submitted: true,
+        inquiryNumber,
+        form: inquiryForm,
+      }));
+    } catch (err: any) {
+      setFormError(err.response?.data?.error || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const urgencyBenefits = [
     { icon: Clock, text: 'Get quotes in under 60 seconds' },
@@ -85,7 +144,7 @@ export function HomePage() {
         <div className="absolute inset-0 grid-bg"></div>
 
         <div className="container-custom relative py-20 lg:py-28">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Left Content */}
             <div className="animate-slide-up">
               {/* Urgency Badge */}
@@ -102,9 +161,7 @@ export function HomePage() {
 
               {/* Main Headline */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-neutral-900 mb-6 leading-[0.9]">
-                Buy Electrical Products.<br />
-                <span className="text-accent-600">Save 20-40%.</span><br />
-                In 60 Seconds.
+                We Will Get You The <span className="text-accent-600">Cheapest Price</span> Of Any Electrical Across India.
               </h1>
 
               {/* Subheadline */}
@@ -135,48 +192,162 @@ export function HomePage() {
               </div>
             </div>
 
-            {/* Right Side - Countdown & Stats */}
+            {/* Right Side - Product Inquiry Form */}
             <div className="animate-slide-left">
-              {/* Countdown Timer */}
-              <div className="bg-neutral-900 p-8 mb-8">
-                <p className="text-accent-500 text-sm font-bold uppercase tracking-wider mb-4">
-                  Today's Offer Ends In
-                </p>
-                <div className="flex gap-4 mb-6">
-                  <div className="text-center">
-                    <div className="text-5xl md:text-6xl font-black text-white tabular-nums">
-                      {String(countdown.hours).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs uppercase tracking-wider text-neutral-400 mt-2">Hours</div>
+              <div className="bg-white border-2 border-neutral-900 p-6 lg:p-8 shadow-brutal">
+                {submitted ? (
+                  <div className="text-center py-8">
+                    <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                    <h3 className="text-2xl font-black text-neutral-900 mb-2">Inquiry Submitted!</h3>
+                    <p className="text-neutral-600 mb-4">We'll get back to you with the best price shortly.</p>
+                    {submittedInquiryId && (
+                      <div className="bg-neutral-50 border-2 border-neutral-200 p-4 mb-4 text-left">
+                        <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Your Inquiry Number</p>
+                        <p className="font-mono text-lg font-black text-neutral-900">{submittedInquiryId}</p>
+                        <p className="text-xs text-neutral-400 mt-1">Save this number to track your inquiry anytime</p>
+                      </div>
+                    )}
+                    <Link
+                      to={`/track?phone=${encodeURIComponent(inquiryForm.phone)}`}
+                      className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 font-bold text-sm hover:bg-neutral-800 transition-colors"
+                    >
+                      Track Your Request
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setSubmitted(false);
+                        setSubmittedInquiryId('');
+                        setInquiryForm(defaultForm);
+                        removePhoto();
+                        sessionStorage.removeItem('hub4estate_inquiry');
+                      }}
+                      className="mt-4 block mx-auto text-accent-600 font-bold underline text-sm"
+                    >
+                      Submit Another Inquiry
+                    </button>
                   </div>
-                  <div className="text-5xl font-black text-accent-500">:</div>
-                  <div className="text-center">
-                    <div className="text-5xl md:text-6xl font-black text-white tabular-nums">
-                      {String(countdown.minutes).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs uppercase tracking-wider text-neutral-400 mt-2">Minutes</div>
-                  </div>
-                  <div className="text-5xl font-black text-accent-500">:</div>
-                  <div className="text-center">
-                    <div className="text-5xl md:text-6xl font-black text-white tabular-nums">
-                      {String(countdown.seconds).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs uppercase tracking-wider text-neutral-400 mt-2">Seconds</div>
-                  </div>
-                </div>
-                <p className="text-neutral-400 text-sm">
-                  <span className="text-white font-bold">127 people</span> are viewing deals right now
-                </p>
-              </div>
+                ) : (
+                  <>
+                    <h3 className="text-xl font-black text-neutral-900 mb-1">Get the Best Price</h3>
+                    <p className="text-sm text-neutral-500 mb-6">Upload a photo or enter model number. We'll find you the cheapest deal.</p>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                {stats.map((stat, index) => (
-                  <div key={index} className="card-stat">
-                    <div className="text-4xl font-black text-neutral-900">{stat.value}</div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mt-1">{stat.label}</p>
-                  </div>
-                ))}
+                    <form onSubmit={handleInquirySubmit} className="space-y-4">
+                      {/* Photo Upload */}
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-2">
+                          Product Photo
+                        </label>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePhotoChange}
+                          className="hidden"
+                        />
+                        {photoPreview ? (
+                          <div className="relative w-full h-32 border-2 border-neutral-200 rounded overflow-hidden">
+                            <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-neutral-50" />
+                            <button
+                              type="button"
+                              onClick={removePhoto}
+                              className="absolute top-2 right-2 bg-neutral-900 text-white rounded-full p-1"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-full h-28 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center gap-2 hover:border-accent-500 hover:bg-accent-50 transition-colors"
+                          >
+                            <Camera className="w-6 h-6 text-neutral-400" />
+                            <span className="text-sm text-neutral-500">Click to upload product photo</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Model Number */}
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
+                          Model Number <span className="text-neutral-400 normal-case">(or product name)</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Havells?"
+                          value={inquiryForm.modelNumber}
+                          onChange={e => setInquiryForm(f => ({ ...f, modelNumber: e.target.value }))}
+                          className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                        />
+                      </div>
+
+                      {/* Quantity & City in row */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Quantity</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={inquiryForm.quantity}
+                            onChange={e => setInquiryForm(f => ({ ...f, quantity: e.target.value }))}
+                            className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Delivery City</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Mumbai"
+                            value={inquiryForm.deliveryCity}
+                            onChange={e => setInquiryForm(f => ({ ...f, deliveryCity: e.target.value }))}
+                            className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Name & Phone */}
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Your Name</label>
+                        <input
+                          type="text"
+                          placeholder="Full name"
+                          value={inquiryForm.name}
+                          onChange={e => setInquiryForm(f => ({ ...f, name: e.target.value }))}
+                          className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Phone Number</label>
+                        <input
+                          type="tel"
+                          placeholder="10-digit mobile number"
+                          value={inquiryForm.phone}
+                          onChange={e => setInquiryForm(f => ({ ...f, phone: e.target.value }))}
+                          className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                        />
+                      </div>
+
+                      {formError && (
+                        <p className="text-sm text-red-600 font-medium">{formError}</p>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full btn-urgent justify-center disabled:opacity-50"
+                      >
+                        {submitting ? 'Submitting...' : 'Get Cheapest Price'}
+                        {!submitting && <ArrowRight className="ml-2 w-5 h-5" />}
+                      </button>
+
+                      <p className="text-xs text-neutral-400 text-center">
+                        We'll call you back with the best price within 30 minutes
+                      </p>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
           </div>

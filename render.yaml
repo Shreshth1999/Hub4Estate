@@ -1,0 +1,33 @@
+# Render Blueprint - Infrastructure as Code
+# Deploy with: https://render.com/deploy
+
+services:
+  # Backend API Service
+  - type: web
+    name: hub4estate-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        sync: false # Set manually from Neon
+      - key: FRONTEND_URL
+        value: https://hub4estate.com,https://www.hub4estate.com,https://hub4estate.vercel.app
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CALLBACK_URL
+        value: https://hub4estate-api.onrender.com/api/auth/google/callback

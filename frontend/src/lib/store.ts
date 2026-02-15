@@ -5,9 +5,13 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: string;
-  city: string;
+  role?: string;
+  city?: string;
   type: 'user' | 'dealer' | 'admin';
+  // Dealer-specific fields
+  status?: string;
+  onboardingStep?: number;
+  profileComplete?: boolean;
 }
 
 interface AuthState {
@@ -17,6 +21,8 @@ interface AuthState {
   isVerifying: boolean; // True while verifying token with backend
   isVerified: boolean;  // True after successful backend verification
   setAuth: (user: User, token: string) => void;
+  setToken: (token: string) => void;
+  setUser: (user: User) => void;
   setVerifying: (verifying: boolean) => void;
   setVerified: (verified: boolean) => void;
   updateUser: (user: User) => void;
@@ -31,9 +37,16 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isVerifying: false,
       isVerified: false,
-      setAuth: (user, token) => {
+      setAuth: (user: User, token: string) => {
         localStorage.setItem('token', token);
         set({ user, token, isAuthenticated: true, isVerified: true, isVerifying: false });
+      },
+      setToken: (token: string) => {
+        localStorage.setItem('token', token);
+        set({ token, isAuthenticated: true });
+      },
+      setUser: (user: User) => {
+        set({ user, isVerified: true, isVerifying: false });
       },
       setVerifying: (verifying) => set({ isVerifying: verifying }),
       setVerified: (verified) => set({ isVerified: verified, isVerifying: false }),

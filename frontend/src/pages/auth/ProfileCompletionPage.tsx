@@ -84,7 +84,8 @@ export function ProfileCompletionPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.phone || formData.phone.length < 10) {
+    // Phone is optional - only validate if provided
+    if (formData.phone && formData.phone.length > 0 && formData.phone.length < 10) {
       setError('Please enter a valid 10-digit phone number');
       return;
     }
@@ -98,10 +99,16 @@ export function ProfileCompletionPage() {
     setError('');
 
     try {
-      const response = await authApi.completeProfile({
-        phone: formData.phone,
+      const profileData: { city: string; phone?: string } = {
         city: formData.city,
-      });
+      };
+
+      // Only include phone if provided
+      if (formData.phone && formData.phone.length === 10) {
+        profileData.phone = formData.phone;
+      }
+
+      const response = await authApi.completeProfile(profileData);
 
       // Update auth state with complete profile and new token
       const newToken = response.data.token;
@@ -170,7 +177,7 @@ export function ProfileCompletionPage() {
             <div>
               <label className="block text-sm font-bold text-neutral-900 mb-2 uppercase tracking-wide">
                 <Phone className="w-4 h-4 inline mr-2" />
-                Phone Number
+                Phone Number <span className="text-neutral-400 font-normal normal-case">(optional)</span>
               </label>
               <Input
                 type="tel"

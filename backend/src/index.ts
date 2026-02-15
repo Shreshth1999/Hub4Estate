@@ -20,6 +20,10 @@ import contactRoutes from './routes/contact.routes';
 import chatRoutes from './routes/chat.routes';
 import crmRoutes from './routes/crm.routes';
 import scraperRoutes from './routes/scraper.routes';
+import inquiryRoutes from './routes/inquiry.routes';
+import inquiryPipelineRoutes from './routes/inquiry-pipeline.routes';
+import brandDealerRoutes from './routes/brand-dealer.routes';
+import databaseRoutes from './routes/database.routes';
 
 const app = express();
 
@@ -42,6 +46,8 @@ app.use(cors({
     const isAllowed = allowedOrigins.some(allowed => origin.includes(allowed)) ||
       origin.includes('.replit.dev') ||
       origin.includes('.repl.co') ||
+      origin.includes('.vercel.app') ||
+      origin.includes('hub4estate.com') ||
       origin.includes('localhost');
 
     if (isAllowed) {
@@ -84,6 +90,9 @@ app.use(
 app.use(passportConfig.initialize());
 app.use(passportConfig.session());
 
+// Serve uploaded files (product photos, dealer documents)
+app.use('/uploads', express.static('uploads'));
+
 // Health check
 app.get('/health', async (_req, res) => {
   try {
@@ -107,6 +116,10 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/crm', crmRoutes);
 app.use('/api/scraper', scraperRoutes);
+app.use('/api/inquiry', inquiryRoutes);
+app.use('/api/inquiry-pipeline', inquiryPipelineRoutes);
+app.use('/api/brand-dealers', brandDealerRoutes);
+app.use('/api/database', databaseRoutes);
 
 // 404 handler
 app.use((_req, res) => {

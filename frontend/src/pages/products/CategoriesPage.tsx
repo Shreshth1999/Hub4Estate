@@ -33,6 +33,7 @@ export function CategoriesPage() {
     const fetchCategories = async () => {
       try {
         const response = await productsApi.getCategories();
+        console.log("Fetched categories:", response.data);
         setCategories(response.data.categories || []);
       } catch (error) {
         console.error('Failed to fetch categories:', error);

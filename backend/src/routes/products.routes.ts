@@ -36,7 +36,7 @@ router.get('/categories/:slug', async (req, res) => {
           include: {
             productTypes: {
               where: { isActive: true },
-              take: 5,
+              orderBy: { sortOrder: 'asc' },
             },
           },
           orderBy: { sortOrder: 'asc' },
