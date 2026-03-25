@@ -3,13 +3,12 @@ frontend:
   phases:
     install:
       commands:
-        - source ~/.nvm/nvm.sh
-        - nvm install 20
-        - nvm use 20
-        - node --version
+        - source ~/.nvm/nvm.sh && nvm install 20 && nvm use 20
+        - node --version && npm --version
         - npm install --ignore-scripts
     build:
       commands:
+        - export PATH="$PWD/node_modules/.bin:$PATH"
         - cd frontend && npm run build
   artifacts:
     baseDirectory: frontend/dist
