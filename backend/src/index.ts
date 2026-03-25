@@ -45,6 +45,7 @@ import databaseRoutes from './routes/database.routes';
 import dealerInquiryRoutes from './routes/dealer-inquiry.routes';
 import slipScannerRoutes from './routes/slip-scanner.routes';
 import notificationRoutes from './routes/notification.routes';
+import professionalRoutes from './routes/professional.routes';
 
 const app = express();
 
@@ -144,6 +145,7 @@ app.use('/api/database', adminLimiter, databaseRoutes);
 app.use('/api/dealer-inquiry', quoteLimiter, dealerInquiryRoutes);
 app.use('/api/slip-scanner', uploadLimiter, slipScannerRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/professional', uploadLimiter, professionalRoutes);
 
 // 404 handler
 app.use((_req, res) => {

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { dealerApi, quotesApi } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
 import { CardSkeleton, Alert } from '../../components/ui';
+import { TourGuide } from '../../components/TourGuide';
 import {
   TrendingUp, FileText, CheckCircle, Clock, ArrowRight,
   Award, Bell, Shield, MapPin, AlertCircle,
@@ -116,6 +117,7 @@ export function DealerDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <TourGuide tourKey="dealer" />
 
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-5">

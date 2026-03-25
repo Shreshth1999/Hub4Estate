@@ -1,175 +1,111 @@
 import { Link } from 'react-router-dom';
-import { Zap, User, Store, ArrowRight, CheckCircle, Shield, Phone, Mail } from 'lucide-react';
+import { Zap, ArrowRight, ShoppingBag, Store, Briefcase } from 'lucide-react';
 
-/**
- * RoleSelectionPage - The FIRST screen before any registration.
- *
- * This is critical for proper platform separation:
- * - Users (Buyers) go to OTP-based auth flow (Phone/Email/Google)
- * - Dealers go to multi-step dealer registration
- *
- * This ensures the platform knows user intent from the start.
- */
+const ROLES = [
+  {
+    key: 'buyer',
+    icon: ShoppingBag,
+    label: 'I want to buy',
+    sublabel: 'Homeowner, anyone who needs electrical products',
+    desc: 'Post your requirements, get quotes from verified dealers, compare and order. Free forever.',
+    href: '/login?mode=signup',
+    cta: 'Sign up as buyer',
+    accent: 'bg-blue-50 text-blue-600',
+    border: 'hover:border-blue-200',
+  },
+  {
+    key: 'professional',
+    icon: Briefcase,
+    label: 'I\'m a professional',
+    sublabel: 'Architect, Interior Designer, Contractor, Electrician',
+    desc: 'Same buying experience, plus a verified professional badge visible to all dealers. Get better quotes, build long-term relationships.',
+    href: '/login?mode=signup&type=professional',
+    cta: 'Sign up as professional',
+    accent: 'bg-violet-50 text-violet-600',
+    border: 'hover:border-violet-200',
+    badge: 'Verified badge',
+  },
+  {
+    key: 'dealer',
+    icon: Store,
+    label: 'I\'m a dealer',
+    sublabel: 'Electrical supplier, distributor, or stockist',
+    desc: 'Receive RFQs from verified buyers in your city. Submit quotes, win orders, grow your business.',
+    href: '/dealer/onboarding',
+    cta: 'Register as dealer',
+    accent: 'bg-orange-50 text-orange-600',
+    border: 'hover:border-orange-200',
+  },
+];
+
 export function RoleSelectionPage() {
   return (
-    <div className="min-h-screen bg-neutral-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+
       {/* Header */}
-      <header className="bg-white border-b-2 border-neutral-200">
-        <div className="container-custom py-4">
-          <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-neutral-900 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-black text-neutral-900 tracking-tight">
-              Hub4Estate
-            </span>
-          </Link>
-        </div>
+      <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <Link to="/" className="inline-flex items-center gap-2">
+          <div className="w-7 h-7 bg-gray-900 flex items-center justify-center rounded-lg">
+            <Zap className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-sm font-semibold text-gray-900">Hub4Estate</span>
+        </Link>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-3xl">
-          {/* Title */}
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4">
-              How do you want to use Hub4Estate?
+        <div className="w-full max-w-2xl">
+
+          <div className="text-center mb-10">
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+              How are you using Hub4Estate?
             </h1>
-            <p className="text-lg text-neutral-600">
-              Choose your role to get started with the right experience
+            <p className="text-sm text-gray-500">
+              Pick the option that fits you best. You can always change this later.
             </p>
           </div>
 
-          {/* Role Cards */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Buyer / User Card */}
-            <Link
-              to="/login?mode=signup"
-              className="group bg-white border-2 border-neutral-200 hover:border-neutral-900 hover:shadow-brutal transition-all p-8"
-            >
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-16 h-16 bg-blue-500 flex items-center justify-center flex-shrink-0">
-                  <User className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-black text-neutral-900 mb-2">
-                    I'm a Buyer
-                  </h2>
-                  <p className="text-neutral-600">
-                    Homeowner, builder, architect, contractor, or electrician looking for electrical products
-                  </p>
-                </div>
-              </div>
+          <div className="space-y-3">
+            {ROLES.map(role => {
+              const Icon = role.icon;
+              return (
+                <Link
+                  key={role.key}
+                  to={role.href}
+                  className={`group flex items-center gap-5 p-5 bg-white rounded-2xl border border-gray-200 ${role.border} hover:shadow-sm transition-all`}
+                >
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${role.accent}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
 
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Browse 10,000+ electrical products
-                </li>
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Get quotes from verified dealers
-                </li>
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Compare prices and save money
-                </li>
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Free to use, no commitments
-                </li>
-              </ul>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <p className="text-sm font-semibold text-gray-900">{role.label}</p>
+                      {role.badge && (
+                        <span className="text-[10px] font-medium bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded-full">
+                          {role.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400 mb-1">{role.sublabel}</p>
+                    <p className="text-xs text-gray-500 leading-relaxed hidden sm:block">{role.desc}</p>
+                  </div>
 
-              <div className="flex items-center justify-between pt-4 border-t-2 border-neutral-100">
-                <div className="flex items-center gap-2 text-sm font-bold text-neutral-500">
-                  <Phone className="w-4 h-4" />
-                  <Mail className="w-4 h-4" />
-                  <span>Sign up with OTP</span>
-                </div>
-                <div className="w-10 h-10 bg-neutral-100 group-hover:bg-neutral-900 group-hover:text-white flex items-center justify-center transition-colors">
-                  <ArrowRight className="w-5 h-5" />
-                </div>
-              </div>
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 group-hover:bg-gray-900 transition-colors">
+                      <ArrowRight className="w-3.5 h-3.5 text-gray-600 group-hover:text-white transition-colors" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          <p className="text-center text-sm text-gray-400 mt-8">
+            Already have an account?{' '}
+            <Link to="/login" className="text-gray-700 font-medium hover:text-orange-600 transition-colors">
+              Sign in
             </Link>
-
-            {/* Dealer Card */}
-            <Link
-              to="/dealer/onboarding"
-              className="group bg-white border-2 border-neutral-200 hover:border-neutral-900 hover:shadow-brutal transition-all p-8"
-            >
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-16 h-16 bg-accent-500 flex items-center justify-center flex-shrink-0">
-                  <Store className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-black text-neutral-900 mb-2">
-                    I'm a Dealer
-                  </h2>
-                  <p className="text-neutral-600">
-                    Electrical dealer or distributor looking to grow your business
-                  </p>
-                </div>
-              </div>
-
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Receive RFQs from verified buyers
-                </li>
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Submit quotes and win orders
-                </li>
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Grow your customer base
-                </li>
-                <li className="flex items-center gap-3 text-sm text-neutral-600">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  Track performance analytics
-                </li>
-              </ul>
-
-              <div className="flex items-center justify-between pt-4 border-t-2 border-neutral-100">
-                <span className="text-sm font-bold text-neutral-500">
-                  Register your business
-                </span>
-                <div className="w-10 h-10 bg-neutral-100 group-hover:bg-neutral-900 group-hover:text-white flex items-center justify-center transition-colors">
-                  <ArrowRight className="w-5 h-5" />
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          {/* Trust Badges */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-neutral-500">
-            <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-green-500" />
-              <span>Verified Dealers</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Secure Platform</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-accent-500" />
-              <span>5000+ Products</span>
-            </div>
-          </div>
-
-          {/* Already have account */}
-          <div className="mt-8 text-center">
-            <p className="text-neutral-600">
-              Already have an account?{' '}
-              <Link to="/login" className="font-bold text-neutral-900 hover:text-accent-600">
-                Sign in as Buyer
-              </Link>
-              {' '} or {' '}
-              <Link to="/dealer/login" className="font-bold text-neutral-900 hover:text-accent-600">
-                Sign in as Dealer
-              </Link>
-            </p>
-          </div>
+          </p>
         </div>
       </main>
     </div>

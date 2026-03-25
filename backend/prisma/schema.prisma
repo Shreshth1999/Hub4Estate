@@ -28,6 +28,14 @@ enum UserStatus {
   DELETED
 }
 
+enum ProfVerificationStatus {
+  NOT_APPLIED
+  PENDING_DOCUMENTS
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+}
+
 model User {
   id            String      @id @default(uuid())
   email         String?     @unique
@@ -42,6 +50,9 @@ model User {
   isPhoneVerified Boolean   @default(false)
   isEmailVerified Boolean   @default(false)
 
+  // Professional verification (for Architect, Interior Designer, Contractor etc.)
+  profVerificationStatus ProfVerificationStatus @default(NOT_APPLIED)
+
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -50,11 +61,72 @@ model User {
   communityPosts CommunityPost[]
   communityComments CommunityComment[]
   savedProducts SavedProduct[]
+  professionalProfile ProfessionalProfile?
 
   @@index([email])
   @@index([phone])
   @@index([googleId])
   @@index([city])
+  @@index([profVerificationStatus])
+}
+
+// Professional profile for Architects, Interior Designers, Contractors, Electricians
+model ProfessionalProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+
+  // Business info
+  businessName    String?
+  registrationNo  String?  // COA no (Architect), trade license no, etc.
+  websiteUrl      String?
+  portfolioUrl    String?
+  bio             String?
+
+  // Location
+  officeAddress   String?
+  city            String?
+  state           String?
+  pincode         String?
+
+  // Years of experience
+  yearsExperience Int?
+
+  // Verification
+  verifiedAt      DateTime?
+  verifiedBy      String?   // Admin ID
+  rejectionReason String?
+  adminNotes      String?
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents       ProfessionalDocument[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Documents uploaded by professionals for verification
+model ProfessionalDocument {
+  id          String   @id @default(uuid())
+  profileId   String
+
+  // Document details
+  docType     String   // coa_certificate, trade_license, gst_certificate, id_proof, portfolio
+  fileUrl     String
+  fileName    String?
+  fileSize    Int?     // bytes
+  mimeType    String?
+
+  isVerified  Boolean  @default(false)
+  verifiedAt  DateTime?
+
+  profile     ProfessionalProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@index([profileId])
+  @@index([docType])
 }
 
 // OTP for phone/email verification

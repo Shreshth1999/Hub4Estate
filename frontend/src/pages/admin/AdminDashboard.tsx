@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
 import { CardSkeleton } from '../../components/ui';
+import { TourGuide } from '../../components/TourGuide';
 import {
   Users, Store, FileText, TrendingUp, AlertTriangle,
-  ChevronRight, Shield, ArrowRight, Package,
+  ChevronRight, Shield, ArrowRight, Package, ShieldCheck,
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -67,6 +68,7 @@ export function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <TourGuide tourKey="admin" />
 
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-5">
@@ -130,6 +132,7 @@ export function AdminDashboard() {
             <div className="space-y-2">
               {[
                 { to: '/admin/dealers', icon: Store, label: 'Manage Dealers', desc: 'Verify, suspend, or review dealers' },
+                { to: '/admin/professionals', icon: ShieldCheck, label: 'Verify Professionals', desc: 'Review Architect, Designer, Contractor verifications' },
                 { to: '/admin/products', icon: Package, label: 'Product Catalog', desc: 'Manage categories, brands, products' },
                 { to: '/admin/fraud', icon: AlertTriangle, label: 'Fraud Monitoring', desc: 'Review flagged activities', danger: true },
                 { to: '/admin/inquiries', icon: FileText, label: 'Inquiries', desc: 'View and manage all inquiries' },

@@ -82,6 +82,7 @@ router.get('/available-rfqs', authenticateDealer, async (req: AuthRequest, res) 
           select: {
             city: true,
             role: true,
+            profVerificationStatus: true,
           },
         },
       },

@@ -147,6 +147,20 @@ export const adminApi = {
   getFraudFlags: () => api.get('/admin/fraud-flags'),
   resolveFraudFlag: (id: string, status: string, notes?: string) =>
     api.post(`/admin/fraud-flags/${id}/resolve`, { status, notes }),
+  // Professional verification
+  getPendingProfessionals: () => api.get('/admin/professionals/pending'),
+  verifyProfessional: (id: string, action: 'approve' | 'reject', notes?: string) =>
+    api.post(`/admin/professionals/${id}/verify`, { action, notes }),
+};
+
+// Professional API
+export const professionalApi = {
+  getProfile: () => api.get('/professional/profile'),
+  updateProfile: (data: any) => api.patch('/professional/profile', data),
+  submitOnboarding: (data: FormData) =>
+    api.post('/professional/onboarding', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
 };
 
 // Community API

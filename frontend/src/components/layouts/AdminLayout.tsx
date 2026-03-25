@@ -3,7 +3,7 @@ import { useAuthStore } from '@/lib/store';
 import {
   User, LogOut, Zap, Users, Shield, BarChart3,
   Settings, AlertTriangle, Home, Package, FileText,
-  Building2, MessageSquare, Mail, ClipboardList, BookUser, Menu, X,
+  Building2, MessageSquare, Mail, ClipboardList, BookUser, Menu, X, ShieldCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
@@ -29,6 +29,7 @@ export function AdminLayout() {
       label: 'Operations',
       items: [
         { path: '/admin/dealers', icon: Users, label: 'Dealers' },
+        { path: '/admin/professionals', icon: ShieldCheck, label: 'Professionals' },
         { path: '/admin/leads', icon: Mail, label: 'Leads' },
         { path: '/admin/inquiries', icon: ClipboardList, label: 'Inquiries' },
         { path: '/admin/brand-dealers', icon: BookUser, label: 'Brand Dealers' },

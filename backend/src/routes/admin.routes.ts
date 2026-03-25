@@ -456,4 +456,69 @@ router.post('/fraud-flags/:id/resolve', authenticateAdmin, validateBody(resolveF
   }
 });
 
+// ============================================
+// PROFESSIONAL VERIFICATION
+// ============================================
+
+// Get professionals pending verification
+router.get('/professionals/pending', authenticateAdmin, async (_req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: { profVerificationStatus: 'UNDER_REVIEW' },
+      select: {
+        id: true, name: true, email: true, phone: true, role: true,
+        profVerificationStatus: true, createdAt: true,
+        professionalProfile: {
+          include: { documents: true },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    res.json({ professionals: users });
+  } catch (err) {
+    console.error('GET /admin/professionals/pending error:', err);
+    res.status(500).json({ error: 'Failed to fetch pending professionals' });
+  }
+});
+
+// Verify or reject professional
+router.post('/professionals/:id/verify', authenticateAdmin, async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+    const { action, notes } = req.body;
+
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ error: 'action must be approve or reject' });
+    }
+
+    const newStatus = action === 'approve' ? 'VERIFIED' : 'REJECTED';
+
+    await prisma.user.update({
+      where: { id },
+      data: { profVerificationStatus: newStatus },
+    });
+
+    if (action === 'approve') {
+      await prisma.professionalProfile.updateMany({
+        where: { userId: id },
+        data: {
+          verifiedAt: new Date(),
+          verifiedBy: req.user?.id,
+          rejectionReason: null,
+        },
+      });
+    } else {
+      await prisma.professionalProfile.updateMany({
+        where: { userId: id },
+        data: { rejectionReason: notes || 'Documents not sufficient' },
+      });
+    }
+
+    res.json({ success: true, status: newStatus });
+  } catch (err) {
+    console.error('POST /admin/professionals/:id/verify error:', err);
+    res.status(500).json({ error: 'Failed to update verification status' });
+  }
+});
+
 export default router;

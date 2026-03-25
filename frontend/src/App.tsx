@@ -5,7 +5,7 @@ import { HomePage } from '@/pages/HomePage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 // Separate Layouts for each user type
-import { UserLayout, DealerLayout, AdminLayout } from '@/components/layouts';
+import { UserLayout, DealerLayout, AdminLayout, ProfessionalLayout } from '@/components/layouts';
 
 // Auth Pages (eager - entry points)
 import { RoleSelectionPage } from '@/pages/auth/RoleSelectionPage';
@@ -26,6 +26,9 @@ const CreateRFQPage = lazy(() => import('@/pages/rfq/CreateRFQPage').then(m => (
 const MyRFQsPage = lazy(() => import('@/pages/rfq/MyRFQsPage').then(m => ({ default: m.MyRFQsPage })));
 const RFQDetailPage = lazy(() => import('@/pages/rfq/RFQDetailPage').then(m => ({ default: m.RFQDetailPage })));
 
+const ProfessionalOnboardingLazy = lazy(() => import('@/pages/professional/ProfessionalOnboarding').then(m => ({ default: m.ProfessionalOnboarding })));
+const ProfessionalDashboard = lazy(() => import('@/pages/professional/ProfessionalDashboard').then(m => ({ default: m.ProfessionalDashboard })));
+
 const DealerOnboardingLazy = lazy(() => import('@/pages/dealer/DealerOnboarding').then(m => ({ default: m.DealerOnboarding })));
 const DealerRegistrationSuccessLazy = lazy(() => import('@/pages/dealer/DealerOnboarding').then(m => ({ default: m.DealerRegistrationSuccess })));
 const DealerRegistrationStatus = lazy(() => import('@/pages/dealer/DealerRegistrationStatus').then(m => ({ default: m.DealerRegistrationStatus })));
@@ -37,6 +40,7 @@ const DealerQuoteSubmitPage = lazy(() => import('@/pages/dealer/DealerQuoteSubmi
 const DealerAvailableInquiriesPage = lazy(() => import('@/pages/dealer/DealerAvailableInquiriesPage').then(m => ({ default: m.DealerAvailableInquiriesPage })));
 
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const AdminProfessionalsPage = lazy(() => import('@/pages/admin/AdminProfessionalsPage').then(m => ({ default: m.AdminProfessionalsPage })));
 const AdminDealersPage = lazy(() => import('@/pages/admin/AdminDealersPage').then(m => ({ default: m.AdminDealersPage })));
 const AdminLeadsPage = lazy(() => import('@/pages/admin/AdminLeadsPage').then(m => ({ default: m.AdminLeadsPage })));
 const AdminChatsPage = lazy(() => import('@/pages/admin/AdminChatsPage').then(m => ({ default: m.AdminChatsPage })));
@@ -72,10 +76,7 @@ const ComparePage = lazy(() => import('@/pages/ComparePage').then(m => ({ defaul
 function PageLoader() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-12 h-12 border-4 border-neutral-200 border-t-neutral-900 rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Loading...</p>
-      </div>
+      <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-500 rounded-full animate-spin" />
     </div>
   );
 }
@@ -107,6 +108,7 @@ function App() {
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/complete-profile" element={<ProfileCompletionPage />} />
         <Route path="/dealer/onboarding" element={<DealerOnboardingLazy />} />
+        <Route path="/pro/onboarding" element={<ProfessionalOnboardingLazy />} />
         <Route path="/dealer/registration-success" element={<DealerRegistrationSuccessLazy />} />
         <Route path="/dealer/registration-status" element={<DealerRegistrationStatus />} />
 
@@ -153,6 +155,19 @@ function App() {
         </Route>
 
         {/* ========================================
+            PROFESSIONAL PORTAL (ProfessionalLayout)
+            Protected workspace for Architects, Designers, Contractors etc.
+            ======================================== */}
+        <Route element={<ProtectedRoute requiredRole="user" />}>
+          <Route element={<ProfessionalLayout />}>
+            <Route path="/pro" element={<ProfessionalDashboard />} />
+            <Route path="/pro/profile" element={<UserDashboard />} />
+            <Route path="/pro/documents" element={<ProfessionalOnboardingLazy />} />
+            <Route path="/pro/projects" element={<UserDashboard />} />
+          </Route>
+        </Route>
+
+        {/* ========================================
             DEALER PORTAL (Isolated DealerLayout)
             Protected workspace for verified dealers
             ======================================== */}
@@ -188,6 +203,7 @@ function App() {
             <Route path="/admin/fraud" element={<AdminFraudPage />} />
             <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
+            <Route path="/admin/professionals" element={<AdminProfessionalsPage />} />
           </Route>
         </Route>
       </Routes>

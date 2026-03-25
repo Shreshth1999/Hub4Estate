@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../lib/store';
 import { rfqApi, productsApi } from '../../lib/api';
+import { TourGuide } from '../../components/TourGuide';
 import {
   ShoppingCart, FileText, Plus, ArrowRight, MessageSquare,
   Search, X, Trash2, ChevronRight, Send, Eye,
@@ -122,6 +123,7 @@ export function UserDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <TourGuide tourKey="user" />
 
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-5">
