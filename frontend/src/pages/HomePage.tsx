@@ -259,21 +259,14 @@ export function HomePage() {
 
             {/* Left Content */}
             <div className="animate-slide-up">
-              {/* Badge */}
-              <div className="inline-flex items-center border-2 border-neutral-900 text-neutral-900 px-4 py-2 mb-8">
-                <span className="w-2 h-2 bg-accent-500 rounded-full mr-3"></span>
-                <span className="text-sm font-bold uppercase tracking-wider">Electrical Products — Transparent Pricing</span>
-              </div>
-
               {/* Main Headline */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-neutral-900 mb-6 leading-[0.9]">
-                Stop Paying Whatever<br />You're <span className="text-accent-600">Told.</span>
+                We Will Get You The <span className="text-accent-600">Cheapest Price</span> Of Any Electrical Across India.
               </h1>
 
               {/* Subheadline */}
               <p className="text-xl md:text-2xl text-neutral-600 mb-8 max-w-xl font-medium leading-relaxed">
-                Tell us what you need. We contact multiple verified dealers.
-                You compare their real prices and pick the best deal.
+                Wires, switches, MCBs, fans, lights — tell us what you need, we contact verified dealers, you compare their real prices and pick the best deal.
               </p>
 
               {/* CTA Buttons */}
@@ -738,9 +731,6 @@ export function HomePage() {
       <section className="section bg-neutral-50 border-b-2 border-neutral-200">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <span className="inline-block text-accent-600 text-sm font-bold uppercase tracking-wider mb-4">
-              Who We Help
-            </span>
             <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
               Anyone Who Buys Electrical Products
             </h2>
@@ -915,9 +905,6 @@ export function HomePage() {
       <section className="section bg-neutral-800 text-white">
         <div className="container-custom">
           <div className="text-center mb-16">
-            <span className="inline-block text-accent-400 text-sm font-bold uppercase tracking-wider mb-4">
-              Browse by Category
-            </span>
             <h2 className="text-4xl md:text-5xl font-black mb-4">
               Everything Electrical.<br />One Platform.
             </h2>
@@ -941,14 +928,11 @@ export function HomePage() {
       <section className="section bg-primary-50">
         <div className="container-custom">
           <div className="text-center mb-16">
-            <span className="inline-block text-neutral-900 text-sm font-bold uppercase tracking-wider mb-4">
-              Real Deals
-            </span>
             <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
               What Real Price Access Looks Like
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              These are actual deals closed through Hub4Estate. Verified numbers, no fabrications.
+              Actual deals closed through Hub4Estate. Real numbers, no fabrications.
             </p>
           </div>
 
@@ -1037,9 +1021,6 @@ export function HomePage() {
       <section className="section bg-white border-b-2 border-neutral-200">
         <div className="container-tight">
           <div className="text-center mb-16">
-            <span className="inline-block text-accent-600 text-sm font-bold uppercase tracking-wider mb-4">
-              Why We Built This
-            </span>
             <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
               The Same Product.<br />Very Different Prices.
             </h2>
