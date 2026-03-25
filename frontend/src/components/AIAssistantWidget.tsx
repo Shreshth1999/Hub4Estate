@@ -1,22 +1,150 @@
-import { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Loader2, Zap, MessageCircle, Sparkles, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  Bot, X, Send, Loader2, Zap, MessageCircle, Sparkles,
+  ChevronDown, Mic, MicOff, CheckCircle, Search, Package,
+} from 'lucide-react';
 import { chatApi } from '../lib/api';
+import { useAuthStore } from '../lib/store';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface ToolResult {
+  tool: string;
+  result: any;
+}
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   createdAt: Date;
+  toolResults?: ToolResult[];
 }
 
+// ─── Markdown renderer (no external deps) ────────────────────────────────────
+
+function renderMarkdown(text: string): React.ReactNode {
+  const lines = text.split('\n');
+  const nodes: React.ReactNode[] = [];
+  let listItems: string[] = [];
+  let key = 0;
+
+  const flushList = () => {
+    if (listItems.length > 0) {
+      nodes.push(
+        <ul key={key++} className="space-y-1 my-2 ml-2">
+          {listItems.map((item, i) => (
+            <li key={i} className="flex gap-2 text-sm leading-relaxed">
+              <span className="text-accent-500 mt-0.5 flex-shrink-0">•</span>
+              <span dangerouslySetInnerHTML={{ __html: inlineFormat(item) }} />
+            </li>
+          ))}
+        </ul>
+      );
+      listItems = [];
+    }
+  };
+
+  for (const line of lines) {
+    if (line.startsWith('• ') || line.startsWith('- ') || line.startsWith('* ')) {
+      listItems.push(line.slice(2));
+    } else if (/^\d+\.\s/.test(line)) {
+      listItems.push(line.replace(/^\d+\.\s/, ''));
+    } else if (line.startsWith('## ')) {
+      flushList();
+      nodes.push(<p key={key++} className="font-bold text-sm mt-3 mb-1 text-neutral-800">{line.slice(3)}</p>);
+    } else if (line.startsWith('# ')) {
+      flushList();
+      nodes.push(<p key={key++} className="font-bold text-base mt-2 mb-1">{line.slice(2)}</p>);
+    } else if (line.trim() === '') {
+      flushList();
+      nodes.push(<div key={key++} className="h-1.5" />);
+    } else {
+      flushList();
+      nodes.push(
+        <p key={key++} className="text-sm leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: inlineFormat(line) }} />
+      );
+    }
+  }
+  flushList();
+  return <>{nodes}</>;
+}
+
+function inlineFormat(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code class="bg-neutral-100 px-1 rounded text-xs font-mono">$1</code>');
+}
+
+// ─── Tool result cards ────────────────────────────────────────────────────────
+
+function ToolResultCard({ toolResults }: { toolResults: ToolResult[] }) {
+  return (
+    <div className="space-y-2 mt-2">
+      {toolResults.map((tr, i) => {
+        if (tr.tool === 'submit_inquiry' && tr.result?.success) {
+          return (
+            <div key={i} className="bg-green-50 border border-green-200 rounded-lg p-3 flex gap-2">
+              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-bold text-green-800">Inquiry Submitted!</p>
+                <p className="text-xs text-green-700 mt-0.5">
+                  Number: <span className="font-mono font-bold">{tr.result.inquiryNumber}</span>
+                </p>
+                <p className="text-xs text-green-600 mt-0.5">You'll get a callback within 24 hours.</p>
+              </div>
+            </div>
+          );
+        }
+        if (tr.tool === 'search_products' && tr.result?.found > 0) {
+          return (
+            <div key={i} className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Search className="w-4 h-4 text-blue-600" />
+                <p className="text-xs font-bold text-blue-800">Found {tr.result.found} product{tr.result.found > 1 ? 's' : ''}</p>
+              </div>
+              <div className="space-y-1">
+                {tr.result.products?.slice(0, 3).map((p: any, j: number) => (
+                  <div key={j} className="text-xs text-blue-700 bg-white rounded px-2 py-1 border border-blue-100">
+                    <span className="font-semibold">{p.brand}</span> — {p.name}
+                    {p.model && <span className="text-blue-500 ml-1">({p.model})</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        }
+        if (tr.tool === 'compare_products') {
+          return (
+            <div key={i} className="bg-orange-50 border border-orange-200 rounded-lg p-3 flex gap-2">
+              <Package className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-orange-700">Comparing: {tr.result.items?.join(' vs ')}</p>
+            </div>
+          );
+        }
+        return null;
+      })}
+    </div>
+  );
+}
+
+// ─── Quick suggestions ────────────────────────────────────────────────────────
+
 const QUICK_SUGGESTIONS = [
-  { label: 'Product help', message: 'What products do you offer?' },
-  { label: 'Create RFQ', message: 'How do I create an RFQ?' },
-  { label: 'Pricing', message: 'How much can I save using Hub4Estate?' },
-  { label: 'Contact', message: 'How can I contact Hub4Estate?' },
+  { label: '🔍 Find a product', message: 'I want to find a specific electrical product and get the best price' },
+  { label: '⚡ Wire size help', message: 'What wire size do I need for my AC and geysers?' },
+  { label: '💰 How much savings?', message: 'How much can I save using Hub4Estate? Show me real examples.' },
+  { label: '🏢 About Hub4Estate', message: 'Tell me about Hub4Estate and the founder' },
+  { label: '📊 Compare brands', message: 'Compare Havells vs Polycab wires — which is better?' },
+  { label: '🤝 Become a dealer', message: 'How can I register as a dealer on Hub4Estate?' },
 ];
 
+// ─── Main component ────────────────────────────────────────────────────────────
+
 export function AIAssistantWidget() {
+  const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -25,26 +153,31 @@ export function AIAssistantWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+
+  // Voice
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize session when widget opens
+  // Check voice support
   useEffect(() => {
-    if (isOpen && !sessionId && !isInitializing) {
-      initSession();
-    }
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    setVoiceSupported(!!SpeechRecognition);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen && !sessionId && !isInitializing) initSession();
   }, [isOpen]);
 
-  // Auto-scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input when widget opens
   useEffect(() => {
-    if (isOpen && !isMinimized && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (isOpen && !isMinimized) inputRef.current?.focus();
   }, [isOpen, isMinimized]);
 
   const initSession = async () => {
@@ -53,137 +186,152 @@ export function AIAssistantWidget() {
       const response = await chatApi.createSession();
       setSessionId(response.data.sessionId);
 
-      // Add welcome message
-      setMessages([
-        {
-          id: 'welcome',
-          role: 'assistant',
-          content: `Hi! I'm the Hub4Estate AI Assistant. I can help you with:
+      const greeting = user?.name
+        ? `Namaste ${user.name}! 👋 I'm **Spark**, Hub4Estate's AI assistant.`
+        : `Namaste! 👋 I'm **Spark**, Hub4Estate's AI assistant.`;
 
-• Electrical product recommendations
-• Creating RFQs (Request for Quotes)
-• Wire sizes and technical specs
-• Finding the right dealer
+      setMessages([{
+        id: 'welcome',
+        role: 'assistant',
+        content: `${greeting}
 
-How can I help you today?`,
-          createdAt: new Date(),
-        },
-      ]);
-    } catch (err) {
-      console.error('Failed to initialize chat session:', err);
-      setMessages([
-        {
-          id: 'error',
-          role: 'assistant',
-          content: 'Sorry, I had trouble connecting. Please try again or contact us at hello@hub4estate.com',
-          createdAt: new Date(),
-        },
-      ]);
+I can help you with:
+
+• Find any electrical product & get the best price
+• Submit an inquiry — just tell me what you need
+• Compare products and brands
+• Wire sizing, safety advice, technical help
+• Everything about Hub4Estate
+
+**Speak or type in any language** — Hindi, English, or mix both!`,
+        createdAt: new Date(),
+      }]);
+    } catch {
+      setMessages([{
+        id: 'error',
+        role: 'assistant',
+        content: 'Sorry, I had trouble connecting. Please try again or call +91 7690001999.',
+        createdAt: new Date(),
+      }]);
     } finally {
       setIsInitializing(false);
     }
   };
 
-  const handleSend = async (messageText?: string) => {
-    const text = messageText || input.trim();
+  const handleSend = useCallback(async (messageText?: string) => {
+    const text = (messageText || input).trim();
     if (!text || !sessionId || isLoading) return;
 
     setHasInteracted(true);
-
-    // Add user message immediately
-    const userMessage: Message = {
+    setMessages(prev => [...prev, {
       id: `user-${Date.now()}`,
       role: 'user',
       content: text,
       createdAt: new Date(),
-    };
-    setMessages((prev) => [...prev, userMessage]);
+    }]);
     setInput('');
     setIsLoading(true);
 
     try {
       const response = await chatApi.sendMessage(sessionId, text);
-      const assistantMessage: Message = {
-        id: response.data.message.id,
+      const msg = response.data.message;
+      const toolResults: ToolResult[] = response.data.toolResults || [];
+
+      setMessages(prev => [...prev, {
+        id: msg.id,
         role: 'assistant',
-        content: response.data.message.content,
-        createdAt: new Date(response.data.message.createdAt),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (err) {
-      console.error('Failed to send message:', err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `error-${Date.now()}`,
-          role: 'assistant',
-          content: "Sorry, I couldn't respond. Please try again or contact us at hello@hub4estate.com",
-          createdAt: new Date(),
-        },
-      ]);
+        content: msg.content,
+        createdAt: new Date(msg.createdAt),
+        toolResults: toolResults.length > 0 ? toolResults : undefined,
+      }]);
+    } catch {
+      setMessages(prev => [...prev, {
+        id: `err-${Date.now()}`,
+        role: 'assistant',
+        content: "Sorry, I couldn't respond right now. Please try again or contact hello@hub4estate.com",
+        createdAt: new Date(),
+      }]);
     } finally {
       setIsLoading(false);
     }
+  }, [input, sessionId, isLoading]);
+
+  // ── Voice input ──────────────────────────────────────────────────────────────
+
+  const startListening = useCallback(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    // Support Hindi + English + common Indian languages
+    recognition.lang = 'hi-IN';
+
+    recognition.onstart = () => setIsListening(true);
+
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((r: any) => r[0].transcript)
+        .join('');
+      setInput(transcript);
+    };
+
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  }, []);
+
+  const stopListening = useCallback(() => {
+    recognitionRef.current?.stop();
+    setIsListening(false);
+  }, []);
+
+  const toggleVoice = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
-  const toggleWidget = () => {
-    if (isOpen) {
-      setIsOpen(false);
-      setIsMinimized(false);
-    } else {
-      setIsOpen(true);
-      setIsMinimized(false);
-    }
-  };
-
-  const toggleMinimize = () => {
-    setIsMinimized(!isMinimized);
-  };
+  // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
     <>
-      {/* Floating Button with Electric Spark Animation */}
+      {/* Floating Button */}
       <button
-        onClick={toggleWidget}
+        onClick={() => { setIsOpen(true); setIsMinimized(false); }}
         className={`
-          fixed bottom-6 right-6 z-50
-          w-16 h-16 rounded-full
-          bg-neutral-900 text-white
-          border-2 border-accent-500
+          fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full
+          bg-neutral-900 text-white border-2 border-accent-500
           shadow-[0_0_20px_rgba(249,115,22,0.4)]
-          flex items-center justify-center
-          transition-all duration-300
+          flex items-center justify-center transition-all duration-300
           hover:scale-110 hover:shadow-[0_0_30px_rgba(249,115,22,0.6)]
-          ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}
+          ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}
           group
         `}
         aria-label="Open AI Assistant"
       >
-        {/* Pulsing glow effect */}
         <div className="absolute inset-0 rounded-full bg-accent-500 animate-ping opacity-20" />
-
-        {/* Electric spark rings */}
         <div className="absolute inset-[-4px] rounded-full border-2 border-accent-500/50 animate-[spin_3s_linear_infinite]">
           <Zap className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 text-accent-500" />
         </div>
         <div className="absolute inset-[-8px] rounded-full border border-accent-500/30 animate-[spin_4s_linear_infinite_reverse]">
           <Sparkles className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 text-accent-400" />
         </div>
-
-        {/* Inner glow pulse */}
         <div className="absolute inset-2 rounded-full bg-gradient-to-br from-accent-500/20 to-transparent animate-pulse" />
-
-        {/* Icon */}
         <Bot className="w-7 h-7 relative z-10" />
-
-        {/* Notification dot for new users */}
         {!hasInteracted && (
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent-500 rounded-full flex items-center justify-center animate-bounce">
             <span className="w-2 h-2 bg-white rounded-full" />
@@ -192,171 +340,190 @@ How can I help you today?`,
       </button>
 
       {/* Chat Panel */}
-      <div
-        className={`
-          fixed bottom-6 right-6 z-50
-          w-[380px] max-w-[calc(100vw-48px)]
-          transition-all duration-300 ease-out
-          ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}
-        `}
-      >
+      <div className={`
+        fixed bottom-6 right-6 z-50
+        w-[400px] max-w-[calc(100vw-24px)]
+        transition-all duration-300 ease-out
+        ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}
+      `}>
         <div className={`
-          bg-white border-2 border-neutral-900 shadow-brutal
-          flex flex-col
+          bg-white border-2 border-neutral-900
+          flex flex-col overflow-hidden
+          shadow-[6px_6px_0_0_#171717]
           transition-all duration-300
-          ${isMinimized ? 'h-[60px]' : 'h-[500px] max-h-[80vh]'}
+          ${isMinimized ? 'h-[60px]' : 'h-[560px] max-h-[85vh]'}
         `}>
+
           {/* Header */}
           <div
-            className="flex items-center justify-between p-4 bg-neutral-900 text-white cursor-pointer"
-            onClick={toggleMinimize}
+            className="flex items-center justify-between px-4 py-3 bg-neutral-900 text-white cursor-pointer flex-shrink-0"
+            onClick={() => setIsMinimized(!isMinimized)}
           >
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 bg-accent-500 flex items-center justify-center">
+                <div className="w-9 h-9 bg-accent-500 flex items-center justify-center rounded-lg">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
-                {/* Online indicator */}
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-neutral-900 rounded-full" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-neutral-900 rounded-full" />
               </div>
               <div>
-                <h3 className="font-bold text-sm">AI Assistant</h3>
-                <p className="text-xs text-neutral-400">
-                  {isLoading ? 'Typing...' : 'Online'}
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-sm">Spark AI</h3>
+                  <span className="text-[10px] bg-accent-500/20 text-accent-400 px-1.5 py-0.5 rounded font-medium">
+                    by Hub4Estate
+                  </span>
+                </div>
+                <p className="text-[11px] text-neutral-400">
+                  {isLoading ? '⚡ Thinking...' : 'Hindi • English • All languages'}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleMinimize();
-                }}
+                onClick={e => { e.stopPropagation(); setIsMinimized(!isMinimized); }}
                 className="p-1.5 hover:bg-neutral-800 rounded transition-colors"
                 aria-label={isMinimized ? 'Expand' : 'Minimize'}
               >
-                <ChevronDown className={`w-5 h-5 transition-transform ${isMinimized ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 transition-transform ${isMinimized ? 'rotate-180' : ''}`} />
               </button>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleWidget();
-                }}
+                onClick={e => { e.stopPropagation(); setIsOpen(false); setIsMinimized(false); }}
                 className="p-1.5 hover:bg-neutral-800 rounded transition-colors"
                 aria-label="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Chat Content - Hidden when minimized */}
           {!isMinimized && (
             <>
-              {/* Messages Area */}
+              {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
                 {isInitializing ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <Loader2 className="w-8 h-8 text-accent-500 animate-spin mx-auto mb-2" />
-                      <p className="text-sm text-neutral-500">Connecting...</p>
+                      <p className="text-sm text-neutral-500">Connecting Spark...</p>
                     </div>
                   </div>
                 ) : (
                   <>
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`flex gap-2 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
-                      >
-                        {message.role === 'assistant' && (
-                          <div className="w-8 h-8 bg-accent-500 flex-shrink-0 flex items-center justify-center">
+                    {messages.map((msg) => (
+                      <div key={msg.id} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                        {msg.role === 'assistant' && (
+                          <div className="w-8 h-8 bg-accent-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end mb-0.5">
                             <Bot className="w-4 h-4 text-white" />
                           </div>
                         )}
-                        <div
-                          className={`max-w-[80%] p-3 text-sm ${
-                            message.role === 'user'
-                              ? 'bg-neutral-900 text-white'
-                              : 'bg-white border-2 border-neutral-200 text-neutral-900'
-                          }`}
-                        >
-                          <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                        <div className={`max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+                          <div className={`px-3 py-2.5 text-sm ${
+                            msg.role === 'user'
+                              ? 'bg-neutral-900 text-white rounded-2xl rounded-tr-sm'
+                              : 'bg-white border border-neutral-200 text-neutral-900 rounded-2xl rounded-tl-sm shadow-sm'
+                          }`}>
+                            {msg.role === 'assistant'
+                              ? renderMarkdown(msg.content)
+                              : <p className="leading-relaxed">{msg.content}</p>
+                            }
+                          </div>
+                          {msg.toolResults && msg.toolResults.length > 0 && (
+                            <div className="w-full">
+                              <ToolResultCard toolResults={msg.toolResults} />
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
 
-                    {/* Typing Indicator */}
+                    {/* Typing indicator */}
                     {isLoading && (
                       <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-accent-500 flex-shrink-0 flex items-center justify-center">
+                        <div className="w-8 h-8 bg-accent-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end">
                           <Bot className="w-4 h-4 text-white" />
                         </div>
-                        <div className="bg-white border-2 border-neutral-200 p-3">
+                        <div className="bg-white border border-neutral-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                           <div className="flex gap-1.5">
                             <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" />
-                            <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
-                            <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
+                            <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce [animation-delay:0.15s]" />
+                            <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce [animation-delay:0.3s]" />
                           </div>
                         </div>
                       </div>
                     )}
-
                     <div ref={messagesEndRef} />
                   </>
                 )}
               </div>
 
-              {/* Quick Suggestion Chips */}
+              {/* Quick suggestions (only before first interaction) */}
               {messages.length <= 1 && !isLoading && sessionId && (
-                <div className="px-4 py-3 border-t-2 border-neutral-200 bg-white">
-                  <p className="text-xs text-neutral-500 mb-2 flex items-center gap-1">
-                    <MessageCircle className="w-3 h-3" />
-                    Quick questions
+                <div className="px-3 py-2.5 border-t border-neutral-200 bg-white flex-shrink-0">
+                  <p className="text-[11px] text-neutral-400 mb-2 flex items-center gap-1">
+                    <MessageCircle className="w-3 h-3" /> Try asking...
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {QUICK_SUGGESTIONS.map((suggestion, index) => (
+                  <div className="flex flex-wrap gap-1.5">
+                    {QUICK_SUGGESTIONS.map((s, i) => (
                       <button
-                        key={index}
-                        onClick={() => handleSend(suggestion.message)}
+                        key={i}
+                        onClick={() => handleSend(s.message)}
                         disabled={isLoading}
-                        className="px-3 py-1.5 text-xs font-medium border-2 border-neutral-200 hover:border-neutral-900 hover:shadow-brutal transition-all bg-white"
+                        className="px-2.5 py-1 text-xs font-medium border border-neutral-200 hover:border-accent-500 hover:text-accent-600 rounded-full transition-colors bg-white"
                       >
-                        {suggestion.label}
+                        {s.label}
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Input Area */}
-              <div className="p-4 border-t-2 border-neutral-200 bg-white">
+              {/* Input */}
+              <div className="p-3 border-t border-neutral-200 bg-white flex-shrink-0">
+                {isListening && (
+                  <div className="flex items-center gap-2 mb-2 px-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    <span className="text-xs text-red-600 font-medium">Listening... speak now</span>
+                  </div>
+                )}
                 <div className="flex gap-2">
                   <input
                     ref={inputRef}
                     type="text"
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Ask me anything..."
-                    className="flex-1 px-3 py-2.5 text-sm border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors"
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={isListening ? 'Listening...' : 'Message Spark... (Hindi / English)'}
+                    className="flex-1 px-3 py-2.5 text-sm border border-neutral-200 rounded-xl focus:border-accent-500 focus:outline-none transition-colors bg-neutral-50 focus:bg-white"
                     disabled={isLoading || !sessionId}
                   />
+
+                  {voiceSupported && (
+                    <button
+                      onClick={toggleVoice}
+                      disabled={isLoading || !sessionId}
+                      className={`px-3 py-2.5 rounded-xl border transition-all flex items-center justify-center ${
+                        isListening
+                          ? 'bg-red-500 border-red-500 text-white animate-pulse'
+                          : 'border-neutral-200 text-neutral-500 hover:border-accent-500 hover:text-accent-500'
+                      } disabled:opacity-40 disabled:cursor-not-allowed`}
+                      aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+                      title={isListening ? 'Click to stop' : 'Voice input (Hindi/English)'}
+                    >
+                      {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                    </button>
+                  )}
+
                   <button
                     onClick={() => handleSend()}
                     disabled={!input.trim() || isLoading || !sessionId}
-                    className="px-4 py-2.5 bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-                    aria-label="Send message"
+                    className="px-3 py-2.5 bg-neutral-900 text-white rounded-xl hover:bg-neutral-800 disabled:bg-neutral-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                    aria-label="Send"
                   >
-                    {isLoading ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <Send className="w-5 h-5" />
-                    )}
+                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-xs text-neutral-400 mt-2 text-center">
-                  Powered by <span className="font-medium text-accent-500">Hub4Estate</span> AI
+                <p className="text-[10px] text-neutral-400 mt-1.5 text-center">
+                  Powered by <span className="font-semibold text-accent-500">Spark AI</span> · Hub4Estate
                 </p>
               </div>
             </>
@@ -364,24 +531,8 @@ How can I help you today?`,
         </div>
       </div>
 
-      {/* Custom Styles for Animations */}
       <style>{`
-        @keyframes electric-pulse {
-          0%, 100% {
-            box-shadow: 0 0 20px rgba(249, 115, 22, 0.4),
-                        0 0 40px rgba(249, 115, 22, 0.2),
-                        0 0 60px rgba(249, 115, 22, 0.1);
-          }
-          50% {
-            box-shadow: 0 0 30px rgba(249, 115, 22, 0.6),
-                        0 0 60px rgba(249, 115, 22, 0.4),
-                        0 0 90px rgba(249, 115, 22, 0.2);
-          }
-        }
-
-        .shadow-brutal {
-          box-shadow: 4px 4px 0 0 #171717;
-        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
     </>
   );

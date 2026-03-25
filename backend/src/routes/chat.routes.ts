@@ -84,10 +84,19 @@ router.post(
       }));
       messageHistory.push({ role: 'user', content: message });
 
-      // Generate AI response
-      const { response, tokenCount } = await generateChatResponse(
+      // Build user context from authenticated session
+      const userContext = req.user ? {
+        name: (req.user as any).name,
+        phone: (req.user as any).phone,
+        email: (req.user as any).email,
+        city: (req.user as any).city,
+      } : undefined;
+
+      // Generate AI response with tool support
+      const { response, tokenCount, toolResults } = await generateChatResponse(
         messageHistory,
-        sessionId
+        sessionId,
+        userContext,
       );
 
       // Save assistant message
@@ -106,13 +115,13 @@ router.post(
         data: {
           messageCount: { increment: 2 },
           lastMessageAt: new Date(),
-          // Set title from first user message if not set
           title: session.title || message.slice(0, 50),
         },
       });
 
       return res.json({
         message: assistantMessage,
+        toolResults: toolResults || [],
       });
     } catch (error) {
       console.error('Send message error:', error);
