@@ -986,7 +986,7 @@ router.post('/forgot-password', passwordResetLimiter, validateBody(forgotPasswor
     const resetUrl = `${env.FRONTEND_URL}/dealer/reset-password?token=${token}`;
     const { sendOTPEmail: sendEmail } = await import('../services/email.service');
     // Reuse email service — in production replace with a proper reset template
-    await sendEmail(normalizedEmail, `Reset your Hub4Estate password: ${resetUrl}`, 'reset');
+    await sendEmail(normalizedEmail, `Reset your Hub4Estate password: ${resetUrl}`, 'signup');
 
     console.log(`[Auth] Password reset token for ${normalizedEmail}: ${token}`);
 

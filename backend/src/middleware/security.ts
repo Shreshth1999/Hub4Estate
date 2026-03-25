@@ -140,7 +140,7 @@ export function blockMaliciousAgents(req: Request, res: Response, next: NextFunc
     console.warn(`[SECURITY] Blocked agent: ${ua}, IP: ${req.ip}`);
     return res.status(403).json({ error: 'Forbidden' });
   }
-  next();
+  return next();
 }
 
 // Enforce maximum request body size for JSON (belt-and-suspenders over express.json limit)
@@ -150,6 +150,6 @@ export function enforceBodySize(maxBytes: number) {
     if (contentLength > maxBytes) {
       return res.status(413).json({ error: 'Request body too large' });
     }
-    next();
+    return next();
   };
 }

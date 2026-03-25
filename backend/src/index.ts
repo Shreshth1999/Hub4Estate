@@ -79,7 +79,7 @@ app.use(cors({
     if (isAllowed) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all origins in development
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
@@ -170,7 +170,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 // Start server
 const PORT = env.PORT;
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '127.0.0.1', () => {
   console.log(`Server running on port ${PORT} [${env.NODE_ENV}]`);
 });
 
