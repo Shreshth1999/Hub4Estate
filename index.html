@@ -104,8 +104,16 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 .flow-title{font-size:12px;font-weight:800;color:var(--text);line-height:1.3;padding:0 4px}
 .flow-sub{font-size:10.5px;color:var(--text2);padding:0 4px;margin-top:3px;line-height:1.4}
 
+/* Persona grid */
+.persona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:920px}
+.p-card{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--accent-lt);border-radius:14px;padding:16px 14px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:5px;transition:transform .25s,box-shadow .25s;will-change:transform,opacity}
+.p-card:hover{transform:translateY(-4px);box-shadow:var(--sh-lg)}
+.p-icon{font-size:26px}
+.p-type{font-size:13.5px;font-weight:800;color:var(--text)}
+.p-desc{font-size:11px;color:var(--text2);line-height:1.55}
+
 /* Deal cards */
-.deal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:860px}
+.deal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:860px;perspective:1000px}
 .deal-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:8px;transition:transform .25s ease,box-shadow .25s ease}
 .deal-card:hover{transform:translateY(-4px);box-shadow:var(--sh-xl)}
 .deal-name{font-size:13.5px;font-weight:800;color:var(--text)}
@@ -500,7 +508,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
           </marker>
         </defs>
         <rect x="8" y="28" width="145" height="64" rx="12" fill="white" stroke="#dfd8c8" stroke-width="1.5"/>
-        <text x="80" y="50" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#3d332b">Contractor / Builder</text>
+        <text x="80" y="50" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#3d332b">Any Buyer</text>
         <text x="80" y="68" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="800" fill="#1c1916">Posts Requirement</text>
         <text x="80" y="83" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6a5f52">or uploads a slip</text>
         <line x1="155" y1="60" x2="210" y2="60" stroke="#b5672a" stroke-width="2" marker-end="url(#arr)"/>
@@ -534,18 +542,37 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
       <span class="pill">&#128737;&#65039; Safety Equipment</span>
     </div>
 
-    <div class="a6" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
-      <div class="card-sm" style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">&#127963;</span>
-        <span style="font-size:13px;font-weight:700;color:var(--text)">Contractors &amp; Project Buyers</span>
+    <p class="a6" style="font-size:13px;font-style:italic;color:var(--text2);text-align:center">One mechanism. Every buyer type. Same savings.</p>
+    <div class="persona-grid a6">
+      <div class="p-card sc1">
+        <div class="p-icon">&#127968;</div>
+        <div class="p-type">Home Owner</div>
+        <div class="p-desc">Renovating a 3BHK. &#8377;4&ndash;18L electrical budget. No idea what fair price is.</div>
       </div>
-      <div class="card-sm" style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">&#127978;</span>
-        <span style="font-size:13px;font-weight:700;color:var(--text)">Verified Dealer Network</span>
+      <div class="p-card sc2">
+        <div class="p-icon">&#128208;</div>
+        <div class="p-type">Architect</div>
+        <div class="p-desc">Specifies &#8377;Crore electrical systems per project. Calls 6 dealers manually every time.</div>
       </div>
-      <div class="card-sm" style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">&#129302;</span>
-        <span style="font-size:13px;font-weight:700;color:var(--text)">AI-Powered Matching</span>
+      <div class="p-card sc3">
+        <div class="p-icon">&#127912;</div>
+        <div class="p-type">Interior Designer</div>
+        <div class="p-desc">&#8377;5&ndash;50L fitouts. LED panels, switches, dimmers &mdash; bought blind every time.</div>
+      </div>
+      <div class="p-card sc4">
+        <div class="p-icon">&#128736;&#65039;</div>
+        <div class="p-type">Contractor</div>
+        <div class="p-desc">&#8377;10L&ndash;&#8377;5Cr project procurement. 15 spam calls after posting one requirement.</div>
+      </div>
+      <div class="p-card sc5">
+        <div class="p-icon">&#127959;&#65039;</div>
+        <div class="p-type">Builder / Developer</div>
+        <div class="p-desc">200-unit project. 40% of electrical budget lost to opaque pricing every year.</div>
+      </div>
+      <div class="p-card sc6">
+        <div class="p-icon">&#127963;</div>
+        <div class="p-type">Institution / PMC</div>
+        <div class="p-desc">&#8377;Crore annual procurement. Zero competitive pressure on suppliers. No price visibility.</div>
       </div>
     </div>
   </div>
