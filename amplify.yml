@@ -1,7 +1,7 @@
 version: 1
 frontend:
   phases:
-    install:
+    preBuild:
       commands:
         - source ~/.nvm/nvm.sh && nvm install 20 && nvm use 20
         - node --version && npm --version
@@ -14,6 +14,3 @@ frontend:
     baseDirectory: frontend/dist
     files:
       - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
