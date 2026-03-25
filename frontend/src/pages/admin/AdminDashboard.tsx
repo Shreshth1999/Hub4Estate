@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
-import { CardSkeleton, Alert } from '../../components/ui';
+import { CardSkeleton } from '../../components/ui';
 import {
   Users, Store, FileText, TrendingUp, AlertTriangle,
-  ChevronRight, Shield, ArrowRight
+  ChevronRight, Shield, ArrowRight, Package,
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -23,6 +23,13 @@ interface DashboardStats {
   }[];
 }
 
+const STATUS_STYLE: Record<string, string> = {
+  PUBLISHED: 'bg-blue-50 text-blue-700',
+  COMPLETED: 'bg-green-50 text-green-700',
+  DRAFT:     'bg-gray-100 text-gray-600',
+  CANCELLED: 'bg-red-50 text-red-600',
+};
+
 export function AdminDashboard() {
   const [data, setData] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,203 +45,150 @@ export function AdminDashboard() {
         setIsLoading(false);
       }
     };
-
     fetchStats();
   }, []);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
+      <div className="p-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <CardSkeleton key={i} />)}
         </div>
       </div>
     );
   }
 
   const stats = [
-    {
-      label: 'Total Users',
-      value: data?.stats.totalUsers || 0,
-      icon: Users,
-      href: '/admin/users',
-    },
-    {
-      label: 'Verified Dealers',
-      value: data?.stats.totalDealers || 0,
-      icon: Store,
-      href: '/admin/dealers',
-    },
-    {
-      label: 'Total RFQs',
-      value: data?.stats.totalRFQs || 0,
-      icon: FileText,
-      href: '/admin/rfqs',
-    },
-    {
-      label: 'Active RFQs',
-      value: data?.stats.activeRFQs || 0,
-      icon: TrendingUp,
-    },
+    { label: 'Total users', value: data?.stats.totalUsers || 0, icon: Users, href: '/admin/users' },
+    { label: 'Verified dealers', value: data?.stats.totalDealers || 0, icon: Store, href: '/admin/dealers' },
+    { label: 'Total RFQs', value: data?.stats.totalRFQs || 0, icon: FileText, href: '/admin/rfqs' },
+    { label: 'Active RFQs', value: data?.stats.activeRFQs || 0, icon: TrendingUp, href: undefined },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <section className="bg-neutral-900 text-white">
-        <div className="container-custom py-12">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-accent-500 flex items-center justify-center">
-              <Shield className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black tracking-tight">Admin Dashboard</h1>
-              <p className="text-neutral-300 font-medium">Platform management and oversight</p>
-            </div>
+    <div className="min-h-screen bg-gray-50">
+
+      {/* Page Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+            <Shield className="w-4 h-4 text-red-600" />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold text-gray-900">Admin Dashboard</h1>
+            <p className="text-sm text-gray-500 mt-0.5">Platform overview and management</p>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Pending Dealers Alert */}
+      {/* Pending dealers alert */}
       {(data?.stats.pendingDealers || 0) > 0 && (
-        <section className="py-4 bg-amber-50 border-b-2 border-amber-200">
-          <div className="container-custom">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
-                <span className="font-bold text-amber-800">
-                  {data?.stats.pendingDealers} dealer(s) pending verification
-                </span>
-              </div>
-              <Link
-                to="/admin/dealers?status=pending"
-                className="text-amber-800 hover:text-amber-900 font-bold inline-flex items-center uppercase tracking-wider text-sm"
-              >
-                Review Now
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Link>
-            </div>
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <span className="text-sm font-medium text-amber-800">
+              {data?.stats.pendingDealers} dealer{(data?.stats.pendingDealers || 0) !== 1 ? 's' : ''} pending verification
+            </span>
           </div>
-        </section>
+          <Link
+            to="/admin/dealers?status=pending"
+            className="text-sm font-medium text-amber-700 hover:text-amber-900 flex items-center gap-1 transition-colors"
+          >
+            Review now <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       )}
 
-      {/* Stats */}
-      <section className="py-8 border-b-2 border-neutral-200">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
+      <div className="px-6 py-6 max-w-7xl mx-auto">
 
-              return (
-                <div
-                  key={index}
-                  className="bg-white border-2 border-neutral-200 p-6 hover:border-neutral-900 hover:shadow-brutal transition-all"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            const card = (
+              <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 hover:shadow-sm transition-all">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Icon className="w-3.5 h-3.5 text-gray-600" />
                   </div>
-                  <p className="text-4xl font-black text-neutral-900">{stat.value}</p>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mt-1">{stat.label}</p>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Actions */}
-      <section className="py-12">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Management Links */}
-            <div className="space-y-6">
-              <h2 className="text-xl font-black text-neutral-900 uppercase tracking-wider">Quick Actions</h2>
-
-              <div className="space-y-4">
-                <Link
-                  to="/admin/dealers"
-                  className="group flex items-center space-x-4 bg-white border-2 border-neutral-200 p-6 hover:border-neutral-900 hover:shadow-brutal transition-all"
-                >
-                  <div className="w-14 h-14 bg-neutral-900 flex items-center justify-center group-hover:bg-accent-500 transition-colors">
-                    <Store className="w-7 h-7 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-neutral-900">Manage Dealers</h3>
-                    <p className="text-sm text-neutral-500 font-medium">Verify, suspend, or review dealers</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-1 transition-all" />
-                </Link>
-
-                <Link
-                  to="/admin/products"
-                  className="group flex items-center space-x-4 bg-white border-2 border-neutral-200 p-6 hover:border-neutral-900 hover:shadow-brutal transition-all"
-                >
-                  <div className="w-14 h-14 bg-neutral-900 flex items-center justify-center group-hover:bg-accent-500 transition-colors">
-                    <FileText className="w-7 h-7 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-neutral-900">Product Catalog</h3>
-                    <p className="text-sm text-neutral-500 font-medium">Manage categories, brands, and products</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-1 transition-all" />
-                </Link>
-
-                <Link
-                  to="/admin/fraud-flags"
-                  className="group flex items-center space-x-4 bg-white border-2 border-neutral-200 p-6 hover:border-neutral-900 hover:shadow-brutal transition-all"
-                >
-                  <div className="w-14 h-14 bg-red-500 flex items-center justify-center">
-                    <AlertTriangle className="w-7 h-7 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-neutral-900">Fraud Monitoring</h3>
-                    <p className="text-sm text-neutral-500 font-medium">Review flagged activities</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-1 transition-all" />
-                </Link>
+                <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
               </div>
+            );
+            return stat.href
+              ? <Link key={stat.label} to={stat.href}>{card}</Link>
+              : <div key={stat.label}>{card}</div>;
+          })}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* Quick Actions */}
+          <div>
+            <h2 className="text-sm font-medium text-gray-500 mb-3">Quick actions</h2>
+            <div className="space-y-2">
+              {[
+                { to: '/admin/dealers', icon: Store, label: 'Manage Dealers', desc: 'Verify, suspend, or review dealers' },
+                { to: '/admin/products', icon: Package, label: 'Product Catalog', desc: 'Manage categories, brands, products' },
+                { to: '/admin/fraud', icon: AlertTriangle, label: 'Fraud Monitoring', desc: 'Review flagged activities', danger: true },
+                { to: '/admin/inquiries', icon: FileText, label: 'Inquiries', desc: 'View and manage all inquiries' },
+              ].map(({ to, icon: Icon, label, desc, danger }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all group"
+                >
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${danger ? 'bg-red-50' : 'bg-gray-100'}`}>
+                    <Icon className={`w-4 h-4 ${danger ? 'text-red-500' : 'text-gray-600'}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900">{label}</p>
+                    <p className="text-xs text-gray-400">{desc}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                </Link>
+              ))}
             </div>
+          </div>
 
-            {/* Recent Activity */}
-            <div className="space-y-6">
-              <h2 className="text-xl font-black text-neutral-900 uppercase tracking-wider">Recent RFQs</h2>
-
-              <div className="bg-white border-2 border-neutral-200 divide-y-2 divide-neutral-200">
-                {data?.recentRFQs && data.recentRFQs.length > 0 ? (
-                  data.recentRFQs.slice(0, 5).map((rfq) => (
-                    <div key={rfq.id} className="p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors">
-                      <div>
-                        <p className="font-bold text-neutral-900">{rfq.title}</p>
-                        <p className="text-sm text-neutral-500 font-medium">
-                          {new Date(rfq.createdAt).toLocaleDateString('en-IN')}
+          {/* Recent RFQs */}
+          <div>
+            <h2 className="text-sm font-medium text-gray-500 mb-3">Recent RFQs</h2>
+            <div className="bg-white rounded-xl border border-gray-200">
+              {data?.recentRFQs && data.recentRFQs.length > 0 ? (
+                <div className="divide-y divide-gray-100">
+                  {data.recentRFQs.slice(0, 6).map((rfq) => (
+                    <div key={rfq.id} className="px-4 py-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{rfq.title}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {new Date(rfq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                         </p>
                       </div>
-                      <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider ${
-                        rfq.status === 'PUBLISHED' ? 'bg-blue-100 text-blue-700 border-2 border-blue-200' :
-                        rfq.status === 'COMPLETED' ? 'bg-green-100 text-green-700 border-2 border-green-200' :
-                        'bg-neutral-100 text-neutral-700 border-2 border-neutral-200'
-                      }`}>
-                        {rfq.status}
+                      <span className={`ml-3 flex-shrink-0 text-[11px] font-medium px-2 py-0.5 rounded-full ${STATUS_STYLE[rfq.status] || 'bg-gray-100 text-gray-600'}`}>
+                        {rfq.status.charAt(0) + rfq.status.slice(1).toLowerCase().replace('_', ' ')}
                       </span>
                     </div>
-                  ))
-                ) : (
-                  <div className="p-8 text-center text-neutral-500 font-medium">
-                    No recent RFQs
-                  </div>
-                )}
+                  ))}
+                </div>
+              ) : (
+                <div className="px-4 py-8 text-center text-sm text-gray-400">
+                  No recent RFQs
+                </div>
+              )}
+              <div className="px-4 py-3 border-t border-gray-100">
+                <Link
+                  to="/admin/rfqs"
+                  className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  View all RFQs <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

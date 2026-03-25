@@ -2,22 +2,12 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
   User, LogOut, Zap, Users, Shield, BarChart3,
-  Settings, AlertTriangle, Home, Package, FileText, Building2, MessageSquare, Mail, ClipboardList, BookUser
+  Settings, AlertTriangle, Home, Package, FileText,
+  Building2, MessageSquare, Mail, ClipboardList, BookUser, Menu, X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
 
-/**
- * AdminLayout - Administrative control panel.
- *
- * This is a completely separate application shell for platform administrators.
- * Admins have oversight workflows:
- * - Verifying dealers
- * - Monitoring platform activity
- * - Managing products/categories
- * - Viewing fraud flags
- * - System settings
- */
 export function AdminLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
@@ -29,119 +19,139 @@ export function AdminLayout() {
     navigate('/');
   };
 
-  const navItems = [
-    { path: '/admin', icon: Home, label: 'Dashboard' },
-    { path: '/admin/dealers', icon: Users, label: 'Dealers', badge: 'Pending' },
-    { path: '/admin/leads', icon: Mail, label: 'Leads' },
-    { path: '/admin/inquiries', icon: ClipboardList, label: 'Inquiries', badge: 'New' },
-    { path: '/admin/brand-dealers', icon: BookUser, label: 'Brand Dealers' },
-    { path: '/admin/chats', icon: MessageSquare, label: 'AI Chats' },
-    { path: '/admin/crm', icon: Building2, label: 'CRM' },
-    { path: '/admin/rfqs', icon: FileText, label: 'RFQs' },
-    { path: '/admin/products', icon: Package, label: 'Products' },
-    { path: '/admin/fraud', icon: AlertTriangle, label: 'Fraud Flags' },
-    { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
-    { path: '/admin/settings', icon: Settings, label: 'Settings' },
+  const navSections = [
+    {
+      items: [
+        { path: '/admin', icon: Home, label: 'Dashboard' },
+      ],
+    },
+    {
+      label: 'Operations',
+      items: [
+        { path: '/admin/dealers', icon: Users, label: 'Dealers' },
+        { path: '/admin/leads', icon: Mail, label: 'Leads' },
+        { path: '/admin/inquiries', icon: ClipboardList, label: 'Inquiries' },
+        { path: '/admin/brand-dealers', icon: BookUser, label: 'Brand Dealers' },
+        { path: '/admin/rfqs', icon: FileText, label: 'RFQs' },
+      ],
+    },
+    {
+      label: 'Insights',
+      items: [
+        { path: '/admin/chats', icon: MessageSquare, label: 'AI Chats' },
+        { path: '/admin/crm', icon: Building2, label: 'CRM' },
+        { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+        { path: '/admin/fraud', icon: AlertTriangle, label: 'Fraud Flags' },
+      ],
+    },
+    {
+      label: 'Catalog',
+      items: [
+        { path: '/admin/products', icon: Package, label: 'Products' },
+        { path: '/admin/settings', icon: Settings, label: 'Settings' },
+      ],
+    },
   ];
 
-  const isActive = (path: string) => location.pathname === path || (path !== '/admin' && location.pathname.startsWith(path + '/'));
+  const isActive = (path: string) =>
+    location.pathname === path ||
+    (path !== '/admin' && location.pathname.startsWith(path + '/'));
+
+  const NavContent = ({ onItemClick }: { onItemClick?: () => void }) => (
+    <nav className="flex-1 px-2 py-4 overflow-y-auto space-y-5">
+      {navSections.map((section, si) => (
+        <div key={si}>
+          {section.label && (
+            <p className="px-3 mb-1.5 text-[11px] font-medium text-slate-500 uppercase tracking-wide">
+              {section.label}
+            </p>
+          )}
+          <div className="space-y-0.5">
+            {section.items.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={onItemClick}
+                  className={`
+                    flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${active
+                      ? 'bg-white/10 text-white'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                    }
+                  `}
+                >
+                  <Icon
+                    className={`w-4 h-4 flex-shrink-0 ${active ? 'text-white' : 'text-slate-500'}`}
+                  />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </nav>
+  );
 
   return (
-    <div className="min-h-screen bg-neutral-100 flex">
-      {/* AI Assistant Floating Widget */}
+    <div className="min-h-screen bg-gray-50 flex">
       <AIAssistantWidget />
 
-      {/* Sidebar - Desktop */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-slate-900">
-        {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-slate-800">
-          <Link to="/admin" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-red-600 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
+      {/* Sidebar — Desktop */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:inset-y-0 bg-slate-900">
+        <div className="h-14 flex items-center px-4 border-b border-slate-800">
+          <Link to="/admin" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-red-600 flex items-center justify-center rounded-lg">
+              <Shield className="w-4 h-4 text-white" />
             </div>
             <div>
-              <span className="text-lg font-black text-white tracking-tight block">
-                Hub4Estate
-              </span>
-              <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
-                Admin Panel
-              </span>
+              <span className="text-sm font-semibold text-white block leading-tight">Hub4Estate</span>
+              <span className="text-[10px] text-red-400 font-medium">Admin Panel</span>
             </div>
           </Link>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
+        <NavContent />
 
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
-                  ${active
-                    ? 'bg-red-600 text-white'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-                {item.label}
-                {item.badge && (
-                  <span className="ml-auto px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User Section */}
-        <div className="border-t border-slate-800 p-4">
-          <div className="flex items-center gap-3 p-3 bg-slate-800 rounded-lg mb-3">
-            <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
+        <div className="border-t border-slate-800 p-3 space-y-0.5">
+          <div className="flex items-center gap-2.5 px-3 py-2">
+            <div className="w-6 h-6 bg-slate-700 rounded-full flex items-center justify-center flex-shrink-0">
+              <Shield className="w-3 h-3 text-slate-300" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">{user?.name}</p>
-              <p className="text-xs text-slate-400 truncate">Administrator</p>
+              <p className="text-xs font-medium text-white truncate">{user?.name || 'Admin'}</p>
+              <p className="text-[11px] text-slate-500 truncate">Administrator</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg font-medium transition-colors"
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-500 hover:text-slate-200 hover:bg-white/5 rounded-md transition-colors"
           >
-            <LogOut className="w-5 h-5" />
-            Sign Out
+            <LogOut className="w-4 h-4" />
+            Sign out
           </button>
         </div>
       </aside>
 
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 flex items-center justify-between px-4 z-50">
-        <Link to="/admin" className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-red-600 flex items-center justify-center">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 z-50">
+        <Link to="/admin" className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-red-600 flex items-center justify-center rounded-lg">
             <Shield className="w-4 h-4 text-white" />
           </div>
-          <div>
-            <span className="text-base font-black text-white">Hub4Estate</span>
-            <span className="text-xs font-bold text-red-400 ml-2">Admin</span>
-          </div>
+          <span className="text-sm font-semibold text-white">Hub4Estate Admin</span>
         </Link>
-
         <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="w-10 h-10 flex items-center justify-center border border-slate-700 rounded-lg"
+          onClick={() => setSidebarOpen(true)}
+          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-800 transition-colors"
         >
-          <User className="w-5 h-5 text-white" />
+          <Menu className="w-4 h-4 text-slate-400" />
         </button>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
@@ -149,61 +159,35 @@ export function AdminLayout() {
         />
       )}
 
-      {/* Mobile Sidebar */}
       <div
-        className={`
-          lg:hidden fixed inset-y-0 left-0 w-64 bg-slate-900 z-50 transform transition-transform
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
+        className={`lg:hidden fixed inset-y-0 left-0 w-56 bg-slate-900 z-50 flex flex-col transform transition-transform duration-200 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
-        <div className="h-16 flex items-center px-6 border-b border-slate-800">
-          <span className="text-xl font-black text-white">Admin Menu</span>
+        <div className="h-14 flex items-center justify-between px-4 border-b border-slate-800">
+          <span className="text-sm font-semibold text-white">Admin Menu</span>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-800"
+          >
+            <X className="w-4 h-4 text-slate-400" />
+          </button>
         </div>
-
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
-
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setSidebarOpen(false)}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors
-                  ${active
-                    ? 'bg-red-600 text-white'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-                {item.label}
-                {item.badge && (
-                  <span className="ml-auto px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="border-t border-slate-800 p-4">
+        <NavContent onItemClick={() => setSidebarOpen(false)} />
+        <div className="border-t border-slate-800 p-3">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg font-medium transition-colors"
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-500 hover:text-slate-200 hover:bg-white/5 rounded-md transition-colors"
           >
-            <LogOut className="w-5 h-5" />
-            Sign Out
+            <LogOut className="w-4 h-4" />
+            Sign out
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 bg-white">
-        <div className="lg:hidden h-16" /> {/* Spacer for mobile header */}
+      <main className="flex-1 lg:ml-56 bg-gray-50">
+        <div className="lg:hidden h-14" />
         <Outlet />
       </main>
     </div>

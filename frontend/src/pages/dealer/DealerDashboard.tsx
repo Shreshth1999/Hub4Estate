@@ -5,9 +5,9 @@ import { useAuthStore } from '../../lib/store';
 import { CardSkeleton, Alert } from '../../components/ui';
 import {
   TrendingUp, FileText, CheckCircle, Clock, ArrowRight,
-  Target, Award, Bell, Zap, Shield, MapPin, AlertCircle,
-  IndianRupee, MessageSquare, Eye, Send, ChevronRight, Package,
-  Upload, FileCheck, Building2, Phone, Mail
+  Award, Bell, Shield, MapPin, AlertCircle,
+  IndianRupee, Send, Eye, ChevronRight, Package,
+  Upload, FileCheck, Building2, Phone, Mail, Target,
 } from 'lucide-react';
 
 interface DealerProfile {
@@ -31,16 +31,8 @@ interface DealerProfile {
 }
 
 interface Analytics {
-  metrics: {
-    totalRFQs: number;
-    conversions: number;
-    conversionRate: number;
-  };
-  insights: {
-    lossReasons: Record<string, number>;
-    avgQuoteAmount: number;
-    statusBreakdown: Record<string, number>;
-  };
+  metrics: { totalRFQs: number; conversions: number; conversionRate: number };
+  insights: { lossReasons: Record<string, number>; avgQuoteAmount: number; statusBreakdown: Record<string, number> };
 }
 
 interface RFQPreview {
@@ -49,7 +41,6 @@ interface RFQPreview {
   buyerCity: string;
   itemCount: number;
   createdAt: string;
-  deadline?: string;
   estimatedValue?: number;
 }
 
@@ -71,58 +62,28 @@ export function DealerDashboard() {
         ]);
         setProfile(profileRes.data);
         setAnalytics(analyticsRes.data);
-
-        // Mock recent RFQs for preview - in production this would come from API
         setRecentRFQs([
-          {
-            id: '1',
-            title: 'Wiring for 3BHK Apartment',
-            buyerCity: 'Mumbai',
-            itemCount: 12,
-            createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-            estimatedValue: 85000,
-          },
-          {
-            id: '2',
-            title: 'MCB Distribution Setup',
-            buyerCity: 'Pune',
-            itemCount: 8,
-            createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-            estimatedValue: 45000,
-          },
-          {
-            id: '3',
-            title: 'Complete Home Electrical',
-            buyerCity: 'Mumbai',
-            itemCount: 25,
-            createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-            estimatedValue: 175000,
-          },
+          { id: '1', title: 'Wiring for 3BHK Apartment', buyerCity: 'Mumbai', itemCount: 12, createdAt: new Date(Date.now() - 2 * 3600000).toISOString(), estimatedValue: 85000 },
+          { id: '2', title: 'MCB Distribution Setup', buyerCity: 'Pune', itemCount: 8, createdAt: new Date(Date.now() - 5 * 3600000).toISOString(), estimatedValue: 45000 },
+          { id: '3', title: 'Complete Home Electrical', buyerCity: 'Mumbai', itemCount: 25, createdAt: new Date(Date.now() - 12 * 3600000).toISOString(), estimatedValue: 175000 },
         ]);
       } catch (err: any) {
         console.error('Failed to fetch dealer data:', err);
-
         if (err.response?.status === 401 || err.response?.status === 403) {
           logout();
           navigate('/dealer/login', { replace: true });
           return;
         }
-
         setError('Failed to load dashboard data. Please try again.');
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, [logout, navigate]);
 
   const formatTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-
+    const diffHrs = Math.floor((Date.now() - new Date(dateString).getTime()) / 3600000);
     if (diffHrs < 1) return 'Just now';
     if (diffHrs < 24) return `${diffHrs}h ago`;
     return `${Math.floor(diffHrs / 24)}d ago`;
@@ -130,13 +91,9 @@ export function DealerDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {[...Array(4)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
+      <div className="p-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <CardSkeleton key={i} />)}
         </div>
       </div>
     );
@@ -144,291 +101,240 @@ export function DealerDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="container-custom">
-          <Alert variant="error">{error}</Alert>
-        </div>
+      <div className="p-6">
+        <Alert variant="error">{error}</Alert>
       </div>
     );
   }
 
-  // Check if dealer is pending verification
   const isPending = profile?.status && ['PENDING_VERIFICATION', 'DOCUMENTS_PENDING', 'UNDER_REVIEW'].includes(profile.status);
+  if (isPending) return <PendingDealerDashboard profile={profile} />;
 
-  // Pending Verification Dashboard
-  if (isPending) {
-    return <PendingDealerDashboard profile={profile} />;
-  }
-
-  const pendingRFQs = 23; // Mock: would come from API
+  const pendingRFQs = 23;
   const pendingQuotes = analytics?.insights.statusBreakdown?.SUBMITTED || 0;
+  const winRate = ((analytics?.metrics.conversionRate || 0) * 100).toFixed(0);
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Header with Stats */}
-      <div className="bg-neutral-900 text-white">
-        <div className="container-custom py-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-4 h-4 text-green-400" />
-                <span className="text-xs font-bold uppercase tracking-wider text-green-400">Verified Dealer</span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-black">
-                {profile?.businessName || 'Dealer Dashboard'}
-              </h1>
-              <p className="text-neutral-400 mt-1 flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                {profile?.city || 'Location not set'}
-              </p>
-            </div>
+    <div className="min-h-screen bg-gray-50">
 
-            <div className="flex items-center gap-4">
-              <div className="text-center px-4 py-2 bg-white/10 backdrop-blur">
-                <p className="text-2xl font-black text-accent-400">{pendingRFQs}</p>
-                <p className="text-xs text-neutral-400 uppercase">New RFQs</p>
-              </div>
-              <div className="text-center px-4 py-2 bg-white/10 backdrop-blur">
-                <p className="text-2xl font-black text-green-400">{((analytics?.metrics.conversionRate || 0) * 100).toFixed(0)}%</p>
-                <p className="text-xs text-neutral-400 uppercase">Win Rate</p>
-              </div>
+      {/* Page Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Shield className="w-3.5 h-3.5 text-green-500" />
+              <span className="text-xs font-medium text-green-600">Verified Dealer</span>
             </div>
+            <h1 className="text-lg font-semibold text-gray-900">{profile?.businessName}</h1>
+            <p className="text-sm text-gray-500 mt-0.5 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" />
+              {profile?.city || 'Location not set'}
+            </p>
+          </div>
+          <Link
+            to="/dealer/rfqs"
+            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            View RFQs
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Inline stats */}
+        <div className="flex items-center gap-5 mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-1.5">
+            <span className="text-base font-semibold text-gray-900">{pendingRFQs}</span>
+            <span className="text-sm text-gray-400">new RFQs</span>
+          </div>
+          <div className="w-px h-4 bg-gray-200" />
+          <div className="flex items-center gap-1.5">
+            <span className="text-base font-semibold text-gray-900">{pendingQuotes}</span>
+            <span className="text-sm text-gray-400">pending quotes</span>
+          </div>
+          <div className="w-px h-4 bg-gray-200" />
+          <div className="flex items-center gap-1.5">
+            <span className="text-base font-semibold text-gray-900">{winRate}%</span>
+            <span className="text-sm text-gray-400">win rate</span>
           </div>
         </div>
       </div>
 
-      {/* Alert Banner */}
+      {/* Notification bar */}
       {pendingRFQs > 0 && (
-        <div className="bg-accent-500 text-white py-3">
-          <div className="container-custom">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5" />
-                <span className="font-bold">{pendingRFQs} new RFQs need your attention!</span>
-              </div>
-              <Link to="/dealer/rfqs" className="flex items-center gap-1 font-bold hover:underline">
-                View All <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bell className="w-4 h-4 text-amber-600" />
+            <span className="text-sm font-medium text-amber-800">
+              {pendingRFQs} new RFQs waiting for your quote
+            </span>
           </div>
+          <Link
+            to="/dealer/rfqs"
+            className="text-sm font-medium text-amber-700 hover:text-amber-900 flex items-center gap-1 transition-colors"
+          >
+            View all <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       )}
 
-      <div className="container-custom py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* RFQ Inbox Preview */}
-            <div className="bg-white border-2 border-neutral-900">
-              <div className="p-4 border-b-2 border-neutral-900 bg-neutral-900 text-white flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5" />
-                  <h2 className="font-bold">RFQ Inbox</h2>
-                  <span className="bg-accent-500 text-white text-xs font-bold px-2 py-0.5">
-                    {pendingRFQs} New
-                  </span>
+      <div className="px-6 py-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          {/* Main Column */}
+          <div className="lg:col-span-2 space-y-5">
+
+            {/* Stat cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: 'Total RFQs', value: analytics?.metrics.totalRFQs || 0, color: 'text-gray-900' },
+                { label: 'Pending', value: pendingQuotes, color: 'text-amber-600' },
+                { label: 'Won', value: analytics?.metrics.conversions || 0, color: 'text-green-600' },
+                { label: 'Win rate', value: `${winRate}%`, color: 'text-blue-600' },
+              ].map((stat) => (
+                <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4">
+                  <p className="text-xs text-gray-400 mb-1.5">{stat.label}</p>
+                  <p className={`text-xl font-semibold ${stat.color}`}>{stat.value}</p>
                 </div>
-                <Link to="/dealer/rfqs" className="text-sm text-neutral-400 hover:text-white flex items-center gap-1">
-                  View All <ChevronRight className="w-4 h-4" />
+              ))}
+            </div>
+
+            {/* RFQ Inbox */}
+            <div className="bg-white rounded-xl border border-gray-200">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-gray-500" />
+                  <h2 className="text-sm font-medium text-gray-900">RFQ Inbox</h2>
+                  {pendingRFQs > 0 && (
+                    <span className="text-xs font-medium bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">
+                      {pendingRFQs} new
+                    </span>
+                  )}
+                </div>
+                <Link
+                  to="/dealer/rfqs"
+                  className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors"
+                >
+                  View all <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
               {recentRFQs.length === 0 ? (
-                <div className="p-8 text-center">
-                  <FileText className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-                  <h3 className="font-bold text-neutral-900 mb-2">No new RFQs</h3>
-                  <p className="text-neutral-500">New quote requests will appear here</p>
+                <div className="px-4 py-8 text-center">
+                  <FileText className="w-8 h-8 text-gray-200 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500">No new RFQs yet</p>
                 </div>
               ) : (
-                <div className="divide-y divide-neutral-100">
+                <div className="divide-y divide-gray-100">
                   {recentRFQs.map((rfq) => (
-                    <div key={rfq.id} className="p-4 hover:bg-neutral-50 transition-colors">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-bold text-neutral-900">{rfq.title}</h3>
-                          <div className="flex items-center gap-4 mt-2 text-sm text-neutral-500">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" /> {rfq.buyerCity}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Package className="w-3 h-3" /> {rfq.itemCount} items
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> {formatTimeAgo(rfq.createdAt)}
-                            </span>
-                          </div>
+                    <div key={rfq.id} className="px-4 py-3.5 flex items-center gap-3 hover:bg-gray-50 transition-colors">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{rfq.title}</p>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" /> {rfq.buyerCity}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Package className="w-3 h-3" /> {rfq.itemCount} items
+                          </span>
+                          <span>{formatTimeAgo(rfq.createdAt)}</span>
                           {rfq.estimatedValue && (
-                            <p className="mt-2 text-sm font-bold text-green-600">
-                              Est. ₹{(rfq.estimatedValue / 1000).toFixed(0)}K
-                            </p>
+                            <span className="text-green-600 font-medium">
+                              ~₹{(rfq.estimatedValue / 1000).toFixed(0)}K
+                            </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Link
-                            to={`/dealer/rfqs/${rfq.id}`}
-                            className="p-2 border-2 border-neutral-200 hover:border-neutral-900 hover:bg-neutral-50"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Link>
-                          <Link
-                            to={`/dealer/rfqs/${rfq.id}/quote`}
-                            className="p-2 bg-accent-500 text-white hover:bg-accent-600"
-                          >
-                            <Send className="w-4 h-4" />
-                          </Link>
-                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <Link
+                          to={`/dealer/rfqs/${rfq.id}`}
+                          className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-gray-500" />
+                        </Link>
+                        <Link
+                          to={`/dealer/rfqs/${rfq.id}/quote`}
+                          className="w-8 h-8 flex items-center justify-center bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                        </Link>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
 
-              <div className="p-4 bg-neutral-50 border-t-2 border-neutral-200">
+              <div className="px-4 py-3 border-t border-gray-100">
                 <Link
                   to="/dealer/rfqs"
-                  className="btn-primary w-full justify-center"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
                 >
-                  View All RFQs
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  Browse all RFQs <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white border-2 border-neutral-200 p-4">
-                <FileText className="w-5 h-5 text-blue-500 mb-2" />
-                <p className="text-2xl font-black text-neutral-900">{analytics?.metrics.totalRFQs || 0}</p>
-                <p className="text-xs text-neutral-500 font-bold uppercase">Total RFQs</p>
-              </div>
-              <div className="bg-white border-2 border-neutral-200 p-4">
-                <Send className="w-5 h-5 text-amber-500 mb-2" />
-                <p className="text-2xl font-black text-amber-600">{pendingQuotes}</p>
-                <p className="text-xs text-neutral-500 font-bold uppercase">Pending</p>
-              </div>
-              <div className="bg-white border-2 border-neutral-200 p-4">
-                <CheckCircle className="w-5 h-5 text-green-500 mb-2" />
-                <p className="text-2xl font-black text-green-600">{analytics?.metrics.conversions || 0}</p>
-                <p className="text-xs text-neutral-500 font-bold uppercase">Won</p>
-              </div>
-              <div className="bg-white border-2 border-neutral-200 p-4">
-                <Target className="w-5 h-5 text-purple-500 mb-2" />
-                <p className="text-2xl font-black text-purple-600">
-                  {((analytics?.metrics.conversionRate || 0) * 100).toFixed(0)}%
-                </p>
-                <p className="text-xs text-neutral-500 font-bold uppercase">Win Rate</p>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Link
-                to="/dealer/quotes"
-                className="bg-white border-2 border-neutral-200 p-6 hover:border-neutral-900 hover:shadow-brutal transition-all group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-500 flex items-center justify-center">
-                    <CheckCircle className="w-6 h-6 text-white" />
+            {/* Quick links */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { to: '/dealer/quotes', icon: CheckCircle, label: 'My Quotes', desc: 'Track submitted quotes', color: 'text-green-500' },
+                { to: '/dealer/profile', icon: Award, label: 'Profile', desc: 'Update brands & areas', color: 'text-purple-500' },
+              ].map(({ to, icon: Icon, label, desc, color }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 hover:shadow-sm transition-all flex items-center gap-3"
+                >
+                  <Icon className={`w-5 h-5 ${color} flex-shrink-0`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900">{label}</p>
+                    <p className="text-xs text-gray-400">{desc}</p>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-neutral-900">My Quotes</h3>
-                    <p className="text-sm text-neutral-500">Track your submitted quotes</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-1 transition-all" />
-                </div>
-              </Link>
-
-              <Link
-                to="/dealer/profile"
-                className="bg-white border-2 border-neutral-200 p-6 hover:border-neutral-900 hover:shadow-brutal transition-all group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-500 flex items-center justify-center">
-                    <Award className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-neutral-900">My Profile</h3>
-                    <p className="text-sm text-neutral-500">Update brands & areas</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-1 transition-all" />
-                </div>
-              </Link>
+                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                </Link>
+              ))}
             </div>
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Earnings */}
-            <div className="bg-green-50 border-2 border-green-200 p-6">
-              <div className="flex items-center gap-2 text-green-700 mb-3">
-                <IndianRupee className="w-5 h-5" />
-                <span className="font-bold uppercase tracking-wider text-sm">Avg Quote Value</span>
-              </div>
-              <p className="text-3xl font-black text-green-800">
-                {new Intl.NumberFormat('en-IN', {
-                  style: 'currency',
-                  currency: 'INR',
-                  maximumFractionDigits: 0,
-                }).format(analytics?.insights.avgQuoteAmount || 0)}
+          <div className="space-y-5">
+            {/* Avg quote value */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs text-gray-400 mb-1.5 flex items-center gap-1.5">
+                <IndianRupee className="w-3.5 h-3.5" /> Avg quote value
+              </p>
+              <p className="text-xl font-semibold text-gray-900">
+                {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(analytics?.insights.avgQuoteAmount || 0)}
               </p>
             </div>
 
-            {/* Performance Tips */}
-            <div className="bg-neutral-900 text-white p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-5 h-5 text-accent-400" />
-                <h3 className="font-bold">Win More Quotes</h3>
-              </div>
-              <ul className="space-y-3 text-sm text-neutral-300">
-                <li className="flex items-start gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Respond within 24 hours for 40% higher win rate</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Add detailed item breakdowns</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Offer warranty information</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Include delivery timeline</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Quick Links */}
-            <div className="bg-white border-2 border-neutral-200 p-4">
-              <h3 className="font-bold text-neutral-900 mb-4">Quick Links</h3>
-              <div className="space-y-2">
-                <Link to="/dealer/rfqs" className="flex items-center gap-3 p-3 bg-neutral-50 hover:bg-neutral-100 transition-colors">
-                  <FileText className="w-5 h-5 text-neutral-600" />
-                  <span className="font-medium text-neutral-900">Browse RFQs</span>
-                  <ChevronRight className="w-4 h-4 text-neutral-400 ml-auto" />
-                </Link>
-                <Link to="/dealer/quotes" className="flex items-center gap-3 p-3 bg-neutral-50 hover:bg-neutral-100 transition-colors">
-                  <Send className="w-5 h-5 text-neutral-600" />
-                  <span className="font-medium text-neutral-900">My Quotes</span>
-                  <ChevronRight className="w-4 h-4 text-neutral-400 ml-auto" />
-                </Link>
-                <Link to="/community" className="flex items-center gap-3 p-3 bg-neutral-50 hover:bg-neutral-100 transition-colors">
-                  <MessageSquare className="w-5 h-5 text-neutral-600" />
-                  <span className="font-medium text-neutral-900">Community</span>
-                  <ChevronRight className="w-4 h-4 text-neutral-400 ml-auto" />
-                </Link>
+            {/* Tips */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs font-medium text-gray-500 mb-3">Win more quotes</p>
+              <div className="space-y-2.5">
+                {[
+                  'Respond within 24h — 40% higher win rate',
+                  'Add detailed item breakdowns',
+                  'Include warranty information',
+                  'Provide clear delivery timeline',
+                ].map((tip, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <TrendingUp className="w-3.5 h-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-gray-600 leading-relaxed">{tip}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Help */}
-            <div className="bg-white border-2 border-neutral-200 p-4">
-              <h3 className="font-bold text-neutral-900 mb-2">Need Help?</h3>
-              <p className="text-sm text-neutral-600 mb-4">
-                Our dealer support team is here to help you grow your business.
-              </p>
-              <a href="tel:+917690001999" className="btn-secondary w-full justify-center text-sm">
-                Call: +91 76900 01999
+            <div className="bg-gray-50 rounded-xl border border-gray-200 p-4">
+              <p className="text-xs font-medium text-gray-700 mb-1">Need help?</p>
+              <p className="text-xs text-gray-500 mb-3">Our dealer support team is here.</p>
+              <a
+                href="tel:+917690001999"
+                className="flex items-center justify-center gap-2 w-full py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:border-gray-400 transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5" />
+                +91 76900 01999
               </a>
             </div>
           </div>
@@ -438,264 +344,154 @@ export function DealerDashboard() {
   );
 }
 
-// Pending Dealer Dashboard - shown when dealer is awaiting verification
+// Pending verification state
 function PendingDealerDashboard({ profile }: { profile: DealerProfile | null }) {
   const getStatusInfo = (status: string | undefined) => {
     switch (status) {
-      case 'PENDING_VERIFICATION':
-        return {
-          label: 'Pending Verification',
-          description: 'Your registration is being reviewed by our team.',
-          color: 'amber',
-          step: 1,
-        };
-      case 'DOCUMENTS_PENDING':
-        return {
-          label: 'Documents Required',
-          description: 'Please upload required documents to complete verification.',
-          color: 'orange',
-          step: 2,
-        };
-      case 'UNDER_REVIEW':
-        return {
-          label: 'Under Review',
-          description: 'Your documents are being verified. This usually takes 24-48 hours.',
-          color: 'blue',
-          step: 3,
-        };
-      default:
-        return {
-          label: 'Processing',
-          description: 'Your application is being processed.',
-          color: 'gray',
-          step: 1,
-        };
+      case 'PENDING_VERIFICATION': return { label: 'Pending verification', description: 'Your registration is being reviewed.', step: 1 };
+      case 'DOCUMENTS_PENDING':   return { label: 'Documents required', description: 'Please upload required documents to complete verification.', step: 2 };
+      case 'UNDER_REVIEW':        return { label: 'Under review', description: 'Your documents are being verified. Usually 24–48 hours.', step: 3 };
+      default:                    return { label: 'Processing', description: 'Your application is being processed.', step: 1 };
     }
   };
 
   const statusInfo = getStatusInfo(profile?.status);
-
-  const verificationSteps = [
-    { label: 'Registration', description: 'Account created', completed: true },
-    { label: 'Documents', description: 'Upload GST & PAN', completed: statusInfo.step > 1 },
-    { label: 'Review', description: 'Verification in progress', completed: statusInfo.step > 2 },
-    { label: 'Verified', description: 'Start receiving RFQs', completed: false },
+  const steps = [
+    { label: 'Registration', done: true },
+    { label: 'Documents', done: statusInfo.step > 1 },
+    { label: 'Review', done: statusInfo.step > 2 },
+    { label: 'Verified', done: false },
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <div className="bg-neutral-900 text-white">
-        <div className="container-custom py-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                  {statusInfo.label}
-                </span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-black">
-                {profile?.businessName || 'Welcome, Dealer'}
-              </h1>
-              <p className="text-neutral-400 mt-1 flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                {profile?.city}, {profile?.state}
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Clock className="w-3.5 h-3.5 text-amber-500" />
+          <span className="text-xs font-medium text-amber-600">{statusInfo.label}</span>
         </div>
+        <h1 className="text-lg font-semibold text-gray-900">{profile?.businessName || 'Welcome'}</h1>
+        <p className="text-sm text-gray-500 mt-0.5 flex items-center gap-1.5">
+          <MapPin className="w-3.5 h-3.5" />
+          {profile?.city}, {profile?.state}
+        </p>
       </div>
 
-      {/* Status Banner */}
-      <div className={`bg-amber-500 text-neutral-900 py-4`}>
-        <div className="container-custom">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="w-6 h-6" />
-            <div>
-              <p className="font-bold">{statusInfo.label}</p>
-              <p className="text-sm opacity-80">{statusInfo.description}</p>
-            </div>
-          </div>
-        </div>
+      <div className="px-6 py-4 bg-amber-50 border-b border-amber-200 flex items-center gap-2">
+        <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+        <p className="text-sm text-amber-800">{statusInfo.description}</p>
       </div>
 
-      <div className="container-custom py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Verification Progress */}
-            <div className="bg-white border-2 border-neutral-900 p-6">
-              <h2 className="text-xl font-bold text-neutral-900 mb-6">Verification Progress</h2>
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  {verificationSteps.map((step, index) => (
-                    <div key={index} className="flex flex-col items-center relative z-10">
-                      <div className={`w-10 h-10 flex items-center justify-center font-bold text-sm ${
-                        step.completed
-                          ? 'bg-green-600 text-white'
-                          : index === statusInfo.step - 1
-                            ? 'bg-amber-500 text-neutral-900'
-                            : 'bg-neutral-200 text-neutral-500'
-                      }`}>
-                        {step.completed ? <CheckCircle className="w-5 h-5" /> : index + 1}
-                      </div>
-                      <span className="text-xs font-bold mt-2 text-neutral-900">{step.label}</span>
-                      <span className="text-xs text-neutral-500 text-center mt-1 max-w-[80px]">{step.description}</span>
-                    </div>
-                  ))}
-                </div>
-                {/* Progress line */}
-                <div className="absolute top-5 left-0 right-0 h-0.5 bg-neutral-200 -z-0" style={{ left: '5%', right: '5%' }}>
+      <div className="px-6 py-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-5">
+
+            {/* Progress */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <h2 className="text-sm font-medium text-gray-900 mb-5">Verification progress</h2>
+              <div className="flex items-center justify-between relative">
+                <div className="absolute left-0 right-0 top-4 h-px bg-gray-200 z-0" style={{ left: '5%', right: '5%' }}>
                   <div
-                    className="h-full bg-green-600 transition-all"
+                    className="h-full bg-green-500 transition-all"
                     style={{ width: `${((statusInfo.step - 1) / 3) * 100}%` }}
                   />
                 </div>
+                {steps.map((step, i) => (
+                  <div key={i} className="flex flex-col items-center relative z-10">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                      step.done
+                        ? 'bg-green-500 text-white'
+                        : i === statusInfo.step - 1
+                          ? 'bg-amber-400 text-white'
+                          : 'bg-gray-100 text-gray-400'
+                    }`}>
+                      {step.done ? '✓' : i + 1}
+                    </div>
+                    <p className="text-xs text-gray-600 mt-2 font-medium">{step.label}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* What's Next */}
-            <div className="bg-white border-2 border-neutral-200 p-6">
-              <h2 className="text-xl font-bold text-neutral-900 mb-4">What's Next?</h2>
-              <div className="space-y-4">
-                {profile?.status === 'DOCUMENTS_PENDING' ? (
-                  <>
-                    <div className="flex items-start gap-4 p-4 bg-amber-50 border-2 border-amber-200">
-                      <Upload className="w-6 h-6 text-amber-600 flex-shrink-0" />
-                      <div>
-                        <h3 className="font-bold text-neutral-900">Upload Required Documents</h3>
-                        <p className="text-sm text-neutral-600 mt-1">
-                          Please upload your GST certificate and PAN card to complete verification.
-                        </p>
-                        <Link to="/dealer/profile" className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-amber-500 text-neutral-900 font-bold hover:bg-amber-400">
-                          Upload Documents <ArrowRight className="w-4 h-4" />
-                        </Link>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-start gap-4 p-4 bg-blue-50 border-2 border-blue-200">
-                      <FileCheck className="w-6 h-6 text-blue-600 flex-shrink-0" />
-                      <div>
-                        <h3 className="font-bold text-neutral-900">Verification in Progress</h3>
-                        <p className="text-sm text-neutral-600 mt-1">
-                          Our team is reviewing your application. This typically takes 24-48 hours.
-                          We'll notify you via email once verified.
-                        </p>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <div className="flex items-start gap-4 p-4 bg-neutral-50 border-2 border-neutral-200">
-                  <Building2 className="w-6 h-6 text-neutral-600 flex-shrink-0" />
+            {/* Action */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <h2 className="text-sm font-medium text-gray-900 mb-4">What&apos;s next</h2>
+              {profile?.status === 'DOCUMENTS_PENDING' ? (
+                <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg">
+                  <Upload className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-bold text-neutral-900">Complete Your Profile</h3>
-                    <p className="text-sm text-neutral-600 mt-1">
-                      Add the brands you deal in and your service areas to get matched with relevant RFQs.
-                    </p>
-                    <Link to="/dealer/profile" className="inline-flex items-center gap-2 mt-3 text-neutral-900 font-bold hover:underline">
-                      Go to Profile <ChevronRight className="w-4 h-4" />
+                    <p className="text-sm font-medium text-gray-900">Upload required documents</p>
+                    <p className="text-sm text-gray-500 mt-1">Please upload your GST certificate and PAN card.</p>
+                    <Link to="/dealer/profile" className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-orange-600 hover:text-orange-700">
+                      Upload now <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
+              ) : (
+                <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+                  <FileCheck className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Verification in progress</p>
+                    <p className="text-sm text-gray-500 mt-1">Our team is reviewing your application. Typically 24–48 hours. We&apos;ll email you once verified.</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-3 flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+                <Building2 className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Complete your profile</p>
+                  <p className="text-sm text-gray-500 mt-1">Add the brands you deal in and service areas to get matched with relevant RFQs.</p>
+                  <Link to="/dealer/profile" className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-gray-700 hover:text-gray-900">
+                    Go to profile <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </div>
             </div>
 
-            {/* Your Information */}
-            <div className="bg-white border-2 border-neutral-200 p-6">
-              <h2 className="text-xl font-bold text-neutral-900 mb-4">Your Registration Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-xs font-bold text-neutral-500 uppercase">Business Name</label>
-                  <p className="font-bold text-neutral-900 mt-1">{profile?.businessName}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-neutral-500 uppercase">Owner Name</label>
-                  <p className="font-bold text-neutral-900 mt-1">{profile?.ownerName}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-neutral-500 uppercase">Email</label>
-                  <p className="font-bold text-neutral-900 mt-1 flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-neutral-400" />
-                    {profile?.email}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-neutral-500 uppercase">Phone</label>
-                  <p className="font-bold text-neutral-900 mt-1 flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-neutral-400" />
-                    {profile?.phone}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-neutral-500 uppercase">GST Number</label>
-                  <p className="font-mono text-neutral-900 mt-1">{profile?.gstNumber || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-neutral-500 uppercase">Location</label>
-                  <p className="text-neutral-900 mt-1">{profile?.city}, {profile?.state}</p>
-                </div>
+            {/* Your details */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
+              <h2 className="text-sm font-medium text-gray-900 mb-4">Registration details</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { label: 'Business', value: profile?.businessName },
+                  { label: 'Owner', value: profile?.ownerName },
+                  { label: 'Email', value: profile?.email },
+                  { label: 'Phone', value: profile?.phone },
+                  { label: 'GST', value: profile?.gstNumber || '—' },
+                  { label: 'Location', value: `${profile?.city}, ${profile?.state}` },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <p className="text-xs text-gray-400 mb-0.5">{label}</p>
+                    <p className="text-sm font-medium text-gray-900">{value}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Status Card */}
-            <div className="bg-amber-50 border-2 border-amber-200 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Clock className="w-6 h-6 text-amber-600" />
-                <h3 className="font-bold text-neutral-900">Verification Status</h3>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-neutral-600">Status</span>
-                  <span className="font-bold text-amber-700">{statusInfo.label}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-neutral-600">Estimated Time</span>
-                  <span className="font-bold text-neutral-900">24-48 hours</span>
-                </div>
+          <div className="space-y-5">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs font-medium text-gray-500 mb-3">While you wait</p>
+              <div className="space-y-2.5">
+                {['Complete your dealer profile', 'Add brands you deal in', 'Set your service areas', 'Browse product catalog'].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-gray-300 flex-shrink-0" />
+                    <p className="text-xs text-gray-600">{item}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* What You Can Do */}
-            <div className="bg-neutral-900 text-white p-6">
-              <h3 className="font-bold mb-4">While You Wait</h3>
-              <ul className="space-y-3 text-sm text-neutral-300">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Complete your dealer profile</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Add brands you deal in</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Set your service areas</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Browse product catalog</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Help */}
-            <div className="bg-white border-2 border-neutral-200 p-4">
-              <h3 className="font-bold text-neutral-900 mb-2">Need Help?</h3>
-              <p className="text-sm text-neutral-600 mb-4">
-                Questions about verification? Our team is happy to help.
-              </p>
-              <a href="tel:+917690001999" className="block w-full text-center py-3 border-2 border-neutral-900 font-bold hover:bg-neutral-900 hover:text-white transition-colors">
-                Call: +91 76900 01999
+            <div className="bg-gray-50 rounded-xl border border-gray-200 p-4">
+              <p className="text-xs font-medium text-gray-700 mb-1">Questions?</p>
+              <p className="text-xs text-gray-500 mb-3">Our team is happy to help.</p>
+              <a href="tel:+917690001999" className="flex items-center justify-center gap-2 w-full py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:border-gray-400 transition-colors">
+                <Phone className="w-3.5 h-3.5" />
+                +91 76900 01999
               </a>
-              <a href="mailto:support@hub4estate.com" className="text-sm text-neutral-600 block text-center mt-3 hover:text-neutral-900">
-                support@hub4estate.com
+              <a href="mailto:shreshth.agarwal@hub4estate.com" className="block text-center text-xs text-gray-400 mt-2 hover:text-gray-600">
+                shreshth.agarwal@hub4estate.com
               </a>
             </div>
           </div>
