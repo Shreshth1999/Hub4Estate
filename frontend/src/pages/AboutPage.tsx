@@ -1,36 +1,74 @@
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft, Zap, Target, Users, TrendingUp, Award,
-  Mail, Phone, ArrowRight
+  Mail, Phone, ArrowRight, Linkedin
 } from 'lucide-react';
 
 export function AboutPage() {
   const milestones = [
-    { year: '2024', title: 'Idea Born', description: 'Identified the gap in electrical procurement market' },
-    { year: '2025', title: 'Platform Launch', description: 'Hub4Estate goes live with 100+ dealers' },
-    { year: '2026', title: 'Expansion', description: '500+ dealers, 50+ cities, 10,000+ products' },
+    {
+      year: 'Apr 2024',
+      title: 'The Idea',
+      description: "Shreshth's father — a real estate professional — was drowning in broker calls, mismatched leads, and zero transparency. The first question: why does he need 50 calls for one useful deal? That spiralled into deeper research on procurement pain in construction.",
+    },
+    {
+      year: '2024–25',
+      title: 'Two Years of Validation',
+      description: "Spoke with contractors, builders, interior designers, and homeowners. Found the real problem: same product, wildly different prices depending on who you know. The same item quoted at ₹1.05 lakh — sourced at ₹66,000. Not a communication problem. An access problem.",
+    },
+    {
+      year: 'Mar 2026',
+      title: 'Incorporated',
+      description: 'HUB4ESTATE LLP registered (LLPIN: ACW-4269). 2 years of validation, pivots, and real deal-closing before building the platform. Started with electricals — highest chaos, most opaque pricing, guaranteed repeat demand.',
+    },
+    {
+      year: 'Mar 2026',
+      title: 'Platform Live',
+      description: '10+ clients served. Real deals closed. Sony speakers at ₹68K vs ₹1,05,000 at Croma. Philips LED panels saving ₹24,000 on a 200-unit order. FRLS wire: 6 dealer quotes, ₹8,800 saved on 200 metres. Building from here.',
+    },
   ];
 
   const values = [
     {
       icon: Target,
       title: 'Transparency',
-      description: 'Clear pricing, no hidden costs. What you see is what you get.',
+      description: 'You see every quote side by side. No hidden prices, no dealer favouritism, no undisclosed commissions.',
     },
     {
       icon: Users,
-      title: 'Trust',
-      description: 'Every dealer is verified. Every product is authentic.',
+      title: 'Access',
+      description: 'The same dealer network that big contractors use — now available to anyone who needs one electrical product.',
     },
     {
       icon: TrendingUp,
-      title: 'Efficiency',
-      description: 'Save time and money with streamlined procurement.',
+      title: 'Honesty',
+      description: "We don't claim numbers we haven't earned. Every stat on this platform is real. Every deal we share is verified.",
     },
     {
       icon: Award,
-      title: 'Quality',
-      description: 'Only the best brands and products on our platform.',
+      title: 'Long Game',
+      description: 'We are building infrastructure, not a quick flip. Electricals first. Every category in construction eventually.',
+    },
+  ];
+
+  const realDeals = [
+    {
+      product: 'Sony Tower Speaker + 2 Mics',
+      market: '₹1,05,000 (Croma)',
+      hub4estate: '₹68,000',
+      saved: '₹37,000',
+    },
+    {
+      product: 'Philips 15W LED Panels × 200',
+      market: '₹585/pc (local dealer)',
+      hub4estate: '₹465/pc with shipping',
+      saved: '₹24,000',
+    },
+    {
+      product: 'FRLS 2.5mm² Wire × 200m',
+      market: '₹127/m (highest quote)',
+      hub4estate: '₹83/m (best dealer)',
+      saved: '₹8,800',
     },
   ];
 
@@ -49,51 +87,65 @@ export function AboutPage() {
               Our Story
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6">
-              Building India's Procurement
-              <span className="text-accent-400"> Infrastructure for Electrical</span>
+              Fixing the Price Information
+              <span className="text-accent-400"> Problem in Electrical Procurement.</span>
             </h1>
             <p className="text-xl text-neutral-300 leading-relaxed">
-              Hub4Estate is not a typical e-commerce website. It's an RFQ-driven, price-discovery engine where
-              dealers compete transparently to give buyers the best deal on electrical products.
+              Hub4Estate exists because the same product is priced completely differently
+              by different dealers — and most buyers have no way to know. We're fixing that.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Mission */}
+      {/* The Problem We're Solving */}
       <section className="py-20">
         <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div>
               <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-6">
                 Why Electrical? Why Now?
               </h2>
               <p className="text-lg text-neutral-600 mb-6 leading-relaxed">
-                The electrical sector in Indian real estate is highly fragmented, opaque in pricing, and dealer-dependent.
-                The same Havells switch or Polycab wire is sold at vastly different prices depending on the buyer's knowledge and negotiation ability.
+                The electrical sector in India is highly fragmented and opaque. The same Havells switch
+                or Polycab wire is priced differently by every dealer depending on who you are and how
+                much you know. Buyers without industry connections routinely pay far more than they need to.
+              </p>
+              <p className="text-lg text-neutral-600 mb-6 leading-relaxed">
+                Hub4Estate was built to close that gap. We connect buyers to multiple verified dealers,
+                let them compete on price, and give the buyer full visibility into every quote.
+                No middlemen. No guesswork. Just the real price.
               </p>
               <p className="text-lg text-neutral-600 leading-relaxed">
-                Hub4Estate fixes this by standardizing the catalog, verifying every dealer, and creating a transparent
-                RFQ system where price competition happens on merit—not relationships.
+                We started with electricals because the chaos is highest here, the margins are most
+                opaque, and the repeat demand is guaranteed. This is phase one. Every procurement
+                category in construction follows.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="bg-neutral-900 text-white p-8">
-                <div className="text-4xl font-black text-accent-400 mb-2">500+</div>
-                <div className="text-sm font-bold uppercase tracking-wider text-neutral-400">Verified Dealers</div>
-              </div>
-              <div className="bg-neutral-900 text-white p-8">
-                <div className="text-4xl font-black text-accent-400 mb-2">50+</div>
-                <div className="text-sm font-bold uppercase tracking-wider text-neutral-400">Cities</div>
-              </div>
-              <div className="bg-neutral-900 text-white p-8">
-                <div className="text-4xl font-black text-accent-400 mb-2">10K+</div>
-                <div className="text-sm font-bold uppercase tracking-wider text-neutral-400">Products</div>
-              </div>
-              <div className="bg-neutral-900 text-white p-8">
-                <div className="text-4xl font-black text-accent-400 mb-2">15-25%</div>
-                <div className="text-sm font-bold uppercase tracking-wider text-neutral-400">Avg. Savings</div>
-              </div>
+
+            {/* Real Deals as proof */}
+            <div className="space-y-4">
+              <p className="text-sm font-bold uppercase tracking-wider text-neutral-500 mb-4">
+                Real Deals We've Closed
+              </p>
+              {realDeals.map((deal, i) => (
+                <div key={i} className="border-2 border-neutral-200 p-6 hover:border-neutral-900 transition-all">
+                  <p className="font-bold text-neutral-900 mb-3">{deal.product}</p>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-neutral-500">Market price</span>
+                    <span className="text-neutral-500 line-through">{deal.market}</span>
+                  </div>
+                  <div className="flex justify-between text-sm mb-3">
+                    <span className="font-bold text-neutral-900">Hub4Estate</span>
+                    <span className="font-bold text-neutral-900">{deal.hub4estate}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-neutral-100 pt-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Saved</span>
+                    <span className="font-black text-green-600">{deal.saved}</span>
+                  </div>
+                </div>
+              ))}
+              <p className="text-xs text-neutral-400 mt-2">All numbers verified. No fabrications.</p>
             </div>
           </div>
         </div>
@@ -115,32 +167,54 @@ export function AboutPage() {
                   <div className="w-48 h-48 bg-neutral-900 flex items-center justify-center mx-auto md:mx-0">
                     <span className="text-6xl font-black text-white">SA</span>
                   </div>
+                  <div className="mt-6 space-y-2">
+                    <div className="bg-neutral-100 px-3 py-2 text-xs font-bold text-neutral-700 uppercase tracking-wider">
+                      Age 18
+                    </div>
+                    <div className="bg-neutral-100 px-3 py-2 text-xs font-bold text-neutral-700 uppercase tracking-wider">
+                      Mesa School of Business
+                    </div>
+                    <div className="bg-neutral-100 px-3 py-2 text-xs font-bold text-neutral-700 uppercase tracking-wider">
+                      NMIMS BBA (Distance)
+                    </div>
+                    <div className="bg-neutral-100 px-3 py-2 text-xs font-bold text-neutral-700 uppercase tracking-wider">
+                      Sri Ganganagar, Rajasthan
+                    </div>
+                  </div>
                 </div>
                 <div className="md:col-span-2">
                   <h3 className="text-2xl font-black text-neutral-900 mb-2">Shreshth Agarwal</h3>
-                  <p className="text-accent-600 font-bold mb-4">Founder & CEO, Hub4Estate LLP</p>
-                  <p className="text-neutral-600 mb-6 leading-relaxed">
-                    Hub4Estate is a direct extension of Shreshth's lived experience—watching real estate professionals
-                    struggle with fragmented information, endless calls, and opaque pricing. This platform is not a
-                    generic startup but an operator's product, built by someone who understands the pain of procurement
-                    in Indian real estate.
+                  <p className="text-accent-600 font-bold mb-6">Founder & CEO, HUB4ESTATE LLP</p>
+
+                  <p className="text-neutral-600 mb-5 leading-relaxed">
+                    Shreshth started ideating Hub4Estate at 16, watching his father — a real estate professional
+                    in Sri Ganganagar — navigate endless broker calls, irrelevant leads, and opaque supplier
+                    pricing. The insight that stuck: it's not a communication problem, it's an access problem.
+                  </p>
+                  <p className="text-neutral-600 mb-5 leading-relaxed">
+                    Before Hub4Estate, Shreshth ran a dropshipping business in Class 9 (bottles to UAE/Dubai markets,
+                    bought his own iPhone and MacBook from the proceeds), traded equities using hedging strategies
+                    through Class 10 and 11 (₹87 lakh in returns), and ran Treva Iconic Jewels for a full year.
+                    Hub4Estate is not a first venture — it's the most deliberate one.
                   </p>
                   <p className="text-neutral-600 mb-6 leading-relaxed">
-                    The electrical focus reflects a deliberate choice: start where chaos is highest, margins are opaque,
-                    and repeat demand is guaranteed. The long-term vision is to become the default procurement layer
-                    for electrical materials in Indian real estate projects.
+                    2 years of validation, 10+ clients served manually, real deals closed across audio equipment,
+                    LED lighting, and wiring — then incorporated HUB4ESTATE LLP in March 2026.
+                    Electricals is the first vertical. The real play is B2B procurement infrastructure.
                   </p>
+
                   <blockquote className="border-l-4 border-accent-500 pl-4 italic text-neutral-700 mb-6">
-                    "We're replacing phone calls, WhatsApp negotiations, and fragmented dealer networks with a single
-                    intelligent interface. If executed correctly, this becomes extremely hard to displace."
+                    "Unclear is dangerous. Difficult is workable. The problem is clear —
+                    I know exactly what we're building and why. Everything else is just execution."
                   </blockquote>
+
                   <div className="flex flex-wrap gap-4">
                     <a
-                      href="mailto:shresth.agarwal@hub4estate.com"
+                      href="mailto:shreshth.agarwal@hub4estate.com"
                       className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900"
                     >
                       <Mail className="w-5 h-5" />
-                      <span className="font-medium">shresth.agarwal@hub4estate.com</span>
+                      <span className="font-medium">shreshth.agarwal@hub4estate.com</span>
                     </a>
                     <a
                       href="tel:+917690001999"
@@ -148,6 +222,15 @@ export function AboutPage() {
                     >
                       <Phone className="w-5 h-5" />
                       <span className="font-medium">+91 76900 01999</span>
+                    </a>
+                    <a
+                      href="https://linkedin.com/in/sa-h4e"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900"
+                    >
+                      <Linkedin className="w-5 h-5" />
+                      <span className="font-medium">linkedin.com/in/sa-h4e</span>
                     </a>
                   </div>
                 </div>
@@ -162,10 +245,10 @@ export function AboutPage() {
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4">
-              Our Values
+              What We Stand For
             </h2>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              These principles guide everything we do at Hub4Estate.
+              These aren't values we put on a wall. They're the decisions we make every day.
             </p>
           </div>
 
@@ -186,27 +269,53 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* Journey Timeline */}
       <section className="py-20 bg-neutral-900 text-white">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black mb-4">Our Journey</h2>
+            <h2 className="text-3xl md:text-4xl font-black mb-4">The Journey</h2>
+            <p className="text-neutral-400">Two years of validation before a single line of product code.</p>
           </div>
 
           <div className="max-w-3xl mx-auto">
-            <div className="space-y-8">
+            <div className="space-y-0">
               {milestones.map((milestone, index) => (
                 <div key={index} className="flex gap-6">
-                  <div className="w-20 flex-shrink-0 text-right">
-                    <span className="text-2xl font-black text-accent-400">{milestone.year}</span>
+                  <div className="w-24 flex-shrink-0 text-right pt-1">
+                    <span className="text-sm font-black text-accent-400">{milestone.year}</span>
                   </div>
-                  <div className="w-px bg-neutral-700 relative">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-accent-500 rounded-full" />
+                  <div className="flex flex-col items-center">
+                    <div className="w-4 h-4 bg-accent-500 rounded-full flex-shrink-0 mt-1" />
+                    {index < milestones.length - 1 && (
+                      <div className="w-px flex-1 bg-neutral-700 min-h-12" />
+                    )}
                   </div>
-                  <div className="flex-1 pb-8">
+                  <div className="flex-1 pb-10">
                     <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
-                    <p className="text-neutral-400">{milestone.description}</p>
+                    <p className="text-neutral-400 leading-relaxed">{milestone.description}</p>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Company Info */}
+      <section className="py-12 bg-neutral-50 border-y-2 border-neutral-200">
+        <div className="container-custom">
+          <div className="max-w-2xl mx-auto text-center">
+            <h3 className="text-xl font-black text-neutral-900 mb-6">Company Details</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+              {[
+                { label: 'Entity', value: 'HUB4ESTATE LLP' },
+                { label: 'LLPIN', value: 'ACW-4269' },
+                { label: 'Incorporated', value: '17 March 2026' },
+                { label: 'Registered in', value: 'Rajasthan, India' },
+              ].map((item, i) => (
+                <div key={i} className="bg-white border border-neutral-200 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">{item.label}</p>
+                  <p className="font-bold text-neutral-900 text-sm">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -218,14 +327,14 @@ export function AboutPage() {
       <section className="py-20 bg-accent-500">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white mb-6">
-            Ready to Experience Better Procurement?
+            Ready to Find the Best Price?
           </h2>
           <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-            Join thousands of buyers and dealers already using Hub4Estate.
+            Submit an inquiry and let our dealer network do the work.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/rfq/create" className="btn-primary bg-white text-neutral-900 border-white hover:bg-neutral-900 hover:text-white hover:border-neutral-900">
-              Get Started
+              Submit an Inquiry
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
             <Link to="/dealer/onboarding" className="btn-secondary border-white text-white hover:bg-white hover:text-neutral-900">

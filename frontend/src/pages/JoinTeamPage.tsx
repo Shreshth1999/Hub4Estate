@@ -29,40 +29,40 @@ export function JoinTeamPage() {
 
   const openPositions = [
     {
-      title: 'CTO / Lead Engineer',
+      title: 'Full-Stack Engineer / Tech Lead',
       type: 'Full-time',
       location: 'Remote / Hybrid',
-      problem: 'Build the RFQ engine, dealer matching, quote comparison, and AI assistant from scratch.',
-      description: 'You understand marketplaces, RFQ systems, and scalable backend architecture. React, Node.js, PostgreSQL.',
+      problem: 'Build and own the RFQ engine, dealer matching logic, quote comparison, and the platform backend.',
+      description: 'Strong in React + Node.js + PostgreSQL. You think in systems, not just features. Marketplace or B2B experience is a plus.',
     },
     {
-      title: 'Product Designer',
-      type: 'Full-time',
-      location: 'Remote / Hybrid',
-      problem: 'Create Apple-level clarity in a B2B procurement tool—trust is built through design.',
-      description: 'Strong UX sensibility. Restraint over flashy. You believe the best UI is invisible.',
-    },
-    {
-      title: 'Catalog & Data Lead',
-      type: 'Full-time',
-      location: 'Remote',
-      problem: 'Structure 10,000+ electrical products with specs, compliance, and brand mapping.',
-      description: 'Manage brand data, specifications, scraping workflows, and ISI/BIS compliance mapping.',
-    },
-    {
-      title: 'Dealer Onboarding Lead',
+      title: 'Dealer Acquisition Lead',
       type: 'Full-time',
       location: 'Pan India',
-      problem: 'Build supply depth—500+ verified dealers across 50+ cities.',
-      description: 'Sales experience in B2B. You understand how to build trust with traditional businesses.',
+      problem: 'Bring verified electrical dealers onto the platform. Build relationships with traditional businesses.',
+      description: 'B2B sales experience. You know how to earn trust with shop owners and distributors — not just pitch decks.',
+    },
+    {
+      title: 'Operations & Catalog Lead',
+      type: 'Full-time',
+      location: 'Remote',
+      problem: 'Structure electrical product data — specs, brands, categories, compliance (ISI/BIS). Keep the catalog clean.',
+      description: 'Detail-oriented. Comfortable with spreadsheets, scraping workflows, and systematic data management.',
+    },
+    {
+      title: 'Marketing & Growth Intern',
+      type: 'Internship',
+      location: 'Remote',
+      problem: 'Help buyers find us. Content, social, SEO, community — whatever actually works.',
+      description: 'Creative, self-directed, willing to try things and be honest when they fail. No fluff.',
     },
   ];
 
   const benefits = [
-    { icon: TrendingUp, title: 'Ownership', description: 'Real responsibility from day one, not titles' },
-    { icon: Users, title: 'Impact', description: 'Build infrastructure for a massive market' },
-    { icon: Briefcase, title: 'Learning', description: 'Solve hard problems across the entire stack' },
-    { icon: Code, title: 'Long-term', description: 'Not a quick flip—building for decades' },
+    { icon: TrendingUp, title: 'Real Ownership', description: 'Real responsibility from day one — not ticket-filing' },
+    { icon: Users, title: 'Actual Impact', description: 'Your work directly saves buyers money on every deal' },
+    { icon: Briefcase, title: 'Hard Problems', description: 'Fragmented markets, trust, pricing opacity — not CRUD apps' },
+    { icon: Code, title: 'Long Game', description: 'Building infrastructure for decades — not a quick flip' },
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -75,7 +75,6 @@ export function JoinTeamPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Create mailto link with form data
     const subject = encodeURIComponent(`Job Application: ${formData.position || 'General'} - ${formData.name}`);
     const body = encodeURIComponent(
 `New Job Application for Hub4Estate
@@ -100,7 +99,7 @@ ${formData.vision}
 Submitted via Hub4Estate Join Team Page`
     );
 
-    window.location.href = `mailto:shresth.agarwal@hub4estate.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:shreshth.agarwal@hub4estate.com?subject=${subject}&body=${body}`;
     setSubmitted(true);
   };
 
@@ -122,8 +121,8 @@ Submitted via Hub4Estate Join Team Page`
               Join the Mission
             </h1>
             <p className="text-xl text-neutral-300">
-              We're building the procurement infrastructure for Indian real estate—starting with electrical.
-              We want builders, not job seekers. People who want to solve hard, unsexy problems with massive impact.
+              We're building the price transparency infrastructure for electrical procurement in India.
+              We want people who want to solve hard, unsexy problems with real market impact.
             </p>
           </div>
         </div>
@@ -170,7 +169,7 @@ Submitted via Hub4Estate Join Team Page`
                         {position.location}
                       </span>
                     </div>
-                    <p className="text-accent-700 font-semibold mt-3">Problem: {position.problem}</p>
+                    <p className="text-accent-700 font-semibold mt-3">Problem you'll own: {position.problem}</p>
                     <p className="text-neutral-600 mt-2">{position.description}</p>
                   </div>
                   <a
@@ -183,6 +182,13 @@ Submitted via Hub4Estate Join Team Page`
               </div>
             ))}
           </div>
+
+          <div className="mt-8 p-6 bg-neutral-50 border-2 border-neutral-200 text-center">
+            <p className="text-neutral-600">
+              Don't see your role? If you understand the problem we're solving and can contribute —
+              <a href="#apply" className="text-neutral-900 font-bold hover:text-accent-600 ml-1">send a general application.</a>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -193,25 +199,25 @@ Submitted via Hub4Estate Join Team Page`
             <div className="text-center mb-8">
               <h2 className="text-3xl font-black text-neutral-900 mb-4">Apply Now</h2>
               <p className="text-neutral-600">
-                Share your vision and tell us how you can contribute to revolutionizing electrical procurement in India.
+                Tell us who you are, what you've done, and why Hub4Estate.
               </p>
             </div>
 
             {submitted ? (
               <div className="bg-white border-2 border-green-500 shadow-brutal p-8 text-center">
-                <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-green-500 flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-black text-neutral-900 mb-2">Application Sent!</h3>
                 <p className="text-neutral-600 mb-6">
                   Your email client should have opened with your application.
-                  If it didn't, please send your application directly to:
+                  If it didn't, email directly to:
                 </p>
                 <a
-                  href="mailto:shresth.agarwal@hub4estate.com"
+                  href="mailto:shreshth.agarwal@hub4estate.com"
                   className="text-accent-600 font-bold hover:underline"
                 >
-                  shresth.agarwal@hub4estate.com
+                  shreshth.agarwal@hub4estate.com
                 </a>
                 <button
                   onClick={() => setSubmitted(false)}
@@ -223,7 +229,6 @@ Submitted via Hub4Estate Join Team Page`
             ) : (
               <form onSubmit={handleSubmit} className="bg-white border-2 border-neutral-200 shadow-brutal p-8">
                 <div className="space-y-6">
-                  {/* Personal Details */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-bold text-neutral-900 mb-2">
@@ -289,7 +294,6 @@ Submitted via Hub4Estate Join Team Page`
                     </div>
                   </div>
 
-                  {/* Position */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-bold text-neutral-900 mb-2">
@@ -323,7 +327,7 @@ Submitted via Hub4Estate Join Team Page`
                         className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors bg-white"
                       >
                         <option value="">Select experience</option>
-                        <option value="0-1 years">0-1 years (Fresher)</option>
+                        <option value="0-1 years">0-1 years (Fresher / Student)</option>
                         <option value="1-3 years">1-3 years</option>
                         <option value="3-5 years">3-5 years</option>
                         <option value="5-10 years">5-10 years</option>
@@ -332,14 +336,13 @@ Submitted via Hub4Estate Join Team Page`
                     </div>
                   </div>
 
-                  {/* Vision */}
                   <div>
                     <label className="block text-sm font-bold text-neutral-900 mb-2">
                       <Zap className="w-4 h-4 inline mr-1" />
-                      Your Vision *
+                      Why Hub4Estate? *
                     </label>
                     <p className="text-sm text-neutral-500 mb-2">
-                      Tell us why you want to join Hub4Estate and how you can contribute to our mission.
+                      Tell us what you've done that's relevant, and why you want in on this specifically.
                     </p>
                     <textarea
                       name="vision"
@@ -348,7 +351,7 @@ Submitted via Hub4Estate Join Team Page`
                       required
                       rows={6}
                       className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors resize-none"
-                      placeholder="Share your vision for Hub4Estate and what unique value you bring to the team..."
+                      placeholder="What have you built or done that's relevant? Why does this problem matter to you?"
                     />
                   </div>
 
@@ -379,21 +382,32 @@ Submitted via Hub4Estate Join Team Page`
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-3xl font-black mb-4">Questions?</h2>
             <p className="text-neutral-300 mb-8">
-              Reach out directly to our founder. We'd love to hear from you.
+              Reach out directly to our founder.
             </p>
-            <div className="bg-white/10 backdrop-blur-sm border border-white/20 p-8 text-left">
-              <h3 className="font-bold text-lg mb-4">Contact Shreshth Agarwal</h3>
+            <div className="bg-white/10 border border-white/20 p-8 text-left">
+              <h3 className="font-bold text-lg mb-4">Shreshth Agarwal — Founder, Hub4Estate</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-accent-400" />
-                  <a href="mailto:shresth.agarwal@hub4estate.com" className="hover:text-accent-400">
-                    shresth.agarwal@hub4estate.com
+                  <a href="mailto:shreshth.agarwal@hub4estate.com" className="hover:text-accent-400">
+                    shreshth.agarwal@hub4estate.com
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-accent-400" />
                   <a href="tel:+917690001999" className="hover:text-accent-400">
                     +91 76900 01999
+                  </a>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Linkedin className="w-5 h-5 text-accent-400" />
+                  <a
+                    href="https://linkedin.com/in/sa-h4e"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-accent-400"
+                  >
+                    linkedin.com/in/sa-h4e
                   </a>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Clock, ArrowRight, Building2, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, MapPin, Clock, ArrowRight, Building2, CheckCircle, Loader2, Linkedin } from 'lucide-react';
 import { contactApi } from '../lib/api';
 
 interface FormData {
@@ -33,7 +33,6 @@ export function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (!formData.name || !formData.email || !formData.role || !formData.message) {
       setError('Please fill in all required fields');
       return;
@@ -73,7 +72,7 @@ export function ContactPage() {
               Contact Us
             </h1>
             <p className="text-xl text-neutral-300 leading-relaxed">
-              Have questions about Hub4Estate? Want to partner with us? We'd love to hear from you.
+              Questions about Hub4Estate? Want to become a dealer? Just reach out.
             </p>
           </div>
         </div>
@@ -95,14 +94,10 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-neutral-900 mb-1">Email</h3>
-                    <a href="mailto:hello@hub4estate.com" className="text-accent-600 hover:underline text-lg">
-                      hello@hub4estate.com
+                    <a href="mailto:shreshth.agarwal@hub4estate.com" className="text-accent-600 hover:underline text-lg block">
+                      shreshth.agarwal@hub4estate.com
                     </a>
-                    <p className="text-neutral-500 text-sm mt-1">For general inquiries</p>
-                    <a href="mailto:dealers@hub4estate.com" className="text-accent-600 hover:underline text-lg block mt-2">
-                      dealers@hub4estate.com
-                    </a>
-                    <p className="text-neutral-500 text-sm mt-1">For dealer partnerships</p>
+                    <p className="text-neutral-500 text-sm mt-1">General inquiries, partnerships, dealer registration</p>
                   </div>
                 </div>
 
@@ -116,7 +111,26 @@ export function ContactPage() {
                     <a href="tel:+917690001999" className="text-accent-600 hover:underline text-lg">
                       +91 76900 01999
                     </a>
-                    <p className="text-neutral-500 text-sm mt-1">Mon-Sat, 9AM-7PM IST</p>
+                    <p className="text-neutral-500 text-sm mt-1">Mon–Sat, 9AM–7PM IST</p>
+                  </div>
+                </div>
+
+                {/* LinkedIn */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center flex-shrink-0">
+                    <Linkedin className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-neutral-900 mb-1">LinkedIn</h3>
+                    <a
+                      href="https://linkedin.com/in/sa-h4e"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent-600 hover:underline text-lg"
+                    >
+                      linkedin.com/in/sa-h4e
+                    </a>
+                    <p className="text-neutral-500 text-sm mt-1">Shreshth Agarwal — Founder</p>
                   </div>
                 </div>
 
@@ -127,9 +141,11 @@ export function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-neutral-900 mb-1">Registered Office</h3>
-                    <p className="text-neutral-600 text-lg">
-                      Hub4Estate LLP<br />
-                      India
+                    <p className="text-neutral-600 leading-relaxed">
+                      HUB4ESTATE LLP<br />
+                      8-D-12, Jawahar Nagar<br />
+                      Sriganganagar, Ganganagar — 335001<br />
+                      Rajasthan, India
                     </p>
                   </div>
                 </div>
@@ -142,7 +158,7 @@ export function ContactPage() {
                   <div>
                     <h3 className="font-bold text-neutral-900 mb-1">Business Hours</h3>
                     <p className="text-neutral-600">
-                      Monday - Saturday: 9:00 AM - 7:00 PM IST<br />
+                      Monday – Saturday: 9:00 AM – 7:00 PM IST<br />
                       Sunday: Closed
                     </p>
                   </div>
@@ -155,10 +171,13 @@ export function ContactPage() {
                   <Building2 className="w-6 h-6 text-neutral-700" />
                   <h3 className="font-bold text-neutral-900">Company Details</h3>
                 </div>
-                <div className="space-y-2 text-neutral-600">
-                  <p><span className="font-semibold">Legal Entity:</span> Hub4Estate LLP</p>
-                  <p><span className="font-semibold">Jurisdiction:</span> India</p>
-                  <p><span className="font-semibold">Industry:</span> B2B/B2C Marketplace - Electrical Products</p>
+                <div className="space-y-2 text-neutral-600 text-sm">
+                  <p><span className="font-semibold text-neutral-800">Legal Entity:</span> HUB4ESTATE LLP</p>
+                  <p><span className="font-semibold text-neutral-800">LLPIN:</span> ACW-4269</p>
+                  <p><span className="font-semibold text-neutral-800">PAN:</span> AATFH3466L</p>
+                  <p><span className="font-semibold text-neutral-800">Incorporated:</span> 17 March 2026</p>
+                  <p><span className="font-semibold text-neutral-800">Registered in:</span> Rajasthan, India</p>
+                  <p><span className="font-semibold text-neutral-800">Industry:</span> B2B/B2C Marketplace — Electrical Products</p>
                 </div>
               </div>
             </div>
@@ -168,12 +187,12 @@ export function ContactPage() {
               <div className="bg-white border-2 border-neutral-900 p-8">
                 {isSuccess ? (
                   <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-6">
                       <CheckCircle className="w-8 h-8 text-green-600" />
                     </div>
                     <h3 className="text-2xl font-black text-neutral-900 mb-4">Message Sent!</h3>
                     <p className="text-neutral-600 mb-6">
-                      Thank you for reaching out. We'll get back to you within 24 hours.
+                      We'll get back to you within 24 hours.
                     </p>
                     <button
                       onClick={() => setIsSuccess(false)}
@@ -249,8 +268,10 @@ export function ContactPage() {
                           <option value="">Select your role</option>
                           <option value="homeowner">Homeowner / Individual Buyer</option>
                           <option value="contractor">Contractor / Builder</option>
+                          <option value="interior-designer">Interior Designer / Architect</option>
                           <option value="dealer">Electrical Dealer</option>
                           <option value="brand">Brand / Manufacturer</option>
+                          <option value="investor">Investor</option>
                           <option value="other">Other</option>
                         </select>
                       </div>
@@ -300,7 +321,7 @@ export function ContactPage() {
               to="/rfq/create"
               className="bg-white border-2 border-neutral-200 hover:border-neutral-900 p-6 text-center transition-all"
             >
-              <h3 className="font-bold text-neutral-900 mb-2">Create an RFQ</h3>
+              <h3 className="font-bold text-neutral-900 mb-2">Submit an Inquiry</h3>
               <p className="text-sm text-neutral-500 mb-4">Get quotes from verified dealers</p>
               <span className="text-accent-600 font-semibold inline-flex items-center">
                 Start Now <ArrowRight className="w-4 h-4 ml-1" />
@@ -311,7 +332,7 @@ export function ContactPage() {
               className="bg-white border-2 border-neutral-200 hover:border-neutral-900 p-6 text-center transition-all"
             >
               <h3 className="font-bold text-neutral-900 mb-2">Become a Dealer</h3>
-              <p className="text-sm text-neutral-500 mb-4">Join our verified dealer network</p>
+              <p className="text-sm text-neutral-500 mb-4">Register and start receiving buyer inquiries</p>
               <span className="text-accent-600 font-semibold inline-flex items-center">
                 Register Free <ArrowRight className="w-4 h-4 ml-1" />
               </span>
@@ -320,8 +341,8 @@ export function ContactPage() {
               to="/about"
               className="bg-white border-2 border-neutral-200 hover:border-neutral-900 p-6 text-center transition-all"
             >
-              <h3 className="font-bold text-neutral-900 mb-2">Learn About Us</h3>
-              <p className="text-sm text-neutral-500 mb-4">Our story and mission</p>
+              <h3 className="font-bold text-neutral-900 mb-2">Our Story</h3>
+              <p className="text-sm text-neutral-500 mb-4">Why we built Hub4Estate</p>
               <span className="text-accent-600 font-semibold inline-flex items-center">
                 Read More <ArrowRight className="w-4 h-4 ml-1" />
               </span>
