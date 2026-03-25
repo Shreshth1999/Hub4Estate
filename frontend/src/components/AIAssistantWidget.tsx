@@ -3,7 +3,7 @@ import {
   Bot, X, Send, Loader2, Zap, MessageCircle, Sparkles,
   ChevronDown, Mic, MicOff, CheckCircle, Search, Package,
 } from 'lucide-react';
-import { chatApi } from '../lib/api';
+import { chatApi, streamChatMessage, StreamEvent } from '../lib/api';
 import { useAuthStore } from '../lib/store';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -151,6 +151,7 @@ export function AIAssistantWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -220,7 +221,7 @@ I can help you with:
 
   const handleSend = useCallback(async (messageText?: string) => {
     const text = (messageText || input).trim();
-    if (!text || !sessionId || isLoading) return;
+    if (!text || !sessionId || isLoading || isStreaming) return;
 
     setHasInteracted(true);
     setMessages(prev => [...prev, {
@@ -231,30 +232,53 @@ I can help you with:
     }]);
     setInput('');
     setIsLoading(true);
+    setIsStreaming(true);
+
+    const assistantId = `a-${Date.now()}`;
+    setMessages(prev => [...prev, {
+      id: assistantId,
+      role: 'assistant',
+      content: '',
+      createdAt: new Date(),
+    }]);
 
     try {
-      const response = await chatApi.sendMessage(sessionId, text);
-      const msg = response.data.message;
-      const toolResults: ToolResult[] = response.data.toolResults || [];
+      const toolResults: ToolResult[] = [];
 
-      setMessages(prev => [...prev, {
-        id: msg.id,
-        role: 'assistant',
-        content: msg.content,
-        createdAt: new Date(msg.createdAt),
-        toolResults: toolResults.length > 0 ? toolResults : undefined,
-      }]);
+      for await (const event of streamChatMessage(sessionId, text)) {
+        const e = event as StreamEvent;
+
+        if (e.type === 'text') {
+          setMessages(prev => prev.map(m =>
+            m.id === assistantId ? { ...m, content: m.content + e.text } : m
+          ));
+        } else if (e.type === 'tool_done') {
+          toolResults.push({ tool: e.tool, result: e.result });
+          setMessages(prev => prev.map(m =>
+            m.id === assistantId ? { ...m, toolResults: [...toolResults] } : m
+          ));
+        } else if (e.type === 'done' || e.type === 'error') {
+          if (e.type === 'error') {
+            setMessages(prev => prev.map(m =>
+              m.id === assistantId
+                ? { ...m, content: m.content || 'Something went wrong. Please try again.' }
+                : m
+            ));
+          }
+          break;
+        }
+      }
     } catch {
-      setMessages(prev => [...prev, {
-        id: `err-${Date.now()}`,
-        role: 'assistant',
-        content: "Sorry, I couldn't respond right now. Please try again or contact hello@hub4estate.com",
-        createdAt: new Date(),
-      }]);
+      setMessages(prev => prev.map(m =>
+        m.id === assistantId
+          ? { ...m, content: 'Connection lost. Please try again or call +91 76900 01999.' }
+          : m
+      ));
     } finally {
       setIsLoading(false);
+      setIsStreaming(false);
     }
-  }, [input, sessionId, isLoading]);
+  }, [input, sessionId, isLoading, isStreaming]);
 
   // ── Voice input ──────────────────────────────────────────────────────────────
 
