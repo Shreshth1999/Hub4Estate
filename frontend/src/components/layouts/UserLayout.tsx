@@ -6,6 +6,19 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
+import type { LucideIcon } from 'lucide-react';
+
+interface NavItem {
+  path: string;
+  icon: LucideIcon;
+  label: string;
+  highlight?: boolean;
+}
+
+interface NavSection {
+  label?: string;
+  items: NavItem[];
+}
 
 export function UserLayout() {
   const { user, logout } = useAuthStore();
@@ -18,7 +31,7 @@ export function UserLayout() {
     navigate('/');
   };
 
-  const navSections = [
+  const navSections: NavSection[] = [
     {
       items: [
         { path: '/dashboard', icon: Home, label: 'Home' },
@@ -117,7 +130,7 @@ export function UserLayout() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-gray-900 truncate">{user?.name}</p>
-              <p className="text-[11px] text-gray-400 truncate">{user?.email || user?.phone}</p>
+              <p className="text-[11px] text-gray-400 truncate">{user?.email || ''}</p>
             </div>
           </div>
           <button

@@ -7,7 +7,10 @@ export interface User {
   name: string;
   role?: string;
   city?: string;
+  phone?: string;
   type: 'user' | 'dealer' | 'admin';
+  // Professional verification
+  profVerificationStatus?: string;
   // Dealer-specific fields
   status?: string;
   onboardingStep?: number;

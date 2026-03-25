@@ -5,8 +5,12 @@ import {
   MessageSquare, Sparkles, Menu, X, User, Briefcase,
   ShieldCheck, FolderOpen,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
+
+interface NavItem { path: string; icon: LucideIcon; label: string; highlight?: boolean; }
+interface NavSection { label?: string; items: NavItem[]; }
 
 const ROLE_LABELS: Record<string, string> = {
   ARCHITECT: 'Architect',
@@ -42,7 +46,7 @@ export function ProfessionalLayout() {
   const roleLabel = user?.role ? (ROLE_LABELS[user.role] || 'Professional') : 'Professional';
   const roleColorClass = user?.role ? (ROLE_COLORS[user.role] || 'text-gray-700 bg-gray-100') : 'text-gray-700 bg-gray-100';
 
-  const navSections = [
+  const navSections: NavSection[] = [
     {
       items: [
         { path: '/pro', icon: Home, label: 'Overview' },

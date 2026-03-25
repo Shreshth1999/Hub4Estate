@@ -38,7 +38,7 @@ export function ProfessionalDashboard() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const verifStatus = (user as any)?.profVerificationStatus as keyof typeof VERIF_STATUS || 'NOT_APPLIED';
+  const verifStatus = (user?.profVerificationStatus as keyof typeof VERIF_STATUS) || 'NOT_APPLIED';
   const verifConfig = VERIF_STATUS[verifStatus] || VERIF_STATUS.NOT_APPLIED;
   const VerifIcon = verifConfig.icon;
   const isVerified = verifStatus === 'VERIFIED';
