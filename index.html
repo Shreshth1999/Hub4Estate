@@ -305,6 +305,27 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 /* Slide toast */
 .slide-toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-14px);background:rgba(28,25,22,.86);color:#fff;font-size:11px;font-weight:700;padding:6px 18px;border-radius:100px;pointer-events:none;z-index:10000;opacity:0;transition:opacity .28s,transform .28s;font-family:'Inter',sans-serif;letter-spacing:.5px;white-space:nowrap;backdrop-filter:blur(6px)}
 .slide-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* GTM phase cards (investor s19 design) */
+.phases{display:flex;gap:0;align-items:stretch;width:100%;max-width:920px}
+.pcard{flex:1;background:var(--card);border:1px solid var(--border);border-top:2px solid rgba(255,255,255,.75);border-radius:16px;padding:20px 18px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:8px;transition:transform .25s,box-shadow .25s}
+.pcard:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
+.pnum{font-size:9.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent)}
+.ptitle{font-size:18px;font-weight:800;color:var(--text)}
+.ptime{font-size:11px;color:var(--text3);margin-top:-5px}
+.plist{display:flex;flex-direction:column;gap:5px;margin-top:4px}
+.pi{font-size:11.5px;color:var(--text2);display:flex;gap:6px;line-height:1.4}
+.pi::before{content:'·';color:var(--accent);font-weight:900;font-size:16px;line-height:1;flex-shrink:0}
+.parr{display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0 6px}
+
+/* Small card (contact/info blocks) */
+.sm{background:var(--card);border:1px solid var(--border);border-top:1.5px solid rgba(255,255,255,.75);border-radius:10px;padding:11px 15px;box-shadow:var(--sh);transition:box-shadow .2s}
+.sm:hover{box-shadow:var(--sh-lg)}
+
+/* Word-by-word reveal */
+.wrd{display:inline-block;opacity:0;transform:translateY(16px);will-change:transform,opacity}
+.slide.active .wrd{animation:wrdIn .5s cubic-bezier(.22,1,.36,1) var(--wd,0s) both}
+@keyframes wrdIn{to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 
@@ -420,8 +441,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
           <div class="caption" style="margin-top:6px;font-size:12.5px;color:var(--text2)">of paying dealers<br>quit within one year</div>
         </div>
         <div class="card a5" style="text-align:center;padding:20px">
-          <div class="big-stat" style="font-size:28px">1 lead</div>
-          <div class="caption" style="margin-top:6px;font-size:12.5px">sold to <strong style="color:var(--red);font-weight:900">10+ dealers</strong><br>at the same time</div>
+          <div class="big-stat" style="font-size:26px">&#8377;70K</div>
+          <div class="caption" style="margin-top:6px;font-size:12.5px">avg annual spend<br>on <strong style="color:var(--red);font-weight:900">cold, unfiltered</strong> leads</div>
         </div>
         <div class="card a6" style="text-align:center;padding:20px">
           <div class="big-stat" style="font-size:38px;color:var(--red)">1.8&#9733;</div>
@@ -455,9 +476,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 
       <div class="card a2" style="text-align:center;padding:30px 24px">
         <div style="font-size:48px;margin-bottom:12px">&#128176;</div>
-        <div class="big-stat" style="font-size:clamp(32px,5.5vw,52px);color:var(--red)">20–40%</div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin:8px 0">overpay on every order</div>
-        <div class="caption" style="font-size:13px">No real-time price visibility. No competitive pressure on suppliers. Buyers just absorb the loss.</div>
+        <div class="big-stat" style="font-size:clamp(32px,5.5vw,52px);color:var(--red)">34.7%</div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);margin:8px 0">avg savings below retail</div>
+        <div class="caption" style="font-size:13px">Documented across all client deals. No benchmark, no comparison = buyers absorb the full markup silently.</div>
       </div>
     </div>
 
@@ -1193,12 +1214,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
     <div class="s-head">
       <div class="label">Timing</div>
       <h2 class="display" style="font-size:clamp(26px,4vw,44px)">Three Tailwinds. One Window.</h2>
+      <p class="caption a1" style="max-width:560px;text-align:center;font-style:italic;font-size:13px">Tailwinds = market forces already pushing in our direction. We didn't create them. We're riding them.</p>
       <div class="sep"></div>
     </div>
 
     <div class="why-grid">
       <div class="why-card a1">
-        <div class="why-hero">&#8377;111<br><span style="font-size:18px;font-weight:800;letter-spacing:0">lakh crore</span></div>
+        <div class="why-hero" style="font-size:36px">$1.4T<br><span style="font-size:15px;font-weight:700;letter-spacing:0;color:var(--text2)">(&#8377;111 lakh crore)</span></div>
         <div class="why-icon">&#127959;&#65039;</div>
         <div class="why-title">Infrastructure Boom</div>
         <div class="why-body">India's National Infrastructure Pipeline is driving massive procurement demand in electricals. Tier 2/3 cities are the center of this build-out — exactly where we operate.</div>
@@ -1379,82 +1401,78 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 <!-- ════════════════════════════════
      15  GTM + MOAT
 ════════════════════════════════ -->
-<section class="slide" id="s15" style="padding:28px 50px 48px">
+<section class="slide" id="s15" style="padding:28px 56px 44px">
   <div class="s-wrap" style="gap:20px">
     <div class="s-head">
-      <div class="label">Strategy &amp; Defensibility</div>
-      <h2 class="display" style="font-size:clamp(24px,3.5vw,38px)">Go-to-Market Roadmap &amp; Technology Moat</h2>
+      <div class="label">Go-to-Market &amp; Defensibility</div>
+      <h2 class="display a1" style="font-size:clamp(22px,3.5vw,40px)">Build Local. Prove. Scale.</h2>
     </div>
 
-    <div class="phase-row a1">
-      <div class="phase-card" style="border-color:var(--border)">
-        <div class="phase-num">Phase 1</div>
-        <div class="phase-title" style="font-size:20px">Prove</div>
-        <div class="phase-time">Now — 6 months</div>
-        <div style="margin-top:8px">
-          <div style="font-size:10.5px;font-weight:800;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Beachhead: North India</div>
-        </div>
-        <div class="phase-items">
-          <div class="phase-item">Sri Ganganagar → Jaipur → Jodhpur — deep trade network roots</div>
-          <div class="phase-item">10 manual deals &#8594; 10 case studies &#8594; 10 referrals</div>
-          <div class="phase-item">DPIIT recognition + Rajasthan Startup Policy</div>
-          <div class="phase-item">100 verified dealers · 500 inquiries / month</div>
-          <div class="phase-item">&#8377;0 to first &#8377;1L ARR via dealer subscriptions</div>
+    <div class="phases a2">
+      <div class="pcard">
+        <div class="pnum">Phase 1</div>
+        <div class="ptitle">Prove</div>
+        <div class="ptime">Now &rarr; 12 months</div>
+        <div class="plist">
+          <div class="pi">North India, electricals only &middot; Sri Ganganagar first</div>
+          <div class="pi">100 verified dealers &middot; 500 active buyers / month</div>
+          <div class="pi">10 deals &rarr; 10 case studies &rarr; 10 referrals</div>
+          <div class="pi">DPIIT recognition + Rajasthan Startup Policy</div>
+          <div class="pi">&#8377;0 to first &#8377;1L ARR via subscriptions</div>
         </div>
       </div>
-      <div class="phase-arrow">&#8594;</div>
-      <div class="phase-card" style="border-color:var(--accent);background:var(--accent-lt)">
-        <div class="phase-num" style="color:var(--accent)">Phase 2</div>
-        <div class="phase-title" style="font-size:20px">Scale</div>
-        <div class="phase-time">6 – 18 months</div>
-        <div style="margin-top:8px">
-          <div style="font-size:10.5px;font-weight:800;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">10 Tier 2 Cities</div>
-        </div>
-        <div class="phase-items">
-          <div class="phase-item">Expand: UP, Punjab, Haryana, MP, Gujarat belt</div>
-          <div class="phase-item">Dealer acquisition via WhatsApp trade groups + electrician unions</div>
-          <div class="phase-item">Brand partnerships: Havells, Polycab, Finolex dealer networks</div>
-          <div class="phase-item">1,000 dealers · 10,000 inquiries / month</div>
-          <div class="phase-item">Launch Market Intelligence reports (B2B revenue stream)</div>
+      <div class="parr">
+        <svg width="42" height="38" viewBox="0 0 42 38">
+          <path d="M4 19 Q21 5 38 19" fill="none" stroke="var(--border)" stroke-width="2.5" stroke-linecap="round"
+            stroke-dasharray="48" stroke-dashoffset="48" style="animation:drawLine .5s ease .9s both"/>
+          <polygon points="34,14 38,19 34,24" fill="var(--border)" style="opacity:0;animation:fadeUp .2s ease 1.3s both"/>
+        </svg>
+      </div>
+      <div class="pcard" style="background:linear-gradient(135deg,#fffdf9,var(--accent-lt));border-color:#e8d0b5">
+        <div class="pnum" style="color:var(--accent)">Phase 2</div>
+        <div class="ptitle">Scale</div>
+        <div class="ptime">12 &rarr; 24 months</div>
+        <div class="plist">
+          <div class="pi">All North India &mdash; UP, Punjab, Haryana, Gujarat belt</div>
+          <div class="pi">1,000 dealers &middot; 5,000 active buyers</div>
+          <div class="pi">Dealer acquisition via WhatsApp trade groups</div>
+          <div class="pi">Brand partnerships: Havells, Polycab, Finolex</div>
+          <div class="pi">Market Intelligence product launch &middot; Series A prep</div>
         </div>
       </div>
-      <div class="phase-arrow">&#8594;</div>
-      <div class="phase-card" style="border-color:var(--border)">
-        <div class="phase-num">Phase 3</div>
-        <div class="phase-title" style="font-size:20px">Dominate</div>
-        <div class="phase-time">18 months+</div>
-        <div style="margin-top:8px">
-          <div style="font-size:10.5px;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">Pan-India + New Verticals</div>
-        </div>
-        <div class="phase-items">
-          <div class="phase-item">Pan-India expansion — 100+ cities</div>
-          <div class="phase-item">New verticals: plumbing · HVAC · civil · safety equipment</div>
-          <div class="phase-item">API / data feed to ERPs and large construction companies</div>
-          <div class="phase-item">50,000 dealers nationally · ₹10 Cr+ ARR</div>
-          <div class="phase-item">Convert LLP &#8594; Pvt Ltd for institutional investment</div>
+      <div class="parr">
+        <svg width="42" height="38" viewBox="0 0 42 38">
+          <path d="M4 19 Q21 5 38 19" fill="none" stroke="var(--border)" stroke-width="2.5" stroke-linecap="round"
+            stroke-dasharray="48" stroke-dashoffset="48" style="animation:drawLine .5s ease 1.2s both"/>
+          <polygon points="34,14 38,19 34,24" fill="var(--border)" style="opacity:0;animation:fadeUp .2s ease 1.6s both"/>
+        </svg>
+      </div>
+      <div class="pcard" style="background:linear-gradient(135deg,#fffdf9,var(--accent-lt));border-color:#e8d0b5">
+        <div class="pnum" style="color:var(--accent)">Phase 3</div>
+        <div class="ptitle">Platform</div>
+        <div class="ptime">24 &rarr; 36 months</div>
+        <div class="plist">
+          <div class="pi">Pan-India &mdash; 100+ cities, multiple verticals</div>
+          <div class="pi">Architects, PMCs, real estate companies</div>
+          <div class="pi">Pricing data API + white-label procurement</div>
+          <div class="pi">50,000 dealers nationally &middot; &#8377;10 Cr+ ARR</div>
+          <div class="pi">Not a marketplace. An operating system.</div>
         </div>
       </div>
     </div>
 
-    <div class="a2" style="width:100%;max-width:880px">
-      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Technology Moat</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-        <div class="moat-item">
-          <div class="moat-icon">&#129302;</div>
-          <div class="moat-text"><strong>AI Slip Scanner</strong> — proprietary OCR + LLM on Indian electrical SKU data</div>
-        </div>
-        <div class="moat-item">
-          <div class="moat-icon">&#127284;</div>
-          <div class="moat-text"><strong>Blind bidding</strong> — structurally prevents dealer collusion and identity bias</div>
-        </div>
-        <div class="moat-item">
-          <div class="moat-icon">&#128202;</div>
-          <div class="moat-text"><strong>Data flywheel</strong> — every deal builds pricing benchmarks; moat grows with scale</div>
-        </div>
-        <div class="moat-item">
-          <div class="moat-icon">&#127975;</div>
-          <div class="moat-text"><strong>Verified graph</strong> — trust network takes months to build; impossible to copy fast</div>
-        </div>
+    <div class="a3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:860px">
+      <div class="moat-item">
+        <div class="moat-icon">&#128202;</div>
+        <div class="moat-text"><strong>Data Moat</strong> &mdash; Thousands of bids = the pricing oracle IndiaMART never built.</div>
+      </div>
+      <div class="moat-item">
+        <div class="moat-icon">&#128274;</div>
+        <div class="moat-text"><strong>Trust Moat</strong> &mdash; Verified dealer network takes months to build. Can&rsquo;t be replicated overnight.</div>
+      </div>
+      <div class="moat-item">
+        <div class="moat-icon">&#129302;</div>
+        <div class="moat-text"><strong>AI Moat</strong> &mdash; Slip scanner + routing improve with every transaction. Self-reinforcing flywheel.</div>
       </div>
     </div>
   </div>
@@ -1465,60 +1483,46 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
      16  THANK YOU
 ════════════════════════════════ -->
 <section class="slide" id="s16" style="overflow:hidden">
-  <!-- Floaters — 14 elements, varied sizes and timings -->
-  <div class="floater" style="top:8%;left:4%;--fd:4.2s;--fd-d:0s;--dx:5px;--dy:-12px;font-size:12px">&#127978; 10 Active Clients</div>
-  <div class="floater" style="top:14%;right:6%;--fd:3.8s;--fd-d:.9s;--dx:-6px;--dy:-9px">&#128176; &#8377;1.22 lakh+ Saved</div>
-  <div class="floater" style="bottom:22%;left:2%;--fd:4.6s;--fd-d:1.8s;--dx:7px;--dy:-14px;font-size:12px">&#129302; AI-Powered</div>
-  <div class="floater" style="bottom:16%;right:4%;--fd:3.6s;--fd-d:.5s;--dx:-4px;--dy:-8px">&#9889; Electricals First</div>
-  <div class="floater" style="top:42%;left:1%;--fd:4.1s;--fd-d:1.3s;--dx:5px;--dy:-11px;font-size:11px">&#128205; Tier 2 North India</div>
-  <div class="floater" style="top:38%;right:1.5%;--fd:4.4s;--fd-d:.7s;--dx:-7px;--dy:-10px">&#127959;&#65039; &#8377;2.6 lakh crore market</div>
-  <div class="floater" style="bottom:36%;left:6%;--fd:3.9s;--fd-d:2.2s;--dx:4px;--dy:-8px;font-size:11px">&#128202; Market Intelligence</div>
-  <div class="floater" style="bottom:30%;right:8%;--fd:4.0s;--fd-d:1.1s;--dx:-5px;--dy:-13px">&#127963; HUB4ESTATE LLP</div>
-  <div class="floater" style="top:24%;left:8%;--fd:4.3s;--fd-d:2.8s;--dx:8px;--dy:-10px;font-size:11px">&#127891; Mesa School of Business</div>
-  <div class="floater" style="top:58%;right:4%;--fd:3.7s;--fd-d:3.1s;--dx:-4px;--dy:-7px;font-size:11px">&#128665; DPIIT Recognition</div>
-  <div class="floater" style="bottom:48%;left:1.5%;--fd:4.8s;--fd-d:.3s;--dx:6px;--dy:-12px;font-size:11px">&#127284; Blind Bidding</div>
-  <div class="floater" style="top:30%;right:15%;--fd:3.5s;--fd-d:2s;--dx:-4px;--dy:-8px;font-size:11px;opacity:.8">&#9733; 84 lakh dealers</div>
-  <div class="floater" style="bottom:10%;left:20%;--fd:4.5s;--fd-d:1.5s;--dx:6px;--dy:-9px;font-size:11px;opacity:.75">&#128293; 18-yr-old founder</div>
-  <div class="floater" style="top:70%;right:18%;--fd:3.9s;--fd-d:3.4s;--dx:-5px;--dy:-11px;font-size:11px;opacity:.8">&#128200; $2M+ hedging portfolio</div>
+  <!-- Floaters with 2D drift -->
+  <div class="floater" style="top:9%;left:3%;--fd:4.2s;--fd-d:.2s;--dx:5px;--dy:-12px;z-index:3">&#127968; 10 Active Clients</div>
+  <div class="floater" style="top:13%;right:5%;--fd:3.6s;--fd-d:.8s;--dx:-4px;--dy:-10px;z-index:4">&#128268; &#8377;2.6 lakh crore market</div>
+  <div class="floater" style="top:35%;left:2%;--fd:4.8s;--fd-d:1.2s;--dx:6px;--dy:-14px;z-index:5">&#128200; $2M+ hedging portfolio</div>
+  <div class="floater" style="top:28%;right:2%;--fd:3.9s;--fd-d:.4s;--dx:-5px;--dy:-11px;z-index:3">&#128176; &#8377;1.25 lakh+ Saved</div>
+  <div class="floater" style="bottom:22%;left:4%;--fd:4.4s;--fd-d:1.8s;--dx:4px;--dy:-13px;z-index:4">&#9889; Electricals First</div>
+  <div class="floater" style="bottom:18%;right:5%;--fd:3.7s;--fd-d:.6s;--dx:-6px;--dy:-9px;z-index:5">&#127963; Tier 2 North India</div>
+  <div class="floater" style="bottom:36%;left:18%;--fd:4.6s;--fd-d:2.1s;--dx:3px;--dy:-12px;z-index:3">&#129302; AI-Powered Matching</div>
+  <div class="floater" style="bottom:28%;right:16%;--fd:3.5s;--fd-d:1s;--dx:-4px;--dy:-10px;z-index:4">&#127959;&#65039; Mar 2026 Incorporated</div>
+  <div class="floater" style="top:56%;left:6%;--fd:4.3s;--fd-d:2.4s;--dx:7px;--dy:-9px;z-index:3;font-size:11px">&#127284; Blind Bidding</div>
+  <div class="floater" style="top:48%;right:7%;--fd:3.8s;--fd-d:3s;--dx:-5px;--dy:-11px;z-index:4;font-size:11px">&#128665; DPIIT Recognition</div>
 
-  <!-- Decorative sketch stars in background -->
-  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.08" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet">
-    <path d="M200 200 L210 180 L220 200 L240 205 L220 220 L225 245 L205 232 L185 245 L190 220 L170 205 Z" fill="none" stroke="var(--accent)" stroke-width="2"/>
-    <path d="M1700 180 L1707 162 L1714 180 L1733 184 L1714 197 L1718 218 L1701 207 L1684 218 L1688 197 L1669 184 Z" fill="none" stroke="var(--accent)" stroke-width="2"/>
-    <path d="M150 880 L156 866 L162 880 L177 883 L162 895 L165 912 L151 903 L137 912 L140 895 L125 883 Z" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-    <path d="M1750 860 L1755 848 L1760 860 L1773 863 L1760 874 L1763 888 L1751 880 L1739 888 L1742 874 L1729 863 Z" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-    <circle cx="960" cy="80" r="24" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-    <circle cx="960" cy="1000" r="18" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-  </svg>
-
-  <div style="position:relative;z-index:10;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px">
+  <!-- Frosted glass central card -->
+  <div style="position:relative;z-index:10;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px;background:rgba(245,240,231,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:24px;padding:44px 60px;border:1px solid rgba(223,216,200,.85);box-shadow:var(--sh-xl);max-width:740px;width:90%">
     <div class="label a1">Hub4Estate &middot; 2026</div>
-
-    <h1 class="display a2" style="font-size:clamp(32px,5.5vw,68px);color:var(--accent);line-height:1.1;letter-spacing:-2px">
-      Win the deal —<br>or win the data.
+    <h1 class="display" style="font-size:clamp(26px,4.5vw,54px);line-height:1.1">
+      <span class="wrd" style="--wd:.2s">Win</span><span class="wrd" style="--wd:.32s"> the </span><span class="wrd" style="color:var(--accent);--wd:.44s">deal</span><span class="wrd" style="--wd:.56s"> &mdash; or </span><span class="wrd" style="--wd:.68s">win</span><span class="wrd" style="--wd:.8s"> the </span><span class="wrd" style="color:var(--green);--wd:.92s">data.</span>
     </h1>
-
-    <div class="sep a3"></div>
-
-    <p class="a4" style="font-size:14px;font-weight:500;color:var(--text2);max-width:460px;line-height:1.8">
-      HUB4ESTATE LLP &middot; LLPIN ACW-4269<br>
-      Incorporated 17 March 2026 &middot; Rajasthan, India
+    <p class="a3" style="font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(13px,1.8vw,18px);color:var(--text2);max-width:520px;line-height:1.5">
+      The procurement intelligence layer for India&rsquo;s built environment.<br>Starting with electricals. Expanding from there.
     </p>
-
-    <div class="a5" style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
-      <div class="card-sm" style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:16px">&#128231;</span>
-        <span style="font-size:12.5px;font-family:'JetBrains Mono',monospace;color:var(--text)">shreshth.agarwal@hub4estate.com</span>
-      </div>
-      <div class="card-sm" style="display:flex;align-items:center;gap:8px">
+    <div class="sep a4"></div>
+    <div class="a5" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+      <div class="sm" style="display:flex;align-items:center;gap:10px">
         <span style="font-size:16px">&#128222;</span>
-        <span style="font-size:12.5px;font-family:'JetBrains Mono',monospace;color:var(--text)">+91 76900 01999</span>
+        <div>
+          <div style="font-size:11.5px;font-weight:800;color:var(--text)">Shreshth Agarwal</div>
+          <div style="font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace">+91 76900 01999</div>
+        </div>
+      </div>
+      <div class="sm" style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">&#128231;</span>
+        <div style="font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace">shreshth.agarwal@hub4estate.com</div>
+      </div>
+      <div class="sm" style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:16px">&#127760;</span>
+        <div style="font-size:11.5px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace">hub4estate.com</div>
       </div>
     </div>
-
-    <div class="a6">
-      <span class="pill" style="font-size:13px;padding:8px 24px">Shreshth Agarwal &mdash; Founder</span>
-    </div>
+    <div class="a6" style="font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.4px">HUB4ESTATE LLP &middot; LLPIN: ACW-4269 &middot; Incorporated 17 March 2026, Rajasthan, India</div>
   </div>
 </section>
 
@@ -1694,7 +1698,7 @@ const dotsEl = document.getElementById('dots');
 const slideTitles = [
   'Hook — The Problem','Supply Side','Buyer Pain','The Solution','How It Works',
   'Real Deals','Sony Price War','Platform Live','Market Size','Incumbents',
-  'Why Now','Revenue Model','The Founder','GTM & Moat','The Vision','Sources'
+  'Why Now','Revenue Model','The Founder','GTM & Moat — Build Local','The Vision','Sources'
 ];
 
 const toastEl = document.getElementById('slide-toast');
