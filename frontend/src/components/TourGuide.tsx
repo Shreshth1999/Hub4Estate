@@ -133,7 +133,8 @@ export function TourGuide({ tourKey, forceShow = false }: TourGuideProps) {
 
   const saveState = useCallback((updates: Partial<{ completed: boolean; dismissed: boolean; step: number }>) => {
     const storage = getTourStorage();
-    setTourStorage({ ...storage, [tourKey]: { completed: false, dismissed: false, step, ...storage[tourKey], ...updates } });
+    const current = storage[tourKey] ?? { completed: false, dismissed: false, step: 0 };
+    setTourStorage({ ...storage, [tourKey]: { ...current, step, ...updates } });
   }, [tourKey, step]);
 
   const next = () => {
