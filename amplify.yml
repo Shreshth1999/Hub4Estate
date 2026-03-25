@@ -3,9 +3,11 @@ frontend:
   phases:
     install:
       commands:
+        - source ~/.nvm/nvm.sh
         - nvm install 20
         - nvm use 20
-        - cd frontend && npm install
+        - node --version
+        - npm install --ignore-scripts
     build:
       commands:
         - cd frontend && npm run build
@@ -15,4 +17,4 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - frontend/node_modules/**/*
+      - node_modules/**/*
