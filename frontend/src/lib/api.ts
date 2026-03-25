@@ -203,6 +203,74 @@ export const chatApi = {
     api.patch(`/chat/admin/sessions/${sessionId}`, data),
 };
 
+// Streaming chat — yields SSE events as they arrive
+export type StreamEvent =
+  | { type: 'text'; text: string }
+  | { type: 'tool_start'; tool: string; label: string }
+  | { type: 'tool_done'; tool: string; result: any }
+  | { type: 'done'; messageId?: string }
+  | { type: 'error'; error: string };
+
+export async function* streamChatMessage(
+  sessionId: string,
+  message: string
+): AsyncGenerator<StreamEvent> {
+  const base = import.meta.env.VITE_BACKEND_API_URL || '/api';
+  const token = localStorage.getItem('token');
+
+  let response: Response;
+  try {
+    response = await fetch(`${base}/chat/message/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ sessionId, message }),
+    });
+  } catch {
+    yield { type: 'error', error: 'Network error. Check your connection.' };
+    return;
+  }
+
+  if (!response.ok || !response.body) {
+    yield { type: 'error', error: `Server error (${response.status})` };
+    return;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // Parse SSE events — split on double newline
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop() ?? '';
+
+      for (const part of parts) {
+        const dataLine = part.split('\n').find((l) => l.startsWith('data: '));
+        if (dataLine) {
+          try {
+            const event = JSON.parse(dataLine.slice(6)) as StreamEvent;
+            yield event;
+            if (event.type === 'done' || event.type === 'error') return;
+          } catch {
+            // malformed chunk — skip
+          }
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 // CRM API
 export const crmApi = {
   // Companies

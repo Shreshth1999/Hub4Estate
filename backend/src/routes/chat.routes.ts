@@ -3,7 +3,7 @@ import { z } from 'zod';
 import prisma from '../config/database';
 import { validateBody } from '../middleware/validation';
 import { optionalAuth, authenticateAdmin, AuthRequest } from '../middleware/auth';
-import { generateChatResponse, ChatMessage } from '../services/ai.service';
+import { generateChatResponse, streamChatResponse, ChatMessage } from '../services/ai.service';
 
 const router = Router();
 
@@ -127,6 +127,120 @@ router.post(
       console.error('Send message error:', error);
       return res.status(500).json({ error: 'Failed to process message' });
     }
+  }
+);
+
+// ============================================
+// STREAMING CHAT ENDPOINT (SSE)
+// ============================================
+
+router.post(
+  '/message/stream',
+  optionalAuth,
+  async (req: AuthRequest, res: Response) => {
+    const { sessionId, message } = req.body;
+
+    if (!sessionId || !message || typeof message !== 'string' || message.length < 1 || message.length > 2000) {
+      return res.status(400).json({ error: 'Invalid request' });
+    }
+
+    // Set SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    const emit = (data: object) => {
+      if (!res.writableEnded) {
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+      }
+    };
+
+    try {
+      const session = await prisma.chatSession.findUnique({
+        where: { id: sessionId },
+        include: {
+          messages: {
+            orderBy: { createdAt: 'asc' },
+            take: 20,
+          },
+        },
+      });
+
+      if (!session) {
+        emit({ type: 'error', error: 'Session not found' });
+        res.end();
+        return;
+      }
+
+      // Save user message
+      await prisma.chatMessage.create({
+        data: { sessionId, role: 'user', content: message },
+      });
+
+      // Build message history
+      const messageHistory: ChatMessage[] = session.messages.map((m) => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+      }));
+      messageHistory.push({ role: 'user', content: message });
+
+      // Build user context
+      const userContext = req.user
+        ? {
+            name: (req.user as any).name,
+            phone: (req.user as any).phone,
+            email: (req.user as any).email,
+            city: (req.user as any).city,
+          }
+        : undefined;
+
+      // Build dealer context if applicable
+      const dealerContext =
+        (req.user as any)?.type === 'dealer'
+          ? {
+              businessName: (req.user as any).name,
+              city: (req.user as any).city,
+              id: (req.user as any).id,
+            }
+          : undefined;
+
+      // Stream the response
+      let fullResponse = '';
+
+      for await (const event of streamChatResponse(messageHistory, userContext, dealerContext)) {
+        emit(event);
+        if (event.type === 'text') {
+          fullResponse += event.text;
+        }
+      }
+
+      // Save assistant message to DB
+      if (fullResponse) {
+        const assistantMessage = await prisma.chatMessage.create({
+          data: { sessionId, role: 'assistant', content: fullResponse },
+        });
+
+        await prisma.chatSession.update({
+          where: { id: sessionId },
+          data: {
+            messageCount: { increment: 2 },
+            lastMessageAt: new Date(),
+            title: session.title || message.slice(0, 50),
+          },
+        });
+
+        emit({ type: 'done', messageId: assistantMessage.id });
+      } else {
+        emit({ type: 'done' });
+      }
+    } catch (error) {
+      console.error('[Stream] Error:', error);
+      emit({ type: 'error', error: 'Server error. Please try again.' });
+    }
+
+    res.end();
   }
 );
 
