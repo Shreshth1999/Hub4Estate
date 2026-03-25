@@ -55,3 +55,10 @@ __pycache__/
 # Generated files from scripts
 /*.xlsx
 /*.pdf
+
+# Scraper test/output files (may contain third-party keys/analytics)
+backend/scripts/scrapers/*.html
+backend/scripts/scrapers/*.png
+backend/scripts/scrapers/*.json
+backend/scripts/scrapers/output/
+backend/scripts/scrapers/data/
