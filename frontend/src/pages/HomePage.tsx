@@ -5,7 +5,7 @@ import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { productsApi, api } from '../lib/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
 interface InquiryForm {
   name: string;

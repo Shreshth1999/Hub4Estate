@@ -61,9 +61,6 @@ export const authApi = {
   userSignup: (data: { name: string; phone?: string; email?: string; city?: string }) =>
     api.post('/auth/user/signup', data),
 
-  // Google OAuth
-  googleCallback: (token: string) => api.post('/auth/google/callback', { token }),
-
   // Complete profile (for both OAuth and OTP users)
   completeProfile: (data: any) => api.post('/auth/complete-profile', data),
 
@@ -97,9 +94,7 @@ export const productsApi = {
 // RFQ API
 export const rfqApi = {
   create: (data: any) => api.post('/rfq', data),
-  createRFQ: (data: any) => api.post('/rfq', data),
   publish: (id: string) => api.post(`/rfq/${id}/publish`),
-  publishRFQ: (id: string) => api.post(`/rfq/${id}/publish`),
   list: (params?: any) => api.get('/rfq', { params }),
   getMyRFQs: (params?: any) => api.get('/rfq', { params }),
   getRFQ: (id: string) => api.get(`/rfq/${id}`),

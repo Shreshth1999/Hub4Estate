@@ -15,7 +15,7 @@ const envSchema = z.object({
   GOOGLE_CALLBACK_URL: z.string(),
   ANTHROPIC_API_KEY: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
-  NOTIFICATION_EMAIL: z.string().email().default('shresth.agarwal@hub4estate.com'),
+  NOTIFICATION_EMAIL: z.string().email().default('shreshth.agarwal@hub4estate.com'),
   MAX_FILE_SIZE: z.string().default('5242880'),
   UPLOAD_DIR: z.string().default('./uploads'),
   BCRYPT_ROUNDS: z.string().default('12'),

@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
-  User, LogOut, Zap, FileText, CheckCircle, BarChart3,
+  User, LogOut, Zap, FileText, CheckCircle,
   Award, Home, MessageSquare, Package
 } from 'lucide-react';
 import { useState } from 'react';

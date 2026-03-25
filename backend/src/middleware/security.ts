@@ -47,14 +47,19 @@ const ATTACK_PATTERNS: RegExp[] = [
   /\.\.[/\\]/,
   // Null byte injection
   /\x00/,
-  // LDAP injection
-  /[()=*|!&\\]/,
+  // LDAP injection (= and & are valid URL chars, excluded to prevent false positives)
+  /[()*|!\\]/,
   // Template injection
   /\$\{.*\}/,
   /\{\{.*\}\}/,
 ];
 
 export function detectAttacks(req: Request, res: Response, next: NextFunction) {
+  // Skip attack detection for OAuth/auth routes — callbacks contain legitimate = and & chars
+  if (req.path.startsWith('/api/auth/') || req.path === '/api/auth') {
+    return next();
+  }
+
   // Skip attack detection for file upload endpoints — checked separately
   const contentType = req.headers['content-type'] || '';
   if (contentType.includes('multipart/form-data')) {

@@ -41,12 +41,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       try {
         // Call backend to verify token and get authoritative user data
-        // Use a timeout to prevent hanging if backend is down
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
         const response = await authApi.getMe();
-        clearTimeout(timeoutId);
 
         const serverUser = response.data.user;
 
