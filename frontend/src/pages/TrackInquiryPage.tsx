@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Search, Clock, CheckCircle, Phone, MapPin, Package, ArrowRight, AlertCircle, Loader2, IndianRupee, Truck, MessageSquare, Hash } from 'lucide-react';
 import { api } from '../lib/api';
+import { ImagePreview } from '../components/common/ImagePreview';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface Inquiry {
   id: string;
@@ -249,11 +252,11 @@ export function TrackInquiryPage() {
                       </div>
                       {inq.productPhoto && (
                         <div className="col-span-2">
-                          <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Your Product Photo</p>
-                          <img
-                            src={inq.productPhoto}
-                            alt="Product"
-                            className="w-24 h-24 object-cover border-2 border-neutral-200"
+                          <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">Your Product Photo (Click to view)</p>
+                          <ImagePreview
+                            src={`${API_BASE_URL}${inq.productPhoto}`}
+                            alt="Product Photo"
+                            className="w-full h-48"
                           />
                         </div>
                       )}

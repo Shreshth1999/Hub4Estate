@@ -251,18 +251,45 @@ router.get('/admin/list', authenticateAdmin, async (req: AuthRequest, res) => {
   }
 });
 
-// GET /api/inquiry/admin/:id - Get single inquiry detail
+// GET /api/inquiry/admin/:id - Get single inquiry detail with all dealer responses
 router.get('/admin/:id', authenticateAdmin, async (req: AuthRequest, res) => {
   try {
     const inquiry = await prisma.productInquiry.findUnique({
       where: { id: req.params.id },
+      include: {
+        category: { select: { id: true, name: true } },
+        identifiedBrand: { select: { id: true, name: true, logo: true } },
+      },
     });
 
     if (!inquiry) {
       return res.status(404).json({ error: 'Inquiry not found' });
     }
 
-    return res.json({ inquiry });
+    // Get all dealer responses
+    const dealerResponses = await prisma.inquiryDealerResponse.findMany({
+      where: { inquiryId: req.params.id },
+      include: {
+        dealer: {
+          select: {
+            id: true,
+            businessName: true,
+            city: true,
+            phone: true,
+            email: true,
+            conversionRate: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return res.json({
+      inquiry,
+      dealerResponses,
+      totalResponses: dealerResponses.length,
+      quotedResponses: dealerResponses.filter(r => r.status === 'quoted').length,
+    });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }

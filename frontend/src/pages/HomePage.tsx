@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Clock, Shield, Zap, CheckCircle, Star, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3, Upload, Camera, X } from 'lucide-react';
+import { ArrowRight, Clock, Shield, Zap, CheckCircle, Star, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3, Upload, Camera, X, Sparkles, Loader2, MapPin } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { productsApi, api } from '../lib/api';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface InquiryForm {
   name: string;
@@ -34,6 +36,16 @@ export function HomePage() {
   const [formError, setFormError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // AI Scan mode
+  const [useAIScan, setUseAIScan] = useState(false);
+  const [aiScanning, setAiScanning] = useState(false);
+  const [aiParsedItems, setAiParsedItems] = useState<any[]>([]);
+  const [detectedLocation, setDetectedLocation] = useState('');
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
   useEffect(() => {
     productsApi.getCategories()
       .then(res => {
@@ -46,11 +58,44 @@ export function HomePage() {
       });
   }, []);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setProductPhoto(file);
-      setPhotoPreview(URL.createObjectURL(file));
+      const preview = URL.createObjectURL(file);
+      setPhotoPreview(preview);
+
+      // Auto-scan with AI if in AI mode
+      if (useAIScan) {
+        await processWithAI(file);
+      }
+    }
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setProductPhoto(file);
+      const preview = URL.createObjectURL(file);
+      setPhotoPreview(preview);
+
+      // Auto-scan with AI if in AI mode
+      if (useAIScan) {
+        await processWithAI(file);
+      }
     }
   };
 
@@ -58,6 +103,109 @@ export function HomePage() {
     setProductPhoto(null);
     setPhotoPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  // AI Scan functions
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      });
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+      setCameraActive(true);
+    } catch (err) {
+      setFormError('Unable to access camera. Please check permissions.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setCameraActive(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(videoRef.current, 0, 0);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+          handlePhotoChange({ target: { files: [file] } } as any);
+          stopCamera();
+          processWithAI(file);
+        }
+      }, 'image/jpeg', 0.9);
+    }
+  };
+
+  const processWithAI = async (file: File) => {
+    setAiScanning(true);
+    setFormError('');
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await api.post('/slip-scanner/parse', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const data = response.data;
+      setAiParsedItems(data.items || []);
+
+      // Auto-fill form with first item
+      if (data.items && data.items.length > 0) {
+        const firstItem = data.items[0];
+        setInquiryForm(f => ({
+          ...f,
+          modelNumber: `${firstItem.productName} ${firstItem.brand || ''}`.trim(),
+          quantity: firstItem.quantity.toString(),
+          deliveryCity: data.detectedLocation || f.deliveryCity,
+        }));
+        setDetectedLocation(data.detectedLocation || '');
+      }
+
+      if (data.warnings && data.warnings.length > 0) {
+        setFormError(`AI detected: ${data.warnings[0]}`);
+      }
+    } catch (err: any) {
+      setFormError(err.response?.data?.error || 'AI scan failed. Please try manual entry.');
+    } finally {
+      setAiScanning(false);
+    }
+  };
+
+  // Auto-detect location
+  const detectLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+            );
+            const data = await response.json();
+            const city = data.address?.city || data.address?.town || data.address?.village || '';
+            if (city) {
+              setInquiryForm(f => ({ ...f, deliveryCity: city }));
+            }
+          } catch (err) {
+            console.error('Location detection failed:', err);
+          }
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+        }
+      );
+    }
   };
 
   const handleInquirySubmit = async (e: React.FormEvent) => {
@@ -230,22 +378,348 @@ export function HomePage() {
                 ) : (
                   <>
                     <h3 className="text-xl font-black text-neutral-900 mb-1">Get the Best Price</h3>
-                    <p className="text-sm text-neutral-500 mb-6">Upload a photo or enter model number. We'll find you the cheapest deal.</p>
+                    <p className="text-sm text-neutral-500 mb-6">Choose your preferred method to get started</p>
+
+                    {/* Enhanced Toggle: Manual vs AI Scan */}
+                    <div className="relative mb-6 bg-gradient-to-br from-neutral-100 to-neutral-50 border-2 border-neutral-200 rounded-lg p-1.5">
+                      <div className="grid grid-cols-2 gap-1.5 relative">
+                        <button
+                          type="button"
+                          onClick={() => { setUseAIScan(false); stopCamera(); setAiParsedItems([]); }}
+                          className={`relative px-4 py-3 text-sm font-bold transition-all duration-300 rounded-md ${
+                            !useAIScan
+                              ? 'bg-neutral-900 text-white shadow-lg'
+                              : 'text-neutral-600 hover:text-neutral-900'
+                          }`}
+                        >
+                          <div className="flex items-center justify-center gap-2">
+                            <FileText className="w-4 h-4" />
+                            <span>Manual Entry</span>
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setUseAIScan(true)}
+                          className={`relative px-4 py-3 text-sm font-bold transition-all duration-300 rounded-md overflow-hidden ${
+                            useAIScan
+                              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                              : 'text-neutral-600 hover:text-neutral-900'
+                          }`}
+                        >
+                          <div className="flex items-center justify-center gap-2 relative z-10">
+                            <Sparkles className="w-4 h-4" />
+                            <span>AI Scan</span>
+                          </div>
+                          {useAIScan && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 opacity-0 animate-pulse" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* AI Scan Quick Guide */}
+                    {useAIScan && !cameraActive && !photoPreview && (
+                      <div className="mb-6 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Sparkles className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-neutral-900 mb-1">How AI Scan Works</h4>
+                            <p className="text-xs text-neutral-600 leading-relaxed">
+                              Upload your contractor's slip or materials list. Our AI will instantly extract all products, quantities, and brands.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          <div className="bg-white/60 rounded p-2">
+                            <div className="text-lg font-black text-purple-600 mb-0.5">1</div>
+                            <div className="text-xs font-medium text-neutral-700">Upload Photo</div>
+                          </div>
+                          <div className="bg-white/60 rounded p-2">
+                            <div className="text-lg font-black text-purple-600 mb-0.5">2</div>
+                            <div className="text-xs font-medium text-neutral-700">AI Analyzes</div>
+                          </div>
+                          <div className="bg-white/60 rounded p-2">
+                            <div className="text-lg font-black text-purple-600 mb-0.5">3</div>
+                            <div className="text-xs font-medium text-neutral-700">Auto-Fill Form</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Hidden File Input - Shared by both modes */}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                    />
 
                     <form onSubmit={handleInquirySubmit} className="space-y-4">
-                      {/* Photo Upload */}
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-2">
-                          Product Photo
-                        </label>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePhotoChange}
-                          className="hidden"
-                        />
-                        {photoPreview ? (
+                      {/* AI Scan Mode */}
+                      {useAIScan ? (
+                        <div className="space-y-4">
+                          {/* Camera View or Upload */}
+                          {cameraActive ? (
+                            <div className="space-y-4">
+                              {/* Camera View with Frame Guide */}
+                              <div className="relative rounded-lg overflow-hidden border-2 border-purple-400 shadow-lg">
+                                <video
+                                  ref={videoRef}
+                                  autoPlay
+                                  playsInline
+                                  className="w-full"
+                                />
+                                {/* Frame guide overlay */}
+                                <div className="absolute inset-0 pointer-events-none">
+                                  <div className="absolute inset-4 border-2 border-dashed border-white/50 rounded-lg flex items-center justify-center">
+                                    <span className="bg-black/60 text-white text-xs font-medium px-3 py-1.5 rounded-full">
+                                      Position slip within frame
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Camera Controls */}
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={capturePhoto}
+                                  disabled={aiScanning}
+                                  className="flex-1 px-4 py-3.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold flex items-center justify-center gap-2 hover:from-purple-700 hover:to-blue-700 transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl disabled:opacity-50"
+                                >
+                                  <Camera className="w-5 h-5" />
+                                  <span>Capture & Scan</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={stopCamera}
+                                  className="px-5 bg-neutral-200 hover:bg-neutral-300 font-bold text-sm rounded-lg transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : photoPreview ? (
+                            <div className="space-y-4">
+                              {/* Enhanced Image Preview */}
+                              <div className="relative rounded-lg overflow-hidden border-2 border-neutral-300 shadow-lg">
+                                <img src={photoPreview} alt="Product" className="w-full bg-neutral-50" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    removePhoto();
+                                    setAiParsedItems([]);
+                                  }}
+                                  className="absolute top-3 right-3 bg-neutral-900/80 hover:bg-neutral-900 text-white rounded-full p-2 transition-all duration-200 backdrop-blur-sm"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                                {!aiScanning && aiParsedItems.length === 0 && (
+                                  <div className="absolute bottom-3 left-3 right-3">
+                                    <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-white text-xs font-medium text-center">
+                                      Photo uploaded • Scanning...
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              {aiScanning ? (
+                                <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-300 rounded-lg p-6 text-center">
+                                  <div className="relative mb-4">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full mx-auto flex items-center justify-center animate-pulse">
+                                      <Sparkles className="w-8 h-8 text-white" />
+                                    </div>
+                                    <Loader2 className="w-6 h-6 animate-spin text-purple-600 absolute -bottom-1 -right-1 left-0 right-0 mx-auto" />
+                                  </div>
+                                  <p className="text-sm font-bold text-neutral-900 mb-1">AI is analyzing your slip...</p>
+                                  <p className="text-xs text-neutral-600">Extracting products, quantities, and brands</p>
+                                  <div className="mt-3 flex items-center justify-center gap-1">
+                                    <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                                    <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                                    <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                                  </div>
+                                </div>
+                              ) : aiParsedItems.length > 0 ? (
+                                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-5 space-y-3">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                                      <CheckCircle className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-bold text-green-900">
+                                        Success! Found {aiParsedItems.length} product{aiParsedItems.length > 1 ? 's' : ''}
+                                      </p>
+                                      <p className="text-xs text-green-700">Form auto-filled with first item</p>
+                                    </div>
+                                  </div>
+
+                                  {/* Product List */}
+                                  <div className="space-y-3 bg-white/60 rounded-lg p-3">
+                                    {aiParsedItems.slice(0, 3).map((item: any, i: number) => (
+                                      <div key={i} className="flex items-start gap-2 text-xs">
+                                        <span className="text-green-600 font-bold mt-0.5">{i + 1}.</span>
+                                        <div className="flex-1">
+                                          <div className="font-bold text-neutral-900">{item.productName}</div>
+                                          <div className="text-neutral-600 flex items-center gap-2 flex-wrap">
+                                            <span>{item.quantity} {item.unit}</span>
+                                            {item.brand && (
+                                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                                {item.brand}
+                                              </span>
+                                            )}
+                                            {item.confidence && (
+                                              <span className="text-neutral-500">
+                                                {Math.round(item.confidence * 100)}% confident
+                                              </span>
+                                            )}
+                                          </div>
+                                          {/* Brand suggestions when no brand detected */}
+                                          {!item.brand && item.brandSuggestions && item.brandSuggestions.length > 0 && (
+                                            <div className="mt-2">
+                                              <p className="text-xs text-neutral-500 mb-1">Suggested brands:</p>
+                                              <div className="flex flex-wrap gap-1">
+                                                {item.brandSuggestions.map((s: any) => (
+                                                  <button
+                                                    key={s.name}
+                                                    type="button"
+                                                    onClick={() => {
+                                                      const updated = [...aiParsedItems];
+                                                      updated[i] = { ...updated[i], brand: s.name };
+                                                      setAiParsedItems(updated);
+                                                      if (i === 0) setInquiryForm(f => ({ ...f, modelNumber: `${item.productName} ${s.name}`.trim() }));
+                                                    }}
+                                                    className={`px-2 py-0.5 border text-xs font-bold rounded-sm transition-colors ${
+                                                      s.segment === 'premium' ? 'border-purple-300 text-purple-700 bg-purple-50 hover:bg-purple-100' :
+                                                      s.segment === 'quality' ? 'border-blue-300 text-blue-700 bg-blue-50 hover:bg-blue-100' :
+                                                      'border-green-300 text-green-700 bg-green-50 hover:bg-green-100'
+                                                    }`}
+                                                    title={s.reason}
+                                                  >
+                                                    {s.name}
+                                                  </button>
+                                                ))}
+                                              </div>
+                                              <p className="text-xs text-neutral-400 mt-1 italic">Tap to select, or leave blank for all quotes</p>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                    {aiParsedItems.length > 3 && (
+                                      <p className="text-xs text-neutral-500 italic pt-1 border-t border-neutral-200">
+                                        +{aiParsedItems.length - 3} more product{aiParsedItems.length - 3 > 1 ? 's' : ''} detected
+                                      </p>
+                                    )}
+                                  </div>
+
+                                  {detectedLocation && (
+                                    <div className="flex items-center gap-2 bg-blue-50 rounded px-3 py-2">
+                                      <MapPin className="w-4 h-4 text-blue-600" />
+                                      <span className="text-xs font-medium text-blue-900">
+                                        Location detected: <span className="font-bold">{detectedLocation}</span>
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : null}
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              {/* Enhanced Upload Area */}
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => fileInputRef.current?.click()}
+                                  onDragOver={handleDragOver}
+                                  onDragLeave={handleDragLeave}
+                                  onDrop={handleDrop}
+                                  className={`group w-full h-44 border-2 border-dashed transition-all duration-300 rounded-xl flex flex-col items-center justify-center gap-3 relative overflow-hidden shadow-sm hover:shadow-lg ${
+                                    isDragging
+                                      ? 'border-purple-600 bg-purple-100 scale-105'
+                                      : 'border-purple-400 bg-gradient-to-br from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 hover:border-purple-600'
+                                  }`}
+                                >
+                                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                                  {/* Animated Border Pulse */}
+                                  <div className="absolute inset-0 rounded-xl border-2 border-purple-400 animate-pulse opacity-50"></div>
+
+                                  <div className="relative z-10 flex flex-col items-center gap-2">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center mb-1 group-hover:scale-110 transition-transform shadow-lg">
+                                      <Upload className="w-8 h-8 text-white animate-bounce" />
+                                    </div>
+                                    <span className="text-base font-bold text-neutral-900">Click to Upload Slip</span>
+                                    <span className="text-xs text-neutral-600">or drag and drop here</span>
+                                    <div className="mt-2 px-4 py-1.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-md">
+                                      <span className="text-xs font-bold">✨ AI-Powered • Instant Results</span>
+                                    </div>
+                                    <span className="text-xs text-neutral-500 mt-1">JPG, PNG • Max 10MB</span>
+                                  </div>
+                                </button>
+                              </div>
+
+                              {/* Divider */}
+                              <div className="relative">
+                                <div className="absolute inset-0 flex items-center">
+                                  <div className="w-full border-t border-neutral-200"></div>
+                                </div>
+                                <div className="relative flex justify-center text-xs">
+                                  <span className="px-3 bg-white text-neutral-500 font-medium">OR</span>
+                                </div>
+                              </div>
+
+                              {/* Enhanced Camera Button */}
+                              <button
+                                type="button"
+                                onClick={startCamera}
+                                className="w-full px-4 py-3.5 bg-gradient-to-r from-neutral-900 to-neutral-800 text-white font-bold flex items-center justify-center gap-2 hover:from-neutral-800 hover:to-neutral-700 transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl"
+                              >
+                                <Camera className="w-5 h-5" />
+                                <span>Use Camera to Capture</span>
+                              </button>
+
+                              {/* Enhanced Tips Section */}
+                              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                                    <Camera className="w-3.5 h-3.5 text-white" />
+                                  </div>
+                                  <p className="text-sm font-bold text-neutral-900">Pro Tips for Perfect Scans</p>
+                                </div>
+                                <ul className="text-xs text-neutral-700 space-y-2">
+                                  <li className="flex items-start gap-2">
+                                    <span className="text-green-600 font-bold mt-0.5">✓</span>
+                                    <span><span className="font-semibold">Clear lighting</span> - Natural light works best</span>
+                                  </li>
+                                  <li className="flex items-start gap-2">
+                                    <span className="text-green-600 font-bold mt-0.5">✓</span>
+                                    <span><span className="font-semibold">Full view</span> - Capture entire slip in frame</span>
+                                  </li>
+                                  <li className="flex items-start gap-2">
+                                    <span className="text-green-600 font-bold mt-0.5">✓</span>
+                                    <span><span className="font-semibold">Steady shot</span> - Avoid blurry or angled photos</span>
+                                  </li>
+                                </ul>
+                                <div className="mt-3 pt-3 border-t border-green-200">
+                                  <p className="text-xs text-neutral-600 flex items-center gap-1">
+                                    <Sparkles className="w-3 h-3 text-purple-600" />
+                                    <span className="font-medium">AI works best with clear, well-lit images</span>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* Manual Entry Mode */
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-2">
+                            Product Photo
+                          </label>
+                          {photoPreview ? (
                           <div className="relative w-full h-32 border-2 border-neutral-200 rounded overflow-hidden">
                             <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-neutral-50" />
                             <button
@@ -266,7 +740,8 @@ export function HomePage() {
                             <span className="text-sm text-neutral-500">Click to upload product photo</span>
                           </button>
                         )}
-                      </div>
+                        </div>
+                      )}
 
                       {/* Model Number */}
                       <div>
@@ -295,7 +770,17 @@ export function HomePage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Delivery City</label>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1 flex items-center justify-between">
+                            <span>Delivery City</span>
+                            <button
+                              type="button"
+                              onClick={detectLocation}
+                              className="text-xs text-accent-600 hover:text-accent-700 font-normal normal-case flex items-center gap-1"
+                            >
+                              <MapPin className="w-3 h-3" />
+                              Auto-detect
+                            </button>
+                          </label>
                           <input
                             type="text"
                             placeholder="e.g. Mumbai"
@@ -330,16 +815,37 @@ export function HomePage() {
                       </div>
 
                       {formError && (
-                        <p className="text-sm text-red-600 font-medium">{formError}</p>
+                        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start gap-3">
+                          <div className="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <X className="w-3 h-3 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-red-900 mb-0.5">Error</p>
+                            <p className="text-xs text-red-700">{formError}</p>
+                          </div>
+                        </div>
                       )}
 
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full btn-urgent justify-center disabled:opacity-50"
+                        className={`w-full justify-center disabled:opacity-50 transition-all duration-300 ${
+                          useAIScan && aiParsedItems.length > 0
+                            ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3.5 px-6 rounded-lg shadow-lg hover:shadow-xl'
+                            : 'btn-urgent'
+                        }`}
                       >
-                        {submitting ? 'Submitting...' : 'Get Cheapest Price'}
-                        {!submitting && <ArrowRight className="ml-2 w-5 h-5" />}
+                        {submitting ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                            <span>Submitting...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>{useAIScan && aiParsedItems.length > 0 ? 'Submit AI-Scanned Inquiry' : 'Get Cheapest Price'}</span>
+                            <ArrowRight className="ml-2 w-5 h-5" />
+                          </>
+                        )}
                       </button>
 
                       <p className="text-xs text-neutral-400 text-center">

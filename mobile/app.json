@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "Hub4Estate",
+    "slug": "hub4estate",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "hub4estate",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1C1917"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hub4estate.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Hub4Estate needs camera access to scan product labels and bills.",
+        "NSPhotoLibraryUsageDescription": "Hub4Estate needs photo library access to upload product images.",
+        "NSPhotoLibraryAddUsageDescription": "Hub4Estate needs to save photos."
+      }
+    },
+    "android": {
+      "package": "com.hub4estate.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#1C1917",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-camera",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Hub4Estate accesses your photos to upload product images."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#F97316",
+          "sounds": []
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "hub4estate-mobile"
+      }
+    }
+  }
+}

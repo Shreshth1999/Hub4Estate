@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { ImagePreview } from '../../components/common/ImagePreview';
 import {
   Package, Phone, MapPin, Clock, Search, Filter, ChevronRight,
   Send, IndianRupee, Truck, X, Loader2, Image, Hash, User, Calendar,
   CheckCircle, AlertCircle, MessageSquare, Zap
 } from 'lucide-react';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface Inquiry {
   id: string;
@@ -267,16 +270,13 @@ export function AdminInquiriesPage() {
                         <span className="text-sm text-neutral-600">Qty: {inq.quantity}</span>
                       </div>
                       {inq.productPhoto && (
-                        <div className="flex items-center gap-2">
-                          <Image className="w-4 h-4 text-neutral-400" />
-                          <a
-                            href={inq.productPhoto}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-sm text-blue-600 hover:underline"
-                          >
-                            View Photo
-                          </a>
+                        <div className="mt-2">
+                          <p className="text-xs font-bold uppercase text-neutral-500 mb-1">Product Photo</p>
+                          <ImagePreview
+                            src={`${API_BASE_URL}${inq.productPhoto}`}
+                            alt="Product Photo"
+                            className="w-24 h-24"
+                          />
                         </div>
                       )}
                       {inq.notes && (
@@ -418,15 +418,13 @@ export function AdminInquiriesPage() {
                   <span className="text-neutral-900">{selectedInquiry.deliveryCity}</span>
                 </div>
                 {selectedInquiry.productPhoto && (
-                  <div>
-                    <a
-                      href={selectedInquiry.productPhoto}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-600 hover:underline font-medium flex items-center gap-1"
-                    >
-                      <Image className="w-4 h-4" /> View Product Photo
-                    </a>
+                  <div className="col-span-2">
+                    <p className="text-xs font-bold uppercase text-neutral-700 mb-2">Product Photo</p>
+                    <ImagePreview
+                      src={`${API_BASE_URL}${selectedInquiry.productPhoto}`}
+                      alt="Product Photo"
+                      className="w-full max-w-sm h-48"
+                    />
                   </div>
                 )}
               </div>

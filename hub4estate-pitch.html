@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Hub4Estate — The Opportunity</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--black:#0a0a0a;--org:#f97316;--org-d:#ea580c;
+  --org-lt:#fff7ed;--muted:#737373;--surface:#fafafa;
+  --green:#16a34a;--red:#dc2626;--blue:#2563eb;
+  --sh:4px 4px 0 0 #0a0a0a;--sh-lg:6px 6px 0 0 #0a0a0a;--sh-sm:2px 2px 0 0 #0a0a0a;
+}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:#fff;color:#0a0a0a}
+*{cursor:none!important}
+
+/* CURSOR */
+#cur{position:fixed;width:12px;height:12px;background:var(--org);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s;will-change:transform}
+#cur.big{width:36px;height:36px;opacity:.25}
+
+/* PROGRESS */
+#prog{position:fixed;top:0;left:0;height:3px;background:var(--org);z-index:700;transition:width .4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(249,115,22,.6)}
+
+/* COUNTER */
+#ctr{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);z-index:600;letter-spacing:.08em}
+
+/* NAV ARROWS */
+.nav-arr{position:fixed;top:50%;z-index:600;width:40px;height:40px;background:var(--black);border:none;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;transform:translateY(-50%);box-shadow:var(--sh-sm);transition:background .15s,transform .15s;cursor:pointer!important}
+.nav-arr:hover{background:var(--org);transform:translateY(-50%) scale(1.1)}
+#nav-l{left:16px}
+#nav-r{right:16px}
+
+/* MENU */
+#mbtn{position:fixed;top:18px;right:22px;z-index:700;background:var(--black);border:2px solid var(--black);padding:9px 11px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--sh-sm);cursor:pointer!important}
+#mbtn span{display:block;width:18px;height:2px;background:#fff}
+#mbtn:hover{background:var(--org);border-color:var(--org)}
+#mov{position:fixed;inset:0;background:rgba(10,10,10,.97);z-index:650;display:none;overflow-y:auto;padding:72px 48px 48px}
+#mov.open{display:block}
+#mov h2{font-size:20px;font-weight:900;color:var(--org);margin-bottom:20px;text-transform:uppercase;letter-spacing:.08em}
+#mclose{position:absolute;top:18px;right:22px;font-size:22px;background:none;border:none;color:#fff;font-weight:300;cursor:pointer!important}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.mitem{background:#111;border:2px solid #222;padding:12px 16px;text-align:left;transition:border-color .2s;cursor:pointer!important}
+.mitem:hover{border-color:var(--org)}
+.mitem .mn{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--org);margin-bottom:5px;text-transform:uppercase}
+.mitem .ml{font-size:13px;color:#fff;font-weight:600;line-height:1.3}
+
+/* SLIDES */
+#slides{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:48px 68px 52px;overflow:hidden;background:#fff}
+.slide.active{display:flex}
+.slide.gb{background-image:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);background-size:40px 40px}
+
+/* TICKER */
+.ticker{position:absolute;top:0;left:0;right:0;overflow:hidden;background:var(--black);padding:8px 0;z-index:10}
+.tick-in{display:inline-flex;white-space:nowrap;animation:marquee 32s linear infinite}
+.tick-it{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;padding:0 24px;color:#fff}
+.td{color:var(--org);margin:0 6px}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;border:2px solid var(--black);padding:4px 12px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;background:#fff;margin-bottom:14px;flex-shrink:0}
+.tag.blk{background:var(--black);color:#fff}
+.tag.org{background:var(--org);color:#fff;border-color:var(--org)}
+.tag.red{background:var(--red);color:#fff;border-color:var(--red)}
+.tag.grn{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* SOURCE LINK */
+.src{display:inline-flex;align-items:center;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border:1px solid #d4d4d4;padding:2px 7px;margin-top:4px;white-space:nowrap;text-decoration:none;transition:border-color .2s,color .2s;cursor:pointer!important}
+.src::before{content:'SRC ';color:var(--org);font-size:8px}
+.src:hover{border-color:var(--org);color:var(--org)}
+
+/* HEADINGS */
+.h1{font-size:60px;font-weight:900;line-height:1.02;letter-spacing:-.035em}
+.h1.xl{font-size:80px}
+.h2{font-size:38px;font-weight:900;line-height:1.08;letter-spacing:-.03em;margin-bottom:10px}
+.sub{font-size:15px;font-weight:500;color:var(--muted);line-height:1.5}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* CARDS */
+.card{background:#fff;border:2px solid var(--black);padding:20px;box-shadow:var(--sh);transition:transform .18s,box-shadow .18s}
+.card:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
+.card.blk{background:var(--black);color:#fff}
+.card.org{background:var(--org);color:#fff;border-color:var(--org)}
+.card.org-lt{background:var(--org-lt);border-color:var(--org)}
+.card.red-lt{background:#fff5f5;border-color:var(--red)}
+.card.grn{background:#f0fdf4;border-color:var(--green)}
+
+/* STAT CARD */
+.sc{border:2px solid var(--black);padding:16px 20px;background:#fff;box-shadow:var(--sh);transition:transform .18s,box-shadow .18s}
+.sc:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
+.sn{font-size:40px;font-weight:900;letter-spacing:-.03em;line-height:1}
+.sl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:4px}
+.sd{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.3}
+
+/* DEAL CARD */
+.dc{border:2px solid var(--black);box-shadow:var(--sh);overflow:hidden;background:#fff}
+.dc-hd{background:var(--black);color:#fff;padding:10px 16px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.dc-body{padding:14px 16px}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
+.price-row:last-child{border-bottom:none;padding-top:8px}
+.pl{color:var(--muted);font-weight:600}
+.ph{color:var(--red);font-weight:800}
+.pl2{color:var(--green);font-weight:800}
+.dc-foot{background:var(--org-lt);border-top:2px solid var(--black);padding:7px 16px;font-size:11px;font-weight:800;color:var(--black)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* FLOATING BADGES */
+.fb{position:absolute;border:2px solid var(--black);padding:6px 14px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;background:#fff;box-shadow:var(--sh);animation:float 4s ease-in-out infinite;pointer-events:none}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+.au{animation:fadeUp .55s cubic-bezier(.4,0,.2,1) both}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--black)}
+.tl-item{position:relative;margin-bottom:14px}
+.tl-item::before{content:'';position:absolute;left:-24px;top:5px;width:10px;height:10px;border:2px solid var(--black);background:var(--org)}
+.tl-item.key::before{background:var(--org);box-shadow:0 0 0 3px rgba(249,115,22,.25)}
+.tl-date{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--org);font-family:'JetBrains Mono',monospace}
+.tl-text{font-size:12px;font-weight:700;line-height:1.4;margin-top:2px}
+.tl-sub{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.35}
+
+/* CATEGORY TICKER */
+.cat-ticker{overflow:hidden;border:2px solid var(--black);border-left:none;border-right:none;background:var(--org-lt);padding:9px 0}
+.cat-in{display:inline-flex;white-space:nowrap;animation:marquee 22s linear infinite}
+.cat-it{display:flex;align-items:center;gap:7px;padding:0 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--black)}
+.cat-it span{font-size:16px}
+
+/* FAN ANIMATION */
+@keyframes fanSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fan-blade{animation:fanSpin 1.4s linear infinite;transform-origin:20px 20px}
+
+/* BULB PULSE */
+@keyframes bulbPulse{0%,100%{fill:#f97316;opacity:1}50%{fill:#fbbf24;opacity:.5}}
+.bulb-inner{animation:bulbPulse 1.6s ease-in-out infinite}
+
+/* CABLE WAVE */
+@keyframes cableWave{0%{d:path("M0,10 Q15,3 30,10 Q45,17 60,10")}50%{d:path("M0,10 Q15,17 30,10 Q45,3 60,10")}100%{d:path("M0,10 Q15,3 30,10 Q45,17 60,10")}}
+
+/* BRAND SCROLL */
+.brand-scroll{overflow:hidden;border-top:2px solid var(--black);padding:8px 0;background:var(--surface)}
+.brand-in{display:inline-flex;white-space:nowrap;animation:marquee 18s linear infinite}
+.brand-pill{border:2px solid var(--black);padding:4px 12px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;background:#fff;margin:0 4px;box-shadow:var(--sh-sm)}
+
+/* REVENUE ITEM */
+.rev-item{border:2px solid var(--black);padding:13px 15px;background:#fff;box-shadow:var(--sh)}
+.rev-icon{font-size:22px;margin-bottom:6px}
+.rev-name{font-size:12px;font-weight:800;margin-bottom:3px}
+.rev-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.rev-comp{font-size:9px;font-weight:700;color:var(--org);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;border-top:1px solid #f0f0f0;padding-top:5px}
+
+/* ROADMAP */
+.rm-phase{border:2px solid var(--black);padding:12px 16px;box-shadow:var(--sh);margin-bottom:8px}
+.rm-year{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--org);font-weight:700;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em}
+.rm-title{font-size:13px;font-weight:800;margin-bottom:3px}
+.rm-items{font-size:10px;color:var(--muted);line-height:1.5}
+
+/* QUOTE BOX */
+.qbox{border-left:4px solid var(--org);padding:12px 16px;background:var(--org-lt);font-style:italic;font-size:13px;font-weight:600;line-height:1.5}
+
+/* SEPARATOR */
+.sep{height:1px;background:#e5e5e5;margin:12px 0}
+
+/* PILL */
+.pill{display:inline-block;border:2px solid var(--black);padding:3px 10px;font-size:10px;font-weight:700;background:#fff}
+.pill.org{background:var(--org);color:#fff;border-color:var(--org)}
+.pill.blk{background:var(--black);color:#fff}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+/* DATA ROW */
+.dr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
+.dr:last-child{border-bottom:none}
+.dr-l{color:var(--muted);font-weight:600}
+.dr-r{font-weight:800}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="prog"></div>
+<div id="ctr">01 / 09</div>
+
+<button class="nav-arr" id="nav-l" onclick="prev()">&#8592;</button>
+<button class="nav-arr" id="nav-r" onclick="next()">&#8594;</button>
+
+<button id="mbtn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+
+<div id="mov">
+  <button id="mclose" onclick="toggleMenu()">&#10005;</button>
+  <h2>Navigate</h2>
+  <div class="mgrid">
+    <button class="mitem" onclick="goTo(0);toggleMenu()"><div class="mn">01</div><div class="ml">Cover</div></button>
+    <button class="mitem" onclick="goTo(1);toggleMenu()"><div class="mn">02</div><div class="ml">The Problem</div></button>
+    <button class="mitem" onclick="goTo(2);toggleMenu()"><div class="mn">03</div><div class="ml">Proof: Real Deals</div></button>
+    <button class="mitem" onclick="goTo(3);toggleMenu()"><div class="mn">04</div><div class="ml">What We're Building</div></button>
+    <button class="mitem" onclick="goTo(4);toggleMenu()"><div class="mn">05</div><div class="ml">The Blueprint</div></button>
+    <button class="mitem" onclick="goTo(5);toggleMenu()"><div class="mn">06</div><div class="ml">The Gap</div></button>
+    <button class="mitem" onclick="goTo(6);toggleMenu()"><div class="mn">07</div><div class="ml">The Founder</div></button>
+    <button class="mitem" onclick="goTo(7);toggleMenu()"><div class="mn">08</div><div class="ml">Revenue Models</div></button>
+    <button class="mitem" onclick="goTo(8);toggleMenu()"><div class="mn">09</div><div class="ml">The Vision</div></button>
+  </div>
+</div>
+
+<div id="slides">
+
+<!-- ─────────────────────────────────────────
+     SLIDE 1 · COVER
+───────────────────────────────────────── -->
+<div class="slide active" id="s0">
+  <div class="ticker">
+    <div class="tick-in">
+      <span class="tick-it">₹3.2 Lakh Crore — Indian Electrical Equipment Market<span class="td">◆</span></span>
+      <span class="tick-it">IndiaMART App Rating: 1.8 / 5 on Google Play<span class="td">◆</span></span>
+      <span class="tick-it">40% Price Gap — Documented Across Real Deals<span class="td">◆</span></span>
+      <span class="tick-it">10 Active Clients · Zero Ad Spend<span class="td">◆</span></span>
+      <span class="tick-it">LLP Registered · 17 March 2026 · LLPIN: ACW-4269<span class="td">◆</span></span>
+      <span class="tick-it">North India — IndiaMART's Highest Revenue Region<span class="td">◆</span></span>
+      <span class="tick-it">₹3.2 Lakh Crore — Indian Electrical Equipment Market<span class="td">◆</span></span>
+      <span class="tick-it">IndiaMART App Rating: 1.8 / 5 on Google Play<span class="td">◆</span></span>
+      <span class="tick-it">40% Price Gap — Documented Across Real Deals<span class="td">◆</span></span>
+      <span class="tick-it">10 Active Clients · Zero Ad Spend<span class="td">◆</span></span>
+      <span class="tick-it">LLP Registered · 17 March 2026 · LLPIN: ACW-4269<span class="td">◆</span></span>
+      <span class="tick-it">North India — IndiaMART's Highest Revenue Region<span class="td">◆</span></span>
+    </div>
+  </div>
+
+  <!-- Floating badges -->
+  <div class="fb" style="top:82px;right:220px;animation-delay:0s;background:var(--black);color:#fff">B2B + B2C</div>
+  <div class="fb" style="top:148px;right:72px;animation-delay:.6s;background:var(--org);color:#fff;border-color:var(--org)">North India First ⚡</div>
+  <div class="fb" style="top:230px;right:340px;animation-delay:.3s;background:var(--surface)">Electricals Vertical</div>
+  <div class="fb" style="bottom:130px;right:160px;animation-delay:1.2s;background:var(--org-lt);border-color:var(--org)">₹24,000 Saved · One Deal</div>
+  <div class="fb" style="bottom:210px;right:60px;animation-delay:1.8s">Transparency First</div>
+  <div class="fb" style="top:310px;right:95px;animation-delay:.9s;background:var(--black);color:#fff;font-size:9px">LLP Reg. Mar 17, 2026</div>
+
+  <div style="margin-top:44px;flex:1;display:flex;flex-direction:column;justify-content:center;max-width:700px">
+    <div class="tag blk au" style="animation-delay:.1s">Introducing</div>
+    <div class="h1 xl au" style="animation-delay:.2s">HUB<span style="color:var(--org)">4</span>ESTATE</div>
+    <div class="au" style="font-size:20px;font-weight:700;color:var(--muted);margin-top:8px;animation-delay:.3s">India's First Transparent Electrical Procurement Marketplace</div>
+    <p class="sub au" style="max-width:480px;margin-top:10px;animation-delay:.4s">
+      Starting where the problem is deepest — <strong style="color:var(--black)">Tier 2 &amp; 3 North India.</strong><br>
+      Where IndiaMART earns most. Where buyers still overpay by 40%.
+    </p>
+
+    <div class="g4 au" style="max-width:780px;margin-top:28px;animation-delay:.5s">
+      <div class="sc">
+        <div class="sn">₹3.2L<span style="font-size:18px">Cr</span></div>
+        <div class="sl">Electrical Equipment Market</div>
+        <div class="sd">Indian electrical equipment industry size</div>
+        <a class="src" href="https://www.ieema.org/knowledge-center/industry-statistics/" target="_blank" rel="noopener">IEEMA 2024–25</a>
+      </div>
+      <div class="sc">
+        <div class="sn" style="color:var(--red)">1.8<span style="font-size:18px">/5</span></div>
+        <div class="sl">IndiaMART App Rating</div>
+        <div class="sd">Google Play Store — buyer frustration is real</div>
+        <a class="src" href="https://play.google.com/store/apps/details?id=com.indiamart.app" target="_blank" rel="noopener">Google Play 2025</a>
+      </div>
+      <div class="sc">
+        <div class="sn" style="color:var(--org)">40<span style="font-size:18px">%</span></div>
+        <div class="sl">Avg Price Gap</div>
+        <div class="sd">Documented across 4 closed deals</div>
+        <span class="src">Hub4Estate Field Data</span>
+      </div>
+      <div class="sc">
+        <div class="sn">10</div>
+        <div class="sl">Active Clients</div>
+        <div class="sd">Served manually. Zero ad spend.</div>
+        <span class="src">Internal · Mar 2026</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 2 · THE PROBLEM
+───────────────────────────────────────── -->
+<div class="slide gb" id="s1">
+  <div class="tag blk au" style="animation-delay:.1s">The Problem</div>
+  <div class="h2 au" style="animation-delay:.2s">3 calls minimum.<br>Still no honest price.</div>
+  <p class="sub au" style="animation-delay:.25s;max-width:580px">Buying electrical materials in India is chaos. Every project, every purchase — the same broken workflow repeats.</p>
+
+  <div class="g2 au" style="animation-delay:.35s;margin-top:16px;flex:1;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card red-lt">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:6px">❌ No Price Transparency</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Same cable. 6 dealers. 6 different prices.</div>
+        <div style="font-size:11px;color:var(--muted)">FRLS 2.5mm² wire: ₹83/m to ₹127/m across 6 dealers in the same city. No benchmark exists. No way to know who's fair.</div>
+      </div>
+      <div class="card red-lt">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:6px">❌ WhatsApp + PDF Chaos</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">15 chats. Outdated catalogues. No comparison possible.</div>
+        <div style="font-size:11px;color:var(--muted)">Buyers juggle WhatsApp messages, voice notes, and screenshots. No central source. Everything is scattered.</div>
+      </div>
+      <div class="card red-lt">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:6px">❌ Quality Dealers Are Invisible</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Trusted suppliers have zero digital presence.</div>
+        <div style="font-size:11px;color:var(--muted)">Discovered only through word-of-mouth. Buyers default to nearest — not best value. Overpayment is normalized.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card blk" style="flex:1">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--org);margin-bottom:12px">Who suffers</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #222">
+            <div style="font-size:18px;width:28px;text-align:center">🏗️</div>
+            <div><div style="font-size:12px;font-weight:700">Contractors &amp; Builders</div><div style="font-size:10px;color:#888">Bulk procurement, no price benchmarks anywhere</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #222">
+            <div style="font-size:18px;width:28px;text-align:center">📐</div>
+            <div><div style="font-size:12px;font-weight:700">Architects &amp; Interior Designers</div><div style="font-size:10px;color:#888">Specify brands, can't verify dealer pricing</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #222">
+            <div style="font-size:18px;width:28px;text-align:center">🏠</div>
+            <div><div style="font-size:12px;font-weight:700">Homeowners &amp; Renovators</div><div style="font-size:10px;color:#888">One-time buyers — most vulnerable to overpricing</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 0">
+            <div style="font-size:18px;width:28px;text-align:center">⚡</div>
+            <div><div style="font-size:12px;font-weight:700">Electricians &amp; MEP Firms</div><div style="font-size:10px;color:#888">Daily procurement, depend on dealer relationships</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="background:var(--org);color:#fff;border-color:var(--org);padding:16px">
+        <div style="font-size:28px;font-weight:900">₹8,800</div>
+        <div style="font-size:12px;font-weight:700;margin-top:2px">Saved on a single 200m cable order</div>
+        <div style="font-size:10px;opacity:.85;margin-top:4px">Just by finding the right dealer. Same city. Same cable. No platform existed to help.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 3 · PROOF: REAL DEALS
+───────────────────────────────────────── -->
+<div class="slide" id="s2">
+  <div class="tag org au" style="animation-delay:.1s">Proof — Not Theory</div>
+  <div class="h2 au" style="animation-delay:.2s">Actual deals we closed.<br>Every rupee is real.</div>
+  <p class="sub au" style="animation-delay:.25s">We've manually sourced and closed these. Before building the platform, we proved the model works.</p>
+
+  <div class="g2 au" style="animation-delay:.35s;margin-top:16px">
+    <div class="dc">
+      <div class="dc-hd">Sony LED Panels × 2</div>
+      <div class="dc-body">
+        <div class="price-row"><span class="pl">MRP (per piece)</span><span>₹129</span></div>
+        <div class="price-row"><span class="pl">Local dealer (both)</span><span class="ph">₹280 total</span></div>
+        <div class="price-row"><span class="pl">Hub4Estate (with delivery)</span><span class="pl2">₹76 / each</span></div>
+      </div>
+      <div class="dc-foot">🟢 Saved ₹128 · 46% below local dealer · Delivered</div>
+    </div>
+    <div class="dc">
+      <div class="dc-hd">Sony Tower Speaker + 2 Microphones</div>
+      <div class="dc-body">
+        <div class="price-row"><span class="pl">MRP</span><span>₹1,15,000</span></div>
+        <div class="price-row"><span class="pl">Croma (retail)</span><span class="ph">₹1,05,000</span></div>
+        <div class="price-row"><span class="pl">Hub4Estate (8 dealers tracked)</span><span class="pl2">₹68,000</span></div>
+      </div>
+      <div class="dc-foot">🟢 Saved ₹37,000 · 35% below Croma · 8 dealers benchmarked</div>
+    </div>
+    <div class="dc">
+      <div class="dc-hd">Philips 15W LED Panels × 200 Units</div>
+      <div class="dc-body">
+        <div class="price-row"><span class="pl">Local dealer price / piece</span><span class="ph">₹585</span></div>
+        <div class="price-row"><span class="pl">Hub4Estate (with shipping)</span><span class="pl2">₹465 / piece</span></div>
+        <div class="price-row"><span class="pl">Total saved on this order</span><span class="pl2">₹24,000</span></div>
+      </div>
+      <div class="dc-foot">🟢 Saved ₹24,000 · 21% savings · Free delivery included</div>
+    </div>
+    <div class="dc">
+      <div class="dc-hd">FRLS 2.5mm² Wire — 200 Metres</div>
+      <div class="dc-body">
+        <div class="price-row"><span class="pl">6 dealers quoted (range)</span><span class="ph">₹83 – ₹127/m</span></div>
+        <div class="price-row"><span class="pl">Best price via Hub4Estate</span><span class="pl2">₹83/m</span></div>
+        <div class="price-row"><span class="pl">What buyer would've paid (avg)</span><span class="ph">₹25,400</span></div>
+      </div>
+      <div class="dc-foot">🟢 Saved ₹8,800 on 200m · Same city · Same brand</div>
+    </div>
+  </div>
+
+  <div class="brand-scroll" style="margin-top:14px">
+    <div class="brand-in">
+      <span class="brand-pill">Havells</span><span class="brand-pill">Polycab</span><span class="brand-pill">Legrand</span><span class="brand-pill">Finolex</span><span class="brand-pill">Schneider Electric</span><span class="brand-pill">Bajaj Electricals</span><span class="brand-pill">Wipro Lighting</span><span class="brand-pill">Crompton</span><span class="brand-pill">Anchor by Panasonic</span><span class="brand-pill">Orient Electric</span><span class="brand-pill">Philips</span><span class="brand-pill">Syska</span><span class="brand-pill">RR Kabel</span><span class="brand-pill">KEI Industries</span><span class="brand-pill">GM Modular</span><span class="brand-pill">Hager</span><span class="brand-pill">ABB</span><span class="brand-pill">Siemens</span><span class="brand-pill">Goldmedal</span><span class="brand-pill">Halonix</span>
+      <span class="brand-pill">Havells</span><span class="brand-pill">Polycab</span><span class="brand-pill">Legrand</span><span class="brand-pill">Finolex</span><span class="brand-pill">Schneider Electric</span><span class="brand-pill">Bajaj Electricals</span><span class="brand-pill">Wipro Lighting</span><span class="brand-pill">Crompton</span><span class="brand-pill">Anchor by Panasonic</span><span class="brand-pill">Orient Electric</span><span class="brand-pill">Philips</span><span class="brand-pill">Syska</span><span class="brand-pill">RR Kabel</span><span class="brand-pill">KEI Industries</span><span class="brand-pill">GM Modular</span><span class="brand-pill">Hager</span><span class="brand-pill">ABB</span><span class="brand-pill">Siemens</span><span class="brand-pill">Goldmedal</span><span class="brand-pill">Halonix</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 4 · WHAT WE'RE BUILDING
+───────────────────────────────────────── -->
+<div class="slide" id="s3">
+  <div class="tag blk au" style="animation-delay:.1s">The Solution</div>
+  <div class="h2 au" style="animation-delay:.2s">One platform for every<br>electrical procurement need.</div>
+
+  <div class="g2 au" style="animation-delay:.3s;margin-top:16px;flex:1;align-items:start">
+    <div>
+      <p class="sub" style="margin-bottom:14px">Hub4Estate connects verified electrical dealers with buyers who need transparent, honest pricing — B2B and B2C.</p>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+        <div class="card" style="padding:12px 16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:30px;height:30px;background:var(--org);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace">01</div>
+            <div>
+              <div style="font-size:12px;font-weight:800">Discover — Browse verified catalogues</div>
+              <div style="font-size:10px;color:var(--muted)">All electrical categories from verified, KYC-checked local dealers</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:12px 16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:30px;height:30px;background:var(--black);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace">02</div>
+            <div>
+              <div style="font-size:12px;font-weight:800">Compare — Post RFQ, get transparent quotes</div>
+              <div style="font-size:10px;color:var(--muted)">Multiple dealers respond. Compare price, delivery, and credibility on one screen.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:12px 16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:30px;height:30px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace">03</div>
+            <div>
+              <div style="font-size:12px;font-weight:800">Procure — Close with confidence</div>
+              <div style="font-size:10px;color:var(--muted)">Verified suppliers. Transaction backed by our dealer network and deal history.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;color:var(--muted)">We serve</div>
+      <div class="pill-row">
+        <span class="pill org">Contractors</span>
+        <span class="pill org">Architects</span>
+        <span class="pill org">Interior Designers</span>
+        <span class="pill blk">Builders</span>
+        <span class="pill">Electricians</span>
+        <span class="pill">MEP Firms</span>
+        <span class="pill">Homeowners</span>
+        <span class="pill">Renovators</span>
+        <span class="pill">Project Managers</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px">Product Categories — All Electrical</div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <!-- Animated Fan -->
+        <div class="card" style="padding:10px;text-align:center;border-color:var(--org)">
+          <svg width="38" height="38" viewBox="0 0 40 40" style="margin:0 auto 5px;display:block">
+            <g class="fan-blade">
+              <ellipse cx="20" cy="10" rx="5" ry="9" fill="#f97316" opacity=".85"/>
+              <ellipse cx="20" cy="10" rx="5" ry="9" fill="#f97316" opacity=".65" transform="rotate(120,20,20)"/>
+              <ellipse cx="20" cy="10" rx="5" ry="9" fill="#f97316" opacity=".75" transform="rotate(240,20,20)"/>
+            </g>
+            <circle cx="20" cy="20" r="4" fill="#0a0a0a"/>
+          </svg>
+          <div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">Ceiling Fans</div>
+        </div>
+
+        <!-- Pulsing Bulb -->
+        <div class="card" style="padding:10px;text-align:center">
+          <svg width="38" height="38" viewBox="0 0 40 40" style="margin:0 auto 5px;display:block">
+            <circle cx="20" cy="15" r="11" class="bulb-inner"/>
+            <rect x="15" y="26" width="10" height="3" rx="1" fill="#737373"/>
+            <rect x="16" y="29" width="8" height="3" rx="1" fill="#737373"/>
+            <line x1="20" y1="6" x2="20" y2="4" stroke="#f97316" stroke-width="1.5"/>
+            <line x1="27" y1="9" x2="29" y2="7" stroke="#f97316" stroke-width="1.5"/>
+            <line x1="13" y1="9" x2="11" y2="7" stroke="#f97316" stroke-width="1.5"/>
+          </svg>
+          <div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">LED Lighting</div>
+        </div>
+
+        <div class="card" style="padding:10px;text-align:center">
+          <div style="font-size:26px;margin-bottom:5px">🔌</div>
+          <div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">Switches &amp; Sockets</div>
+        </div>
+        <div class="card" style="padding:10px;text-align:center">
+          <div style="font-size:26px;margin-bottom:5px">🔧</div>
+          <div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">Wires &amp; Cables</div>
+        </div>
+        <div class="card" style="padding:10px;text-align:center">
+          <div style="font-size:26px;margin-bottom:5px">⚙️</div>
+          <div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">MCBs &amp; DBs</div>
+        </div>
+        <div class="card" style="padding:10px;text-align:center">
+          <div style="font-size:26px;margin-bottom:5px">☀️</div>
+          <div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">Solar Systems</div>
+        </div>
+      </div>
+
+      <div class="cat-ticker">
+        <div class="cat-in">
+          <span class="cat-it"><span>⚡</span>Wiring &amp; Cables</span>
+          <span class="cat-it"><span>🔌</span>Switches &amp; Sockets</span>
+          <span class="cat-it"><span>💡</span>LED Lighting</span>
+          <span class="cat-it"><span>🌀</span>Ceiling Fans</span>
+          <span class="cat-it"><span>⚙️</span>MCBs &amp; DBs</span>
+          <span class="cat-it"><span>❄️</span>AC &amp; Cooling</span>
+          <span class="cat-it"><span>☀️</span>Solar Systems</span>
+          <span class="cat-it"><span>🔋</span>UPS &amp; Inverters</span>
+          <span class="cat-it"><span>🏠</span>Smart Home</span>
+          <span class="cat-it"><span>🔩</span>Conduits &amp; Fittings</span>
+          <span class="cat-it"><span>🔦</span>Industrial Lighting</span>
+          <span class="cat-it"><span>⚡</span>Wiring &amp; Cables</span>
+          <span class="cat-it"><span>🔌</span>Switches &amp; Sockets</span>
+          <span class="cat-it"><span>💡</span>LED Lighting</span>
+          <span class="cat-it"><span>🌀</span>Ceiling Fans</span>
+          <span class="cat-it"><span>⚙️</span>MCBs &amp; DBs</span>
+          <span class="cat-it"><span>❄️</span>AC &amp; Cooling</span>
+          <span class="cat-it"><span>☀️</span>Solar Systems</span>
+          <span class="cat-it"><span>🔋</span>UPS &amp; Inverters</span>
+          <span class="cat-it"><span>🏠</span>Smart Home</span>
+          <span class="cat-it"><span>🔩</span>Conduits &amp; Fittings</span>
+          <span class="cat-it"><span>🔦</span>Industrial Lighting</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 5 · THE BLUEPRINT
+───────────────────────────────────────── -->
+<div class="slide gb" id="s4">
+  <div class="tag org au" style="animation-delay:.1s">The Blueprint</div>
+  <div class="h2 au" style="animation-delay:.2s">IndiaMART &amp; JustDial proved<br>aggregation works at ₹1,000+ Cr.</div>
+  <p class="sub au" style="animation-delay:.25s;max-width:600px">They built the market. But neither went deep on electricals. That's the gap Hub4Estate fills.</p>
+
+  <div class="g2 au" style="animation-delay:.35s;margin-top:16px;flex:1;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card" style="border-color:var(--blue)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div style="font-size:14px;font-weight:900">IndiaMART</div>
+          <span class="tag" style="margin-bottom:0;font-size:8px;background:var(--blue);color:#fff;border-color:var(--blue)">Founded 1996</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div>
+            <div style="font-size:18px;font-weight:900">₹480Cr</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase">FY2019 Revenue</div>
+          </div>
+          <div>
+            <div style="font-size:18px;font-weight:900">₹1,130Cr</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase">FY2024 Revenue</div>
+            <a class="src" href="https://www.indiamart.com/investorrelations/" target="_blank" rel="noopener">IndiaMART IR</a>
+          </div>
+          <div>
+            <div style="font-size:18px;font-weight:900">7.5M+</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase">Supplier Storefronts</div>
+            <a class="src" href="https://www.indiamart.com/investorrelations/" target="_blank" rel="noopener">IndiaMART AR</a>
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted);border-top:1px solid #eee;padding-top:7px">Built for generic B2B discovery. Proved the market exists. North India generates its highest GMV.</div>
+      </div>
+
+      <div class="card" style="border-color:#6366f1">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div style="font-size:14px;font-weight:900">JustDial</div>
+          <span class="tag" style="margin-bottom:0;font-size:8px;background:#6366f1;color:#fff;border-color:#6366f1">Founded 1996</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <div style="font-size:18px;font-weight:900">₹1,013Cr</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase">FY2024 Revenue</div>
+            <a class="src" href="https://www.justdial.com/investor-relations" target="_blank" rel="noopener">JustDial IR 2024</a>
+          </div>
+          <div>
+            <div style="font-size:18px;font-weight:900">36Cr+</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase">Monthly Unique Users</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted);border-top:1px solid #eee;padding-top:7px">Local discovery for services. Proved service aggregation works. Zero procurement depth.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card blk" style="flex:1">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--org);margin-bottom:12px">The pattern they proved</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="border-bottom:1px solid #222;padding-bottom:8px">
+            <div style="font-size:12px;font-weight:700;color:#fff">✅ Aggregation + Trust = ₹1,000 Cr+ businesses</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">Both IndiaMART &amp; JustDial built large businesses by simply organising fragmented information</div>
+          </div>
+          <div style="border-bottom:1px solid #222;padding-bottom:8px">
+            <div style="font-size:12px;font-weight:700;color:#fff">✅ North India = Highest B2B procurement volume</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">IndiaMART earns its highest GMV from North India — the same region Hub4Estate starts in</div>
+          </div>
+          <div style="border-bottom:1px solid #222;padding-bottom:8px">
+            <div style="font-size:12px;font-weight:700;color:#fff">✅ Tier 2/3 fastest-growing digital adoption</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">&lt;20% digital penetration in electrical procurement — early mover advantage still available</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#fff">❌ Neither built for electricals specifically</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">No verified pricing, no category depth, no procurement outcome. 1.8/5 rating proves buyer frustration.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card org">
+        <div style="font-size:13px;font-weight:900;margin-bottom:4px">Hub4Estate is what they should have built for electricals.</div>
+        <div style="font-size:11px;opacity:.9">Category-deep · Price transparent · Verified dealers · Built for Tier 2/3 North India first</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 6 · THE GAP
+───────────────────────────────────────── -->
+<div class="slide" id="s5">
+  <div class="tag red au" style="animation-delay:.1s">The Gap</div>
+  <div class="h2 au" style="animation-delay:.2s">₹1,130 Crore business.<br>1.8/5 rating. Buyer problem unsolved.</div>
+  <p class="sub au" style="animation-delay:.25s;max-width:620px">IndiaMART built the market. But buyers are still frustrated. The electrical procurement problem remains open.</p>
+
+  <div class="g2 au" style="animation-delay:.35s;margin-top:16px;flex:1;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card" style="border-color:var(--red)">
+        <div style="font-size:13px;font-weight:900;margin-bottom:10px">IndiaMART — The Numbers</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div style="font-size:26px;font-weight:900;color:var(--red)">1.8<span style="font-size:14px">/5</span></div>
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--muted)">App Rating</div>
+            <a class="src" href="https://play.google.com/store/apps/details?id=com.indiamart.app" target="_blank" rel="noopener">Google Play 2025</a>
+          </div>
+          <div>
+            <div style="font-size:26px;font-weight:900">₹1,130<span style="font-size:14px">Cr</span></div>
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--muted)">FY2024 Revenue</div>
+            <a class="src" href="https://www.indiamart.com/investorrelations/" target="_blank" rel="noopener">IndiaMART IR 2024</a>
+          </div>
+          <div>
+            <div style="font-size:26px;font-weight:900">₹14K–<span style="font-size:14px">₹1.2L</span></div>
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--muted)">Annual Sub Range</div>
+            <a class="src" href="https://seller.indiamart.com/membership/" target="_blank" rel="noopener">IndiaMART Plans</a>
+          </div>
+          <div>
+            <div style="font-size:26px;font-weight:900">2.1<span style="font-size:14px">L</span></div>
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;color:var(--muted)">Paying Suppliers</div>
+            <a class="src" href="https://www.indiamart.com/investorrelations/" target="_blank" rel="noopener">IndiaMART AR 2024</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:#888">
+        <div style="font-size:13px;font-weight:900;margin-bottom:8px">JustDial — What They Offer</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5">Local service discovery. Phone-based lead generation. No catalogues, no pricing, no RFQ engine. Revenue from listing ads + lead packages.</div>
+        <div class="dr" style="margin-top:8px"><span class="dr-l">FY2024 Revenue</span><span class="dr-r">₹1,013 Cr</span></div>
+        <div class="dr"><span class="dr-l">Electrical procurement depth</span><span class="dr-r" style="color:var(--red)">None</span></div>
+        <a class="src" href="https://www.justdial.com/investor-relations" target="_blank" rel="noopener">JustDial IR 2024</a>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card blk" style="flex:1">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--org);margin-bottom:12px">What IndiaMART doesn't do for electricals</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #222">
+            <div style="color:var(--red);font-weight:900;font-size:15px;width:20px;flex-shrink:0">✗</div>
+            <div style="font-size:11px;color:#ccc">No real-time verified pricing for electrical categories</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #222">
+            <div style="color:var(--red);font-weight:900;font-size:15px;width:20px;flex-shrink:0">✗</div>
+            <div style="font-size:11px;color:#ccc">Subscription too expensive (₹14K–₹1.2L/yr) for small dealers</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #222">
+            <div style="color:var(--red);font-weight:900;font-size:15px;width:20px;flex-shrink:0">✗</div>
+            <div style="font-size:11px;color:#ccc">No category depth — generic B2B, not electrical procurement</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #222">
+            <div style="color:var(--red);font-weight:900;font-size:15px;width:20px;flex-shrink:0">✗</div>
+            <div style="font-size:11px;color:#ccc">Buyers get spammed by irrelevant suppliers after posting RFQs</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+            <div style="color:var(--red);font-weight:900;font-size:15px;width:20px;flex-shrink:0">✗</div>
+            <div style="font-size:11px;color:#ccc">Built for visibility — not procurement outcomes or buyer trust</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card org">
+        <div style="font-size:14px;font-weight:900">Hub4Estate fills this exact gap.</div>
+        <div style="font-size:11px;margin-top:4px;opacity:.9">Category-deep for electricals. Transparent pricing. Verified dealers. Affordable for small dealers. Built for Tier 2/3.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 7 · THE FOUNDER
+───────────────────────────────────────── -->
+<div class="slide gb" id="s6">
+  <div class="tag blk au" style="animation-delay:.1s">The Founder</div>
+  <div class="h2 au" style="animation-delay:.2s;font-size:30px">2 years. Real pivots. <span style="color:var(--org)">The right founder for this problem.</span></div>
+
+  <div class="g2 au" style="animation-delay:.3s;margin-top:14px;flex:1;align-items:start">
+    <div class="tl" style="overflow-y:auto;max-height:calc(100vh - 220px);padding-right:4px">
+      <div class="tl-item">
+        <div class="tl-date">April 2024 · Age 16</div>
+        <div class="tl-text">Idea born watching father navigate broker chaos in real estate</div>
+        <div class="tl-sub">"Why does he need 50 calls for 1 useful deal?" First question. First principle.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">June 2024</div>
+        <div class="tl-text">Built first version — broker filtering platform</div>
+        <div class="tl-sub">Failed. Discovered it wasn't an information problem — it was a trust network problem disguised as one.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">August 2024</div>
+        <div class="tl-text">FasterCapital meeting. Explored full listing model.</div>
+        <div class="tl-sub">Validated market need. Rejected the generic approach. Needed category depth.</div>
+      </div>
+      <div class="tl-item key">
+        <div class="tl-date">September 2024 · TechSparks Bengaluru</div>
+        <div class="tl-text">Met Nithin Kamath, Ronnie Screwvala, Naveen Tewari — Shradha Sharma (1:1)</div>
+        <div class="tl-sub">"Clarity compounds. Confusion compounds faster." — the defining takeaway from this exposure.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">October 2024 · SMC Summit</div>
+        <div class="tl-text">Met Ritesh Agarwal (OYO). Treva Iconic Jewels venture completed (1 full year run).</div>
+        <div class="tl-sub">Pattern recognition: execution matters more than idea. Focus on one problem deeply.</div>
+      </div>
+      <div class="tl-item key">
+        <div class="tl-date">November 2024 · Pricing Breakthrough</div>
+        <div class="tl-text">Same product: quoted ₹1,05,000 → sourced at ₹66,000</div>
+        <div class="tl-sub">"It's not a communication problem. It's an access problem." — pivot to procurement.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">December 2024</div>
+        <div class="tl-text">Started manually brokering electrical deals. First 10 clients. Real savings.</div>
+        <div class="tl-sub">Philips 200 panels: ₹24,000 saved. FRLS cable: ₹8,800 saved. Proof before platform.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">January 2025</div>
+        <div class="tl-text">Outsourcing failure — product built without founder clarity</div>
+        <div class="tl-sub">"Can't outsource clarity." Rebuilt thinking from scratch. Electricals as first vertical locked in.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">February – March 2025</div>
+        <div class="tl-text">Deep dissection phase. Identified trust network vs. information problem.</div>
+        <div class="tl-sub">Growth model shifted: Open → attract → scale became Closed → trust → expand.</div>
+      </div>
+      <div class="tl-item key" style="margin-bottom:0">
+        <div class="tl-date" style="color:var(--green)">March 17, 2026 · Day 1 — Official</div>
+        <div class="tl-text" style="color:var(--green)">HUB4ESTATE LLP Registered · LLPIN: ACW-4269</div>
+        <div class="tl-sub">Sriganganagar, Rajasthan. <span id="day-count" style="font-weight:800;color:var(--black)">0</span> days since registration.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card blk">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--org);margin-bottom:11px">Why this founder</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="border-bottom:1px solid #222;padding:7px 0">
+            <div style="font-size:11px;font-weight:700;color:#fff">Grew up inside real business</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">M/s Sadhu Ram Sanjay Kumar — real estate, agro trading, warehousing. Saw procurement chaos daily.</div>
+          </div>
+          <div style="border-bottom:1px solid #222;padding:7px 0">
+            <div style="font-size:11px;font-weight:700;color:#fff">₹87L generated through stock trading</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">Hedging, capital allocation, risk management. Building with financial discipline, not on borrowed runway.</div>
+          </div>
+          <div style="border-bottom:1px solid #222;padding:7px 0">
+            <div style="font-size:11px;font-weight:700;color:#fff">Self-funded since age 14</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">Dropshipping bottles to UAE. Bought own iPhone + MacBook from profits. Pattern: find gap, solve it, get paid.</div>
+          </div>
+          <div style="border-bottom:1px solid #222;padding:7px 0">
+            <div style="font-size:11px;font-weight:700;color:#fff">Network: TechSparks · SMC Summit · Wharton Competition</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">Met Ritesh Agarwal, Shradha Sharma (1:1), Nithin Kamath, Ronnie Screwvala. Wharton Investment Competition participant.</div>
+          </div>
+          <div style="padding-top:7px">
+            <div style="font-size:11px;font-weight:700;color:#fff">40+ user interviews · North India field research</div>
+            <div style="font-size:10px;color:#888;margin-top:2px">Sri Ganganagar, Sirsa, Bathinda — direct validation, not desk research. 2 years of pivots and lessons.</div>
+          </div>
+        </div>
+      </div>
+      <div class="qbox">
+        "I am no longer trying to prove that I have a big idea. I am trying to prove that I can build something that actually works."
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;font-style:normal;font-weight:700">— Shreshth Agarwal, Founder</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 8 · REVENUE MODELS
+───────────────────────────────────────── -->
+<div class="slide" id="s7">
+  <div class="tag org au" style="animation-delay:.1s">Business Model</div>
+  <div class="h2 au" style="animation-delay:.2s">Multiple ways to earn.<br>Currently building trust first.</div>
+  <p class="sub au" style="animation-delay:.25s">We are in user acquisition phase. No one is charged right now. Monetisation begins when trust is established.</p>
+
+  <div class="au" style="animation-delay:.35s;margin-top:16px;flex:1;display:flex;flex-direction:column">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:1">
+      <div class="rev-item">
+        <div class="rev-icon">📋</div>
+        <div class="rev-name">Dealer Subscription Plans</div>
+        <div class="rev-desc">Verified listing + premium catalogue placement + priority leads. Tiered plans by dealer size and category depth.</div>
+        <div class="rev-comp">IndiaMART earns 75% revenue this way · ₹14K–₹1.2L/yr per dealer</div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon">🎯</div>
+        <div class="rev-name">Lead Purchase / Pay-Per-Inquiry</div>
+        <div class="rev-desc">Dealers buy verified buyer RFQs as credits. Pay only for leads that match their category and geography.</div>
+        <div class="rev-comp">IndiaMART RFQ credit model — proven at scale</div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon">📢</div>
+        <div class="rev-name">Display Advertising</div>
+        <div class="rev-desc">Brand-level ads within platform. Havells, Polycab, Legrand advertising directly to our active buyer base.</div>
+        <div class="rev-comp">JustDial earns 40%+ revenue from ads · Same model</div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon">📊</div>
+        <div class="rev-name">Data &amp; Market Analytics</div>
+        <div class="rev-desc">Aggregated pricing intelligence, demand trends, and category insights sold to brands and national distributors.</div>
+        <div class="rev-comp">New layer — IndiaMART hasn't fully monetised this</div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon">⭐</div>
+        <div class="rev-name">Featured Placement</div>
+        <div class="rev-desc">Premium category positioning, homepage features, search priority — dealers pay to stand out to active buyers.</div>
+        <div class="rev-comp">Standard marketplace model · High margin</div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon">🏢</div>
+        <div class="rev-name">Enterprise &amp; Bulk Procurement</div>
+        <div class="rev-desc">Service fee on large B2B orders. Contractors managing multi-crore projects using our managed procurement.</div>
+        <div class="rev-comp">Unique to construction vertical · High ACV</div>
+      </div>
+    </div>
+
+    <div style="background:var(--org-lt);border:2px solid var(--org);padding:12px 18px;display:flex;align-items:center;gap:14px;margin-top:12px">
+      <div style="font-size:26px">📈</div>
+      <div>
+        <div style="font-size:13px;font-weight:800">Year 1 Target: ₹30L ARR from dealer subscriptions alone</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">100 verified dealers × ₹2,500/month avg = ₹30L/year. Conservative estimate. North India Tier 2/3 only.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────
+     SLIDE 9 · THE VISION
+───────────────────────────────────────── -->
+<div class="slide gb" id="s8">
+  <div class="tag blk au" style="animation-delay:.1s">The Vision</div>
+  <div class="h2 au" style="animation-delay:.2s">India's Procurement Backbone.<br><span style="color:var(--org)">Starting from electricals.</span></div>
+
+  <div class="g2 au" style="animation-delay:.3s;margin-top:16px;flex:1;align-items:start">
+    <div>
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px">Expansion Roadmap</div>
+
+      <div class="rm-phase" style="background:var(--org);color:#fff;border-color:var(--org)">
+        <div class="rm-year" style="color:rgba(255,255,255,.75)">Phase 1 · 2026 — Active</div>
+        <div class="rm-title">⚡ Electricals — Tier 2/3 North India</div>
+        <div class="rm-items" style="color:rgba(255,255,255,.8)">Wiring &amp; Cables · Switches · LED Lighting · Ceiling Fans · MCBs &amp; DBs · Solar · UPS<br>Sri Ganganagar → Sirsa → Bathinda → Ajmer → North India</div>
+      </div>
+
+      <div class="rm-phase">
+        <div class="rm-year">Phase 2 · 2027</div>
+        <div class="rm-title">🔧 Plumbing + Paints + Hardware</div>
+        <div class="rm-items">Pipes &amp; Fittings · Sanitary Ware · Paints · Tools &amp; Hardware · Adhesives<br>Same trust model proven in electricals — replicated across verticals</div>
+      </div>
+
+      <div class="rm-phase">
+        <div class="rm-year">Phase 3 · 2028</div>
+        <div class="rm-title">🏗️ Tiles + Glass + Structural Materials</div>
+        <div class="rm-items">Tiles &amp; Flooring · Glass &amp; Glazing · Steel · Cement · RMC<br>Full construction materials procurement ecosystem</div>
+      </div>
+
+      <div class="rm-phase" style="background:var(--black);color:#fff;border-color:var(--black);margin-bottom:0">
+        <div class="rm-year" style="color:var(--org)">Phase 4 · 2029+ — The Vision</div>
+        <div class="rm-title">🌐 India's B2B Construction Procurement Infrastructure</div>
+        <div class="rm-items" style="color:#aaa">Pan-India · All construction verticals · Brand analytics layer · Enterprise procurement · Data intelligence</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="padding:18px">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px">Company</div>
+        <div class="dr"><span class="dr-l">Entity</span><span class="dr-r">HUB4ESTATE LLP</span></div>
+        <div class="dr"><span class="dr-l">LLPIN</span><span class="dr-r mono" style="font-family:'JetBrains Mono',monospace">ACW-4269</span></div>
+        <div class="dr"><span class="dr-l">PAN</span><span class="dr-r mono" style="font-family:'JetBrains Mono',monospace">AATFH3466L</span></div>
+        <div class="dr"><span class="dr-l">TAN</span><span class="dr-r mono" style="font-family:'JetBrains Mono',monospace">JDHH05755B</span></div>
+        <div class="dr"><span class="dr-l">Registered</span><span class="dr-r">17 March 2026</span></div>
+        <div class="dr" style="border-bottom:none"><span class="dr-l">Days Building</span><span class="dr-r" style="color:var(--org);font-weight:900" id="day-count2">—</span></div>
+      </div>
+
+      <div class="card org">
+        <div style="font-size:13px;font-weight:900;margin-bottom:8px">Get in touch</div>
+        <div style="font-size:13px;font-weight:800">Shreshth Agarwal</div>
+        <div style="font-size:10px;opacity:.85;margin-top:2px">Founder · HUB4ESTATE LLP · Age 18</div>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px">📧 shreshth.agarwal@hub4estate.com</div>
+          <div style="font-size:11px">📱 +91 76900 01999</div>
+          <div style="font-size:11px">🌐 hub4estate.com</div>
+        </div>
+      </div>
+
+      <div class="card org-lt" style="border-color:var(--org)">
+        <div style="font-size:12px;font-weight:800;color:var(--black);margin-bottom:5px">The shift has already happened.</div>
+        <div class="qbox" style="font-size:11px;padding:10px 12px">
+          "Everything before this was preparation — even when it didn't look like it. And now, for the first time, it actually feels like I'm about to begin."
+        </div>
+        <div style="font-size:9px;font-weight:700;color:var(--org);margin-top:6px;text-transform:uppercase;letter-spacing:.08em">— Shreshth Agarwal, Founder</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /slides -->
+
+<script>
+// ─── STATE ───────────────────────────────
+let cur = 0;
+const TOTAL = 9;
+
+// ─── CURSOR ──────────────────────────────
+const curEl = document.getElementById('cur');
+document.addEventListener('mousemove', e => {
+  curEl.style.left = e.clientX + 'px';
+  curEl.style.top  = e.clientY + 'px';
+});
+document.addEventListener('mousedown', () => curEl.classList.add('big'));
+document.addEventListener('mouseup',   () => curEl.classList.remove('big'));
+
+// ─── NAVIGATION ──────────────────────────
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach((s, i) => {
+    s.classList.toggle('active', i === n);
+  });
+  cur = n;
+  document.getElementById('prog').style.width = ((n + 1) / TOTAL * 100) + '%';
+  document.getElementById('ctr').textContent =
+    String(n + 1).padStart(2, '0') + ' / 0' + TOTAL;
+}
+function next() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prev() { if (cur > 0)         goTo(cur - 1); }
+
+// ─── KEYBOARD ────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  next();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    prev();
+  if (e.key === 'm' || e.key === 'M') toggleMenu();
+  if (e.key === 'Escape') document.getElementById('mov').classList.remove('open');
+});
+
+// ─── CLICK HALF ──────────────────────────
+document.getElementById('slides').addEventListener('click', e => {
+  const ignore = '#mbtn,#mov,#nav-l,#nav-r,button,a,.dc,.dc-body,.dc-hd,.dc-foot,.price-row,.rev-item,.rm-phase,.tl-item,.mitem,.qbox,input,select';
+  if (e.target.closest(ignore)) return;
+  e.clientX > window.innerWidth / 2 ? next() : prev();
+});
+
+// ─── TOUCH SWIPE ─────────────────────────
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend',   e => {
+  const dx = touchX - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 50) dx > 0 ? next() : prev();
+}, { passive: true });
+
+// ─── MENU ────────────────────────────────
+function toggleMenu() {
+  document.getElementById('mov').classList.toggle('open');
+}
+
+// ─── DAY COUNTER ─────────────────────────
+function updateDayCount() {
+  const reg  = new Date('2026-03-17T00:00:00+05:30');
+  const now  = new Date();
+  const days = Math.max(0, Math.floor((now - reg) / (1000 * 60 * 60 * 24)));
+  const el1  = document.getElementById('day-count');
+  const el2  = document.getElementById('day-count2');
+  if (el1) el1.textContent = days;
+  if (el2) el2.textContent = days + ' days';
+}
+updateDayCount();
+setInterval(updateDayCount, 60000);
+
+// ─── INIT ─────────────────────────────────
+goTo(0);
+</script>
+</body>
+</html>

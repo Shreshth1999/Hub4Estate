@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hub4Estate — Internship 2026</title>
+  <style>
+    @page { size: A4; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      background: #fff;
+      color: #0f0f0f;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+
+    /* ══════════════ PAGE 1 ══════════════ */
+
+    .topbar {
+      background: #0f0f0f;
+      padding: 4.5mm 12mm;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .brand { font-size: 15.5pt; font-weight: 900; color: #fff; letter-spacing: -0.3px; }
+    .brand span { color: #ff6a00; }
+    .t-right { display: flex; align-items: center; gap: 7px; }
+    .t-tag   { font-size: 6.5pt; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #555; }
+    .t-dot   { color: #ff6a00; }
+
+    .hero {
+      padding: 9mm 12mm 8mm;
+      border-bottom: 2px solid #0f0f0f;
+      flex-shrink: 0;
+    }
+    .eyebrow {
+      font-size: 7pt; font-weight: 800; letter-spacing: 3px;
+      text-transform: uppercase; color: #ff6a00; margin-bottom: 3.5mm;
+    }
+    .hero-h1 {
+      font-size: 29pt; font-weight: 900; line-height: 1.07; letter-spacing: -0.9px;
+    }
+    .hero-h1 em { font-style: normal; color: #ff6a00; }
+    .hero-body {
+      font-size: 9.5pt; color: #444; margin-top: 4mm; line-height: 1.68; max-width: 160mm;
+    }
+    .hero-body strong { color: #0f0f0f; }
+    .chips { display: flex; gap: 5px; margin-top: 5mm; flex-wrap: wrap; }
+    .chip  { font-size: 7pt; font-weight: 700; padding: 2.5px 9px; border-radius: 2px; }
+    .c-dark    { background: #0f0f0f; color: #fff; }
+    .c-orange  { background: #ff6a00; color: #fff; }
+    .c-outline { border: 1.5px solid #d5d5d5; color: #666; }
+
+    /* 3-column roles */
+    .roles {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      flex: 1;
+      min-height: 0;
+    }
+    .role {
+      padding: 7mm 10mm 7mm;
+      border-right: 1.5px solid #ebebeb;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .role:last-child { border-right: none; }
+
+    .role-name { font-size: 13pt; font-weight: 900; color: #0f0f0f; line-height: 1.15; margin-bottom: 1mm; }
+    .role-sub  { font-size: 7.5pt; font-weight: 600; color: #aaa; margin-bottom: 5mm; }
+
+    .sec-label {
+      font-size: 6pt; font-weight: 800; letter-spacing: 2.5px;
+      text-transform: uppercase; color: #ccc; margin-bottom: 2.5mm;
+    }
+    .bullets { list-style: none; }
+    .bullets li {
+      font-size: 8.5pt; color: #222; padding: 2.5px 0 2.5px 12px;
+      position: relative; line-height: 1.52;
+    }
+    .bullets li::before {
+      content: "→"; position: absolute; left: 0;
+      color: #ff6a00; font-size: 7pt; font-weight: 900;
+    }
+
+    .fit-label {
+      font-size: 6pt; font-weight: 800; letter-spacing: 2.5px;
+      text-transform: uppercase; color: #ccc; margin-top: 6mm; margin-bottom: 2.5mm;
+    }
+    .fit-list { list-style: none; margin-bottom: 5mm; }
+    .fit-list li {
+      font-size: 7.5pt; color: #777; padding: 1.5px 0 1.5px 9px;
+      position: relative; line-height: 1.48;
+    }
+    .fit-list li::before {
+      content: "·"; position: absolute; left: 0;
+      color: #ff6a00; font-size: 10pt; line-height: 0.9;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag  { font-size: 6.5pt; font-weight: 700; padding: 2.5px 7px; border-radius: 2px; }
+    .t-filled { background: #0f0f0f; color: #fff; }
+    .t-soft   { background: #f2f2f2; color: #555; }
+
+    /* Page 1 footer */
+    .p1bar {
+      background: #0f0f0f;
+      padding: 3.5mm 12mm;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .p1bar-items { display: flex; align-items: center; }
+    .p1bar-item {
+      font-size: 7.5pt; color: #777; font-weight: 600;
+      padding: 0 10px; border-right: 1px solid #222;
+    }
+    .p1bar-item:first-child { padding-left: 0; }
+    .p1bar-item:last-child  { border-right: none; }
+    .p1bar-item strong { color: #ff6a00; }
+    .p1bar-url { font-size: 7pt; color: #3a3a3a; font-weight: 600; }
+
+    /* ══════════════ PAGE 2 ══════════════ */
+
+    .p2-bar {
+      background: #ff6a00;
+      padding: 4.5mm 12mm;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .p2-bar-l { font-size: 9pt; font-weight: 900; color: #fff; }
+    .p2-bar-r { font-size: 6.5pt; font-weight: 700; color: rgba(255,255,255,0.55); letter-spacing: 2px; text-transform: uppercase; }
+
+    .p2-head {
+      padding: 7mm 12mm 6mm;
+      border-bottom: 1.5px solid #ebebeb;
+      flex-shrink: 0;
+    }
+    .p2-pre { font-size: 7pt; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #ccc; margin-bottom: 2mm; }
+    .p2-h2  { font-size: 22pt; font-weight: 900; letter-spacing: -0.5px; line-height: 1.1; }
+    .p2-h2 em { font-style: normal; color: #ff6a00; }
+    .p2-sub { font-size: 8.5pt; color: #888; margin-top: 2.5mm; line-height: 1.55; max-width: 150mm; }
+
+    /* 6 perk boxes — spacious 3×2 */
+    .perks { padding: 6mm 12mm 0; flex-shrink: 0; }
+    .perks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .perk { border: 1.5px solid #ebebeb; padding: 6mm 5.5mm; }
+    .perk.hi { border: 2px solid #0f0f0f; background: #fafafa; }
+
+    .perk-n { font-size: 7.5pt; font-weight: 900; color: #e4e4e4; margin-bottom: 2mm; }
+    .perk.hi .perk-n { color: #ff6a00; }
+    .perk-t { font-size: 9.5pt; font-weight: 800; color: #0f0f0f; margin-bottom: 2mm; line-height: 1.22; }
+    .perk-d { font-size: 7.5pt; color: #666; line-height: 1.6; }
+
+    /* Also-included strip */
+    .also {
+      margin: 5mm 12mm 0;
+      padding: 3.5mm 5mm;
+      background: #f7f7f7;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .also-lbl {
+      font-size: 6pt; font-weight: 800; letter-spacing: 2px;
+      text-transform: uppercase; color: #aaa; white-space: nowrap;
+    }
+    .also-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+    .pill {
+      font-size: 7pt; font-weight: 600; color: #444;
+      background: #fff; border: 1px solid #e0e0e0;
+      padding: 2px 8px; border-radius: 20px;
+    }
+
+    /* Location row */
+    .loc-row {
+      margin: 5mm 12mm 0;
+      background: #0f0f0f;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      flex-shrink: 0;
+    }
+    .loc-cell { padding: 3.5mm 5mm; border-right: 1px solid #1e1e1e; }
+    .loc-cell:last-child { border-right: none; }
+    .loc-l { font-size: 6pt; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #555; margin-bottom: 1mm; }
+    .loc-v { font-size: 8.5pt; font-weight: 700; color: #fff; }
+
+    /* Apply — full-width, two-part: instructions + contact */
+    .apply {
+      margin: auto 0 0;
+      flex-shrink: 0;
+      border-top: 2px solid #0f0f0f;
+    }
+
+    /* Top part: instructions */
+    .apply-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1.5px solid #ebebeb;
+    }
+    .apply-head {
+      padding: 5mm 6mm 5mm 12mm;
+      border-right: 1.5px solid #ebebeb;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .apply-h-label { font-size: 6pt; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #ccc; margin-bottom: 1.5mm; }
+    .apply-h-text  { font-size: 10pt; font-weight: 900; color: #0f0f0f; line-height: 1.2; }
+    .apply-h-text em { font-style: normal; color: #ff6a00; }
+
+    .apply-step {
+      padding: 5mm 6mm;
+      border-right: 1.5px solid #ebebeb;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .apply-step:last-child { border-right: none; }
+    .step-num  { font-size: 8pt; font-weight: 900; color: #ff6a00; margin-bottom: 1.5mm; }
+    .step-text { font-size: 8.5pt; color: #222; line-height: 1.5; }
+    .step-text strong { color: #0f0f0f; }
+
+    /* Bottom part: contact */
+    .apply-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: #0f0f0f;
+    }
+    .contact-cell {
+      padding: 4.5mm 6mm;
+      border-right: 1px solid #1e1e1e;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .contact-cell:first-child { padding-left: 12mm; }
+    .contact-cell:last-child  { border-right: none; }
+    .cc-label { font-size: 6pt; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 1.5mm; }
+    .cc-val   { font-size: 9pt; font-weight: 800; color: #fff; line-height: 1.2; }
+    .cc-val.orange { color: #ff6a00; }
+    .cc-note  { font-size: 6.5pt; color: #555; margin-top: 1mm; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ PAGE 1 ════════════════ -->
+<div class="page">
+
+  <div class="topbar">
+    <div class="brand">HUB4<span>ESTATE</span></div>
+    <div class="t-right">
+      <span class="t-tag">Internship 2026</span>
+      <span class="t-dot">·</span>
+      <span class="t-tag">Bannerghatta, Bangalore</span>
+      <span class="t-dot">·</span>
+      <span class="t-tag">3 Roles Open</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">Now Hiring</div>
+    <div class="hero-h1">
+      The startup fixing how India<br>
+      buys electrical materials.<br>
+      <em>Come build it with us.</em>
+    </div>
+    <div class="hero-body">
+      Builders and contractors across India waste weeks sourcing electricals —
+      overpriced dealers, zero transparency, no trust.
+      <strong>Hub4Estate fixes that</strong> by connecting them directly to verified local dealers at real prices.
+      We have live clients, we are growing fast, and we are looking for the people
+      who want to build this with us from day one.
+    </div>
+    <div class="chips">
+      <span class="chip c-orange">Bannerghatta Office · Bangalore</span>
+      <span class="chip c-dark">Developer · Content · Dealer Outreach</span>
+      <span class="chip c-outline">Hybrid</span>
+      <span class="chip c-outline">Immediate Start</span>
+      <span class="chip c-outline">Certificate Issued</span>
+    </div>
+  </div>
+
+  <div class="roles">
+
+    <div class="role">
+      <div>
+        <div class="role-name">Developer<br>Intern</div>
+        <div class="role-sub">Web · Mobile App · iOS</div>
+        <div class="sec-label">What You Will Do</div>
+        <ul class="bullets">
+          <li>Ship real features to a live platform — not mock projects</li>
+          <li>Build our iOS and Android mobile app from the ground up</li>
+          <li>Own the full stack: React, Node.js, PostgreSQL, Prisma</li>
+          <li>Claude Code + every API and tool subscription fully covered — you bring the skills, we cover everything else</li>
+        </ul>
+      </div>
+      <div>
+        <div class="fit-label">You Are a Fit If</div>
+        <ul class="fit-list">
+          <li>You build things on your own time — projects, tools, anything</li>
+          <li>You care about shipping, not just writing code</li>
+          <li>You are comfortable figuring things out without being told how</li>
+        </ul>
+        <div class="tags">
+          <span class="tag t-filled">React</span>
+          <span class="tag t-filled">TypeScript</span>
+          <span class="tag t-filled">Node.js</span>
+          <span class="tag t-filled">iOS</span>
+          <span class="tag t-soft">React Native</span>
+          <span class="tag t-soft">PostgreSQL</span>
+          <span class="tag t-soft">Tailwind</span>
+          <span class="tag t-soft">Swift</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div>
+        <div class="role-name">Social Media &amp;<br>Content Intern</div>
+        <div class="role-sub">Instagram · LinkedIn · X</div>
+        <div class="sec-label">What You Will Do</div>
+        <ul class="bullets">
+          <li>Own our brand voice — you decide how Hub4Estate sounds online</li>
+          <li>Create daily content: reels, carousels, stories, written posts</li>
+          <li>Turn dealer visits and market stories into shareable content</li>
+          <li>In-office at Bannerghatta — creative, fast-paced, collaborative</li>
+        </ul>
+      </div>
+      <div>
+        <div class="fit-label">You Are a Fit If</div>
+        <ul class="fit-list">
+          <li>You are already creating — your own page, a friend's, anything</li>
+          <li>You know what makes someone stop scrolling</li>
+          <li>You care about the story behind a brand, not just the post</li>
+        </ul>
+        <div class="tags">
+          <span class="tag t-filled">Instagram</span>
+          <span class="tag t-filled">LinkedIn</span>
+          <span class="tag t-filled">X / Twitter</span>
+          <span class="tag t-soft">Reels</span>
+          <span class="tag t-soft">Canva</span>
+          <span class="tag t-soft">Copywriting</span>
+          <span class="tag t-soft">CapCut</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <div>
+        <div class="role-name">Dealer Outreach<br>Intern</div>
+        <div class="role-sub">Field · Onboarding · Research</div>
+        <div class="sec-label">What You Will Do</div>
+        <ul class="bullets">
+          <li>Walk into electrical shops across Bangalore and pitch our platform</li>
+          <li>Onboard and verify dealers — document brands, pricing, reach</li>
+          <li>Conduct on-ground market research and shoot field videos on phone</li>
+          <li>Work in person with the founder every day — high ownership, high impact</li>
+        </ul>
+      </div>
+      <div>
+        <div class="fit-label">You Are a Fit If</div>
+        <ul class="fit-list">
+          <li>You can walk into a room of strangers and start a conversation</li>
+          <li>You do not quit after the first no — you learn from it</li>
+          <li>You are curious about how real businesses actually work</li>
+        </ul>
+        <div class="tags">
+          <span class="tag t-filled">Field Sales</span>
+          <span class="tag t-filled">Dealer Onboarding</span>
+          <span class="tag t-soft">Market Research</span>
+          <span class="tag t-soft">Communication</span>
+          <span class="tag t-soft">Kannada / Hindi</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="p1bar">
+    <div class="p1bar-items">
+      <span class="p1bar-item"><strong>Claude Code</strong> + all tools for developers</span>
+      <span class="p1bar-item"><strong>Certificate</strong> + personal LOR</span>
+      <span class="p1bar-item"><strong>LinkedIn</strong> feature for top interns</span>
+      <span class="p1bar-item"><strong>Priority hire</strong> when we raise</span>
+    </div>
+    <div class="p1bar-url">hub4estate.com</div>
+  </div>
+
+</div>
+
+
+<!-- ════════════════ PAGE 2 ════════════════ -->
+<div class="page">
+
+  <div class="p2-bar">
+    <div class="p2-bar-l">HUB4ESTATE — What You Get</div>
+    <div class="p2-bar-r">Hub4Estate LLP · Bangalore · 2026</div>
+  </div>
+
+  <div class="p2-head">
+    <div class="p2-pre">Benefits &amp; Experience</div>
+    <div class="p2-h2">Not just an internship.<br><em>A real launchpad.</em></div>
+    <div class="p2-sub">Every benefit below is real, non-monetary, and yours from day one. No conditions, no fine print.</div>
+  </div>
+
+  <div class="perks">
+    <div class="perks-grid">
+
+      <div class="perk hi">
+        <div class="perk-n">01</div>
+        <div class="perk-t">Claude Code + Every Tool You Need</div>
+        <div class="perk-d">Developers get Anthropic's Claude Code plus every API key and SaaS subscription needed — all covered by us. Engineers outside pay ₹1,500+/mo for Claude Code alone. You pay nothing.</div>
+      </div>
+
+      <div class="perk hi">
+        <div class="perk-n">02</div>
+        <div class="perk-t">Daily Access to the Founder</div>
+        <div class="perk-d">Not a manager, not a coordinator — the founder. Shreshth works alongside you every day, gives real feedback on real work, and is genuinely invested in your growth as a person.</div>
+      </div>
+
+      <div class="perk hi">
+        <div class="perk-n">03</div>
+        <div class="perk-t">Certificate + Personal Letter of Recommendation</div>
+        <div class="perk-d">Official internship certificate on completion. Performers receive a personal LOR written by the founder — specific, honest, and genuinely useful for colleges, jobs, and future ventures.</div>
+      </div>
+
+      <div class="perk">
+        <div class="perk-n">04</div>
+        <div class="perk-t">LinkedIn Public Appreciation Post</div>
+        <div class="perk-d">Top interns get publicly recognised on the founder's LinkedIn — a real post, your name, your work. Build your personal brand while you're building ours.</div>
+      </div>
+
+      <div class="perk">
+        <div class="perk-n">05</div>
+        <div class="perk-t">Real Work. Real Portfolio.</div>
+        <div class="perk-d">Everything you build ships to real users. Your code runs in production, your content reaches real people, your dealer deals close on the ground. All of it is yours to show.</div>
+      </div>
+
+      <div class="perk">
+        <div class="perk-n">06</div>
+        <div class="perk-t">First in Line When We Grow</div>
+        <div class="perk-d">When Hub4Estate raises its next round, interns who delivered get the first call for paid full-time roles. You are not just interning — you are building your seat at the table.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="also">
+    <div class="also-lbl">Also Included</div>
+    <div class="also-pills">
+      <span class="pill">Founding team credit</span>
+      <span class="pill">Team events &amp; founder meetups</span>
+      <span class="pill">Startup ecosystem access</span>
+      <span class="pill">Investor &amp; mentor network exposure</span>
+      <span class="pill">Office in Bannerghatta</span>
+      <span class="pill">Creative ownership</span>
+      <span class="pill">Flexible working hours</span>
+      <span class="pill">Daily team check-in</span>
+    </div>
+  </div>
+
+  <div class="loc-row">
+    <div class="loc-cell">
+      <div class="loc-l">Office</div>
+      <div class="loc-v">Bannerghatta, Bangalore</div>
+    </div>
+    <div class="loc-cell">
+      <div class="loc-l">Mode</div>
+      <div class="loc-v">Flexible Hours · Daily Meeting</div>
+    </div>
+    <div class="loc-cell">
+      <div class="loc-l">Duration</div>
+      <div class="loc-v">Min. 2 Months · Flexible</div>
+    </div>
+    <div class="loc-cell">
+      <div class="loc-l">Start Date</div>
+      <div class="loc-v">Immediate / Rolling</div>
+    </div>
+  </div>
+
+  <!-- Apply section — 3-step instructions + 3-column contact -->
+  <div class="apply">
+
+    <div class="apply-top">
+      <div class="apply-head">
+        <div class="apply-h-label">How to Apply</div>
+        <div class="apply-h-text">Show us<br><em>your real work.</em></div>
+      </div>
+      <div class="apply-step">
+        <div class="step-num">Step 01</div>
+        <div class="step-text">Send your <strong>CV</strong> — a proper, updated one that represents you well</div>
+      </div>
+      <div class="apply-step">
+        <div class="step-num">Step 02</div>
+        <div class="step-text">Show us <strong>real work</strong> — projects you have built, code you have written, content you have created, or deals you have closed. Link your GitHub, portfolio, Behance, or anything that shows what you actually do. No real work, no response.</div>
+      </div>
+    </div>
+
+    <div class="apply-bottom">
+      <div class="contact-cell">
+        <div class="cc-label">Step 03 + Send To (Preferred)</div>
+        <div class="cc-val orange">shreshth.agarwal@hub4estate.com</div>
+        <div class="cc-note">Include your CV, real work samples or project links, and a short note on why you want this and why you are the right fit. Subject: [Role] — Your Name</div>
+      </div>
+      <div class="contact-cell">
+        <div class="cc-label">WhatsApp</div>
+        <div class="cc-val">+91 76900 01999</div>
+        <div class="cc-note">Send: who you are, which role, your best project or work sample, and why you are the right fit</div>
+      </div>
+      <div class="contact-cell">
+        <div class="cc-label">Connect on LinkedIn</div>
+        <div class="cc-val">linkedin.com/in/sa-h4e</div>
+        <div class="cc-note">Follow us and send a message — we check it</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -2,10 +2,28 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
-import rateLimit from 'express-rate-limit';
 import { env } from './config/env';
 import passportConfig from './config/passport';
 import prisma from './config/database';
+import {
+  requestId,
+  sanitizeInputs,
+  detectAttacks,
+  securityHeaders,
+  preventParamPollution,
+  blockMaliciousAgents,
+} from './middleware/security';
+import {
+  inquiryLimiter,
+  contactLimiter,
+  rfqLimiter,
+  quoteLimiter,
+  adminLimiter,
+  scraperLimiter,
+  aiLimiter,
+  uploadLimiter,
+} from './middleware/rateLimiter';
+import { tokenService } from './services/token.service';
 
 // Routes
 import authRoutes from './routes/auth.routes';
@@ -24,13 +42,21 @@ import inquiryRoutes from './routes/inquiry.routes';
 import inquiryPipelineRoutes from './routes/inquiry-pipeline.routes';
 import brandDealerRoutes from './routes/brand-dealer.routes';
 import databaseRoutes from './routes/database.routes';
+import dealerInquiryRoutes from './routes/dealer-inquiry.routes';
+import slipScannerRoutes from './routes/slip-scanner.routes';
+import notificationRoutes from './routes/notification.routes';
 
 const app = express();
 
-// Security middleware
+// ── Security first ────────────────────────────────────────────────────────────
+app.use(requestId);
+app.use(blockMaliciousAgents);
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: false, // We set our own tighter CSP below
 }));
+app.use(securityHeaders);
+app.use(preventParamPollution);
 
 // CORS configuration - supports localhost and any deployment URL
 const allowedOrigins = env.FRONTEND_URL
@@ -59,18 +85,13 @@ app.use(cors({
   credentials: true,
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: env.RATE_LIMIT_WINDOW_MS,
-  max: env.RATE_LIMIT_MAX_REQUESTS,
-  message: 'Too many requests from this IP, please try again later',
-});
-
-app.use('/api/', limiter);
-
-// Body parsing
+// ── Body parsing (before sanitization) ───────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ── Input sanitization (after body parsing) ───────────────────────────────────
+app.use(sanitizeInputs);
+app.use(detectAttacks);
 
 // Session setup
 app.use(
@@ -106,20 +127,23 @@ app.get('/health', async (_req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productsRoutes);
-app.use('/api/rfq', rfqRoutes);
-app.use('/api/quotes', quoteRoutes);
+app.use('/api/rfq', rfqLimiter, rfqRoutes);
+app.use('/api/quotes', quoteLimiter, quoteRoutes);
 app.use('/api/dealer', dealerRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminLimiter, adminRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/knowledge', knowledgeRoutes);
-app.use('/api/contact', contactRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/crm', crmRoutes);
-app.use('/api/scraper', scraperRoutes);
-app.use('/api/inquiry', inquiryRoutes);
+app.use('/api/contact', contactLimiter, contactRoutes);
+app.use('/api/chat', aiLimiter, chatRoutes);
+app.use('/api/crm', adminLimiter, crmRoutes);
+app.use('/api/scraper', scraperLimiter, scraperRoutes);
+app.use('/api/inquiry', inquiryLimiter, inquiryRoutes);
 app.use('/api/inquiry-pipeline', inquiryPipelineRoutes);
 app.use('/api/brand-dealers', brandDealerRoutes);
-app.use('/api/database', databaseRoutes);
+app.use('/api/database', adminLimiter, databaseRoutes);
+app.use('/api/dealer-inquiry', quoteLimiter, dealerInquiryRoutes);
+app.use('/api/slip-scanner', uploadLimiter, slipScannerRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 404 handler
 app.use((_req, res) => {
@@ -149,6 +173,16 @@ const PORT = env.PORT;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT} [${env.NODE_ENV}]`);
 });
+
+// ── Cleanup expired tokens every 6 hours ─────────────────────────────────────
+setInterval(async () => {
+  try {
+    const cleaned = await tokenService.cleanupExpiredTokens();
+    if (cleaned > 0) console.log(`[Cleanup] Removed ${cleaned} expired refresh tokens`);
+  } catch (err) {
+    console.error('[Cleanup] Token cleanup failed:', err);
+  }
+}, 6 * 60 * 60 * 1000);
 
 process.on('SIGINT', async () => {
   console.log('\nShutting down gracefully...');

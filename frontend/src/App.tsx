@@ -33,6 +33,7 @@ const DealerRFQsPage = lazy(() => import('@/pages/dealer/DealerRFQsPage').then(m
 const DealerQuotesPage = lazy(() => import('@/pages/dealer/DealerQuotesPage').then(m => ({ default: m.DealerQuotesPage })));
 const DealerProfilePage = lazy(() => import('@/pages/dealer/DealerProfilePage').then(m => ({ default: m.DealerProfilePage })));
 const DealerQuoteSubmitPage = lazy(() => import('@/pages/dealer/DealerQuoteSubmitPage').then(m => ({ default: m.DealerQuoteSubmitPage })));
+const DealerAvailableInquiriesPage = lazy(() => import('@/pages/dealer/DealerAvailableInquiriesPage').then(m => ({ default: m.DealerAvailableInquiriesPage })));
 
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminDealersPage = lazy(() => import('@/pages/admin/AdminDealersPage').then(m => ({ default: m.AdminDealersPage })));
@@ -60,6 +61,7 @@ const AboutPage = lazy(() => import('@/pages/AboutPage').then(m => ({ default: m
 const ContactPage = lazy(() => import('@/pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const AIAssistantPage = lazy(() => import('@/pages/AIAssistantPage').then(m => ({ default: m.AIAssistantPage })));
 const TrackInquiryPage = lazy(() => import('@/pages/TrackInquiryPage').then(m => ({ default: m.TrackInquiryPage })));
+const SmartSlipScanPage = lazy(() => import('@/pages/SmartSlipScanPage').then(m => ({ default: m.SmartSlipScanPage })));
 
 const UserDashboard = lazy(() => import('@/pages/user/UserDashboard').then(m => ({ default: m.UserDashboard })));
 const MessagesPage = lazy(() => import('@/pages/MessagesPage').then(m => ({ default: m.MessagesPage })));
@@ -126,6 +128,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/track" element={<TrackInquiryPage />} />
+          <Route path="/smart-scan" element={<SmartSlipScanPage />} />
         </Route>
 
         {/* ========================================
@@ -154,6 +157,7 @@ function App() {
         <Route element={<ProtectedRoute requiredRole="dealer" />}>
           <Route element={<DealerLayout />}>
             <Route path="/dealer" element={<DealerDashboard />} />
+            <Route path="/dealer/inquiries/available" element={<DealerAvailableInquiriesPage />} />
             <Route path="/dealer/rfqs" element={<DealerRFQsPage />} />
             <Route path="/dealer/rfqs/:rfqId/quote" element={<DealerQuoteSubmitPage />} />
             <Route path="/dealer/quotes" element={<DealerQuotesPage />} />

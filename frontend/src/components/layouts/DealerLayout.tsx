@@ -2,7 +2,7 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
   User, LogOut, Zap, FileText, CheckCircle, BarChart3,
-  Award, Home, MessageSquare
+  Award, Home, MessageSquare, Package
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
@@ -31,10 +31,10 @@ export function DealerLayout() {
 
   const navItems = [
     { path: '/dealer', icon: Home, label: 'Dashboard' },
-    { path: '/dealer/rfqs', icon: FileText, label: 'Available RFQs', badge: true },
+    { path: '/dealer/inquiries/available', icon: Package, label: 'Product Inquiries', badge: true },
+    { path: '/dealer/rfqs', icon: FileText, label: 'Available RFQs' },
     { path: '/dealer/quotes', icon: CheckCircle, label: 'My Quotes' },
     { path: '/dealer/messages', icon: MessageSquare, label: 'Messages' },
-    { path: '/dealer/analytics', icon: BarChart3, label: 'Analytics' },
     { path: '/dealer/profile', icon: Award, label: 'Profile' },
   ];
 

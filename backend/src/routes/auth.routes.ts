@@ -2,6 +2,7 @@ import { Router } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { z } from 'zod';
 import prisma from '../config/database';
 import { env } from '../config/env';
@@ -10,6 +11,8 @@ import { authenticateToken } from '../middleware/auth';
 import { sendOTPEmail } from '../services/email.service';
 import { sendOTPSMS } from '../services/sms.service';
 import { logActivity } from '../services/activity.service';
+import { tokenService } from '../services/token.service';
+import { otpLimiter, loginLimiter, credentialLoginLimiter, passwordResetLimiter, refreshLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
@@ -31,7 +34,7 @@ const sendOTPSchema = z.object({
   message: 'Either phone or email is required',
 });
 
-router.post('/send-otp', validateBody(sendOTPSchema), async (req, res) => {
+router.post('/send-otp', otpLimiter, validateBody(sendOTPSchema), async (req, res) => {
   try {
     const { phone, email, type } = req.body;
     const identifier = phone || email;
@@ -124,7 +127,7 @@ const verifyOTPSchema = z.object({
   message: 'Either phone or email is required',
 });
 
-router.post('/verify-otp', validateBody(verifyOTPSchema), async (req, res) => {
+router.post('/verify-otp', loginLimiter, validateBody(verifyOTPSchema), async (req, res) => {
   try {
     const { phone, email, otp, type } = req.body;
     const identifier = phone || email;
@@ -722,7 +725,7 @@ const dealerLoginSchema = z.object({
   password: z.string(),
 });
 
-router.post('/dealer/login', validateBody(dealerLoginSchema), async (req, res) => {
+router.post('/dealer/login', credentialLoginLimiter, validateBody(dealerLoginSchema), async (req, res) => {
   try {
     const dealer = await prisma.dealer.findUnique({
       where: { email: req.body.email },
@@ -811,7 +814,7 @@ const adminLoginSchema = z.object({
   password: z.string(),
 });
 
-router.post('/admin/login', validateBody(adminLoginSchema), async (req, res) => {
+router.post('/admin/login', credentialLoginLimiter, validateBody(adminLoginSchema), async (req, res) => {
   try {
     const admin = await prisma.admin.findUnique({
       where: { email: req.body.email },
@@ -862,6 +865,188 @@ router.post('/admin/login', validateBody(adminLoginSchema), async (req, res) => 
   } catch (error) {
     console.error('Admin login error:', error);
     return res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// ============================================
+// REFRESH TOKEN
+// ============================================
+
+router.post('/refresh-token', refreshLimiter, async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(400).json({ error: 'Refresh token required' });
+    }
+
+    const record = await tokenService.validateRefreshToken(refreshToken);
+    if (!record) {
+      return res.status(401).json({ error: 'Invalid or expired refresh token' });
+    }
+
+    // Rotate: revoke old token, issue new pair
+    await tokenService.revokeToken(refreshToken);
+
+    let tokenPayload: object;
+    let userResponse: object;
+
+    if (record.userType === 'user') {
+      const user = await prisma.user.findUnique({
+        where: { id: record.userId },
+        select: { id: true, email: true, phone: true, name: true, role: true, city: true, status: true },
+      });
+      if (!user || user.status !== 'ACTIVE') {
+        return res.status(401).json({ error: 'User account is inactive' });
+      }
+      tokenPayload = { id: user.id, email: user.email, name: user.name, type: 'user', role: user.role, city: user.city };
+      userResponse = { ...user, type: 'user' };
+    } else if (record.userType === 'dealer') {
+      const dealer = await prisma.dealer.findUnique({
+        where: { id: record.userId },
+        select: { id: true, email: true, businessName: true, phone: true, city: true, status: true },
+      });
+      if (!dealer || dealer.status === 'DELETED' || dealer.status === 'SUSPENDED') {
+        return res.status(401).json({ error: 'Dealer account is inactive' });
+      }
+      tokenPayload = { id: dealer.id, email: dealer.email, type: 'dealer' };
+      userResponse = { id: dealer.id, email: dealer.email, name: dealer.businessName, phone: dealer.phone, city: dealer.city, type: 'dealer', status: dealer.status };
+    } else {
+      return res.status(400).json({ error: 'Unsupported user type' });
+    }
+
+    const newAccessToken = jwt.sign(tokenPayload, env.JWT_SECRET, { expiresIn: '7d' });
+    const newRefreshToken = await tokenService.createRefreshToken(record.userId, record.userType as 'user' | 'dealer' | 'admin');
+
+    return res.json({ token: newAccessToken, refreshToken: newRefreshToken, user: userResponse });
+  } catch (error) {
+    console.error('Refresh token error:', error);
+    return res.status(500).json({ error: 'Failed to refresh token' });
+  }
+});
+
+// ============================================
+// LOGOUT (revoke refresh token)
+// ============================================
+
+router.post('/logout', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (refreshToken) {
+      await tokenService.revokeToken(refreshToken);
+    }
+    return res.json({ message: 'Logged out successfully' });
+  } catch (error) {
+    // Always succeed on logout — don't block the client
+    return res.json({ message: 'Logged out' });
+  }
+});
+
+// Logout all devices
+router.post('/logout-all', authenticateToken, async (req: any, res) => {
+  try {
+    await tokenService.revokeAllUserTokens(req.user.id);
+    return res.json({ message: 'Logged out from all devices' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to logout all devices' });
+  }
+});
+
+// ============================================
+// FORGOT PASSWORD (Dealer + future user email)
+// ============================================
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});
+
+router.post('/forgot-password', passwordResetLimiter, validateBody(forgotPasswordSchema), async (req, res) => {
+  try {
+    const { email } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check dealer first (dealers have passwords)
+    const dealer = await prisma.dealer.findUnique({ where: { email: normalizedEmail } });
+
+    if (!dealer) {
+      // Don't reveal whether email exists — always return success
+      return res.json({ message: 'If that email is registered, you will receive a reset link.' });
+    }
+
+    // Delete any existing unexpired token for this email
+    await prisma.passwordResetToken.deleteMany({ where: { email: normalizedEmail } });
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await prisma.passwordResetToken.create({
+      data: { token, email: normalizedEmail, userType: 'dealer', expiresAt },
+    });
+
+    // Send reset email
+    const resetUrl = `${env.FRONTEND_URL}/dealer/reset-password?token=${token}`;
+    const { sendOTPEmail: sendEmail } = await import('../services/email.service');
+    // Reuse email service — in production replace with a proper reset template
+    await sendEmail(normalizedEmail, `Reset your Hub4Estate password: ${resetUrl}`, 'reset');
+
+    console.log(`[Auth] Password reset token for ${normalizedEmail}: ${token}`);
+
+    return res.json({ message: 'If that email is registered, you will receive a reset link.' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ error: 'Failed to process request' });
+  }
+});
+
+// ============================================
+// RESET PASSWORD
+// ============================================
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(32, 'Invalid reset token'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
+router.post('/reset-password', validateBody(resetPasswordSchema), async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    const record = await prisma.passwordResetToken.findUnique({ where: { token } });
+
+    if (!record) {
+      return res.status(400).json({ error: 'Invalid or expired reset token' });
+    }
+    if (record.used) {
+      return res.status(400).json({ error: 'Reset token already used' });
+    }
+    if (new Date() > record.expiresAt) {
+      await prisma.passwordResetToken.delete({ where: { token } });
+      return res.status(400).json({ error: 'Reset token has expired' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, env.BCRYPT_ROUNDS);
+
+    if (record.userType === 'dealer') {
+      await prisma.dealer.update({
+        where: { email: record.email },
+        data: { password: hashedPassword },
+      });
+    }
+
+    // Mark token as used
+    await prisma.passwordResetToken.update({ where: { token }, data: { used: true } });
+
+    // Revoke all refresh tokens (force re-login everywhere)
+    const user = record.userType === 'dealer'
+      ? await prisma.dealer.findUnique({ where: { email: record.email }, select: { id: true } })
+      : null;
+    if (user) {
+      await tokenService.revokeAllUserTokens(user.id);
+    }
+
+    return res.json({ message: 'Password reset successfully. Please log in.' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ error: 'Failed to reset password' });
   }
 });
 

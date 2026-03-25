@@ -148,6 +148,7 @@ model Dealer {
   serviceAreas      DealerServiceArea[]
   quotes            Quote[]
   reviews           DealerReview[]
+  inquiryResponses  InquiryDealerResponse[]
 
   @@index([email])
   @@index([gstNumber])
@@ -210,6 +211,7 @@ model Category {
   // Relations
   subCategories SubCategory[]
   dealerMappings DealerCategoryMapping[]
+  inquiries     ProductInquiry[]
 
   @@index([slug])
 }
@@ -279,6 +281,7 @@ model Brand {
   products    Product[]
   dealerMappings DealerBrandMapping[]
   brandDealers  BrandDealer[]
+  identifiedInquiries ProductInquiry[]
 
   @@index([slug])
 }
@@ -1032,16 +1035,51 @@ model ProductInquiry {
   respondedAt       DateTime?
   respondedBy       String?   // Admin ID who responded
 
+  // NEW: Category identification
+  categoryId          String?
+  identifiedBrandId   String?
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   // Relations
-  pipeline        InquiryPipeline?
+  pipeline              InquiryPipeline?
+  category              Category?               @relation(fields: [categoryId], references: [id])
+  identifiedBrand       Brand?                  @relation(fields: [identifiedBrandId], references: [id])
+  dealerResponses       InquiryDealerResponse[]
 
   @@index([status])
   @@index([phone])
   @@index([createdAt])
   @@index([inquiryNumber])
+  @@index([categoryId])
+}
+
+// Dealer responses to product inquiries
+model InquiryDealerResponse {
+  id                String    @id @default(uuid())
+  inquiryId         String
+  dealerId          String
+
+  status            String    @default("pending") // pending, viewed, quoted, declined
+  quotedPrice       Float?
+  shippingCost      Float?    @default(0)
+  totalPrice        Float?
+  estimatedDelivery String?
+  notes             String?   @db.Text
+
+  viewedAt          DateTime?
+  respondedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  inquiry           ProductInquiry @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  dealer            Dealer         @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+
+  @@index([inquiryId])
+  @@index([dealerId])
+  @@index([status])
 }
 
 // ============================================
@@ -1187,6 +1225,83 @@ model InquiryDealerQuote {
   @@index([pipelineId])
   @@index([brandDealerId])
   @@index([responseStatus])
+}
+
+// ============================================
+// AUTH SECURITY TOKENS
+// ============================================
+
+// Persistent refresh tokens (mobile stays logged in; rotate on each use)
+model RefreshToken {
+  id          String    @id @default(uuid())
+  token       String    @unique
+  userId      String
+  userType    String    // user, dealer, admin
+  revoked     Boolean   @default(false)
+  revokedAt   DateTime?
+  expiresAt   DateTime
+
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@index([revoked])
+}
+
+// Password reset tokens (time-limited, one-use)
+model PasswordResetToken {
+  id          String    @id @default(uuid())
+  token       String    @unique
+  email       String
+  userType    String    // user, dealer
+  used        Boolean   @default(false)
+  expiresAt   DateTime
+
+  createdAt   DateTime  @default(now())
+
+  @@index([token])
+  @@index([email])
+  @@index([expiresAt])
+}
+
+// ============================================
+// MOBILE PUSH NOTIFICATIONS
+// ============================================
+
+// Expo push tokens per device
+model DevicePushToken {
+  id          String    @id @default(uuid())
+  token       String    @unique
+  userId      String
+  userType    String    // user, dealer
+  platform    String    // ios, android
+  isActive    Boolean   @default(true)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([userType])
+  @@index([isActive])
+}
+
+// In-app notification records
+model Notification {
+  id          String    @id @default(uuid())
+  userId      String
+  userType    String    // user, dealer
+  title       String
+  body        String
+  data        String?   // JSON payload
+  read        Boolean   @default(false)
+  readAt      DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
 }
 
 // ============================================
