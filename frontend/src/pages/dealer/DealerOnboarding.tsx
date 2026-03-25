@@ -36,7 +36,7 @@ const YEARS_OPTIONS = [
 
 const benefits = [
   { icon: Users, title: 'Get Quality Leads', description: 'Verified buyers actively looking for electrical products' },
-  { icon: TrendingUp, title: 'Grow Your Business', description: 'Average dealer sees 40% increase in orders' },
+  { icon: TrendingUp, title: 'Grow Your Business', description: 'Reach buyers you could never find on your own' },
   { icon: Clock, title: 'Save Time', description: 'No more chasing customers - they come to you' },
   { icon: Shield, title: 'Verified Badge', description: 'Build trust with buyers through our verification' },
 ];
@@ -265,19 +265,19 @@ export function DealerOnboarding() {
                 <span className="text-xl font-bold">Hub4Estate</span>
               </Link>
               <h1 className="text-3xl md:text-4xl font-black mb-2">
-                Join 500+ Dealers.<br />
-                <span className="text-amber-400">Grow Your Business.</span>
+                Register as a Dealer.<br />
+                <span className="text-amber-400">Reach More Buyers.</span>
               </h1>
-              <p className="text-neutral-400">Start receiving quality leads in 24 hours after verification</p>
+              <p className="text-neutral-400">Receive qualified buyer inquiries after verification</p>
             </div>
             <div className="flex gap-6">
               <div className="text-center">
-                <div className="text-3xl font-black text-amber-400 mb-1">500+</div>
-                <div className="text-xs uppercase tracking-wider text-neutral-400">Active Dealers</div>
+                <div className="text-3xl font-black text-amber-400 mb-1">Free</div>
+                <div className="text-xs uppercase tracking-wider text-neutral-400">To Register</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-black text-amber-400 mb-1">40%</div>
-                <div className="text-xs uppercase tracking-wider text-neutral-400">Order Growth</div>
+                <div className="text-3xl font-black text-amber-400 mb-1">Real</div>
+                <div className="text-xs uppercase tracking-wider text-neutral-400">Buyer Inquiries</div>
               </div>
             </div>
           </div>

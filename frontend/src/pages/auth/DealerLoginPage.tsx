@@ -4,16 +4,13 @@ import { authApi } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
 import { Button, Input, Alert } from '../../components/ui';
 import {
-  Store, Shield, Eye, EyeOff, Zap, ArrowRight, ArrowLeft,
+  Store, Eye, EyeOff, Zap, ArrowRight, ArrowLeft,
   TrendingUp, Users, FileText, Award, Sparkles, CheckCircle
 } from 'lucide-react';
-
-type LoginType = 'dealer' | 'admin';
 
 export function DealerLoginPage() {
   const navigate = useNavigate();
   const { setAuth, isAuthenticated, user } = useAuthStore();
-  const [loginType, setLoginType] = useState<LoginType>('dealer');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -38,36 +35,19 @@ export function DealerLoginPage() {
     setIsLoading(true);
 
     try {
-      let response;
-      if (loginType === 'admin') {
-        response = await authApi.adminLogin({ email, password });
-        const { token, admin } = response.data;
-        localStorage.setItem('token', token);
-        setAuth({
-          id: admin.id,
-          email: admin.email,
-          name: admin.name,
-          role: admin.role,
-          city: '',
-          type: 'admin',
-        }, token);
-        setSuccess(true);
-        setTimeout(() => navigate('/admin'), 1500);
-      } else {
-        response = await authApi.dealerLogin({ email, password });
-        const { token, dealer } = response.data;
-        localStorage.setItem('token', token);
-        setAuth({
-          id: dealer.id,
-          email: dealer.email,
-          name: dealer.businessName,
-          role: 'dealer',
-          city: dealer.city || '',
-          type: 'dealer',
-        }, token);
-        setSuccess(true);
-        setTimeout(() => navigate('/dealer'), 1500);
-      }
+      const response = await authApi.dealerLogin({ email, password });
+      const { token, dealer } = response.data;
+      localStorage.setItem('token', token);
+      setAuth({
+        id: dealer.id,
+        email: dealer.email,
+        name: dealer.businessName,
+        role: 'dealer',
+        city: dealer.city || '',
+        type: 'dealer',
+      }, token);
+      setSuccess(true);
+      setTimeout(() => navigate('/dealer'), 1500);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
     } finally {
@@ -140,7 +120,7 @@ export function DealerLoginPage() {
         {/* Footer */}
         <div className="relative z-10">
           <p className="text-neutral-400 text-sm">
-            Trusted by 500+ dealers across India
+            Electrical products marketplace — India
           </p>
         </div>
 
@@ -186,45 +166,13 @@ export function DealerLoginPage() {
                     <CheckCircle className="w-10 h-10 text-white" />
                   </div>
                   <h2 className="text-2xl font-black text-neutral-900 mb-2">Welcome Back!</h2>
-                  <p className="text-neutral-500">
-                    Redirecting to your {loginType === 'admin' ? 'admin panel' : 'dashboard'}...
-                  </p>
+                  <p className="text-neutral-500">Redirecting to your dashboard...</p>
                 </div>
               ) : (
                 <>
                   <div className="text-center mb-8">
-                    <h2 className="text-2xl font-black text-neutral-900">
-                      {loginType === 'admin' ? 'Admin Login' : 'Dealer Login'}
-                    </h2>
-                    <p className="text-neutral-500 mt-2">
-                      Sign in to access your {loginType === 'admin' ? 'admin panel' : 'dealer dashboard'}
-                    </p>
-                  </div>
-
-                  {/* Toggle */}
-                  <div className="flex bg-neutral-100 border-2 border-neutral-200 p-1 mb-6">
-                    <button
-                      onClick={() => { setLoginType('dealer'); setError(''); }}
-                      className={`flex-1 flex items-center justify-center space-x-2 py-3 font-bold transition-all ${
-                        loginType === 'dealer'
-                          ? 'bg-neutral-900 text-white'
-                          : 'text-neutral-500 hover:text-neutral-700'
-                      }`}
-                    >
-                      <Store className="w-4 h-4" />
-                      <span>Dealer</span>
-                    </button>
-                    <button
-                      onClick={() => { setLoginType('admin'); setError(''); }}
-                      className={`flex-1 flex items-center justify-center space-x-2 py-3 font-bold transition-all ${
-                        loginType === 'admin'
-                          ? 'bg-neutral-900 text-white'
-                          : 'text-neutral-500 hover:text-neutral-700'
-                      }`}
-                    >
-                      <Shield className="w-4 h-4" />
-                      <span>Admin</span>
-                    </button>
+                    <h2 className="text-2xl font-black text-neutral-900">Dealer Login</h2>
+                    <p className="text-neutral-500 mt-2">Sign in to access your dealer dashboard</p>
                   </div>
 
                   {error && (
@@ -263,17 +211,6 @@ export function DealerLoginPage() {
                       </button>
                     </div>
 
-                    {loginType === 'dealer' && (
-                      <div className="text-right">
-                        <button
-                          type="button"
-                          className="text-sm font-bold text-accent-600 hover:text-accent-700"
-                        >
-                          Forgot Password?
-                        </button>
-                      </div>
-                    )}
-
                     <Button
                       type="submit"
                       isLoading={isLoading}
@@ -285,31 +222,20 @@ export function DealerLoginPage() {
                     </Button>
                   </form>
 
-                  {/* Demo Credentials */}
-                  {loginType === 'admin' && (
-                    <div className="mt-6 p-4 bg-blue-50 border-2 border-blue-200">
-                      <p className="text-sm font-bold text-blue-900 mb-2">Demo Admin Credentials:</p>
-                      <p className="text-sm text-blue-700 font-medium">Email: admin@hub4estate.com</p>
-                      <p className="text-sm text-blue-700 font-medium">Password: admin123</p>
+                  <div className="mt-6 pt-6 border-t-2 border-neutral-100">
+                    <div className="text-center">
+                      <p className="text-neutral-600 font-medium mb-4">
+                        Don't have an account?
+                      </p>
+                      <Link
+                        to="/dealer/onboarding"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-100 hover:bg-neutral-200 font-bold text-neutral-900 transition-colors"
+                      >
+                        <Sparkles className="w-5 h-5" />
+                        Register as Dealer
+                      </Link>
                     </div>
-                  )}
-
-                  {loginType === 'dealer' && (
-                    <div className="mt-6 pt-6 border-t-2 border-neutral-100">
-                      <div className="text-center">
-                        <p className="text-neutral-600 font-medium mb-4">
-                          Don't have an account?
-                        </p>
-                        <Link
-                          to="/dealer/onboarding"
-                          className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-100 hover:bg-neutral-200 font-bold text-neutral-900 transition-colors"
-                        >
-                          <Sparkles className="w-5 h-5" />
-                          Register as Dealer
-                        </Link>
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </>
               )}
             </div>

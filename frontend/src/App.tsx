@@ -13,6 +13,7 @@ import { UserAuthPage } from '@/pages/auth/UserAuthPage';
 import { AuthCallback } from '@/pages/auth/AuthCallback';
 import { ProfileCompletionPage } from '@/pages/auth/ProfileCompletionPage';
 import { DealerLoginPage } from '@/pages/auth/DealerLoginPage';
+import { AdminLoginPage } from '@/pages/auth/AdminLoginPage';
 
 // Product Pages (eager - core browsing flow)
 import { CategoriesPage } from '@/pages/products/CategoriesPage';
@@ -102,6 +103,7 @@ function App() {
         <Route path="/login" element={<UserAuthPage />} />
         <Route path="/signup" element={<UserAuthPage />} />
         <Route path="/dealer/login" element={<DealerLoginPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/complete-profile" element={<ProfileCompletionPage />} />
         <Route path="/dealer/onboarding" element={<DealerOnboardingLazy />} />

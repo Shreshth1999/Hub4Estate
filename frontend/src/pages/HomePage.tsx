@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Clock, Shield, Zap, CheckCircle, Star, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3, Upload, Camera, X, Sparkles, Loader2, MapPin } from 'lucide-react';
+import { ArrowRight, Shield, CheckCircle, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3, Upload, Camera, X, Sparkles, Loader2, MapPin, Home, Wrench, Palette, Building2 } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { productsApi, api } from '../lib/api';
@@ -65,14 +65,12 @@ export function HomePage() {
       const preview = URL.createObjectURL(file);
       setPhotoPreview(preview);
 
-      // Auto-scan with AI if in AI mode
       if (useAIScan) {
         await processWithAI(file);
       }
     }
   };
 
-  // Drag and drop handlers
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -92,7 +90,6 @@ export function HomePage() {
       const preview = URL.createObjectURL(file);
       setPhotoPreview(preview);
 
-      // Auto-scan with AI if in AI mode
       if (useAIScan) {
         await processWithAI(file);
       }
@@ -105,7 +102,6 @@ export function HomePage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  // AI Scan functions
   const startCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -161,7 +157,6 @@ export function HomePage() {
       const data = response.data;
       setAiParsedItems(data.items || []);
 
-      // Auto-fill form with first item
       if (data.items && data.items.length > 0) {
         const firstItem = data.items[0];
         setInquiryForm(f => ({
@@ -183,7 +178,6 @@ export function HomePage() {
     }
   };
 
-  // Auto-detect location
   const detectLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -240,7 +234,6 @@ export function HomePage() {
       const inquiryNumber = response.data.inquiryNumber || response.data.inquiryId || '';
       setSubmittedInquiryId(inquiryNumber);
       setSubmitted(true);
-      // Save to sessionStorage so refresh doesn't lose the success state
       sessionStorage.setItem('hub4estate_inquiry', JSON.stringify({
         submitted: true,
         inquiryNumber,
@@ -253,85 +246,54 @@ export function HomePage() {
     }
   };
 
-  const urgencyBenefits = [
-    { icon: Clock, text: 'Get quotes in under 60 seconds' },
-    { icon: Shield, text: 'All dealers verified & background-checked' },
-    { icon: Zap, text: 'Guaranteed lowest prices or money back' },
-  ];
-
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Electrical background system */}
       <ElectricalBackgroundSystem />
-
-      {/* Urgency Ticker */}
-      <div className="ticker">
-        <div className="ticker-content">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex">
-              <span className="ticker-item">
-                <span className="w-2 h-2 bg-accent-500 rounded-full mr-3 animate-pulse"></span>
-                LIMITED TIME: FREE DELIVERY ON ORDERS ABOVE ₹5,000
-              </span>
-              <span className="ticker-item">
-                <span className="w-2 h-2 bg-success-500 rounded-full mr-3 animate-pulse"></span>
-                247 BUYERS GOT QUOTES IN THE LAST HOUR
-              </span>
-              <span className="ticker-item">
-                <span className="w-2 h-2 bg-warning-500 rounded-full mr-3 animate-pulse"></span>
-                PRICES UPDATED EVERY 24 HOURS — ACT NOW
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Hero Section */}
       <section className="relative bg-white border-b-2 border-neutral-900 overflow-hidden">
-        {/* Grid Background */}
         <div className="absolute inset-0 grid-bg"></div>
 
         <div className="container-custom relative py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+
             {/* Left Content */}
             <div className="animate-slide-up">
-              {/* Urgency Badge */}
-              <div className="inline-flex items-center bg-neutral-900 text-white px-4 py-2 mb-8">
-                <span className="w-2 h-2 bg-accent-500 rounded-full mr-3 animate-pulse"></span>
-                <span className="text-sm font-bold uppercase tracking-wider">Price Drop Alert: Save Up to 40% Today</span>
-              </div>
-
-              {/* Brand Badge */}
-              <div className="inline-flex items-center border-2 border-accent-500 text-accent-600 px-4 py-2 mb-8 ml-4">
-                <Zap className="w-4 h-4 mr-2" />
-                <span className="text-sm font-bold uppercase tracking-wider">India's #1 Electrical Products Marketplace</span>
+              {/* Badge */}
+              <div className="inline-flex items-center border-2 border-neutral-900 text-neutral-900 px-4 py-2 mb-8">
+                <span className="w-2 h-2 bg-accent-500 rounded-full mr-3"></span>
+                <span className="text-sm font-bold uppercase tracking-wider">Electrical Products — Transparent Pricing</span>
               </div>
 
               {/* Main Headline */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-neutral-900 mb-6 leading-[0.9]">
-                We Will Get You The <span className="text-accent-600">Cheapest Price</span> Of Any Electrical Across India.
+                Stop Paying Whatever<br />You're <span className="text-accent-600">Told.</span>
               </h1>
 
               {/* Subheadline */}
               <p className="text-xl md:text-2xl text-neutral-600 mb-8 max-w-xl font-medium leading-relaxed">
-                Wires, switches, MCBs, fans, lights — get <span className="text-neutral-900 font-bold">instant quotes</span> from 500+ verified electrical dealers.
-                Compare prices. Pick the best deal.
+                Tell us what you need. We contact multiple verified dealers.
+                You compare their real prices and pick the best deal.
               </p>
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
                 <Link to="/rfq/create" className="btn-urgent group">
-                  Get Instant Quote
+                  Submit an Inquiry
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <Link to="/categories" className="btn-secondary">
-                  Browse Products
+                <Link to="/track" className="btn-secondary">
+                  Track Your Inquiry
                 </Link>
               </div>
 
-              {/* Trust Indicators */}
+              {/* Honest Trust Indicators */}
               <div className="flex flex-col gap-3">
-                {urgencyBenefits.map((benefit, index) => (
+                {[
+                  { icon: IndianRupee, text: 'Multiple quotes from real dealers — compare side by side' },
+                  { icon: Shield, text: 'We verify dealers before connecting you' },
+                  { icon: FileText, text: 'Full transparency — you see every quote, no hidden fees' },
+                ].map((benefit, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
                     <benefit.icon className="w-5 h-5 text-neutral-900" />
                     <span>{benefit.text}</span>
@@ -378,17 +340,17 @@ export function HomePage() {
                 ) : (
                   <>
                     <h3 className="text-xl font-black text-neutral-900 mb-1">Get the Best Price</h3>
-                    <p className="text-sm text-neutral-500 mb-6">Choose your preferred method to get started</p>
+                    <p className="text-sm text-neutral-500 mb-6">Tell us what you need — we'll find you the best deal</p>
 
-                    {/* Enhanced Toggle: Manual vs AI Scan */}
-                    <div className="relative mb-6 bg-gradient-to-br from-neutral-100 to-neutral-50 border-2 border-neutral-200 rounded-lg p-1.5">
-                      <div className="grid grid-cols-2 gap-1.5 relative">
+                    {/* Toggle: Manual vs AI Scan */}
+                    <div className="relative mb-6 bg-neutral-100 border-2 border-neutral-200 p-1">
+                      <div className="grid grid-cols-2 gap-1 relative">
                         <button
                           type="button"
                           onClick={() => { setUseAIScan(false); stopCamera(); setAiParsedItems([]); }}
-                          className={`relative px-4 py-3 text-sm font-bold transition-all duration-300 rounded-md ${
+                          className={`relative px-4 py-3 text-sm font-bold transition-all duration-200 ${
                             !useAIScan
-                              ? 'bg-neutral-900 text-white shadow-lg'
+                              ? 'bg-neutral-900 text-white'
                               : 'text-neutral-600 hover:text-neutral-900'
                           }`}
                         >
@@ -400,55 +362,46 @@ export function HomePage() {
                         <button
                           type="button"
                           onClick={() => setUseAIScan(true)}
-                          className={`relative px-4 py-3 text-sm font-bold transition-all duration-300 rounded-md overflow-hidden ${
+                          className={`relative px-4 py-3 text-sm font-bold transition-all duration-200 ${
                             useAIScan
-                              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                              ? 'bg-accent-500 text-white'
                               : 'text-neutral-600 hover:text-neutral-900'
                           }`}
                         >
-                          <div className="flex items-center justify-center gap-2 relative z-10">
+                          <div className="flex items-center justify-center gap-2">
                             <Sparkles className="w-4 h-4" />
-                            <span>AI Scan</span>
+                            <span>AI Scan Slip</span>
                           </div>
-                          {useAIScan && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 opacity-0 animate-pulse" />
-                          )}
                         </button>
                       </div>
                     </div>
 
-                    {/* AI Scan Quick Guide */}
+                    {/* AI Scan Guide */}
                     {useAIScan && !cameraActive && !photoPreview && (
-                      <div className="mb-6 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                      <div className="mb-6 bg-neutral-50 border-2 border-neutral-200 p-4">
                         <div className="flex items-start gap-3 mb-3">
-                          <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 bg-neutral-900 flex items-center justify-center flex-shrink-0">
                             <Sparkles className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <h4 className="text-sm font-bold text-neutral-900 mb-1">How AI Scan Works</h4>
+                            <h4 className="text-sm font-bold text-neutral-900 mb-1">Scan Your Material Slip</h4>
                             <p className="text-xs text-neutral-600 leading-relaxed">
-                              Upload your contractor's slip or materials list. Our AI will instantly extract all products, quantities, and brands.
+                              Upload a photo of your contractor's slip or materials list. AI will extract products, quantities, and brands automatically.
                             </p>
                           </div>
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-center">
-                          <div className="bg-white/60 rounded p-2">
-                            <div className="text-lg font-black text-purple-600 mb-0.5">1</div>
-                            <div className="text-xs font-medium text-neutral-700">Upload Photo</div>
-                          </div>
-                          <div className="bg-white/60 rounded p-2">
-                            <div className="text-lg font-black text-purple-600 mb-0.5">2</div>
-                            <div className="text-xs font-medium text-neutral-700">AI Analyzes</div>
-                          </div>
-                          <div className="bg-white/60 rounded p-2">
-                            <div className="text-lg font-black text-purple-600 mb-0.5">3</div>
-                            <div className="text-xs font-medium text-neutral-700">Auto-Fill Form</div>
-                          </div>
+                          {['Upload Photo', 'AI Reads It', 'Auto-Fill Form'].map((step, i) => (
+                            <div key={i} className="bg-white border border-neutral-200 p-2">
+                              <div className="text-lg font-black text-accent-600 mb-0.5">{i + 1}</div>
+                              <div className="text-xs font-medium text-neutral-700">{step}</div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
 
-                    {/* Hidden File Input - Shared by both modes */}
+                    {/* Hidden File Input */}
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -461,34 +414,30 @@ export function HomePage() {
                       {/* AI Scan Mode */}
                       {useAIScan ? (
                         <div className="space-y-4">
-                          {/* Camera View or Upload */}
                           {cameraActive ? (
                             <div className="space-y-4">
-                              {/* Camera View with Frame Guide */}
-                              <div className="relative rounded-lg overflow-hidden border-2 border-purple-400 shadow-lg">
+                              <div className="relative overflow-hidden border-2 border-neutral-900">
                                 <video
                                   ref={videoRef}
                                   autoPlay
                                   playsInline
                                   className="w-full"
                                 />
-                                {/* Frame guide overlay */}
                                 <div className="absolute inset-0 pointer-events-none">
-                                  <div className="absolute inset-4 border-2 border-dashed border-white/50 rounded-lg flex items-center justify-center">
-                                    <span className="bg-black/60 text-white text-xs font-medium px-3 py-1.5 rounded-full">
+                                  <div className="absolute inset-4 border-2 border-dashed border-white/60 flex items-center justify-center">
+                                    <span className="bg-black/60 text-white text-xs font-medium px-3 py-1.5">
                                       Position slip within frame
                                     </span>
                                   </div>
                                 </div>
                               </div>
 
-                              {/* Camera Controls */}
                               <div className="flex gap-2">
                                 <button
                                   type="button"
                                   onClick={capturePhoto}
                                   disabled={aiScanning}
-                                  className="flex-1 px-4 py-3.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold flex items-center justify-center gap-2 hover:from-purple-700 hover:to-blue-700 transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl disabled:opacity-50"
+                                  className="flex-1 px-4 py-3 bg-neutral-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors disabled:opacity-50"
                                 >
                                   <Camera className="w-5 h-5" />
                                   <span>Capture & Scan</span>
@@ -496,7 +445,7 @@ export function HomePage() {
                                 <button
                                   type="button"
                                   onClick={stopCamera}
-                                  className="px-5 bg-neutral-200 hover:bg-neutral-300 font-bold text-sm rounded-lg transition-colors"
+                                  className="px-5 bg-neutral-200 hover:bg-neutral-300 font-bold text-sm transition-colors"
                                 >
                                   Cancel
                                 </button>
@@ -504,8 +453,7 @@ export function HomePage() {
                             </div>
                           ) : photoPreview ? (
                             <div className="space-y-4">
-                              {/* Enhanced Image Preview */}
-                              <div className="relative rounded-lg overflow-hidden border-2 border-neutral-300 shadow-lg">
+                              <div className="relative overflow-hidden border-2 border-neutral-300">
                                 <img src={photoPreview} alt="Product" className="w-full bg-neutral-50" />
                                 <button
                                   type="button"
@@ -513,51 +461,28 @@ export function HomePage() {
                                     removePhoto();
                                     setAiParsedItems([]);
                                   }}
-                                  className="absolute top-3 right-3 bg-neutral-900/80 hover:bg-neutral-900 text-white rounded-full p-2 transition-all duration-200 backdrop-blur-sm"
+                                  className="absolute top-3 right-3 bg-neutral-900/80 hover:bg-neutral-900 text-white p-2 transition-colors"
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
-                                {!aiScanning && aiParsedItems.length === 0 && (
-                                  <div className="absolute bottom-3 left-3 right-3">
-                                    <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2 text-white text-xs font-medium text-center">
-                                      Photo uploaded • Scanning...
-                                    </div>
-                                  </div>
-                                )}
                               </div>
 
                               {aiScanning ? (
-                                <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-300 rounded-lg p-6 text-center">
-                                  <div className="relative mb-4">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full mx-auto flex items-center justify-center animate-pulse">
-                                      <Sparkles className="w-8 h-8 text-white" />
-                                    </div>
-                                    <Loader2 className="w-6 h-6 animate-spin text-purple-600 absolute -bottom-1 -right-1 left-0 right-0 mx-auto" />
-                                  </div>
-                                  <p className="text-sm font-bold text-neutral-900 mb-1">AI is analyzing your slip...</p>
+                                <div className="bg-neutral-100 border-2 border-neutral-200 p-6 text-center">
+                                  <Loader2 className="w-8 h-8 animate-spin text-neutral-700 mx-auto mb-3" />
+                                  <p className="text-sm font-bold text-neutral-900 mb-1">Scanning your slip...</p>
                                   <p className="text-xs text-neutral-600">Extracting products, quantities, and brands</p>
-                                  <div className="mt-3 flex items-center justify-center gap-1">
-                                    <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                                    <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                                    <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
-                                  </div>
                                 </div>
                               ) : aiParsedItems.length > 0 ? (
-                                <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-5 space-y-3">
+                                <div className="bg-green-50 border-2 border-green-300 p-5 space-y-3">
                                   <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                                      <CheckCircle className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div>
-                                      <p className="text-sm font-bold text-green-900">
-                                        Success! Found {aiParsedItems.length} product{aiParsedItems.length > 1 ? 's' : ''}
-                                      </p>
-                                      <p className="text-xs text-green-700">Form auto-filled with first item</p>
-                                    </div>
+                                    <CheckCircle className="w-5 h-5 text-green-600" />
+                                    <p className="text-sm font-bold text-green-900">
+                                      Found {aiParsedItems.length} product{aiParsedItems.length > 1 ? 's' : ''} — form auto-filled
+                                    </p>
                                   </div>
 
-                                  {/* Product List */}
-                                  <div className="space-y-3 bg-white/60 rounded-lg p-3">
+                                  <div className="space-y-3 bg-white border border-green-200 p-3">
                                     {aiParsedItems.slice(0, 3).map((item: any, i: number) => (
                                       <div key={i} className="flex items-start gap-2 text-xs">
                                         <span className="text-green-600 font-bold mt-0.5">{i + 1}.</span>
@@ -566,17 +491,11 @@ export function HomePage() {
                                           <div className="text-neutral-600 flex items-center gap-2 flex-wrap">
                                             <span>{item.quantity} {item.unit}</span>
                                             {item.brand && (
-                                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                              <span className="px-2 py-0.5 bg-neutral-100 text-neutral-700 text-xs font-medium">
                                                 {item.brand}
                                               </span>
                                             )}
-                                            {item.confidence && (
-                                              <span className="text-neutral-500">
-                                                {Math.round(item.confidence * 100)}% confident
-                                              </span>
-                                            )}
                                           </div>
-                                          {/* Brand suggestions when no brand detected */}
                                           {!item.brand && item.brandSuggestions && item.brandSuggestions.length > 0 && (
                                             <div className="mt-2">
                                               <p className="text-xs text-neutral-500 mb-1">Suggested brands:</p>
@@ -591,18 +510,13 @@ export function HomePage() {
                                                       setAiParsedItems(updated);
                                                       if (i === 0) setInquiryForm(f => ({ ...f, modelNumber: `${item.productName} ${s.name}`.trim() }));
                                                     }}
-                                                    className={`px-2 py-0.5 border text-xs font-bold rounded-sm transition-colors ${
-                                                      s.segment === 'premium' ? 'border-purple-300 text-purple-700 bg-purple-50 hover:bg-purple-100' :
-                                                      s.segment === 'quality' ? 'border-blue-300 text-blue-700 bg-blue-50 hover:bg-blue-100' :
-                                                      'border-green-300 text-green-700 bg-green-50 hover:bg-green-100'
-                                                    }`}
+                                                    className="px-2 py-0.5 border border-neutral-300 text-xs font-bold text-neutral-700 bg-neutral-50 hover:bg-neutral-100 transition-colors"
                                                     title={s.reason}
                                                   >
                                                     {s.name}
                                                   </button>
                                                 ))}
                                               </div>
-                                              <p className="text-xs text-neutral-400 mt-1 italic">Tap to select, or leave blank for all quotes</p>
                                             </div>
                                           )}
                                         </div>
@@ -616,7 +530,7 @@ export function HomePage() {
                                   </div>
 
                                   {detectedLocation && (
-                                    <div className="flex items-center gap-2 bg-blue-50 rounded px-3 py-2">
+                                    <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-2">
                                       <MapPin className="w-4 h-4 text-blue-600" />
                                       <span className="text-xs font-medium text-blue-900">
                                         Location detected: <span className="font-bold">{detectedLocation}</span>
@@ -628,38 +542,25 @@ export function HomePage() {
                             </div>
                           ) : (
                             <div className="space-y-4">
-                              {/* Enhanced Upload Area */}
-                              <div className="relative">
-                                <button
-                                  type="button"
-                                  onClick={() => fileInputRef.current?.click()}
-                                  onDragOver={handleDragOver}
-                                  onDragLeave={handleDragLeave}
-                                  onDrop={handleDrop}
-                                  className={`group w-full h-44 border-2 border-dashed transition-all duration-300 rounded-xl flex flex-col items-center justify-center gap-3 relative overflow-hidden shadow-sm hover:shadow-lg ${
-                                    isDragging
-                                      ? 'border-purple-600 bg-purple-100 scale-105'
-                                      : 'border-purple-400 bg-gradient-to-br from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 hover:border-purple-600'
-                                  }`}
-                                >
-                                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                                  {/* Animated Border Pulse */}
-                                  <div className="absolute inset-0 rounded-xl border-2 border-purple-400 animate-pulse opacity-50"></div>
-
-                                  <div className="relative z-10 flex flex-col items-center gap-2">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center mb-1 group-hover:scale-110 transition-transform shadow-lg">
-                                      <Upload className="w-8 h-8 text-white animate-bounce" />
-                                    </div>
-                                    <span className="text-base font-bold text-neutral-900">Click to Upload Slip</span>
-                                    <span className="text-xs text-neutral-600">or drag and drop here</span>
-                                    <div className="mt-2 px-4 py-1.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-md">
-                                      <span className="text-xs font-bold">✨ AI-Powered • Instant Results</span>
-                                    </div>
-                                    <span className="text-xs text-neutral-500 mt-1">JPG, PNG • Max 10MB</span>
-                                  </div>
-                                </button>
-                              </div>
+                              {/* Upload Area */}
+                              <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                className={`w-full h-40 border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
+                                  isDragging
+                                    ? 'border-neutral-900 bg-neutral-100'
+                                    : 'border-neutral-300 bg-neutral-50 hover:border-neutral-900 hover:bg-neutral-100'
+                                }`}
+                              >
+                                <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center">
+                                  <Upload className="w-6 h-6 text-white" />
+                                </div>
+                                <span className="text-sm font-bold text-neutral-900">Click to Upload Slip</span>
+                                <span className="text-xs text-neutral-500">or drag and drop here · JPG, PNG · Max 10MB</span>
+                              </button>
 
                               {/* Divider */}
                               <div className="relative">
@@ -671,44 +572,24 @@ export function HomePage() {
                                 </div>
                               </div>
 
-                              {/* Enhanced Camera Button */}
+                              {/* Camera Button */}
                               <button
                                 type="button"
                                 onClick={startCamera}
-                                className="w-full px-4 py-3.5 bg-gradient-to-r from-neutral-900 to-neutral-800 text-white font-bold flex items-center justify-center gap-2 hover:from-neutral-800 hover:to-neutral-700 transition-all duration-300 rounded-lg shadow-lg hover:shadow-xl"
+                                className="w-full px-4 py-3 bg-neutral-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors"
                               >
                                 <Camera className="w-5 h-5" />
-                                <span>Use Camera to Capture</span>
+                                <span>Use Camera</span>
                               </button>
 
-                              {/* Enhanced Tips Section */}
-                              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4">
-                                <div className="flex items-center gap-2 mb-3">
-                                  <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
-                                    <Camera className="w-3.5 h-3.5 text-white" />
-                                  </div>
-                                  <p className="text-sm font-bold text-neutral-900">Pro Tips for Perfect Scans</p>
-                                </div>
-                                <ul className="text-xs text-neutral-700 space-y-2">
-                                  <li className="flex items-start gap-2">
-                                    <span className="text-green-600 font-bold mt-0.5">✓</span>
-                                    <span><span className="font-semibold">Clear lighting</span> - Natural light works best</span>
-                                  </li>
-                                  <li className="flex items-start gap-2">
-                                    <span className="text-green-600 font-bold mt-0.5">✓</span>
-                                    <span><span className="font-semibold">Full view</span> - Capture entire slip in frame</span>
-                                  </li>
-                                  <li className="flex items-start gap-2">
-                                    <span className="text-green-600 font-bold mt-0.5">✓</span>
-                                    <span><span className="font-semibold">Steady shot</span> - Avoid blurry or angled photos</span>
-                                  </li>
+                              {/* Tips */}
+                              <div className="bg-neutral-50 border border-neutral-200 p-4">
+                                <p className="text-xs font-bold text-neutral-700 mb-2">For best results:</p>
+                                <ul className="text-xs text-neutral-600 space-y-1">
+                                  <li>• Good lighting — natural light works best</li>
+                                  <li>• Capture the full slip in frame</li>
+                                  <li>• Avoid blurry or angled shots</li>
                                 </ul>
-                                <div className="mt-3 pt-3 border-t border-green-200">
-                                  <p className="text-xs text-neutral-600 flex items-center gap-1">
-                                    <Sparkles className="w-3 h-3 text-purple-600" />
-                                    <span className="font-medium">AI works best with clear, well-lit images</span>
-                                  </p>
-                                </div>
                               </div>
                             </div>
                           )}
@@ -717,47 +598,47 @@ export function HomePage() {
                         /* Manual Entry Mode */
                         <div>
                           <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-2">
-                            Product Photo
+                            Product Photo <span className="text-neutral-400 normal-case font-normal">(optional)</span>
                           </label>
                           {photoPreview ? (
-                          <div className="relative w-full h-32 border-2 border-neutral-200 rounded overflow-hidden">
-                            <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-neutral-50" />
+                            <div className="relative w-full h-32 border-2 border-neutral-200 overflow-hidden">
+                              <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-neutral-50" />
+                              <button
+                                type="button"
+                                onClick={removePhoto}
+                                className="absolute top-2 right-2 bg-neutral-900 text-white p-1"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ) : (
                             <button
                               type="button"
-                              onClick={removePhoto}
-                              className="absolute top-2 right-2 bg-neutral-900 text-white rounded-full p-1"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="w-full h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center gap-2 hover:border-neutral-900 hover:bg-neutral-50 transition-colors"
                             >
-                              <X className="w-4 h-4" />
+                              <Camera className="w-5 h-5 text-neutral-400" />
+                              <span className="text-sm text-neutral-500">Upload product photo</span>
                             </button>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full h-28 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center gap-2 hover:border-accent-500 hover:bg-accent-50 transition-colors"
-                          >
-                            <Camera className="w-6 h-6 text-neutral-400" />
-                            <span className="text-sm text-neutral-500">Click to upload product photo</span>
-                          </button>
-                        )}
+                          )}
                         </div>
                       )}
 
                       {/* Model Number */}
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
-                          Model Number <span className="text-neutral-400 normal-case">(or product name)</span>
+                          Product / Model Number
                         </label>
                         <input
                           type="text"
-                          placeholder="e.g. Havells?"
+                          placeholder="e.g. Havells Crabtree 16A switch, Polycab 2.5mm wire..."
                           value={inquiryForm.modelNumber}
                           onChange={e => setInquiryForm(f => ({ ...f, modelNumber: e.target.value }))}
                           className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
                         />
                       </div>
 
-                      {/* Quantity & City in row */}
+                      {/* Quantity & City */}
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Quantity</label>
@@ -815,25 +696,18 @@ export function HomePage() {
                       </div>
 
                       {formError && (
-                        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start gap-3">
-                          <div className="w-5 h-5 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="bg-red-50 border-2 border-red-200 p-4 flex items-start gap-3">
+                          <div className="w-5 h-5 bg-red-600 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <X className="w-3 h-3 text-white" />
                           </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-bold text-red-900 mb-0.5">Error</p>
-                            <p className="text-xs text-red-700">{formError}</p>
-                          </div>
+                          <p className="text-sm text-red-700">{formError}</p>
                         </div>
                       )}
 
                       <button
                         type="submit"
                         disabled={submitting}
-                        className={`w-full justify-center disabled:opacity-50 transition-all duration-300 ${
-                          useAIScan && aiParsedItems.length > 0
-                            ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3.5 px-6 rounded-lg shadow-lg hover:shadow-xl'
-                            : 'btn-urgent'
-                        }`}
+                        className="btn-urgent w-full justify-center disabled:opacity-50"
                       >
                         {submitting ? (
                           <>
@@ -842,14 +716,14 @@ export function HomePage() {
                           </>
                         ) : (
                           <>
-                            <span>{useAIScan && aiParsedItems.length > 0 ? 'Submit AI-Scanned Inquiry' : 'Get Cheapest Price'}</span>
+                            <span>Get the Best Price</span>
                             <ArrowRight className="ml-2 w-5 h-5" />
                           </>
                         )}
                       </button>
 
                       <p className="text-xs text-neutral-400 text-center">
-                        We'll call you back with the best price within 30 minutes
+                        We'll reach out with dealer quotes. No spam, ever.
                       </p>
                     </form>
                   </>
@@ -860,49 +734,51 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Social Proof Bar */}
-      <section className="bg-primary-50 border-b-2 border-neutral-200 py-6">
+      {/* Who We Help */}
+      <section className="section bg-neutral-50 border-b-2 border-neutral-200">
         <div className="container-custom">
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="w-10 h-10 bg-neutral-300 border-2 border-white rounded-full" />
-                ))}
+          <div className="text-center mb-12">
+            <span className="inline-block text-accent-600 text-sm font-bold uppercase tracking-wider mb-4">
+              Who We Help
+            </span>
+            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
+              Anyone Who Buys Electrical Products
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              If you've ever wondered whether you're being charged a fair price, Hub4Estate is for you.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { icon: Home, title: 'Homeowners', desc: 'Fitting, renovating, or upgrading your home' },
+              { icon: Wrench, title: 'Contractors', desc: 'Sourcing materials for construction projects' },
+              { icon: Palette, title: 'Interior Designers', desc: 'Specifying fixtures and fittings for clients' },
+              { icon: Building2, title: 'Builders', desc: 'Large-scale procurement for project sites' },
+              { icon: Users, title: 'Architects', desc: 'Sourcing to spec for client projects' },
+              { icon: Store, title: 'Small Businesses', desc: 'Office, retail, or facility fitouts' },
+            ].map((segment, index) => (
+              <div key={index} className="border-2 border-neutral-200 p-6 bg-white hover:border-neutral-900 hover:shadow-brutal transition-all duration-200 group">
+                <div className="w-10 h-10 bg-neutral-100 group-hover:bg-accent-500 flex items-center justify-center mb-4 transition-colors">
+                  <segment.icon className="w-5 h-5 text-neutral-700 group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="text-lg font-bold text-neutral-900 mb-1">{segment.title}</h3>
+                <p className="text-sm text-neutral-600">{segment.desc}</p>
               </div>
-              <span className="text-sm font-bold text-neutral-700">
-                <span className="text-neutral-900">2,847</span> happy customers this month
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-warning-400 text-warning-400" />
-                ))}
-              </div>
-              <span className="text-sm font-bold text-neutral-700">
-                <span className="text-neutral-900">4.9/5</span> from 12,000+ reviews
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-success-600" />
-              <span className="text-sm font-bold text-neutral-700">
-                <span className="text-neutral-900">₹2.4 Cr</span> saved by customers
-              </span>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Whether You're Buying or Selling */}
+      {/* For Buyers & For Dealers */}
       <section className="section bg-white">
         <div className="container-custom">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
-              Whether You're Buying or Selling
+              Two Sides. One Platform.
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Hub4Estate works for both sides of the electrical marketplace
+              Hub4Estate works for both buyers and electrical dealers
             </p>
           </div>
 
@@ -915,16 +791,16 @@ export function HomePage() {
                 </div>
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-accent-600">For Buyers</span>
-                  <h3 className="text-2xl font-black text-neutral-900">Home Builders & Contractors</h3>
+                  <h3 className="text-2xl font-black text-neutral-900">Anyone Buying Electrical Products</h3>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
                 {[
-                  { icon: IndianRupee, title: 'Save 20-40% on Every Order', desc: 'Dealers compete to give you the best price' },
-                  { icon: Shield, title: '100% Verified Products', desc: 'No fake brands, no duplicates, full warranty' },
-                  { icon: Clock, title: 'Get Quotes in 60 Seconds', desc: 'No more visiting 10 shops to compare prices' },
-                  { icon: FileText, title: 'Proper Documentation', desc: 'GST bills, warranty cards, delivery proof' },
-                  { icon: Truck, title: 'Doorstep Delivery', desc: 'Products delivered to your site or home' },
+                  { icon: IndianRupee, title: 'Compare Real Dealer Prices', desc: 'See what multiple verified dealers are actually charging — side by side' },
+                  { icon: Shield, title: 'Verified Dealers Only', desc: 'We check dealers before connecting you. No unknown vendors' },
+                  { icon: FileText, title: 'Full Documentation', desc: 'GST bills, warranty cards, delivery proof — proper paperwork every time' },
+                  { icon: Truck, title: 'Doorstep Delivery', desc: 'Products delivered to your site, home, or office where available' },
+                  { icon: TrendingUp, title: 'Zero Middlemen', desc: 'You deal directly with the dealer. We just facilitate the connection' },
                 ].map((benefit, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-neutral-100 flex items-center justify-center flex-shrink-0">
@@ -938,7 +814,7 @@ export function HomePage() {
                 ))}
               </div>
               <Link to="/rfq/create" className="btn-urgent w-full justify-center">
-                Get Free Quotes Now
+                Submit Your First Inquiry
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </div>
@@ -956,11 +832,11 @@ export function HomePage() {
               </div>
               <div className="space-y-4 mb-8">
                 {[
-                  { icon: Users, title: 'Quality Leads Daily', desc: 'Get verified buyer inquiries delivered to you' },
-                  { icon: IndianRupee, title: 'Zero Upfront Fees', desc: 'No listing fees, no monthly charges' },
-                  { icon: Award, title: 'Build Your Reputation', desc: 'Get reviews and ratings from real customers' },
-                  { icon: BarChart3, title: 'Performance Analytics', desc: 'Track your quotes, wins, and conversion rate' },
-                  { icon: TrendingUp, title: 'Grow Your Business', desc: 'Access customers you could never reach before' },
+                  { icon: Users, title: 'Qualified Buyer Inquiries', desc: 'Receive real inquiries from buyers who know what they want' },
+                  { icon: IndianRupee, title: 'Free to Join', desc: 'No listing fees, no upfront charges to get started' },
+                  { icon: Award, title: 'Build Your Reputation', desc: 'Get rated by real customers. Better ratings, more inquiries' },
+                  { icon: BarChart3, title: 'Track Your Performance', desc: 'See your quotes, conversions, and earnings in one dashboard' },
+                  { icon: TrendingUp, title: 'Expand Your Reach', desc: 'Reach buyers across your city who would never have found you otherwise' },
                 ].map((benefit, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-neutral-800 flex items-center justify-center flex-shrink-0">
@@ -974,7 +850,7 @@ export function HomePage() {
                 ))}
               </div>
               <Link to="/dealer/onboarding" className="btn-accent w-full justify-center">
-                Register as Dealer — Free
+                Register as a Dealer — Free
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </div>
@@ -982,15 +858,15 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* How It Works - Bold Steps */}
+      {/* How It Works */}
       <section className="section bg-neutral-50 border-y-2 border-neutral-200">
         <div className="container-custom">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
-              3 Steps. 60 Seconds. Done.
+              How It Works
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              No more running to 10 shops. No more haggling. No more getting ripped off.
+              Submit your inquiry. We do the sourcing. You compare and choose.
             </p>
           </div>
 
@@ -998,21 +874,21 @@ export function HomePage() {
             {[
               {
                 step: '01',
-                title: 'Tell Us What You Need',
-                description: 'Select products from our catalog. Add quantities. Takes 30 seconds.',
-                highlight: 'Takes 30 seconds'
+                title: 'Submit Your Inquiry',
+                description: 'Tell us what you need — product name, model, quantity, and your city. Upload a photo or a contractor\'s material slip if you have one.',
+                highlight: 'Takes 2 minutes'
               },
               {
                 step: '02',
-                title: 'Dealers Fight For You',
-                description: 'Verified dealers compete to give you the best price. You sit back.',
-                highlight: 'You sit back'
+                title: 'We Source Quotes',
+                description: 'We reach out to our network of verified dealers who stock what you need. They compete to give you the best price.',
+                highlight: 'We do the work'
               },
               {
                 step: '03',
-                title: 'Pick The Winner',
-                description: 'Compare quotes side-by-side. Choose the best deal. Pay securely.',
-                highlight: 'Compare & Choose'
+                title: 'Compare & Choose',
+                description: 'We share the dealer quotes with you. Review prices, terms, and ratings. Pick the deal that makes sense for you.',
+                highlight: 'You decide'
               },
             ].map((item, index) => (
               <div key={index} className="card-feature group">
@@ -1028,29 +904,28 @@ export function HomePage() {
 
           <div className="text-center mt-12">
             <Link to="/rfq/create" className="btn-urgent">
-              Start Getting Quotes Now
+              Submit Your Inquiry
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Categories Grid with Interactive Illustrations */}
+      {/* Categories Grid */}
       <section className="section bg-neutral-800 text-white">
         <div className="container-custom">
           <div className="text-center mb-16">
             <span className="inline-block text-accent-400 text-sm font-bold uppercase tracking-wider mb-4">
-              Shop By Category
+              Browse by Category
             </span>
             <h2 className="text-4xl md:text-5xl font-black mb-4">
               Everything Electrical.<br />One Platform.
             </h2>
             <p className="text-xl text-neutral-300 max-w-2xl mx-auto">
-              Havells, Polycab, Schneider, Legrand, Anchor — all major brands with verified specs, compliance info, and warranty details.
+              Havells, Polycab, Schneider, Legrand, Anchor — all major brands with verified specs and warranty details.
             </p>
           </div>
 
-          {/* Interactive Category Grid with SVG illustrations */}
           <InteractiveCategoryGrid categories={categories} loading={loading} />
 
           <div className="text-center mt-12">
@@ -1062,129 +937,155 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* The Problem Section - The Ugly Truth */}
+      {/* Real Deals */}
+      <section className="section bg-primary-50">
+        <div className="container-custom">
+          <div className="text-center mb-16">
+            <span className="inline-block text-neutral-900 text-sm font-bold uppercase tracking-wider mb-4">
+              Real Deals
+            </span>
+            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
+              What Real Price Access Looks Like
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              These are actual deals closed through Hub4Estate. Verified numbers, no fabrications.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Deal 1: Sony Speaker */}
+            <div className="bg-white border-2 border-neutral-900 p-8">
+              <div className="mb-6">
+                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 bg-neutral-100 px-3 py-1.5">Audio Equipment</span>
+              </div>
+              <h3 className="text-xl font-bold text-neutral-900 mb-5">Sony Tower Speaker + 2 Mics</h3>
+              <div className="space-y-2 mb-6">
+                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
+                  <span className="text-sm text-neutral-500">MRP</span>
+                  <span className="text-sm font-bold text-neutral-400 line-through">₹1,15,000</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
+                  <span className="text-sm text-neutral-500">Croma (retail)</span>
+                  <span className="text-sm font-bold text-neutral-500 line-through">₹1,05,000</span>
+                </div>
+                <div className="flex justify-between items-center py-2.5 bg-neutral-900 px-3">
+                  <span className="text-sm font-bold text-white">Hub4Estate</span>
+                  <span className="text-lg font-black text-accent-400">₹68,000</span>
+                </div>
+              </div>
+              <div className="border-t-2 border-neutral-200 pt-4">
+                <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold mb-1">Saved vs Croma</p>
+                <p className="text-2xl font-black text-green-600">₹37,000</p>
+                <p className="text-xs text-neutral-400 mt-1">We tracked 8 dealers to find this price</p>
+              </div>
+            </div>
+
+            {/* Deal 2: Philips LED */}
+            <div className="bg-white border-2 border-neutral-900 p-8">
+              <div className="mb-6">
+                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 bg-neutral-100 px-3 py-1.5">LED Lighting</span>
+              </div>
+              <h3 className="text-xl font-bold text-neutral-900 mb-5">Philips 15W LED Panels × 200 units</h3>
+              <div className="space-y-2 mb-6">
+                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
+                  <span className="text-sm text-neutral-500">Local dealer (per piece)</span>
+                  <span className="text-sm font-bold text-neutral-500 line-through">₹585/pc</span>
+                </div>
+                <div className="flex justify-between items-center py-2.5 bg-neutral-900 px-3">
+                  <span className="text-sm font-bold text-white">Hub4Estate (incl. shipping)</span>
+                  <span className="text-lg font-black text-accent-400">₹465/pc</span>
+                </div>
+              </div>
+              <div className="border-t-2 border-neutral-200 pt-4">
+                <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold mb-1">Total Saved on Order</p>
+                <p className="text-2xl font-black text-green-600">₹24,000</p>
+                <p className="text-xs text-neutral-400 mt-1">₹120 saved per unit × 200 units</p>
+              </div>
+            </div>
+
+            {/* Deal 3: FRLS Wire */}
+            <div className="bg-white border-2 border-neutral-900 p-8">
+              <div className="mb-6">
+                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 bg-neutral-100 px-3 py-1.5">Wiring & Cable</span>
+              </div>
+              <h3 className="text-xl font-bold text-neutral-900 mb-5">FRLS 2.5mm² Wire × 200 metres</h3>
+              <div className="space-y-2 mb-6">
+                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
+                  <span className="text-sm text-neutral-500">Highest dealer quote</span>
+                  <span className="text-sm font-bold text-neutral-500 line-through">₹127/m</span>
+                </div>
+                <div className="flex justify-between items-center py-2.5 bg-neutral-900 px-3">
+                  <span className="text-sm font-bold text-white">Best dealer (via Hub4Estate)</span>
+                  <span className="text-lg font-black text-accent-400">₹83/m</span>
+                </div>
+              </div>
+              <div className="border-t-2 border-neutral-200 pt-4">
+                <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold mb-1">Saved on 200m Order</p>
+                <p className="text-2xl font-black text-green-600">₹8,800</p>
+                <p className="text-xs text-neutral-400 mt-1">6 dealers quoted — ₹44/m spread between them</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-neutral-500 mt-8">
+            These are real, verified deals. We don't fabricate numbers or testimonials.
+          </p>
+        </div>
+      </section>
+
+      {/* Why We Exist */}
       <section className="section bg-white border-b-2 border-neutral-200">
         <div className="container-tight">
           <div className="text-center mb-16">
-            <span className="inline-block text-error-600 text-sm font-bold uppercase tracking-wider mb-4">
-              The Ugly Truth
+            <span className="inline-block text-accent-600 text-sm font-bold uppercase tracking-wider mb-4">
+              Why We Built This
             </span>
             <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
-              You're Getting Ripped Off.<br />Here's How.
+              The Same Product.<br />Very Different Prices.
             </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              The price you're quoted depends entirely on who you ask. Most buyers never find out.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             {[
               {
-                title: 'The 40% Markup Scam',
-                description: 'Local dealers mark up prices 30-50%. The same wire that costs ₹1,200 at wholesale is sold to you for ₹1,800.',
-                stat: '40%',
-                statLabel: 'Average Markup'
-              },
-              {
-                title: 'The Fake Brand Trap',
-                description: 'Duplicate products look identical to originals. Without proper verification, you could be buying counterfeit goods.',
-                stat: '23%',
-                statLabel: 'Products Are Fake'
-              },
-              {
                 title: 'The Information Gap',
-                description: 'Dealers know everything. You know nothing. This power imbalance costs you money on every single purchase.',
-                stat: '₹15K',
-                statLabel: 'Avg Lost Per Project'
+                description: 'Dealers know exactly what they paid for the product. You don\'t. The same Sony speaker set was priced at ₹1,05,000 at one retailer and ₹68,000 through our network. That gap is real — and it\'s common.',
               },
               {
-                title: 'Zero Documentation',
-                description: 'No proper bills, no warranty cards, no proof. When something fails, you have no recourse.',
-                stat: '67%',
-                statLabel: 'Have No Paperwork'
+                title: 'The Local Monopoly Problem',
+                description: 'If there are only one or two dealers near you, they set the price. No competition means no transparency. Calling 5–6 dealers manually takes hours. Most people don\'t bother — and pay the first price they\'re given.',
+              },
+              {
+                title: 'The Documentation Problem',
+                description: 'Cash purchases, no proper GST bills, no warranty cards in your name. When something fails, you\'re left with no recourse and no proof of purchase.',
+              },
+              {
+                title: 'What We\'re Fixing',
+                description: 'We connect buyers to multiple verified dealers at once. You see all the quotes side by side. The dealer who wins your business earns it fairly. That\'s the whole model.',
               },
             ].map((item, index) => (
               <div key={index} className="border-2 border-neutral-200 p-8 hover:border-neutral-900 hover:shadow-brutal transition-all duration-300">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-bold text-neutral-900">{item.title}</h3>
-                  <div className="text-right">
-                    <div className="text-3xl font-black text-error-600">{item.stat}</div>
-                    <div className="text-xs font-bold uppercase tracking-wider text-neutral-500">{item.statLabel}</div>
-                  </div>
-                </div>
-                <p className="text-neutral-600">{item.description}</p>
+                <h3 className="text-xl font-bold text-neutral-900 mb-4">{item.title}</h3>
+                <p className="text-neutral-600 leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
 
-          {/* Solution Box */}
           <div className="bg-neutral-900 text-white p-10 text-center">
             <h3 className="text-3xl font-black mb-4">
-              Hub4Estate Fixes Everything.
+              Transparent Pricing. Verified Dealers. Your Choice.
             </h3>
             <p className="text-xl text-neutral-300 mb-8 max-w-2xl mx-auto">
-              Transparent pricing. Verified dealers. Full documentation. Price comparison.
-              <span className="text-accent-400 font-bold"> The playing field is now level.</span>
+              We're not here to guarantee the lowest price in the universe.
+              We're here to give you enough information to make the right call.
             </p>
             <Link to="/rfq/create" className="btn-accent inline-flex">
-              Start Saving Money Today
+              Submit Your First Inquiry
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="section bg-primary-50">
-        <div className="container-custom">
-          <div className="text-center mb-16">
-            <span className="inline-block text-neutral-900 text-sm font-bold uppercase tracking-wider mb-4">
-              Real Results
-            </span>
-            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
-              Customers Saved ₹2.4 Crores.<br />This Month Alone.
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                quote: "I was quoted ₹85,000 by a local dealer. Hub4Estate got me the same order for ₹52,000. That's ₹33,000 saved!",
-                author: 'Rajesh Kumar',
-                role: 'Home Builder, Bangalore',
-                saved: '₹33,000'
-              },
-              {
-                quote: "The comparison feature is genius. I could see exactly which dealer was trying to overcharge me. Never going back to the old way.",
-                author: 'Priya Sharma',
-                role: 'Interior Designer, Mumbai',
-                saved: '₹28,500'
-              },
-              {
-                quote: "As a contractor, I buy electrical items daily. Hub4Estate reduced my procurement costs by 25%. My margins improved overnight.",
-                author: 'Mohammed Irfan',
-                role: 'Electrical Contractor, Delhi',
-                saved: '₹1.2 Lakhs'
-              },
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-white border-2 border-neutral-900 p-8">
-                <div className="flex gap-0.5 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-warning-400 text-warning-400" />
-                  ))}
-                </div>
-                <blockquote className="text-lg text-neutral-700 mb-6">
-                  "{testimonial.quote}"
-                </blockquote>
-                <div className="flex items-center justify-between border-t-2 border-neutral-200 pt-6">
-                  <div>
-                    <p className="font-bold text-neutral-900">{testimonial.author}</p>
-                    <p className="text-sm text-neutral-500">{testimonial.role}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">Saved</p>
-                    <p className="text-xl font-black text-success-600">{testimonial.saved}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -1193,16 +1094,21 @@ export function HomePage() {
       <section className="py-20 bg-accent-500">
         <div className="container-custom text-center">
           <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-            Ready To Save Money?
+            Ready to Find the Best Price?
           </h2>
           <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-            Join thousands of smart buyers who refuse to overpay.
-            Your first quote is free. Always.
+            Submit an inquiry and let our dealer network do the work.
+            No commitment. No spam. Just real quotes.
           </p>
-          <Link to="/rfq/create" className="btn-primary bg-white text-neutral-900 border-white hover:bg-neutral-900 hover:text-white hover:border-neutral-900">
-            Get Your Free Quote Now
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/rfq/create" className="btn-primary bg-white text-neutral-900 border-white hover:bg-neutral-900 hover:text-white hover:border-neutral-900">
+              Submit an Inquiry
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
+            <Link to="/track" className="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-bold hover:bg-white hover:text-neutral-900 transition-colors">
+              Track an Existing Inquiry
+            </Link>
+          </div>
         </div>
       </section>
     </div>
