@@ -25,7 +25,7 @@ export function TermsPage() {
 
           <div className="bg-neutral-50 border-2 border-neutral-200 p-6 mb-10">
             <p className="text-neutral-700 font-medium">
-              These Terms of Service govern your use of Hub4Estate (hub4estate.com), operated by HUB4ESTATE LLP (LLPIN: ACW-4269), a Limited Liability Partnership registered under the Limited Liability Partnership Act, 2008, with its registered office at 8-D-12, Jawahar Nagar, Sriganganagar, Ganganagar — 335001, Rajasthan, India. By accessing or using our platform, you agree to these terms. If you do not agree, do not use Hub4Estate.
+              These Terms of Service govern your use of Hub4Estate (hub4estate.com), operated by HUB4ESTATE LLP (LLPIN: ACW-4269), a Limited Liability Partnership registered under the Limited Liability Partnership Act, 2008, with its registered office at WeWork Arekere, No. 197/36, 2nd Floor, Bannerghatta Road, Bengaluru — 560076, Karnataka, India. By accessing or using our platform, you agree to these terms. If you do not agree, do not use Hub4Estate.
             </p>
           </div>
 
@@ -144,14 +144,14 @@ export function TermsPage() {
                 For disputes between buyers and dealers, Hub4Estate will provide a reasonable mediation effort upon request. However, we are not obligated to resolve third-party disputes.
               </p>
               <p className="text-neutral-600">
-                For disputes involving Hub4Estate directly, the parties agree to first attempt resolution through written notice and good-faith negotiation. If unresolved within 30 days, disputes shall be subject to arbitration under the Arbitration and Conciliation Act, 1996, with proceedings conducted in Sriganganagar, Rajasthan.
+                For disputes involving Hub4Estate directly, the parties agree to first attempt resolution through written notice and good-faith negotiation. If unresolved within 30 days, disputes shall be subject to arbitration under the Arbitration and Conciliation Act, 1996, with proceedings conducted in Bengaluru, Karnataka.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-bold text-neutral-900 mb-4 pb-2 border-b-2 border-neutral-200">11. Governing Law & Jurisdiction</h2>
               <p className="text-neutral-600">
-                These Terms are governed by the laws of India. Subject to the arbitration clause above, the courts of Sriganganagar, Rajasthan shall have exclusive jurisdiction over any disputes arising from these Terms or your use of Hub4Estate.
+                These Terms are governed by the laws of India. Subject to the arbitration clause above, the courts of Bengaluru, Karnataka shall have exclusive jurisdiction over any disputes arising from these Terms or your use of Hub4Estate.
               </p>
             </section>
 
@@ -173,7 +173,7 @@ export function TermsPage() {
               <h2 className="text-2xl font-bold text-neutral-900 mb-4 pb-2 border-b-2 border-neutral-200">14. Contact</h2>
               <div className="bg-neutral-50 border-2 border-neutral-200 p-6">
                 <p className="font-bold text-neutral-900 text-lg mb-3">HUB4ESTATE LLP</p>
-                <p className="text-neutral-600 mb-1">8-D-12, Jawahar Nagar, Sriganganagar, Ganganagar — 335001, Rajasthan, India</p>
+                <p className="text-neutral-600 mb-1">WeWork Arekere, No. 197/36, 2nd Floor, Bannerghatta Road, Bengaluru — 560076, Karnataka, India</p>
                 <p className="text-neutral-600 mb-1">LLPIN: ACW-4269 | PAN: AATFH3466L</p>
                 <p className="text-neutral-600 mb-1">
                   Email:{' '}

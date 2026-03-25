@@ -37,7 +37,7 @@ export function PrivacyPage() {
                 <p><span className="font-semibold text-neutral-800">Legal Name:</span> HUB4ESTATE LLP</p>
                 <p><span className="font-semibold text-neutral-800">LLPIN:</span> ACW-4269</p>
                 <p><span className="font-semibold text-neutral-800">PAN:</span> AATFH3466L</p>
-                <p><span className="font-semibold text-neutral-800">Registered Address:</span> 8-D-12, Jawahar Nagar, Sriganganagar, Ganganagar — 335001, Rajasthan, India</p>
+                <p><span className="font-semibold text-neutral-800">Registered Address:</span> WeWork Arekere, No. 197/36, 2nd Floor, Bannerghatta Road, Bengaluru — 560076, Karnataka, India</p>
                 <p><span className="font-semibold text-neutral-800">Contact:</span> shreshth.agarwal@hub4estate.com | +91 76900 01999</p>
               </div>
             </section>
@@ -159,7 +159,7 @@ export function PrivacyPage() {
               <div className="bg-neutral-50 border-2 border-neutral-200 p-6">
                 <p className="font-bold text-neutral-900 text-lg mb-3">Shreshth Agarwal</p>
                 <p className="text-neutral-600 mb-1">Grievance Officer, HUB4ESTATE LLP</p>
-                <p className="text-neutral-600 mb-1">8-D-12, Jawahar Nagar, Sriganganagar, Ganganagar — 335001, Rajasthan</p>
+                <p className="text-neutral-600 mb-1">WeWork Arekere, No. 197/36, 2nd Floor, Bannerghatta Road, Bengaluru — 560076, Karnataka</p>
                 <p className="text-neutral-600 mb-1">
                   Email:{' '}
                   <a href="mailto:shreshth.agarwal@hub4estate.com" className="text-accent-600 hover:underline">

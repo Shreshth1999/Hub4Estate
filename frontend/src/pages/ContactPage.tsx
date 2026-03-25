@@ -143,9 +143,9 @@ export function ContactPage() {
                     <h3 className="font-bold text-neutral-900 mb-1">Registered Office</h3>
                     <p className="text-neutral-600 leading-relaxed">
                       HUB4ESTATE LLP<br />
-                      8-D-12, Jawahar Nagar<br />
-                      Sriganganagar, Ganganagar — 335001<br />
-                      Rajasthan, India
+                      WeWork Arekere, No. 197/36, 2nd Floor<br />
+                      Bannerghatta Road, Bengaluru — 560076<br />
+                      Karnataka, India
                     </p>
                   </div>
                 </div>
