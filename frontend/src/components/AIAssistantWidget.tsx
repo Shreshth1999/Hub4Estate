@@ -35,7 +35,7 @@ function renderMarkdown(text: string): React.ReactNode {
         <ul key={key++} className="space-y-1 my-2 ml-2">
           {listItems.map((item, i) => (
             <li key={i} className="flex gap-2 text-sm leading-relaxed">
-              <span className="text-accent-500 mt-0.5 flex-shrink-0">•</span>
+              <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
               <span dangerouslySetInnerHTML={{ __html: inlineFormat(item) }} />
             </li>
           ))}
@@ -52,7 +52,7 @@ function renderMarkdown(text: string): React.ReactNode {
       listItems.push(line.replace(/^\d+\.\s/, ''));
     } else if (line.startsWith('## ')) {
       flushList();
-      nodes.push(<p key={key++} className="font-bold text-sm mt-3 mb-1 text-neutral-800">{line.slice(3)}</p>);
+      nodes.push(<p key={key++} className="font-bold text-sm mt-3 mb-1 text-gray-800">{line.slice(3)}</p>);
     } else if (line.startsWith('# ')) {
       flushList();
       nodes.push(<p key={key++} className="font-bold text-base mt-2 mb-1">{line.slice(2)}</p>);
@@ -75,7 +75,7 @@ function inlineFormat(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`(.+?)`/g, '<code class="bg-neutral-100 px-1 rounded text-xs font-mono">$1</code>');
+    .replace(/`(.+?)`/g, '<code class="bg-gray-100 px-1 rounded text-xs font-mono">$1</code>');
 }
 
 // ─── Tool result cards ────────────────────────────────────────────────────────
@@ -338,26 +338,26 @@ I can help you with:
         onClick={() => { setIsOpen(true); setIsMinimized(false); }}
         className={`
           fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full
-          bg-neutral-900 text-white border-2 border-accent-500
-          shadow-[0_0_20px_rgba(249,115,22,0.4)]
+          bg-gray-900 text-white
+          shadow-lg
           flex items-center justify-center transition-all duration-300
-          hover:scale-110 hover:shadow-[0_0_30px_rgba(249,115,22,0.6)]
+          hover:scale-110 hover:shadow-xl
           ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}
           group
         `}
         aria-label="Open AI Assistant"
       >
-        <div className="absolute inset-0 rounded-full bg-accent-500 animate-ping opacity-20" />
-        <div className="absolute inset-[-4px] rounded-full border-2 border-accent-500/50 animate-[spin_3s_linear_infinite]">
-          <Zap className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 text-accent-500" />
+        <div className="absolute inset-0 rounded-full bg-orange-500 animate-ping opacity-20" />
+        <div className="absolute inset-[-4px] rounded-full border border-orange-500/40 animate-[spin_3s_linear_infinite]">
+          <Zap className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 text-orange-500" />
         </div>
-        <div className="absolute inset-[-8px] rounded-full border border-accent-500/30 animate-[spin_4s_linear_infinite_reverse]">
-          <Sparkles className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 text-accent-400" />
+        <div className="absolute inset-[-8px] rounded-full border border-orange-500/30 animate-[spin_4s_linear_infinite_reverse]">
+          <Sparkles className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 text-orange-400" />
         </div>
-        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-accent-500/20 to-transparent animate-pulse" />
+        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-orange-500/20 to-transparent animate-pulse" />
         <Bot className="w-7 h-7 relative z-10" />
         {!hasInteracted && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent-500 rounded-full flex items-center justify-center animate-bounce">
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center animate-bounce">
             <span className="w-2 h-2 bg-white rounded-full" />
           </span>
         )}
@@ -371,33 +371,33 @@ I can help you with:
         ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}
       `}>
         <div className={`
-          bg-white border-2 border-neutral-900
+          bg-white border border-gray-200 rounded-2xl
           flex flex-col overflow-hidden
-          shadow-[6px_6px_0_0_#171717]
+          shadow-lg
           transition-all duration-300
           ${isMinimized ? 'h-[60px]' : 'h-[560px] max-h-[85vh]'}
         `}>
 
           {/* Header */}
           <div
-            className="flex items-center justify-between px-4 py-3 bg-neutral-900 text-white cursor-pointer flex-shrink-0"
+            className="flex items-center justify-between px-4 py-3 bg-gray-900 text-white cursor-pointer flex-shrink-0"
             onClick={() => setIsMinimized(!isMinimized)}
           >
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-9 h-9 bg-accent-500 flex items-center justify-center rounded-lg">
+                <div className="w-9 h-9 bg-orange-500 flex items-center justify-center rounded-lg">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-neutral-900 rounded-full" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-gray-700 rounded-full" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-sm">Spark AI</h3>
-                  <span className="text-[10px] bg-accent-500/20 text-accent-400 px-1.5 py-0.5 rounded font-medium">
+                  <h3 className="font-semibold text-sm">Spark AI</h3>
+                  <span className="text-[10px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded font-medium">
                     by Hub4Estate
                   </span>
                 </div>
-                <p className="text-[11px] text-neutral-400">
+                <p className="text-[11px] text-gray-400">
                   {isLoading ? '⚡ Thinking...' : 'Hindi • English • All languages'}
                 </p>
               </div>
@@ -405,14 +405,14 @@ I can help you with:
             <div className="flex items-center gap-1">
               <button
                 onClick={e => { e.stopPropagation(); setIsMinimized(!isMinimized); }}
-                className="p-1.5 hover:bg-neutral-800 rounded transition-colors"
+                className="p-1.5 hover:bg-gray-800 rounded transition-colors"
                 aria-label={isMinimized ? 'Expand' : 'Minimize'}
               >
                 <ChevronDown className={`w-4 h-4 transition-transform ${isMinimized ? 'rotate-180' : ''}`} />
               </button>
               <button
                 onClick={e => { e.stopPropagation(); setIsOpen(false); setIsMinimized(false); }}
-                className="p-1.5 hover:bg-neutral-800 rounded transition-colors"
+                className="p-1.5 hover:bg-gray-800 rounded transition-colors"
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
@@ -423,12 +423,12 @@ I can help you with:
           {!isMinimized && (
             <>
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
                 {isInitializing ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
-                      <Loader2 className="w-8 h-8 text-accent-500 animate-spin mx-auto mb-2" />
-                      <p className="text-sm text-neutral-500">Connecting Spark...</p>
+                      <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-2" />
+                      <p className="text-sm text-gray-500">Connecting Spark...</p>
                     </div>
                   </div>
                 ) : (
@@ -436,15 +436,15 @@ I can help you with:
                     {messages.map((msg) => (
                       <div key={msg.id} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                         {msg.role === 'assistant' && (
-                          <div className="w-8 h-8 bg-accent-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end mb-0.5">
+                          <div className="w-8 h-8 bg-orange-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end mb-0.5">
                             <Bot className="w-4 h-4 text-white" />
                           </div>
                         )}
                         <div className={`max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
                           <div className={`px-3 py-2.5 text-sm ${
                             msg.role === 'user'
-                              ? 'bg-neutral-900 text-white rounded-2xl rounded-tr-sm'
-                              : 'bg-white border border-neutral-200 text-neutral-900 rounded-2xl rounded-tl-sm shadow-sm'
+                              ? 'bg-gray-900 text-white rounded-2xl rounded-tr-sm'
+                              : 'bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm shadow-sm'
                           }`}>
                             {msg.role === 'assistant'
                               ? renderMarkdown(msg.content)
@@ -463,14 +463,14 @@ I can help you with:
                     {/* Typing indicator */}
                     {isLoading && (
                       <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-accent-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end">
+                        <div className="w-8 h-8 bg-orange-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end">
                           <Bot className="w-4 h-4 text-white" />
                         </div>
-                        <div className="bg-white border border-neutral-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+                        <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                           <div className="flex gap-1.5">
-                            <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" />
-                            <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce [animation-delay:0.15s]" />
-                            <span className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce [animation-delay:0.3s]" />
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.15s]" />
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.3s]" />
                           </div>
                         </div>
                       </div>
@@ -482,8 +482,8 @@ I can help you with:
 
               {/* Quick suggestions (only before first interaction) */}
               {messages.length <= 1 && !isLoading && sessionId && (
-                <div className="px-3 py-2.5 border-t border-neutral-200 bg-white flex-shrink-0">
-                  <p className="text-[11px] text-neutral-400 mb-2 flex items-center gap-1">
+                <div className="px-3 py-2.5 border-t border-gray-200 bg-white flex-shrink-0">
+                  <p className="text-[11px] text-gray-400 mb-2 flex items-center gap-1">
                     <MessageCircle className="w-3 h-3" /> Try asking...
                   </p>
                   <div className="flex flex-wrap gap-1.5">
@@ -492,7 +492,7 @@ I can help you with:
                         key={i}
                         onClick={() => handleSend(s.message)}
                         disabled={isLoading}
-                        className="px-2.5 py-1 text-xs font-medium border border-neutral-200 hover:border-accent-500 hover:text-accent-600 rounded-full transition-colors bg-white"
+                        className="px-2.5 py-1 text-xs font-medium border border-gray-200 hover:border-orange-500 hover:text-orange-600 rounded-full transition-colors bg-white"
                       >
                         {s.label}
                       </button>
@@ -502,7 +502,7 @@ I can help you with:
               )}
 
               {/* Input */}
-              <div className="p-3 border-t border-neutral-200 bg-white flex-shrink-0">
+              <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
                 {isListening && (
                   <div className="flex items-center gap-2 mb-2 px-2">
                     <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
@@ -517,7 +517,7 @@ I can help you with:
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder={isListening ? 'Listening...' : 'Message Spark... (Hindi / English)'}
-                    className="flex-1 px-3 py-2.5 text-sm border border-neutral-200 rounded-xl focus:border-accent-500 focus:outline-none transition-colors bg-neutral-50 focus:bg-white"
+                    className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors bg-gray-50 focus:bg-white"
                     disabled={isLoading || !sessionId}
                   />
 
@@ -528,7 +528,7 @@ I can help you with:
                       className={`px-3 py-2.5 rounded-xl border transition-all flex items-center justify-center ${
                         isListening
                           ? 'bg-red-500 border-red-500 text-white animate-pulse'
-                          : 'border-neutral-200 text-neutral-500 hover:border-accent-500 hover:text-accent-500'
+                          : 'border-gray-200 text-gray-500 hover:border-orange-500 hover:text-orange-500'
                       } disabled:opacity-40 disabled:cursor-not-allowed`}
                       aria-label={isListening ? 'Stop listening' : 'Start voice input'}
                       title={isListening ? 'Click to stop' : 'Voice input (Hindi/English)'}
@@ -540,14 +540,14 @@ I can help you with:
                   <button
                     onClick={() => handleSend()}
                     disabled={!input.trim() || isLoading || !sessionId}
-                    className="px-3 py-2.5 bg-neutral-900 text-white rounded-xl hover:bg-neutral-800 disabled:bg-neutral-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                    className="px-3 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
                     aria-label="Send"
                   >
                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-[10px] text-neutral-400 mt-1.5 text-center">
-                  Powered by <span className="font-semibold text-accent-500">Spark AI</span> · Hub4Estate
+                <p className="text-[10px] text-gray-400 mt-1.5 text-center">
+                  Powered by <span className="font-semibold text-orange-500">Spark AI</span> · Hub4Estate
                 </p>
               </div>
             </>

@@ -45,11 +45,11 @@ export function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-neutral-900 border border-neutral-800 p-8">
-          <h1 className="text-xl font-black text-white mb-1">Admin Access</h1>
-          <p className="text-neutral-500 text-sm mb-8">Hub4Estate internal panel</p>
+        <div className="bg-gray-900 border border-gray-800 p-8">
+          <h1 className="text-xl font-semibold text-white mb-1">Admin Access</h1>
+          <p className="text-gray-500 text-sm mb-8">Hub4Estate internal panel</p>
 
           {error && (
             <div className="mb-6 p-3 bg-red-950 border border-red-800 text-red-400 text-sm">
@@ -59,7 +59,7 @@ export function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 Email
               </label>
               <input
@@ -68,12 +68,12 @@ export function AdminLoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="w-full bg-neutral-800 border border-neutral-700 text-white px-4 py-3 text-sm focus:border-neutral-500 focus:outline-none"
+                className="w-full bg-gray-800 border border-gray-700 text-white px-4 py-3 text-sm focus:border-gray-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -83,12 +83,12 @@ export function AdminLoginPage() {
                   onChange={e => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="w-full bg-neutral-800 border border-neutral-700 text-white px-4 py-3 text-sm focus:border-neutral-500 focus:outline-none pr-12"
+                  className="w-full bg-gray-800 border border-gray-700 text-white px-4 py-3 text-sm focus:border-gray-500 focus:outline-none pr-12"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -98,7 +98,7 @@ export function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-white text-neutral-900 font-bold py-3 text-sm hover:bg-neutral-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+              className="w-full bg-white text-gray-900 font-bold py-3 text-sm hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

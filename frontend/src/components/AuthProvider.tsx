@@ -1,7 +1,7 @@
 import { useEffect, useState, ReactNode } from 'react';
 import { useAuthStore } from '@/lib/store';
 import { authApi } from '@/lib/api';
-import { LoadingSpinner } from './ui';
+import { Loader2 } from 'lucide-react';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -73,8 +73,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-neutral-600 font-medium">Loading...</p>
+          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          <p className="mt-4 text-sm text-gray-500">Loading...</p>
         </div>
       </div>
     );

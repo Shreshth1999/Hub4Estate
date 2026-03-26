@@ -107,14 +107,14 @@ export function OTPInput({
             text-center text-2xl font-bold
             border-2 transition-all duration-200
             focus:outline-none
-            ${disabled ? 'bg-neutral-100 cursor-not-allowed' : 'bg-white'}
+            ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
             ${error
               ? 'border-red-500 text-red-600 shake'
               : activeIndex === index
-                ? 'border-neutral-900 ring-2 ring-neutral-900/20'
+                ? 'border-gray-900 ring-2 ring-gray-900/20'
                 : value[index]
                   ? 'border-green-500 text-green-600'
-                  : 'border-neutral-300 hover:border-neutral-400'
+                  : 'border-gray-300 hover:border-gray-400'
             }
           `}
           aria-label={`Digit ${index + 1}`}

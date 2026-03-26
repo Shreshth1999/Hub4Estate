@@ -1044,7 +1044,7 @@ export function CategoryTile({ category, index }: { category: Category; index: n
   return (
     <Link
       to={`/categories/${category.slug}`}
-      className="group relative bg-neutral-700/50 border border-neutral-600 overflow-hidden transition-all duration-500"
+      className="group relative bg-gray-700/50 border border-gray-600 overflow-hidden transition-all duration-500"
       style={{
         animationDelay: `${index * 50}ms`,
       }}
@@ -1074,7 +1074,7 @@ export function CategoryTile({ category, index }: { category: Category; index: n
       {/* Active border on hover */}
       <div
         className={`absolute inset-0 border-2 transition-all duration-300 ${
-          isHovered ? 'border-accent-500/50' : 'border-transparent'
+          isHovered ? 'border-orange-500/50' : 'border-transparent'
         }`}
       />
 
@@ -1085,32 +1085,32 @@ export function CategoryTile({ category, index }: { category: Category; index: n
           {illustration ? (
             illustration.renderSVG(isHovered, animationPhase)
           ) : (
-            <div className="w-12 h-12 bg-neutral-700 rounded-lg" />
+            <div className="w-12 h-12 bg-gray-700 rounded-lg" />
           )}
         </div>
 
         {/* Category info */}
         <div className="flex-1">
           <h3 className={`text-base font-semibold transition-colors duration-300 ${
-            isHovered ? 'text-accent-400' : 'text-white'
+            isHovered ? 'text-orange-400' : 'text-white'
           }`}>
             {category.name}
           </h3>
-          <p className="text-sm text-neutral-500 mt-1">100+ Products</p>
+          <p className="text-sm text-gray-500 mt-1">100+ Products</p>
         </div>
 
         {/* Arrow indicator */}
         <ArrowRight
           className={`absolute bottom-5 right-5 w-5 h-5 transition-all duration-300 ${
-            isHovered ? 'text-accent-500 translate-x-1' : 'text-neutral-600'
+            isHovered ? 'text-orange-500 translate-x-1' : 'text-gray-600'
           }`}
         />
 
         {/* Corner measurement marks (blueprint style) */}
-        <div className="absolute top-2 left-2 w-3 h-3 border-l border-t border-neutral-600 opacity-30" />
-        <div className="absolute top-2 right-2 w-3 h-3 border-r border-t border-neutral-600 opacity-30" />
-        <div className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-neutral-600 opacity-30" />
-        <div className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-neutral-600 opacity-30" />
+        <div className="absolute top-2 left-2 w-3 h-3 border-l border-t border-gray-600 opacity-30" />
+        <div className="absolute top-2 right-2 w-3 h-3 border-r border-t border-gray-600 opacity-30" />
+        <div className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-gray-600 opacity-30" />
+        <div className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-gray-600 opacity-30" />
       </div>
     </Link>
   );
@@ -1143,7 +1143,7 @@ export function InteractiveCategoryGrid({ categories, loading }: InteractiveCate
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {[...Array(14)].map((_, i) => (
-          <div key={i} className="bg-neutral-700/50 border border-neutral-600 animate-pulse h-48" />
+          <div key={i} className="bg-gray-700/50 border border-gray-600 animate-pulse h-48" />
         ))}
       </div>
     );

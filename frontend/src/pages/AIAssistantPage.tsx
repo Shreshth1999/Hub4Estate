@@ -35,7 +35,7 @@ function renderInline(text: string): React.ReactNode[] {
     }
     if (part.startsWith('`') && part.endsWith('`')) {
       return (
-        <code key={i} className="bg-neutral-200 text-neutral-800 px-1.5 py-0.5 rounded text-xs font-mono">
+        <code key={i} className="bg-gray-200 text-gray-800 px-1.5 py-0.5 rounded text-xs font-mono">
           {part.slice(1, -1)}
         </code>
       );
@@ -55,7 +55,7 @@ function MarkdownContent({ text, isUser }: { text: string; isUser: boolean }) {
 
     if (line.startsWith('# ')) {
       elements.push(
-        <h3 key={i} className="text-base font-black mt-3 mb-1 first:mt-0">
+        <h3 key={i} className="text-base font-semibold mt-3 mb-1 first:mt-0">
           {renderInline(line.slice(2))}
         </h3>
       );
@@ -69,7 +69,7 @@ function MarkdownContent({ text, isUser }: { text: string; isUser: boolean }) {
       const bullet = line.slice(2);
       elements.push(
         <div key={i} className="flex gap-2 my-0.5">
-          <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${isUser ? 'bg-white/60' : 'bg-accent-500'}`} />
+          <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${isUser ? 'bg-white/60' : 'bg-orange-500'}`} />
           <span className="flex-1 text-sm">{renderInline(bullet)}</span>
         </div>
       );
@@ -107,7 +107,7 @@ function ToolCard({ tool, result }: { tool: string; result: any }) {
 
   if (tool === 'submit_inquiry' && result.success) {
     return (
-      <div className="mt-3 bg-green-50 border-2 border-green-400 p-4 rounded-none">
+      <div className="mt-3 bg-green-50 border border-green-200 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-5 h-5 bg-green-500 flex items-center justify-center rounded-full">
             <Check className="w-3 h-3 text-white" />
@@ -122,8 +122,8 @@ function ToolCard({ tool, result }: { tool: string; result: any }) {
 
   if (tool === 'generate_dealer_quote' && result.success && result.is_dealer_quote) {
     return (
-      <div className="mt-3 border-2 border-accent-500 bg-white">
-        <div className="bg-accent-500 px-4 py-2 flex items-center justify-between">
+      <div className="mt-3 border border-orange-200 rounded-xl bg-white overflow-hidden">
+        <div className="bg-orange-500 px-4 py-2 flex items-center justify-between">
           <span className="text-white text-xs font-bold uppercase tracking-wider">Quote Preview</span>
           <button
             onClick={copyQuote}
@@ -142,13 +142,13 @@ function ToolCard({ tool, result }: { tool: string; result: any }) {
 
   if (tool === 'search_products' && result.found > 0) {
     return (
-      <div className="mt-3 bg-neutral-50 border-2 border-neutral-200 p-3">
-        <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">
+      <div className="mt-3 bg-gray-50 border border-gray-200 rounded-xl p-3">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
           {result.found} product{result.found !== 1 ? 's' : ''} found
         </p>
         <div className="space-y-1">
           {result.products?.slice(0, 3).map((p: any, idx: number) => (
-            <div key={idx} className="text-xs text-neutral-700">
+            <div key={idx} className="text-xs text-gray-700">
               <span className="font-bold">{p.brand}</span> — {p.name}
             </div>
           ))}
@@ -431,12 +431,12 @@ export function AIAssistantPage() {
   // ── Loading ──────────────────────────────────────────────────────────────────
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-accent-500 flex items-center justify-center mx-auto mb-4 animate-pulse">
+          <div className="w-16 h-16 bg-orange-500 flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Zap className="w-8 h-8 text-white" />
           </div>
-          <p className="text-neutral-400 text-sm font-medium">Starting Spark...</p>
+          <p className="text-gray-400 text-sm font-medium">Starting Spark...</p>
         </div>
       </div>
     );
@@ -444,18 +444,18 @@ export function AIAssistantPage() {
 
   if (initError || !sessionId) {
     return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
         <div className="text-center max-w-sm">
-          <div className="w-16 h-16 bg-neutral-800 flex items-center justify-center mx-auto mb-4">
-            <X className="w-8 h-8 text-neutral-400" />
+          <div className="w-16 h-16 bg-gray-800 flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-gray-400" />
           </div>
           <h2 className="text-white font-bold mb-2">Couldn't connect</h2>
-          <p className="text-neutral-400 text-sm mb-6">
+          <p className="text-gray-400 text-sm mb-6">
             Check your internet and try again, or reach Shreshth directly.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-accent-500 text-white px-6 py-3 font-bold text-sm hover:bg-accent-600 transition-colors"
+            className="bg-orange-500 text-white px-6 py-3 font-bold text-sm hover:bg-orange-600 transition-colors"
           >
             Retry
           </button>
@@ -467,24 +467,24 @@ export function AIAssistantPage() {
   const hasMessages = messages.length > 0;
 
   return (
-    <div className="flex flex-col bg-neutral-950" style={{ height: '100dvh' }}>
+    <div className="flex flex-col bg-gray-950" style={{ height: '100dvh' }}>
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <header className="flex-shrink-0 border-b border-neutral-800 px-4 py-3 flex items-center justify-between">
+      <header className="flex-shrink-0 border-b border-gray-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-white transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-accent-500 flex items-center justify-center">
+            <div className="w-8 h-8 bg-orange-500 flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
             </div>
             <div>
-              <span className="text-white font-black text-sm tracking-tight">Spark</span>
+              <span className="text-white font-semibold text-sm tracking-tight">Spark</span>
               {isDealer && (
-                <span className="ml-2 text-xs text-accent-400 font-bold uppercase tracking-wider">
+                <span className="ml-2 text-xs text-orange-400 font-bold uppercase tracking-wider">
                   Dealer
                 </span>
               )}
@@ -494,14 +494,14 @@ export function AIAssistantPage() {
 
         <div className="flex items-center gap-2">
           {detectedLang === 'hi-IN' && (
-            <span className="text-xs text-neutral-500 font-medium px-2 py-1 bg-neutral-800 rounded">
+            <span className="text-xs text-gray-500 font-medium px-2 py-1 bg-gray-800 rounded">
               हिंदी
             </span>
           )}
           {hasMessages && (
             <button
               onClick={clearChat}
-              className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-neutral-300 transition-colors"
+              className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors"
               title="Clear chat"
             >
               <RotateCcw className="w-4 h-4" />
@@ -515,18 +515,18 @@ export function AIAssistantPage() {
         {!hasMessages ? (
           /* Welcome state */
           <div className="flex flex-col items-center justify-center min-h-full px-6 py-12 text-center">
-            <div className="w-20 h-20 bg-accent-500 flex items-center justify-center mb-6">
+            <div className="w-20 h-20 bg-orange-500 flex items-center justify-center mb-6">
               <Zap className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-2xl font-black text-white mb-2">
+            <h1 className="text-2xl font-semibold text-white mb-2">
               {isDealer ? `Hi ${user?.name?.split(' ')[0] || 'there'}.` : 'Hi there.'}
             </h1>
-            <p className="text-neutral-400 text-base mb-1">
+            <p className="text-gray-400 text-base mb-1">
               {isDealer
                 ? 'Compose quotes, analyse your performance, win more bids.'
                 : 'Ask anything. Get the best price. In any language.'}
             </p>
-            <p className="text-neutral-600 text-sm mb-10">
+            <p className="text-gray-600 text-sm mb-10">
               Type, speak, or tap a suggestion below.
             </p>
 
@@ -539,12 +539,12 @@ export function AIAssistantPage() {
                     key={i}
                     onClick={() => handleSend(action.message)}
                     disabled={isStreaming}
-                    className="flex items-start gap-3 p-4 bg-neutral-900 border border-neutral-800 hover:border-neutral-600 hover:bg-neutral-800 text-left transition-all group disabled:opacity-40"
+                    className="flex items-start gap-3 p-4 bg-gray-900 border border-gray-800 hover:border-gray-600 hover:bg-gray-800 text-left transition-all group disabled:opacity-40"
                   >
-                    <div className="w-8 h-8 bg-neutral-800 group-hover:bg-accent-500/20 flex items-center justify-center flex-shrink-0 transition-colors">
-                      <Icon className="w-4 h-4 text-neutral-400 group-hover:text-accent-400" />
+                    <div className="w-8 h-8 bg-gray-800 group-hover:bg-orange-500/20 flex items-center justify-center flex-shrink-0 transition-colors">
+                      <Icon className="w-4 h-4 text-gray-400 group-hover:text-orange-400" />
                     </div>
-                    <span className="text-sm text-neutral-300 group-hover:text-white font-medium leading-snug transition-colors">
+                    <span className="text-sm text-gray-300 group-hover:text-white font-medium leading-snug transition-colors">
                       {action.label}
                     </span>
                   </button>
@@ -558,7 +558,7 @@ export function AIAssistantPage() {
             {messages.map((msg) => (
               <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                 {/* Avatar */}
-                <div className={`w-8 h-8 flex-shrink-0 flex items-center justify-center ${msg.role === 'user' ? 'bg-neutral-700' : 'bg-accent-500'}`}>
+                <div className={`w-8 h-8 flex-shrink-0 flex items-center justify-center ${msg.role === 'user' ? 'bg-gray-700' : 'bg-orange-500'}`}>
                   {msg.role === 'user' ? (
                     <span className="text-white text-xs font-bold">
                       {user?.name?.charAt(0)?.toUpperCase() || 'U'}
@@ -573,8 +573,8 @@ export function AIAssistantPage() {
                   <div
                     className={`px-4 py-3 ${
                       msg.role === 'user'
-                        ? 'bg-neutral-700 text-white'
-                        : 'bg-neutral-900 border border-neutral-800 text-neutral-100'
+                        ? 'bg-gray-700 text-white'
+                        : 'bg-gray-900 border border-gray-800 text-gray-100'
                     }`}
                   >
                     {msg.content ? (
@@ -583,7 +583,7 @@ export function AIAssistantPage() {
 
                     {/* Streaming cursor */}
                     {msg.isStreaming && (
-                      <span className="inline-block w-0.5 h-4 bg-accent-400 ml-0.5 animate-pulse align-middle" />
+                      <span className="inline-block w-0.5 h-4 bg-orange-400 ml-0.5 animate-pulse align-middle" />
                     )}
                   </div>
 
@@ -596,13 +596,13 @@ export function AIAssistantPage() {
 
                   {/* Pending tool label */}
                   {msg.isStreaming && pendingToolLabel && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-800 border border-neutral-700">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 border border-gray-700">
                       <div className="flex gap-1">
-                        <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-bounce" style={{ animationDelay: '100ms' }} />
-                        <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
+                        <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '100ms' }} />
+                        <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
                       </div>
-                      <span className="text-xs text-neutral-400">{pendingToolLabel}</span>
+                      <span className="text-xs text-gray-400">{pendingToolLabel}</span>
                     </div>
                   )}
 
@@ -610,7 +610,7 @@ export function AIAssistantPage() {
                   {msg.role === 'assistant' && !msg.isStreaming && msg.content && (
                     <button
                       onClick={() => copyMessage(msg.id, msg.content)}
-                      className="flex items-center gap-1.5 text-xs text-neutral-600 hover:text-neutral-400 transition-colors"
+                      className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-400 transition-colors"
                     >
                       {copiedId === msg.id ? (
                         <><Check className="w-3 h-3" /> Copied</>
@@ -626,14 +626,14 @@ export function AIAssistantPage() {
             {/* Thinking state (before first text arrives) */}
             {isStreaming && messages.at(-1)?.role === 'assistant' && !messages.at(-1)?.content && !pendingToolLabel && (
               <div className="flex gap-3">
-                <div className="w-8 h-8 bg-accent-500 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-orange-500 flex items-center justify-center flex-shrink-0">
                   <Zap className="w-4 h-4 text-white" />
                 </div>
-                <div className="px-4 py-3 bg-neutral-900 border border-neutral-800">
+                <div className="px-4 py-3 bg-gray-900 border border-gray-800">
                   <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-neutral-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-2 h-2 bg-neutral-600 rounded-full animate-bounce" style={{ animationDelay: '120ms' }} />
-                    <span className="w-2 h-2 bg-neutral-600 rounded-full animate-bounce" style={{ animationDelay: '240ms' }} />
+                    <span className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '120ms' }} />
+                    <span className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '240ms' }} />
                   </div>
                 </div>
               </div>
@@ -646,13 +646,13 @@ export function AIAssistantPage() {
 
       {/* ── Quick actions strip (when chatting) ──────────────────────────────── */}
       {hasMessages && !isStreaming && (
-        <div className="flex-shrink-0 border-t border-neutral-800 px-4 py-2 overflow-x-auto">
+        <div className="flex-shrink-0 border-t border-gray-800 px-4 py-2 overflow-x-auto">
           <div className="flex gap-2 min-w-max">
             {quickActions.map((action, i) => (
               <button
                 key={i}
                 onClick={() => handleSend(action.message)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-600 text-neutral-400 hover:text-neutral-200 text-xs font-medium transition-all whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 border border-gray-800 hover:border-gray-600 text-gray-400 hover:text-gray-200 text-xs font-medium transition-all whitespace-nowrap"
               >
                 <ChevronRight className="w-3 h-3" />
                 {action.label}
@@ -663,7 +663,7 @@ export function AIAssistantPage() {
       )}
 
       {/* ── Input area ───────────────────────────────────────────────────────── */}
-      <div className="flex-shrink-0 border-t border-neutral-800 px-4 py-3">
+      <div className="flex-shrink-0 border-t border-gray-800 px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-end gap-2">
           {/* Voice button */}
           {isSupported && (
@@ -673,7 +673,7 @@ export function AIAssistantPage() {
               className={`w-10 h-10 flex-shrink-0 flex items-center justify-center transition-all disabled:opacity-40 ${
                 isListening
                   ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                  : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white'
+                  : 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white'
               }`}
               title={isListening ? 'Stop recording' : 'Start voice input'}
             >
@@ -704,7 +704,7 @@ export function AIAssistantPage() {
               }
               disabled={isStreaming || isListening}
               rows={1}
-              className="w-full bg-neutral-900 border border-neutral-700 focus:border-neutral-500 text-white placeholder-neutral-600 px-4 py-2.5 text-sm focus:outline-none resize-none transition-colors disabled:opacity-50"
+              className="w-full bg-gray-900 border border-gray-700 focus:border-gray-500 text-white placeholder-gray-600 px-4 py-2.5 text-sm focus:outline-none resize-none transition-colors disabled:opacity-50"
               style={{ minHeight: '42px', maxHeight: '160px' }}
             />
           </div>
@@ -713,13 +713,13 @@ export function AIAssistantPage() {
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || isStreaming || !sessionId}
-            className="w-10 h-10 flex-shrink-0 bg-accent-500 hover:bg-accent-600 disabled:bg-neutral-800 disabled:text-neutral-600 flex items-center justify-center text-white transition-all"
+            className="w-10 h-10 flex-shrink-0 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-800 disabled:text-gray-600 flex items-center justify-center text-white transition-all"
           >
             <Send className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="text-center text-neutral-700 text-xs mt-2 max-w-3xl mx-auto">
+        <p className="text-center text-gray-700 text-xs mt-2 max-w-3xl mx-auto">
           Spark · Powered by Claude · Hub4Estate
         </p>
       </div>

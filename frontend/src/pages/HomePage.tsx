@@ -251,31 +251,31 @@ export function HomePage() {
       <ElectricalBackgroundSystem />
 
       {/* Hero Section */}
-      <section className="relative bg-white border-b-2 border-neutral-900 overflow-hidden">
+      <section className="relative bg-white border-b border-gray-200 overflow-hidden">
         <div className="absolute inset-0 grid-bg"></div>
 
-        <div className="container-custom relative py-20 lg:py-28">
+        <div className="max-w-6xl mx-auto px-6 relative py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
             {/* Left Content */}
             <div className="animate-slide-up">
               {/* Main Headline */}
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-neutral-900 mb-6 leading-[0.9]">
-                We Will Get You The <span className="text-accent-600">Cheapest Price</span> Of Any Electrical Across India.
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-900 mb-6 leading-[0.9]">
+                We Will Get You The <span className="text-orange-600">Cheapest Price</span> Of Any Electrical Across India.
               </h1>
 
               {/* Subheadline */}
-              <p className="text-xl md:text-2xl text-neutral-600 mb-8 max-w-xl font-medium leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-xl font-medium leading-relaxed">
                 Wires, switches, MCBs, fans, lights — tell us what you need, we contact verified dealers, you compare their real prices and pick the best deal.
               </p>
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                <Link to="/rfq/create" className="btn-urgent group">
+                <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors group">
                   Submit an Inquiry
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <Link to="/track" className="btn-secondary">
+                <Link to="/track" className="inline-flex items-center gap-2 px-7 py-3.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:border-gray-400 transition-colors">
                   Track Your Inquiry
                 </Link>
               </div>
@@ -287,8 +287,8 @@ export function HomePage() {
                   { icon: Shield, text: 'We verify dealers before connecting you' },
                   { icon: FileText, text: 'Full transparency — you see every quote, no hidden fees' },
                 ].map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
-                    <benefit.icon className="w-5 h-5 text-neutral-900" />
+                  <div key={index} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                    <benefit.icon className="w-5 h-5 text-gray-900" />
                     <span>{benefit.text}</span>
                   </div>
                 ))}
@@ -297,22 +297,22 @@ export function HomePage() {
 
             {/* Right Side - Product Inquiry Form */}
             <div className="animate-slide-left">
-              <div className="bg-white border-2 border-neutral-900 p-6 lg:p-8 shadow-brutal">
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 shadow-lg">
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                    <h3 className="text-2xl font-black text-neutral-900 mb-2">Inquiry Submitted!</h3>
-                    <p className="text-neutral-600 mb-4">We'll get back to you with the best price shortly.</p>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">Inquiry Submitted!</h3>
+                    <p className="text-gray-600 mb-4">We'll get back to you with the best price shortly.</p>
                     {submittedInquiryId && (
-                      <div className="bg-neutral-50 border-2 border-neutral-200 p-4 mb-4 text-left">
-                        <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Your Inquiry Number</p>
-                        <p className="font-mono text-lg font-black text-neutral-900">{submittedInquiryId}</p>
-                        <p className="text-xs text-neutral-400 mt-1">Save this number to track your inquiry anytime</p>
+                      <div className="bg-gray-50 border border-gray-200 p-4 mb-4 text-left">
+                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Your Inquiry Number</p>
+                        <p className="font-mono text-lg font-semibold text-gray-900">{submittedInquiryId}</p>
+                        <p className="text-xs text-gray-400 mt-1">Save this number to track your inquiry anytime</p>
                       </div>
                     )}
                     <Link
                       to={`/track?phone=${encodeURIComponent(inquiryForm.phone)}`}
-                      className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 font-bold text-sm hover:bg-neutral-800 transition-colors"
+                      className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 font-bold text-sm hover:bg-gray-800 transition-colors"
                     >
                       Track Your Request
                       <ArrowRight className="w-4 h-4" />
@@ -325,26 +325,26 @@ export function HomePage() {
                         removePhoto();
                         sessionStorage.removeItem('hub4estate_inquiry');
                       }}
-                      className="mt-4 block mx-auto text-accent-600 font-bold underline text-sm"
+                      className="mt-4 block mx-auto text-orange-600 font-bold underline text-sm"
                     >
                       Submit Another Inquiry
                     </button>
                   </div>
                 ) : (
                   <>
-                    <h3 className="text-xl font-black text-neutral-900 mb-1">Get the Best Price</h3>
-                    <p className="text-sm text-neutral-500 mb-6">Tell us what you need — we'll find you the best deal</p>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-1">Get the Best Price</h3>
+                    <p className="text-sm text-gray-500 mb-6">Tell us what you need — we'll find you the best deal</p>
 
                     {/* Toggle: Manual vs AI Scan */}
-                    <div className="relative mb-6 bg-neutral-100 border-2 border-neutral-200 p-1">
+                    <div className="relative mb-6 bg-gray-100 border border-gray-200 p-1">
                       <div className="grid grid-cols-2 gap-1 relative">
                         <button
                           type="button"
                           onClick={() => { setUseAIScan(false); stopCamera(); setAiParsedItems([]); }}
                           className={`relative px-4 py-3 text-sm font-bold transition-all duration-200 ${
                             !useAIScan
-                              ? 'bg-neutral-900 text-white'
-                              : 'text-neutral-600 hover:text-neutral-900'
+                              ? 'bg-gray-900 text-white'
+                              : 'text-gray-600 hover:text-gray-900'
                           }`}
                         >
                           <div className="flex items-center justify-center gap-2">
@@ -357,8 +357,8 @@ export function HomePage() {
                           onClick={() => setUseAIScan(true)}
                           className={`relative px-4 py-3 text-sm font-bold transition-all duration-200 ${
                             useAIScan
-                              ? 'bg-accent-500 text-white'
-                              : 'text-neutral-600 hover:text-neutral-900'
+                              ? 'bg-orange-500 text-white'
+                              : 'text-gray-600 hover:text-gray-900'
                           }`}
                         >
                           <div className="flex items-center justify-center gap-2">
@@ -371,23 +371,23 @@ export function HomePage() {
 
                     {/* AI Scan Guide */}
                     {useAIScan && !cameraActive && !photoPreview && (
-                      <div className="mb-6 bg-neutral-50 border-2 border-neutral-200 p-4">
+                      <div className="mb-6 bg-gray-50 border border-gray-200 p-4">
                         <div className="flex items-start gap-3 mb-3">
-                          <div className="w-8 h-8 bg-neutral-900 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 bg-gray-900 flex items-center justify-center flex-shrink-0">
                             <Sparkles className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <h4 className="text-sm font-bold text-neutral-900 mb-1">Scan Your Material Slip</h4>
-                            <p className="text-xs text-neutral-600 leading-relaxed">
+                            <h4 className="text-sm font-bold text-gray-900 mb-1">Scan Your Material Slip</h4>
+                            <p className="text-xs text-gray-600 leading-relaxed">
                               Upload a photo of your contractor's slip or materials list. AI will extract products, quantities, and brands automatically.
                             </p>
                           </div>
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-center">
                           {['Upload Photo', 'AI Reads It', 'Auto-Fill Form'].map((step, i) => (
-                            <div key={i} className="bg-white border border-neutral-200 p-2">
-                              <div className="text-lg font-black text-accent-600 mb-0.5">{i + 1}</div>
-                              <div className="text-xs font-medium text-neutral-700">{step}</div>
+                            <div key={i} className="bg-white border border-gray-200 p-2">
+                              <div className="text-lg font-semibold text-orange-600 mb-0.5">{i + 1}</div>
+                              <div className="text-xs font-medium text-gray-700">{step}</div>
                             </div>
                           ))}
                         </div>
@@ -409,7 +409,7 @@ export function HomePage() {
                         <div className="space-y-4">
                           {cameraActive ? (
                             <div className="space-y-4">
-                              <div className="relative overflow-hidden border-2 border-neutral-900">
+                              <div className="relative overflow-hidden border border-gray-200 rounded-xl">
                                 <video
                                   ref={videoRef}
                                   autoPlay
@@ -417,7 +417,7 @@ export function HomePage() {
                                   className="w-full"
                                 />
                                 <div className="absolute inset-0 pointer-events-none">
-                                  <div className="absolute inset-4 border-2 border-dashed border-white/60 flex items-center justify-center">
+                                  <div className="absolute inset-4 border border-dashed border-white/60 flex items-center justify-center">
                                     <span className="bg-black/60 text-white text-xs font-medium px-3 py-1.5">
                                       Position slip within frame
                                     </span>
@@ -430,7 +430,7 @@ export function HomePage() {
                                   type="button"
                                   onClick={capturePhoto}
                                   disabled={aiScanning}
-                                  className="flex-1 px-4 py-3 bg-neutral-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors disabled:opacity-50"
+                                  className="flex-1 px-4 py-3 bg-gray-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors disabled:opacity-50"
                                 >
                                   <Camera className="w-5 h-5" />
                                   <span>Capture & Scan</span>
@@ -438,7 +438,7 @@ export function HomePage() {
                                 <button
                                   type="button"
                                   onClick={stopCamera}
-                                  className="px-5 bg-neutral-200 hover:bg-neutral-300 font-bold text-sm transition-colors"
+                                  className="px-5 bg-gray-200 hover:bg-gray-300 font-bold text-sm transition-colors"
                                 >
                                   Cancel
                                 </button>
@@ -446,28 +446,28 @@ export function HomePage() {
                             </div>
                           ) : photoPreview ? (
                             <div className="space-y-4">
-                              <div className="relative overflow-hidden border-2 border-neutral-300">
-                                <img src={photoPreview} alt="Product" className="w-full bg-neutral-50" />
+                              <div className="relative overflow-hidden border border-gray-300">
+                                <img src={photoPreview} alt="Product" className="w-full bg-gray-50" />
                                 <button
                                   type="button"
                                   onClick={() => {
                                     removePhoto();
                                     setAiParsedItems([]);
                                   }}
-                                  className="absolute top-3 right-3 bg-neutral-900/80 hover:bg-neutral-900 text-white p-2 transition-colors"
+                                  className="absolute top-3 right-3 bg-gray-900/80 hover:bg-gray-900 text-white p-2 transition-colors"
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
                               </div>
 
                               {aiScanning ? (
-                                <div className="bg-neutral-100 border-2 border-neutral-200 p-6 text-center">
-                                  <Loader2 className="w-8 h-8 animate-spin text-neutral-700 mx-auto mb-3" />
-                                  <p className="text-sm font-bold text-neutral-900 mb-1">Scanning your slip...</p>
-                                  <p className="text-xs text-neutral-600">Extracting products, quantities, and brands</p>
+                                <div className="bg-gray-100 border border-gray-200 p-6 text-center">
+                                  <Loader2 className="w-8 h-8 animate-spin text-gray-700 mx-auto mb-3" />
+                                  <p className="text-sm font-bold text-gray-900 mb-1">Scanning your slip...</p>
+                                  <p className="text-xs text-gray-600">Extracting products, quantities, and brands</p>
                                 </div>
                               ) : aiParsedItems.length > 0 ? (
-                                <div className="bg-green-50 border-2 border-green-300 p-5 space-y-3">
+                                <div className="bg-green-50 border border-green-300 p-5 space-y-3">
                                   <div className="flex items-center gap-2 mb-3">
                                     <CheckCircle className="w-5 h-5 text-green-600" />
                                     <p className="text-sm font-bold text-green-900">
@@ -480,18 +480,18 @@ export function HomePage() {
                                       <div key={i} className="flex items-start gap-2 text-xs">
                                         <span className="text-green-600 font-bold mt-0.5">{i + 1}.</span>
                                         <div className="flex-1">
-                                          <div className="font-bold text-neutral-900">{item.productName}</div>
-                                          <div className="text-neutral-600 flex items-center gap-2 flex-wrap">
+                                          <div className="font-bold text-gray-900">{item.productName}</div>
+                                          <div className="text-gray-600 flex items-center gap-2 flex-wrap">
                                             <span>{item.quantity} {item.unit}</span>
                                             {item.brand && (
-                                              <span className="px-2 py-0.5 bg-neutral-100 text-neutral-700 text-xs font-medium">
+                                              <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-medium">
                                                 {item.brand}
                                               </span>
                                             )}
                                           </div>
                                           {!item.brand && item.brandSuggestions && item.brandSuggestions.length > 0 && (
                                             <div className="mt-2">
-                                              <p className="text-xs text-neutral-500 mb-1">Suggested brands:</p>
+                                              <p className="text-xs text-gray-500 mb-1">Suggested brands:</p>
                                               <div className="flex flex-wrap gap-1">
                                                 {item.brandSuggestions.map((s: any) => (
                                                   <button
@@ -503,7 +503,7 @@ export function HomePage() {
                                                       setAiParsedItems(updated);
                                                       if (i === 0) setInquiryForm(f => ({ ...f, modelNumber: `${item.productName} ${s.name}`.trim() }));
                                                     }}
-                                                    className="px-2 py-0.5 border border-neutral-300 text-xs font-bold text-neutral-700 bg-neutral-50 hover:bg-neutral-100 transition-colors"
+                                                    className="px-2 py-0.5 border border-gray-300 text-xs font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
                                                     title={s.reason}
                                                   >
                                                     {s.name}
@@ -516,7 +516,7 @@ export function HomePage() {
                                       </div>
                                     ))}
                                     {aiParsedItems.length > 3 && (
-                                      <p className="text-xs text-neutral-500 italic pt-1 border-t border-neutral-200">
+                                      <p className="text-xs text-gray-500 italic pt-1 border-t border-gray-200">
                                         +{aiParsedItems.length - 3} more product{aiParsedItems.length - 3 > 1 ? 's' : ''} detected
                                       </p>
                                     )}
@@ -542,26 +542,26 @@ export function HomePage() {
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDrop}
-                                className={`w-full h-40 border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
+                                className={`w-full h-40 border border-dashed transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
                                   isDragging
-                                    ? 'border-neutral-900 bg-neutral-100'
-                                    : 'border-neutral-300 bg-neutral-50 hover:border-neutral-900 hover:bg-neutral-100'
+                                    ? 'border-gray-500 bg-gray-100'
+                                    : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
                                 }`}
                               >
-                                <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center">
+                                <div className="w-12 h-12 bg-gray-900 flex items-center justify-center">
                                   <Upload className="w-6 h-6 text-white" />
                                 </div>
-                                <span className="text-sm font-bold text-neutral-900">Click to Upload Slip</span>
-                                <span className="text-xs text-neutral-500">or drag and drop here · JPG, PNG · Max 10MB</span>
+                                <span className="text-sm font-bold text-gray-900">Click to Upload Slip</span>
+                                <span className="text-xs text-gray-500">or drag and drop here · JPG, PNG · Max 10MB</span>
                               </button>
 
                               {/* Divider */}
                               <div className="relative">
                                 <div className="absolute inset-0 flex items-center">
-                                  <div className="w-full border-t border-neutral-200"></div>
+                                  <div className="w-full border-t border-gray-200"></div>
                                 </div>
                                 <div className="relative flex justify-center text-xs">
-                                  <span className="px-3 bg-white text-neutral-500 font-medium">OR</span>
+                                  <span className="px-3 bg-white text-gray-500 font-medium">OR</span>
                                 </div>
                               </div>
 
@@ -569,16 +569,16 @@ export function HomePage() {
                               <button
                                 type="button"
                                 onClick={startCamera}
-                                className="w-full px-4 py-3 bg-neutral-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors"
+                                className="w-full px-4 py-3 bg-gray-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
                               >
                                 <Camera className="w-5 h-5" />
                                 <span>Use Camera</span>
                               </button>
 
                               {/* Tips */}
-                              <div className="bg-neutral-50 border border-neutral-200 p-4">
-                                <p className="text-xs font-bold text-neutral-700 mb-2">For best results:</p>
-                                <ul className="text-xs text-neutral-600 space-y-1">
+                              <div className="bg-gray-50 border border-gray-200 p-4">
+                                <p className="text-xs font-bold text-gray-700 mb-2">For best results:</p>
+                                <ul className="text-xs text-gray-600 space-y-1">
                                   <li>• Good lighting — natural light works best</li>
                                   <li>• Capture the full slip in frame</li>
                                   <li>• Avoid blurry or angled shots</li>
@@ -590,16 +590,16 @@ export function HomePage() {
                       ) : (
                         /* Manual Entry Mode */
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-2">
-                            Product Photo <span className="text-neutral-400 normal-case font-normal">(optional)</span>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                            Product Photo <span className="text-gray-400 normal-case font-normal">(optional)</span>
                           </label>
                           {photoPreview ? (
-                            <div className="relative w-full h-32 border-2 border-neutral-200 overflow-hidden">
-                              <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-neutral-50" />
+                            <div className="relative w-full h-32 border border-gray-200 overflow-hidden">
+                              <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-gray-50" />
                               <button
                                 type="button"
                                 onClick={removePhoto}
-                                className="absolute top-2 right-2 bg-neutral-900 text-white p-1"
+                                className="absolute top-2 right-2 bg-gray-900 text-white p-1"
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -608,10 +608,10 @@ export function HomePage() {
                             <button
                               type="button"
                               onClick={() => fileInputRef.current?.click()}
-                              className="w-full h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center gap-2 hover:border-neutral-900 hover:bg-neutral-50 transition-colors"
+                              className="w-full h-24 border border-dashed border-gray-300 flex flex-col items-center justify-center gap-2 hover:border-gray-400 hover:bg-gray-50 transition-colors"
                             >
-                              <Camera className="w-5 h-5 text-neutral-400" />
-                              <span className="text-sm text-neutral-500">Upload product photo</span>
+                              <Camera className="w-5 h-5 text-gray-400" />
+                              <span className="text-sm text-gray-500">Upload product photo</span>
                             </button>
                           )}
                         </div>
@@ -619,7 +619,7 @@ export function HomePage() {
 
                       {/* Model Number */}
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
                           Product / Model Number
                         </label>
                         <input
@@ -627,29 +627,29 @@ export function HomePage() {
                           placeholder="e.g. Havells Crabtree 16A switch, Polycab 2.5mm wire..."
                           value={inquiryForm.modelNumber}
                           onChange={e => setInquiryForm(f => ({ ...f, modelNumber: e.target.value }))}
-                          className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                          className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
                         />
                       </div>
 
                       {/* Quantity & City */}
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Quantity</label>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Quantity</label>
                           <input
                             type="number"
                             min="1"
                             value={inquiryForm.quantity}
                             onChange={e => setInquiryForm(f => ({ ...f, quantity: e.target.value }))}
-                            className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                            className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1 flex items-center justify-between">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
                             <span>Delivery City</span>
                             <button
                               type="button"
                               onClick={detectLocation}
-                              className="text-xs text-accent-600 hover:text-accent-700 font-normal normal-case flex items-center gap-1"
+                              className="text-xs text-orange-600 hover:text-orange-700 font-normal normal-case flex items-center gap-1"
                             >
                               <MapPin className="w-3 h-3" />
                               Auto-detect
@@ -660,36 +660,36 @@ export function HomePage() {
                             placeholder="e.g. Mumbai"
                             value={inquiryForm.deliveryCity}
                             onChange={e => setInquiryForm(f => ({ ...f, deliveryCity: e.target.value }))}
-                            className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                            className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
                           />
                         </div>
                       </div>
 
                       {/* Name & Phone */}
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Your Name</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Your Name</label>
                         <input
                           type="text"
                           placeholder="Full name"
                           value={inquiryForm.name}
                           onChange={e => setInquiryForm(f => ({ ...f, name: e.target.value }))}
-                          className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                          className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1">Phone Number</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Phone Number</label>
                         <input
                           type="tel"
                           placeholder="10-digit mobile number"
                           value={inquiryForm.phone}
                           onChange={e => setInquiryForm(f => ({ ...f, phone: e.target.value }))}
-                          className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                          className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
                         />
                       </div>
 
                       {formError && (
-                        <div className="bg-red-50 border-2 border-red-200 p-4 flex items-start gap-3">
+                        <div className="bg-red-50 border border-red-200 p-4 flex items-start gap-3">
                           <div className="w-5 h-5 bg-red-600 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <X className="w-3 h-3 text-white" />
                           </div>
@@ -700,7 +700,7 @@ export function HomePage() {
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="btn-urgent w-full justify-center disabled:opacity-50"
+                        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50"
                       >
                         {submitting ? (
                           <>
@@ -715,7 +715,7 @@ export function HomePage() {
                         )}
                       </button>
 
-                      <p className="text-xs text-neutral-400 text-center">
+                      <p className="text-xs text-gray-400 text-center">
                         We'll reach out with dealer quotes. No spam, ever.
                       </p>
                     </form>
@@ -728,13 +728,13 @@ export function HomePage() {
       </section>
 
       {/* Who We Help */}
-      <section className="section bg-neutral-50 border-b-2 border-neutral-200">
-        <div className="container-custom">
+      <section className="section bg-gray-50 border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
               Anyone Who Buys Electrical Products
             </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               If you've ever wondered whether you're being charged a fair price, Hub4Estate is for you.
             </p>
           </div>
@@ -748,12 +748,12 @@ export function HomePage() {
               { icon: Users, title: 'Architects', desc: 'Sourcing to spec for client projects' },
               { icon: Store, title: 'Small Businesses', desc: 'Office, retail, or facility fitouts' },
             ].map((segment, index) => (
-              <div key={index} className="border-2 border-neutral-200 p-6 bg-white hover:border-neutral-900 hover:shadow-brutal transition-all duration-200 group">
-                <div className="w-10 h-10 bg-neutral-100 group-hover:bg-accent-500 flex items-center justify-center mb-4 transition-colors">
-                  <segment.icon className="w-5 h-5 text-neutral-700 group-hover:text-white transition-colors" />
+              <div key={index} className="border border-gray-200 rounded-xl p-6 bg-white hover:border-gray-300 hover:shadow-sm transition-all duration-200 group">
+                <div className="w-10 h-10 bg-gray-100 group-hover:bg-orange-500 flex items-center justify-center mb-4 transition-colors">
+                  <segment.icon className="w-5 h-5 text-gray-700 group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-lg font-bold text-neutral-900 mb-1">{segment.title}</h3>
-                <p className="text-sm text-neutral-600">{segment.desc}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{segment.title}</h3>
+                <p className="text-sm text-gray-600">{segment.desc}</p>
               </div>
             ))}
           </div>
@@ -762,26 +762,26 @@ export function HomePage() {
 
       {/* For Buyers & For Dealers */}
       <section className="section bg-white">
-        <div className="container-custom">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
               Two Sides. One Platform.
             </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Hub4Estate works for both buyers and electrical dealers
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* For Buyers */}
-            <div className="border-2 border-neutral-900 p-8 bg-white">
+            <div className="border border-gray-200 rounded-2xl p-8 bg-white hover:border-gray-300 hover:shadow-sm transition-all">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-accent-500 flex items-center justify-center">
+                <div className="w-12 h-12 bg-orange-500 flex items-center justify-center">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-accent-600">For Buyers</span>
-                  <h3 className="text-2xl font-black text-neutral-900">Anyone Buying Electrical Products</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-orange-600">For Buyers</span>
+                  <h3 className="text-2xl font-semibold text-gray-900">Anyone Buying Electrical Products</h3>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
@@ -793,31 +793,31 @@ export function HomePage() {
                   { icon: TrendingUp, title: 'Zero Middlemen', desc: 'You deal directly with the dealer. We just facilitate the connection' },
                 ].map((benefit, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-neutral-100 flex items-center justify-center flex-shrink-0">
-                      <benefit.icon className="w-4 h-4 text-neutral-700" />
+                    <div className="w-8 h-8 bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <benefit.icon className="w-4 h-4 text-gray-700" />
                     </div>
                     <div>
-                      <p className="font-bold text-neutral-900">{benefit.title}</p>
-                      <p className="text-sm text-neutral-600">{benefit.desc}</p>
+                      <p className="font-bold text-gray-900">{benefit.title}</p>
+                      <p className="text-sm text-gray-600">{benefit.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link to="/rfq/create" className="btn-urgent w-full justify-center">
+              <Link to="/rfq/create" className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors">
                 Submit Your First Inquiry
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
 
             {/* For Dealers */}
-            <div className="border-2 border-neutral-900 p-8 bg-neutral-900 text-white">
+            <div className="border border-gray-700 rounded-2xl p-8 bg-gray-900 text-white">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-accent-500 flex items-center justify-center">
+                <div className="w-12 h-12 bg-orange-500 flex items-center justify-center">
                   <Store className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-accent-400">For Dealers</span>
-                  <h3 className="text-2xl font-black text-white">Electrical Shops & Distributors</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-orange-400">For Dealers</span>
+                  <h3 className="text-2xl font-semibold text-white">Electrical Shops & Distributors</h3>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
@@ -829,12 +829,12 @@ export function HomePage() {
                   { icon: TrendingUp, title: 'Expand Your Reach', desc: 'Reach buyers across your city who would never have found you otherwise' },
                 ].map((benefit, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-neutral-800 flex items-center justify-center flex-shrink-0">
-                      <benefit.icon className="w-4 h-4 text-accent-400" />
+                    <div className="w-8 h-8 bg-gray-800 flex items-center justify-center flex-shrink-0">
+                      <benefit.icon className="w-4 h-4 text-orange-400" />
                     </div>
                     <div>
                       <p className="font-bold text-white">{benefit.title}</p>
-                      <p className="text-sm text-neutral-400">{benefit.desc}</p>
+                      <p className="text-sm text-gray-400">{benefit.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -849,13 +849,13 @@ export function HomePage() {
       </section>
 
       {/* How It Works */}
-      <section className="section bg-neutral-50 border-y-2 border-neutral-200">
-        <div className="container-custom">
+      <section className="section bg-gray-50 border-y border-gray-200">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
               How It Works
             </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Submit your inquiry. We do the sourcing. You compare and choose.
             </p>
           </div>
@@ -883,9 +883,9 @@ export function HomePage() {
             ].map((item, index) => (
               <div key={index} className="card-feature group">
                 <div className="step-number mb-6">{item.step}</div>
-                <h3 className="text-2xl font-bold text-neutral-900 mb-3">{item.title}</h3>
-                <p className="text-neutral-600 mb-4">{item.description}</p>
-                <span className="inline-flex items-center text-sm font-bold text-accent-600 uppercase tracking-wider">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                <p className="text-gray-600 mb-4">{item.description}</p>
+                <span className="inline-flex items-center text-sm font-bold text-orange-600 uppercase tracking-wider">
                   {item.highlight}
                 </span>
               </div>
@@ -893,22 +893,22 @@ export function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/rfq/create" className="btn-urgent">
+            <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors">
               Submit Your Inquiry
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Categories Grid */}
-      <section className="section bg-neutral-800 text-white">
-        <div className="container-custom">
+      <section className="section bg-gray-800 text-white">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
+            <h2 className="text-4xl md:text-5xl font-semibold mb-4">
               Everything Electrical.<br />One Platform.
             </h2>
-            <p className="text-xl text-neutral-300 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Havells, Polycab, Schneider, Legrand, Anchor — all major brands with verified specs and warranty details.
             </p>
           </div>
@@ -925,106 +925,106 @@ export function HomePage() {
       </section>
 
       {/* Real Deals */}
-      <section className="section bg-primary-50">
-        <div className="container-custom">
+      <section className="section bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
               What Real Price Access Looks Like
             </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Actual deals closed through Hub4Estate. Real numbers, no fabrications.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Deal 1: Sony Speaker */}
-            <div className="bg-white border-2 border-neutral-900 p-8">
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
               <div className="mb-6">
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 bg-neutral-100 px-3 py-1.5">Audio Equipment</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">Audio Equipment</span>
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-5">Sony Tower Speaker + 2 Mics</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-5">Sony Tower Speaker + 2 Mics</h3>
               <div className="space-y-2 mb-6">
-                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
-                  <span className="text-sm text-neutral-500">MRP</span>
-                  <span className="text-sm font-bold text-neutral-400 line-through">₹1,15,000</span>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-500">MRP</span>
+                  <span className="text-sm font-bold text-gray-400 line-through">₹1,15,000</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
-                  <span className="text-sm text-neutral-500">Croma (retail)</span>
-                  <span className="text-sm font-bold text-neutral-500 line-through">₹1,05,000</span>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-500">Croma (retail)</span>
+                  <span className="text-sm font-bold text-gray-500 line-through">₹1,05,000</span>
                 </div>
-                <div className="flex justify-between items-center py-2.5 bg-neutral-900 px-3">
+                <div className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
                   <span className="text-sm font-bold text-white">Hub4Estate</span>
-                  <span className="text-lg font-black text-accent-400">₹68,000</span>
+                  <span className="text-lg font-semibold text-orange-400">₹68,000</span>
                 </div>
               </div>
-              <div className="border-t-2 border-neutral-200 pt-4">
-                <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold mb-1">Saved vs Croma</p>
-                <p className="text-2xl font-black text-green-600">₹37,000</p>
-                <p className="text-xs text-neutral-400 mt-1">We tracked 8 dealers to find this price</p>
+              <div className="border-t-2 border-gray-200 pt-4">
+                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Saved vs Croma</p>
+                <p className="text-2xl font-semibold text-green-600">₹37,000</p>
+                <p className="text-xs text-gray-400 mt-1">We tracked 8 dealers to find this price</p>
               </div>
             </div>
 
             {/* Deal 2: Philips LED */}
-            <div className="bg-white border-2 border-neutral-900 p-8">
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
               <div className="mb-6">
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 bg-neutral-100 px-3 py-1.5">LED Lighting</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">LED Lighting</span>
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-5">Philips 15W LED Panels × 200 units</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-5">Philips 15W LED Panels × 200 units</h3>
               <div className="space-y-2 mb-6">
-                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
-                  <span className="text-sm text-neutral-500">Local dealer (per piece)</span>
-                  <span className="text-sm font-bold text-neutral-500 line-through">₹585/pc</span>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-500">Local dealer (per piece)</span>
+                  <span className="text-sm font-bold text-gray-500 line-through">₹585/pc</span>
                 </div>
-                <div className="flex justify-between items-center py-2.5 bg-neutral-900 px-3">
+                <div className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
                   <span className="text-sm font-bold text-white">Hub4Estate (incl. shipping)</span>
-                  <span className="text-lg font-black text-accent-400">₹465/pc</span>
+                  <span className="text-lg font-semibold text-orange-400">₹465/pc</span>
                 </div>
               </div>
-              <div className="border-t-2 border-neutral-200 pt-4">
-                <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold mb-1">Total Saved on Order</p>
-                <p className="text-2xl font-black text-green-600">₹24,000</p>
-                <p className="text-xs text-neutral-400 mt-1">₹120 saved per unit × 200 units</p>
+              <div className="border-t-2 border-gray-200 pt-4">
+                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Total Saved on Order</p>
+                <p className="text-2xl font-semibold text-green-600">₹24,000</p>
+                <p className="text-xs text-gray-400 mt-1">₹120 saved per unit × 200 units</p>
               </div>
             </div>
 
             {/* Deal 3: FRLS Wire */}
-            <div className="bg-white border-2 border-neutral-900 p-8">
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
               <div className="mb-6">
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 bg-neutral-100 px-3 py-1.5">Wiring & Cable</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">Wiring & Cable</span>
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-5">FRLS 2.5mm² Wire × 200 metres</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-5">FRLS 2.5mm² Wire × 200 metres</h3>
               <div className="space-y-2 mb-6">
-                <div className="flex justify-between items-center py-2 border-b border-neutral-100">
-                  <span className="text-sm text-neutral-500">Highest dealer quote</span>
-                  <span className="text-sm font-bold text-neutral-500 line-through">₹127/m</span>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-500">Highest dealer quote</span>
+                  <span className="text-sm font-bold text-gray-500 line-through">₹127/m</span>
                 </div>
-                <div className="flex justify-between items-center py-2.5 bg-neutral-900 px-3">
+                <div className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
                   <span className="text-sm font-bold text-white">Best dealer (via Hub4Estate)</span>
-                  <span className="text-lg font-black text-accent-400">₹83/m</span>
+                  <span className="text-lg font-semibold text-orange-400">₹83/m</span>
                 </div>
               </div>
-              <div className="border-t-2 border-neutral-200 pt-4">
-                <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold mb-1">Saved on 200m Order</p>
-                <p className="text-2xl font-black text-green-600">₹8,800</p>
-                <p className="text-xs text-neutral-400 mt-1">6 dealers quoted — ₹44/m spread between them</p>
+              <div className="border-t-2 border-gray-200 pt-4">
+                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Saved on 200m Order</p>
+                <p className="text-2xl font-semibold text-green-600">₹8,800</p>
+                <p className="text-xs text-gray-400 mt-1">6 dealers quoted — ₹44/m spread between them</p>
               </div>
             </div>
           </div>
 
-          <p className="text-center text-sm text-neutral-500 mt-8">
+          <p className="text-center text-sm text-gray-500 mt-8">
             These are real, verified deals. We don't fabricate numbers or testimonials.
           </p>
         </div>
       </section>
 
       {/* Why We Exist */}
-      <section className="section bg-white border-b-2 border-neutral-200">
+      <section className="section bg-white border-b border-gray-200">
         <div className="container-tight">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
               The Same Product.<br />Very Different Prices.
             </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               The price you're quoted depends entirely on who you ask. Most buyers never find out.
             </p>
           </div>
@@ -1048,18 +1048,18 @@ export function HomePage() {
                 description: 'We connect buyers to multiple verified dealers at once. You see all the quotes side by side. The dealer who wins your business earns it fairly. That\'s the whole model.',
               },
             ].map((item, index) => (
-              <div key={index} className="border-2 border-neutral-200 p-8 hover:border-neutral-900 hover:shadow-brutal transition-all duration-300">
-                <h3 className="text-xl font-bold text-neutral-900 mb-4">{item.title}</h3>
-                <p className="text-neutral-600 leading-relaxed">{item.description}</p>
+              <div key={index} className="border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all duration-300">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{item.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
 
-          <div className="bg-neutral-900 text-white p-10 text-center">
-            <h3 className="text-3xl font-black mb-4">
+          <div className="bg-gray-900 text-white p-10 text-center">
+            <h3 className="text-3xl font-semibold mb-4">
               Transparent Pricing. Verified Dealers. Your Choice.
             </h3>
-            <p className="text-xl text-neutral-300 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               We're not here to guarantee the lowest price in the universe.
               We're here to give you enough information to make the right call.
             </p>
@@ -1072,21 +1072,21 @@ export function HomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-accent-500">
-        <div className="container-custom text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+      <section className="py-20 bg-gray-900">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">
             Ready to Find the Best Price?
           </h2>
-          <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+          <p className="text-base text-gray-400 mb-10 max-w-2xl mx-auto">
             Submit an inquiry and let our dealer network do the work.
             No commitment. No spam. Just real quotes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/rfq/create" className="btn-primary bg-white text-neutral-900 border-white hover:bg-neutral-900 hover:text-white hover:border-neutral-900">
+            <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-colors">
               Submit an Inquiry
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link to="/track" className="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-bold hover:bg-white hover:text-neutral-900 transition-colors">
+            <Link to="/track" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/30 text-white font-medium rounded-xl hover:border-white/60 transition-colors">
               Track an Existing Inquiry
             </Link>
           </div>

@@ -133,15 +133,15 @@ export function MessagesPage() {
   const totalUnread = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-neutral-900 text-white">
-        <div className="container-custom py-6">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-5">
           <div className="flex items-center gap-3">
-            <MessageSquare className="w-6 h-6" />
-            <h1 className="text-2xl font-black">Messages</h1>
+            <MessageSquare className="w-5 h-5 text-gray-700" />
+            <h1 className="text-lg font-semibold text-gray-900">Messages</h1>
             {totalUnread > 0 && (
-              <span className="bg-accent-500 text-white text-sm font-bold px-2 py-0.5">
+              <span className="bg-orange-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">
                 {totalUnread} new
               </span>
             )}
@@ -149,12 +149,12 @@ export function MessagesPage() {
         </div>
       </div>
 
-      <div className="container-custom py-8">
+      <div className="max-w-6xl mx-auto px-6 py-8">
         {conversations.length === 0 ? (
-          <div className="bg-white border-2 border-neutral-200 p-12 text-center">
-            <MessageSquare className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-neutral-900 mb-2">No messages yet</h2>
-            <p className="text-neutral-500 max-w-md mx-auto">
+          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <MessageSquare className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+            <h2 className="text-base font-semibold text-gray-900 mb-2">No messages yet</h2>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
               {user?.type === 'dealer'
                 ? 'When you submit quotes on RFQs, you can message buyers here.'
                 : 'When dealers respond to your RFQs, you can chat with them here.'
@@ -179,7 +179,7 @@ export function MessagesPage() {
                   {/* Mobile back button */}
                   <button
                     onClick={handleBackToList}
-                    className="lg:hidden flex items-center gap-2 text-neutral-600 hover:text-neutral-900 mb-4"
+                    className="lg:hidden flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
                   >
                     <ArrowLeft className="w-5 h-5" />
                     Back to messages
@@ -192,10 +192,10 @@ export function MessagesPage() {
                   />
                 </div>
               ) : (
-                <div className="bg-white border-2 border-neutral-200 p-12 text-center hidden lg:block">
-                  <MessageSquare className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-                  <h3 className="font-bold text-neutral-900 mb-2">Select a conversation</h3>
-                  <p className="text-neutral-500">
+                <div className="bg-white rounded-xl border border-gray-200 p-12 text-center hidden lg:block">
+                  <MessageSquare className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1">Select a conversation</h3>
+                  <p className="text-gray-500">
                     Choose a conversation from the list to start chatting
                   </p>
                 </div>

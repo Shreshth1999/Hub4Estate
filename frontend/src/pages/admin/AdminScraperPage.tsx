@@ -56,7 +56,7 @@ interface Stats {
 }
 
 const STATUS_CONFIG: Record<string, { color: string; icon: any; label: string }> = {
-  PENDING: { color: 'bg-neutral-100 text-neutral-600', icon: Clock, label: 'Pending' },
+  PENDING: { color: 'bg-gray-100 text-gray-600', icon: Clock, label: 'Pending' },
   IN_PROGRESS: { color: 'bg-blue-100 text-blue-700', icon: RefreshCw, label: 'Running' },
   COMPLETED: { color: 'bg-green-100 text-green-700', icon: CheckCircle, label: 'Completed' },
   FAILED: { color: 'bg-red-100 text-red-700', icon: XCircle, label: 'Failed' },
@@ -146,46 +146,46 @@ export function AdminScraperPage() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-black text-neutral-900">Product Scraper</h1>
-        <p className="text-neutral-500">Scrape product catalogs from electrical brand websites</p>
+        <h1 className="text-2xl font-semibold text-gray-900">Product Scraper</h1>
+        <p className="text-gray-500">Scrape product catalogs from electrical brand websites</p>
       </div>
 
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white border-2 border-neutral-200 p-4">
-            <Database className="w-5 h-5 text-neutral-400 mb-2" />
-            <p className="text-2xl font-black text-neutral-900">{stats.totalBrands}</p>
-            <p className="text-xs text-neutral-500 uppercase font-bold">Brands Configured</p>
+          <div className="bg-white border border-gray-200 p-4">
+            <Database className="w-5 h-5 text-gray-400 mb-2" />
+            <p className="text-2xl font-semibold text-gray-900">{stats.totalBrands}</p>
+            <p className="text-xs text-gray-500 uppercase font-bold">Brands Configured</p>
           </div>
-          <div className="bg-white border-2 border-neutral-200 p-4">
+          <div className="bg-white border border-gray-200 p-4">
             <Package className="w-5 h-5 text-blue-500 mb-2" />
-            <p className="text-2xl font-black text-blue-600">{stats.totalProducts}</p>
-            <p className="text-xs text-neutral-500 uppercase font-bold">Scraped Products</p>
+            <p className="text-2xl font-semibold text-blue-600">{stats.totalProducts}</p>
+            <p className="text-xs text-gray-500 uppercase font-bold">Scraped Products</p>
           </div>
-          <div className="bg-white border-2 border-neutral-200 p-4">
+          <div className="bg-white border border-gray-200 p-4">
             <CheckCircle className="w-5 h-5 text-green-500 mb-2" />
-            <p className="text-2xl font-black text-green-600">{stats.processedProducts}</p>
-            <p className="text-xs text-neutral-500 uppercase font-bold">Processed</p>
+            <p className="text-2xl font-semibold text-green-600">{stats.processedProducts}</p>
+            <p className="text-xs text-gray-500 uppercase font-bold">Processed</p>
           </div>
-          <div className="bg-white border-2 border-neutral-200 p-4">
+          <div className="bg-white border border-gray-200 p-4">
             <AlertCircle className="w-5 h-5 text-amber-500 mb-2" />
-            <p className="text-2xl font-black text-amber-600">{stats.unprocessedProducts}</p>
-            <p className="text-xs text-neutral-500 uppercase font-bold">Pending Review</p>
+            <p className="text-2xl font-semibold text-amber-600">{stats.unprocessedProducts}</p>
+            <p className="text-xs text-gray-500 uppercase font-bold">Pending Review</p>
           </div>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b-2 border-neutral-200">
+      <div className="flex gap-2 mb-6 border-b border-gray-200">
         {(['brands', 'jobs', 'products'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-3 font-bold text-sm capitalize border-b-2 -mb-[2px] transition-colors ${
               activeTab === tab
-                ? 'border-neutral-900 text-neutral-900'
-                : 'border-transparent text-neutral-500 hover:text-neutral-700'
+                ? 'border-gray-900 text-gray-900'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
             {tab}
@@ -196,17 +196,17 @@ export function AdminScraperPage() {
       {/* Content */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <RefreshCw className="w-6 h-6 animate-spin text-neutral-400" />
+          <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
         </div>
       ) : (
         <>
           {/* Brands Tab */}
           {activeTab === 'brands' && (
-            <div className="bg-white border-2 border-neutral-200">
+            <div className="bg-white border border-gray-200">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b-2 border-neutral-200 bg-neutral-50">
+                    <tr className="border-b border-gray-200 bg-gray-50">
                       <th className="text-left p-4 font-bold text-sm">Brand</th>
                       <th className="text-left p-4 font-bold text-sm">Category</th>
                       <th className="text-left p-4 font-bold text-sm">Products</th>
@@ -216,19 +216,19 @@ export function AdminScraperPage() {
                   </thead>
                   <tbody>
                     {brands.map(brand => (
-                      <tr key={brand.slug} className="border-b border-neutral-100 hover:bg-neutral-50">
+                      <tr key={brand.slug} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-neutral-100 flex items-center justify-center">
-                              <Package className="w-5 h-5 text-neutral-400" />
+                            <div className="w-10 h-10 bg-gray-100 flex items-center justify-center">
+                              <Package className="w-5 h-5 text-gray-400" />
                             </div>
                             <div>
-                              <p className="font-bold text-neutral-900">{brand.name}</p>
+                              <p className="font-bold text-gray-900">{brand.name}</p>
                               <a
                                 href={brand.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-xs text-accent-600 hover:underline flex items-center gap-1"
+                                className="text-xs text-blue-600 hover:underline flex items-center gap-1"
                               >
                                 {brand.website.replace('https://', '')}
                                 <ExternalLink className="w-3 h-3" />
@@ -237,15 +237,15 @@ export function AdminScraperPage() {
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className="px-2 py-1 bg-neutral-100 text-neutral-600 text-xs font-bold uppercase">
+                          <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-bold uppercase">
                             {brand.category}
                           </span>
                         </td>
                         <td className="p-4">
-                          <span className="font-bold text-neutral-900">{brand.totalProducts}</span>
-                          <span className="text-neutral-500 text-sm"> products</span>
+                          <span className="font-bold text-gray-900">{brand.totalProducts}</span>
+                          <span className="text-gray-500 text-sm"> products</span>
                         </td>
-                        <td className="p-4 text-sm text-neutral-500">
+                        <td className="p-4 text-sm text-gray-500">
                           {formatDate(brand.lastScrapedAt)}
                         </td>
                         <td className="p-4">
@@ -254,8 +254,8 @@ export function AdminScraperPage() {
                             disabled={runningJobs.has(brand.slug)}
                             className={`flex items-center gap-2 px-3 py-2 text-sm font-bold transition-colors ${
                               runningJobs.has(brand.slug)
-                                ? 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
-                                : 'bg-accent-500 text-white hover:bg-accent-600'
+                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-gray-900 text-white hover:bg-gray-800'
                             }`}
                           >
                             {runningJobs.has(brand.slug) ? (
@@ -281,11 +281,11 @@ export function AdminScraperPage() {
 
           {/* Jobs Tab */}
           {activeTab === 'jobs' && (
-            <div className="bg-white border-2 border-neutral-200">
+            <div className="bg-white border border-gray-200">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b-2 border-neutral-200 bg-neutral-50">
+                    <tr className="border-b border-gray-200 bg-gray-50">
                       <th className="text-left p-4 font-bold text-sm">Brand</th>
                       <th className="text-left p-4 font-bold text-sm">Status</th>
                       <th className="text-left p-4 font-bold text-sm">Found</th>
@@ -301,9 +301,9 @@ export function AdminScraperPage() {
                       const StatusIcon = statusConfig.icon;
 
                       return (
-                        <tr key={job.id} className="border-b border-neutral-100 hover:bg-neutral-50">
+                        <tr key={job.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="p-4">
-                            <span className="font-bold text-neutral-900">{job.brand.name}</span>
+                            <span className="font-bold text-gray-900">{job.brand.name}</span>
                           </td>
                           <td className="p-4">
                             <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-bold ${statusConfig.color}`}>
@@ -318,10 +318,10 @@ export function AdminScraperPage() {
                             {job.errors > 0 ? (
                               <span className="text-red-600 font-bold">{job.errors}</span>
                             ) : (
-                              <span className="text-neutral-400">0</span>
+                              <span className="text-gray-400">0</span>
                             )}
                           </td>
-                          <td className="p-4 text-sm text-neutral-500">
+                          <td className="p-4 text-sm text-gray-500">
                             {formatDate(job.startedAt)}
                           </td>
                         </tr>
@@ -329,7 +329,7 @@ export function AdminScraperPage() {
                     })}
                     {jobs.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="p-8 text-center text-neutral-500">
+                        <td colSpan={7} className="p-8 text-center text-gray-500">
                           No scrape jobs yet. Start by scraping a brand.
                         </td>
                       </tr>
@@ -346,43 +346,43 @@ export function AdminScraperPage() {
               {/* Filters */}
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-neutral-400" />
+                  <Filter className="w-4 h-4 text-gray-400" />
                   <select
                     value={productFilter}
                     onChange={(e) => {
                       setProductFilter(e.target.value as any);
                       setTimeout(fetchData, 100);
                     }}
-                    className="border-2 border-neutral-200 px-3 py-2 text-sm font-medium"
+                    className="border border-gray-200 px-3 py-2 text-sm font-medium"
                   >
                     <option value="unprocessed">Unprocessed Only</option>
                     <option value="all">All Products</option>
                   </select>
                 </div>
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && fetchData()}
-                    className="w-full pl-10 pr-4 py-2 border-2 border-neutral-200 text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 text-sm"
                   />
                 </div>
                 <button
                   onClick={fetchData}
-                  className="px-4 py-2 bg-neutral-900 text-white text-sm font-bold hover:bg-neutral-800"
+                  className="px-4 py-2 bg-gray-900 text-white text-sm font-bold hover:bg-gray-800"
                 >
                   Search
                 </button>
               </div>
 
-              <div className="bg-white border-2 border-neutral-200">
+              <div className="bg-white border border-gray-200">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b-2 border-neutral-200 bg-neutral-50">
+                      <tr className="border-b border-gray-200 bg-gray-50">
                         <th className="text-left p-4 font-bold text-sm">Product</th>
                         <th className="text-left p-4 font-bold text-sm">Brand</th>
                         <th className="text-left p-4 font-bold text-sm">Category</th>
@@ -394,10 +394,10 @@ export function AdminScraperPage() {
                     </thead>
                     <tbody>
                       {products.map(product => (
-                        <tr key={product.id} className="border-b border-neutral-100 hover:bg-neutral-50">
+                        <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="p-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                              <div className="w-12 h-12 bg-gray-100 flex items-center justify-center flex-shrink-0">
                                 {product.rawImages?.[0] ? (
                                   <img
                                     src={product.rawImages[0]}
@@ -405,19 +405,19 @@ export function AdminScraperPage() {
                                     className="w-full h-full object-contain"
                                   />
                                 ) : (
-                                  <Package className="w-6 h-6 text-neutral-300" />
+                                  <Package className="w-6 h-6 text-gray-300" />
                                 )}
                               </div>
-                              <span className="font-medium text-neutral-900 line-clamp-2">
+                              <span className="font-medium text-gray-900 line-clamp-2">
                                 {product.rawName}
                               </span>
                             </div>
                           </td>
                           <td className="p-4 text-sm">{product.brand.name}</td>
-                          <td className="p-4 text-sm text-neutral-500">
+                          <td className="p-4 text-sm text-gray-500">
                             {product.rawCategory || '-'}
                           </td>
-                          <td className="p-4 text-sm font-mono text-neutral-600">
+                          <td className="p-4 text-sm font-mono text-gray-600">
                             {product.rawModelNumber || '-'}
                           </td>
                           <td className="p-4">
@@ -433,11 +433,11 @@ export function AdminScraperPage() {
                               </span>
                             )}
                           </td>
-                          <td className="p-4 text-sm text-neutral-500">
+                          <td className="p-4 text-sm text-gray-500">
                             {formatDate(product.scrapedAt)}
                           </td>
                           <td className="p-4">
-                            <button className="text-accent-600 hover:text-accent-700 text-sm font-bold flex items-center gap-1">
+                            <button className="text-blue-600 hover:text-blue-700 text-sm font-bold flex items-center gap-1">
                               Review
                               <ChevronRight className="w-4 h-4" />
                             </button>
@@ -446,7 +446,7 @@ export function AdminScraperPage() {
                       ))}
                       {products.length === 0 && (
                         <tr>
-                          <td colSpan={7} className="p-8 text-center text-neutral-500">
+                          <td colSpan={7} className="p-8 text-center text-gray-500">
                             No products found. Run a scrape job to populate products.
                           </td>
                         </tr>

@@ -138,11 +138,11 @@ export function RFQChat({ rfqId, dealerId, dealerName, onSendMessage }: RFQChatP
   };
 
   return (
-    <div className="flex flex-col h-full bg-white border-2 border-neutral-200">
+    <div className="flex flex-col h-full bg-white border border-gray-200 rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b-2 border-neutral-200 bg-neutral-50">
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-neutral-900 flex items-center justify-center">
+          <div className="w-9 h-9 bg-gray-900 rounded-lg flex items-center justify-center">
             {user?.type === 'dealer' ? (
               <User className="w-5 h-5 text-white" />
             ) : (
@@ -150,10 +150,10 @@ export function RFQChat({ rfqId, dealerId, dealerName, onSendMessage }: RFQChatP
             )}
           </div>
           <div>
-            <h3 className="font-bold text-neutral-900">
+            <h3 className="font-semibold text-gray-900 text-sm">
               {user?.type === 'dealer' ? 'Chat with Buyer' : dealerName || 'Chat with Dealer'}
             </h3>
-            <p className="text-xs text-neutral-500">RFQ #{rfqId.slice(0, 8)}</p>
+            <p className="text-xs text-gray-500">RFQ #{rfqId.slice(0, 8)}</p>
           </div>
         </div>
       </div>
@@ -161,7 +161,7 @@ export function RFQChat({ rfqId, dealerId, dealerName, onSendMessage }: RFQChatP
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[300px] max-h-[400px]">
         {messages.length === 0 ? (
-          <div className="text-center py-12 text-neutral-500">
+          <div className="text-center py-12 text-gray-500">
             <p className="font-medium">No messages yet</p>
             <p className="text-sm mt-1">Start the conversation by sending a message</p>
           </div>
@@ -174,15 +174,15 @@ export function RFQChat({ rfqId, dealerId, dealerName, onSendMessage }: RFQChatP
                 className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] ${
+                  className={`max-w-[80%] rounded-2xl overflow-hidden ${
                     isMine
-                      ? 'bg-neutral-900 text-white'
-                      : 'bg-neutral-100 text-neutral-900'
+                      ? 'bg-gray-900 text-white rounded-tr-sm'
+                      : 'bg-gray-100 text-gray-900 rounded-tl-sm'
                   }`}
                 >
                   {!isMine && (
                     <div className="px-4 pt-3 pb-1">
-                      <span className="text-xs font-bold text-neutral-500 flex items-center gap-1">
+                      <span className="text-xs font-medium text-gray-500 flex items-center gap-1">
                         {message.senderType === 'dealer' ? (
                           <Building2 className="w-3 h-3" />
                         ) : (
@@ -196,14 +196,14 @@ export function RFQChat({ rfqId, dealerId, dealerName, onSendMessage }: RFQChatP
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                   </div>
                   <div className={`px-4 pb-2 flex items-center gap-2 ${isMine ? 'justify-end' : ''}`}>
-                    <span className={`text-xs ${isMine ? 'text-neutral-400' : 'text-neutral-500'}`}>
+                    <span className={`text-xs ${isMine ? 'text-gray-400' : 'text-gray-500'}`}>
                       {formatTime(message.createdAt)}
                     </span>
                     {isMine && (
                       message.read ? (
                         <CheckCheck className="w-3 h-3 text-blue-400" />
                       ) : (
-                        <Check className="w-3 h-3 text-neutral-400" />
+                        <Check className="w-3 h-3 text-gray-400" />
                       )
                     )}
                   </div>
@@ -216,25 +216,25 @@ export function RFQChat({ rfqId, dealerId, dealerName, onSendMessage }: RFQChatP
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t-2 border-neutral-200 bg-neutral-50">
-        <div className="flex gap-3">
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <div className="flex gap-2">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Type your message..."
-            className="flex-1 px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none text-sm"
+            className="flex-1 px-3 py-2.5 border border-gray-200 rounded-xl focus:border-gray-400 focus:outline-none text-sm bg-white"
           />
           <button
             onClick={handleSend}
             disabled={!newMessage.trim() || isSending}
-            className="px-4 py-3 bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-300 disabled:cursor-not-allowed transition-colors"
+            className="px-3 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
             <Send className="w-5 h-5" />
           </button>
         </div>
-        <p className="text-xs text-neutral-500 mt-2 flex items-center gap-1">
+        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
           <Clock className="w-3 h-3" />
           Messages are typically responded to within 24 hours
         </p>
@@ -278,52 +278,52 @@ export function ConversationList({ conversations, onSelectConversation, selected
   };
 
   return (
-    <div className="bg-white border-2 border-neutral-200">
-      <div className="p-4 border-b-2 border-neutral-200 bg-neutral-50">
-        <h3 className="font-bold text-neutral-900">Messages</h3>
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <h3 className="text-sm font-semibold text-gray-900">Messages</h3>
       </div>
 
       {conversations.length === 0 ? (
-        <div className="p-8 text-center text-neutral-500">
-          <p className="font-medium">No conversations yet</p>
-          <p className="text-sm mt-1">Your RFQ conversations will appear here</p>
+        <div className="p-8 text-center text-gray-500">
+          <p className="text-sm font-medium">No conversations yet</p>
+          <p className="text-xs mt-1">Your RFQ conversations will appear here</p>
         </div>
       ) : (
-        <div className="divide-y divide-neutral-100">
+        <div className="divide-y divide-gray-100">
           {conversations.map((conv) => (
             <button
               key={conv.id}
               onClick={() => onSelectConversation(conv.id)}
-              className={`w-full p-4 text-left hover:bg-neutral-50 transition-colors ${
-                selectedId === conv.id ? 'bg-neutral-100' : ''
+              className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
+                selectedId === conv.id ? 'bg-gray-100' : ''
               }`}
             >
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-neutral-900 flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 bg-gray-900 rounded-lg flex items-center justify-center flex-shrink-0">
                   {conv.otherPartyType === 'dealer' ? (
-                    <Building2 className="w-5 h-5 text-white" />
+                    <Building2 className="w-4 h-4 text-white" />
                   ) : (
-                    <User className="w-5 h-5 text-white" />
+                    <User className="w-4 h-4 text-white" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h4 className="font-bold text-neutral-900 truncate">
+                    <h4 className="text-sm font-semibold text-gray-900 truncate">
                       {conv.otherPartyName}
                     </h4>
-                    <span className="text-xs text-neutral-500 flex-shrink-0">
+                    <span className="text-xs text-gray-400 flex-shrink-0">
                       {formatTime(conv.lastMessageTime)}
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-500 truncate mt-0.5">
+                  <p className="text-xs text-gray-500 truncate mt-0.5">
                     {conv.rfqTitle}
                   </p>
-                  <p className="text-sm text-neutral-600 truncate mt-1">
+                  <p className="text-xs text-gray-600 truncate mt-0.5">
                     {conv.lastMessage}
                   </p>
                 </div>
                 {conv.unreadCount > 0 && (
-                  <span className="bg-accent-500 text-white text-xs font-bold px-2 py-0.5 flex-shrink-0">
+                  <span className="bg-orange-500 text-white text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0">
                     {conv.unreadCount}
                   </span>
                 )}

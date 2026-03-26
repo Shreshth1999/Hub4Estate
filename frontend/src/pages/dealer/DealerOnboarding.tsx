@@ -52,17 +52,17 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 function FormInput({ label, error, helper, required, ...props }: InputProps) {
   return (
     <div>
-      <label className="block text-sm font-bold text-neutral-900 mb-2 uppercase tracking-wide">
+      <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <input
         className={`block w-full border-2 px-4 py-3 text-base font-medium transition-all duration-200 ${
-          error ? 'border-red-500 focus:border-red-600 bg-red-50' : 'border-neutral-300 focus:border-neutral-900'
+          error ? 'border-red-500 focus:border-red-600 bg-red-50' : 'border-gray-300 focus:border-gray-900'
         } focus:outline-none focus:ring-0`}
         {...props}
       />
       {error && <p className="mt-2 text-sm font-medium text-red-600">{error}</p>}
-      {helper && !error && <p className="mt-2 text-xs text-neutral-500">{helper}</p>}
+      {helper && !error && <p className="mt-2 text-xs text-gray-500">{helper}</p>}
     </div>
   );
 }
@@ -254,30 +254,30 @@ export function DealerOnboarding() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-neutral-900 text-white py-8 border-b-4 border-amber-500">
+      <div className="bg-gray-900 text-white py-8 border-b-4 border-amber-500">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <Link to="/" className="inline-flex items-center space-x-3 mb-4 hover:opacity-80 transition-opacity">
                 <div className="w-10 h-10 bg-white flex items-center justify-center">
-                  <span className="text-xl font-black text-neutral-900">H4</span>
+                  <span className="text-xl font-semibold text-gray-900">H4</span>
                 </div>
                 <span className="text-xl font-bold">Hub4Estate</span>
               </Link>
-              <h1 className="text-3xl md:text-4xl font-black mb-2">
+              <h1 className="text-3xl md:text-4xl font-semibold mb-2">
                 Register as a Dealer.<br />
                 <span className="text-amber-400">Reach More Buyers.</span>
               </h1>
-              <p className="text-neutral-400">Receive qualified buyer inquiries after verification</p>
+              <p className="text-gray-400">Receive qualified buyer inquiries after verification</p>
             </div>
             <div className="flex gap-6">
               <div className="text-center">
-                <div className="text-3xl font-black text-amber-400 mb-1">Free</div>
-                <div className="text-xs uppercase tracking-wider text-neutral-400">To Register</div>
+                <div className="text-3xl font-semibold text-amber-400 mb-1">Free</div>
+                <div className="text-xs uppercase tracking-wider text-gray-400">To Register</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-black text-amber-400 mb-1">Real</div>
-                <div className="text-xs uppercase tracking-wider text-neutral-400">Buyer Inquiries</div>
+                <div className="text-3xl font-semibold text-amber-400 mb-1">Real</div>
+                <div className="text-xs uppercase tracking-wider text-gray-400">Buyer Inquiries</div>
               </div>
             </div>
           </div>
@@ -293,41 +293,41 @@ export function DealerOnboarding() {
                   <div key={index} className="flex items-center">
                     <div className="flex flex-col items-center">
                       <div className={`w-10 h-10 flex items-center justify-center font-bold text-sm ${
-                        index < currentStep ? 'bg-green-600 text-white' : index === currentStep ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-500'
+                        index < currentStep ? 'bg-green-600 text-white' : index === currentStep ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-500'
                       }`}>
                         {index < currentStep ? <CheckCircle className="w-5 h-5" /> : index + 1}
                       </div>
-                      <span className="text-xs font-bold mt-2 uppercase tracking-wide text-neutral-600">{step.label}</span>
+                      <span className="text-xs font-bold mt-2 uppercase tracking-wide text-gray-600">{step.label}</span>
                     </div>
                     {index < steps.length - 1 && (
-                      <div className={`h-0.5 w-8 md:w-16 mx-2 ${index < currentStep ? 'bg-green-600' : 'bg-neutral-200'}`} />
+                      <div className={`h-0.5 w-8 md:w-16 mx-2 ${index < currentStep ? 'bg-green-600' : 'bg-gray-200'}`} />
                     )}
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="border-2 border-neutral-900 bg-white p-8 lg:p-10">
+            <div className="border-2 border-gray-900 bg-white p-8 lg:p-10">
               {submitError && <FormAlert variant="error" title="Registration Failed">{submitError}</FormAlert>}
 
               {currentStep === 0 && (
                 <div className="space-y-6">
                   <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-neutral-900 text-white flex items-center justify-center"><Store className="w-6 h-6" /></div>
+                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><Store className="w-6 h-6" /></div>
                     <div>
-                      <h2 className="text-2xl font-bold text-neutral-900">What type of dealer are you?</h2>
-                      <p className="text-neutral-500">This helps us match you with the right buyers</p>
+                      <h2 className="text-2xl font-bold text-gray-900">What type of dealer are you?</h2>
+                      <p className="text-gray-500">This helps us match you with the right buyers</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {DEALER_TYPES.map((type) => (
                       <button key={type.value} type="button" onClick={() => updateField('dealerType', type.value)}
-                        className={`p-4 border-2 text-left transition-all ${formData.dealerType === type.value ? 'border-neutral-900 bg-neutral-50' : 'border-neutral-200 hover:border-neutral-400'}`}>
+                        className={`p-4 border-2 text-left transition-all ${formData.dealerType === type.value ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'}`}>
                         <div className="flex items-start gap-3">
-                          <type.icon className={`w-6 h-6 ${formData.dealerType === type.value ? 'text-neutral-900' : 'text-neutral-400'}`} />
+                          <type.icon className={`w-6 h-6 ${formData.dealerType === type.value ? 'text-gray-900' : 'text-gray-400'}`} />
                           <div>
-                            <p className="font-bold text-neutral-900">{type.label}</p>
-                            <p className="text-sm text-neutral-500">{type.description}</p>
+                            <p className="font-bold text-gray-900">{type.label}</p>
+                            <p className="text-sm text-gray-500">{type.description}</p>
                           </div>
                         </div>
                       </button>
@@ -335,8 +335,8 @@ export function DealerOnboarding() {
                   </div>
                   {errors.dealerType && <p className="text-sm font-medium text-red-600">{errors.dealerType}</p>}
                   <div className="mt-6">
-                    <label className="block text-sm font-bold text-neutral-900 mb-2 uppercase tracking-wide">Years in Operation (Optional)</label>
-                    <select className="block w-full border-2 border-neutral-300 px-4 py-3 text-base font-medium focus:border-neutral-900 focus:outline-none"
+                    <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Years in Operation (Optional)</label>
+                    <select className="block w-full border-2 border-gray-300 px-4 py-3 text-base font-medium focus:border-gray-900 focus:outline-none"
                       value={formData.yearsInOperation} onChange={(e) => updateField('yearsInOperation', parseInt(e.target.value) || 0)}>
                       <option value={0}>Select years</option>
                       {YEARS_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -348,10 +348,10 @@ export function DealerOnboarding() {
               {currentStep === 1 && (
                 <div className="space-y-6">
                   <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-neutral-900 text-white flex items-center justify-center"><Building2 className="w-6 h-6" /></div>
+                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><Building2 className="w-6 h-6" /></div>
                     <div>
-                      <h2 className="text-2xl font-bold text-neutral-900">Business Information</h2>
-                      <p className="text-neutral-500">Tell us about your electrical business</p>
+                      <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
+                      <p className="text-gray-500">Tell us about your electrical business</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -391,7 +391,7 @@ export function DealerOnboarding() {
                       error={errors.password}
                       required
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-11 text-neutral-500 hover:text-neutral-900">
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-11 text-gray-500 hover:text-gray-900">
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
@@ -410,10 +410,10 @@ export function DealerOnboarding() {
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-neutral-900 text-white flex items-center justify-center"><FileText className="w-6 h-6" /></div>
+                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><FileText className="w-6 h-6" /></div>
                     <div>
-                      <h2 className="text-2xl font-bold text-neutral-900">Business Documents</h2>
-                      <p className="text-neutral-500">Required for verification</p>
+                      <h2 className="text-2xl font-bold text-gray-900">Business Documents</h2>
+                      <p className="text-gray-500">Required for verification</p>
                     </div>
                   </div>
                   <FormAlert variant="info">Your documents will be verified within <strong>24-48 hours</strong>. You can start using the platform immediately.</FormAlert>
@@ -428,7 +428,7 @@ export function DealerOnboarding() {
                       required
                     />
                     <div>
-                      <label className="block text-sm font-bold text-neutral-700 mb-2">GST Certificate (Optional)</label>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">GST Certificate (Optional)</label>
                       <input type="file" ref={gstInputRef} accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setGstDocument(e.target.files?.[0] || null)} className="hidden" />
                       {gstDocument ? (
                         <div className="flex items-center gap-3 p-3 bg-green-50 border-2 border-green-200">
@@ -437,7 +437,7 @@ export function DealerOnboarding() {
                           <button type="button" onClick={() => setGstDocument(null)} className="text-green-600 hover:text-green-800"><X className="w-5 h-5" /></button>
                         </div>
                       ) : (
-                        <button type="button" onClick={() => gstInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-neutral-300 hover:border-neutral-400 flex items-center justify-center gap-2 text-neutral-600">
+                        <button type="button" onClick={() => gstInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-gray-300 hover:border-gray-400 flex items-center justify-center gap-2 text-gray-600">
                           <Upload className="w-5 h-5" /><span className="font-medium">Upload GST Certificate</span>
                         </button>
                       )}
@@ -454,7 +454,7 @@ export function DealerOnboarding() {
                       required
                     />
                     <div>
-                      <label className="block text-sm font-bold text-neutral-700 mb-2">PAN Card Copy (Optional)</label>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">PAN Card Copy (Optional)</label>
                       <input type="file" ref={panInputRef} accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setPanDocument(e.target.files?.[0] || null)} className="hidden" />
                       {panDocument ? (
                         <div className="flex items-center gap-3 p-3 bg-green-50 border-2 border-green-200">
@@ -463,14 +463,14 @@ export function DealerOnboarding() {
                           <button type="button" onClick={() => setPanDocument(null)} className="text-green-600 hover:text-green-800"><X className="w-5 h-5" /></button>
                         </div>
                       ) : (
-                        <button type="button" onClick={() => panInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-neutral-300 hover:border-neutral-400 flex items-center justify-center gap-2 text-neutral-600">
+                        <button type="button" onClick={() => panInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-gray-300 hover:border-gray-400 flex items-center justify-center gap-2 text-gray-600">
                           <Upload className="w-5 h-5" /><span className="font-medium">Upload PAN Card</span>
                         </button>
                       )}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-neutral-700 mb-2">Shop License (Optional)</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Shop License (Optional)</label>
                     <input type="file" ref={licenseInputRef} accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setShopLicense(e.target.files?.[0] || null)} className="hidden" />
                     {shopLicense ? (
                       <div className="flex items-center gap-3 p-3 bg-green-50 border-2 border-green-200">
@@ -479,11 +479,11 @@ export function DealerOnboarding() {
                         <button type="button" onClick={() => setShopLicense(null)} className="text-green-600 hover:text-green-800"><X className="w-5 h-5" /></button>
                       </div>
                     ) : (
-                      <button type="button" onClick={() => licenseInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-neutral-300 hover:border-neutral-400 flex items-center justify-center gap-2 text-neutral-600">
+                      <button type="button" onClick={() => licenseInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-gray-300 hover:border-gray-400 flex items-center justify-center gap-2 text-gray-600">
                         <Upload className="w-5 h-5" /><span className="font-medium">Upload Shop License</span>
                       </button>
                     )}
-                    <p className="mt-2 text-xs text-neutral-500">Accepted: PDF, JPG, PNG (max 5MB)</p>
+                    <p className="mt-2 text-xs text-gray-500">Accepted: PDF, JPG, PNG (max 5MB)</p>
                   </div>
                 </div>
               )}
@@ -491,15 +491,15 @@ export function DealerOnboarding() {
               {currentStep === 3 && (
                 <div className="space-y-6">
                   <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-neutral-900 text-white flex items-center justify-center"><MapPin className="w-6 h-6" /></div>
+                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><MapPin className="w-6 h-6" /></div>
                     <div>
-                      <h2 className="text-2xl font-bold text-neutral-900">Location Details</h2>
-                      <p className="text-neutral-500">Where is your shop located?</p>
+                      <h2 className="text-2xl font-bold text-gray-900">Location Details</h2>
+                      <p className="text-gray-500">Where is your shop located?</p>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-neutral-900 mb-2 uppercase tracking-wide">Shop Address <span className="text-red-500">*</span></label>
-                    <textarea className={`block w-full border-2 px-4 py-4 text-base font-medium ${errors.shopAddress ? 'border-red-500 bg-red-50' : 'border-neutral-300 focus:border-neutral-900'} focus:outline-none`}
+                    <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Shop Address <span className="text-red-500">*</span></label>
+                    <textarea className={`block w-full border-2 px-4 py-4 text-base font-medium ${errors.shopAddress ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:border-gray-900'} focus:outline-none`}
                       rows={3} placeholder="Complete shop address with landmark" value={formData.shopAddress} onChange={(e) => updateField('shopAddress', e.target.value)} />
                     {errors.shopAddress && <p className="mt-2 text-sm font-medium text-red-600">{errors.shopAddress}</p>}
                   </div>
@@ -513,8 +513,8 @@ export function DealerOnboarding() {
                       required
                     />
                     <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2 uppercase tracking-wide">State <span className="text-red-500">*</span></label>
-                      <select className={`block w-full border-2 px-4 py-3 text-base font-medium ${errors.state ? 'border-red-500 bg-red-50' : 'border-neutral-300 focus:border-neutral-900'} focus:outline-none`}
+                      <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">State <span className="text-red-500">*</span></label>
+                      <select className={`block w-full border-2 px-4 py-3 text-base font-medium ${errors.state ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:border-gray-900'} focus:outline-none`}
                         value={formData.state} onChange={(e) => updateField('state', e.target.value)}>
                         <option value="">Select state</option>
                         {STATES.map(state => <option key={state} value={state}>{state}</option>)}
@@ -539,54 +539,54 @@ export function DealerOnboarding() {
                   <div className="flex items-center space-x-3 mb-8">
                     <div className="w-12 h-12 bg-green-600 text-white flex items-center justify-center"><CheckCircle className="w-6 h-6" /></div>
                     <div>
-                      <h2 className="text-2xl font-bold text-neutral-900">Review & Submit</h2>
-                      <p className="text-neutral-500">Verify your details before submitting</p>
+                      <h2 className="text-2xl font-bold text-gray-900">Review & Submit</h2>
+                      <p className="text-gray-500">Verify your details before submitting</p>
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <div className="border-2 border-neutral-200 p-6">
-                      <h3 className="font-bold text-neutral-900 mb-4 flex items-center uppercase tracking-wide text-sm"><Store className="w-4 h-4 mr-2" />Dealer Type</h3>
-                      <p className="font-bold text-neutral-900">{DEALER_TYPES.find(t => t.value === formData.dealerType)?.label || 'Not selected'}</p>
-                      {formData.yearsInOperation > 0 && <p className="text-neutral-600 text-sm mt-1">{YEARS_OPTIONS.find(y => y.value === formData.yearsInOperation)?.label} experience</p>}
+                    <div className="border-2 border-gray-200 p-6">
+                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><Store className="w-4 h-4 mr-2" />Dealer Type</h3>
+                      <p className="font-bold text-gray-900">{DEALER_TYPES.find(t => t.value === formData.dealerType)?.label || 'Not selected'}</p>
+                      {formData.yearsInOperation > 0 && <p className="text-gray-600 text-sm mt-1">{YEARS_OPTIONS.find(y => y.value === formData.yearsInOperation)?.label} experience</p>}
                     </div>
-                    <div className="border-2 border-neutral-200 p-6">
-                      <h3 className="font-bold text-neutral-900 mb-4 flex items-center uppercase tracking-wide text-sm"><Building2 className="w-4 h-4 mr-2" />Business Information</h3>
+                    <div className="border-2 border-gray-200 p-6">
+                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><Building2 className="w-4 h-4 mr-2" />Business Information</h3>
                       <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div><span className="text-neutral-500 block">Business Name</span><p className="font-bold text-neutral-900">{formData.businessName}</p></div>
-                        <div><span className="text-neutral-500 block">Owner</span><p className="font-bold text-neutral-900">{formData.ownerName}</p></div>
-                        <div><span className="text-neutral-500 block">Email</span><p className="font-bold text-neutral-900">{formData.email}</p></div>
-                        <div><span className="text-neutral-500 block">Phone</span><p className="font-bold text-neutral-900">{formData.phone}</p></div>
+                        <div><span className="text-gray-500 block">Business Name</span><p className="font-bold text-gray-900">{formData.businessName}</p></div>
+                        <div><span className="text-gray-500 block">Owner</span><p className="font-bold text-gray-900">{formData.ownerName}</p></div>
+                        <div><span className="text-gray-500 block">Email</span><p className="font-bold text-gray-900">{formData.email}</p></div>
+                        <div><span className="text-gray-500 block">Phone</span><p className="font-bold text-gray-900">{formData.phone}</p></div>
                       </div>
                     </div>
-                    <div className="border-2 border-neutral-200 p-6">
-                      <h3 className="font-bold text-neutral-900 mb-4 flex items-center uppercase tracking-wide text-sm"><FileText className="w-4 h-4 mr-2" />Documents</h3>
+                    <div className="border-2 border-gray-200 p-6">
+                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><FileText className="w-4 h-4 mr-2" />Documents</h3>
                       <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div><span className="text-neutral-500 block">GST Number</span><p className="font-bold text-neutral-900 font-mono">{formData.gstNumber}</p>
+                        <div><span className="text-gray-500 block">GST Number</span><p className="font-bold text-gray-900 font-mono">{formData.gstNumber}</p>
                           {gstDocument && <span className="inline-flex items-center gap-1 mt-1 text-xs text-green-600"><CheckCircle className="w-3 h-3" />Certificate uploaded</span>}</div>
-                        <div><span className="text-neutral-500 block">PAN Number</span><p className="font-bold text-neutral-900 font-mono">{formData.panNumber}</p>
+                        <div><span className="text-gray-500 block">PAN Number</span><p className="font-bold text-gray-900 font-mono">{formData.panNumber}</p>
                           {panDocument && <span className="inline-flex items-center gap-1 mt-1 text-xs text-green-600"><CheckCircle className="w-3 h-3" />Card uploaded</span>}</div>
                       </div>
                     </div>
-                    <div className="border-2 border-neutral-200 p-6">
-                      <h3 className="font-bold text-neutral-900 mb-4 flex items-center uppercase tracking-wide text-sm"><MapPin className="w-4 h-4 mr-2" />Location</h3>
-                      <p className="font-bold text-neutral-900">{formData.shopAddress}</p>
-                      <p className="text-neutral-600">{formData.city}, {formData.state} - {formData.pincode}</p>
+                    <div className="border-2 border-gray-200 p-6">
+                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><MapPin className="w-4 h-4 mr-2" />Location</h3>
+                      <p className="font-bold text-gray-900">{formData.shopAddress}</p>
+                      <p className="text-gray-600">{formData.city}, {formData.state} - {formData.pincode}</p>
                     </div>
                   </div>
                   <FormAlert variant="info">By submitting, you agree to our <Link to="/terms" className="font-bold underline">Terms of Service</Link> and confirm all information is accurate.</FormAlert>
                 </div>
               )}
 
-              <div className="flex items-center justify-between mt-10 pt-8 border-t-2 border-neutral-200">
+              <div className="flex items-center justify-between mt-10 pt-8 border-t-2 border-gray-200">
                 {currentStep > 0 ? (
-                  <button type="button" onClick={handleBack} className="flex items-center gap-2 px-6 py-3 text-neutral-700 font-bold hover:text-neutral-900"><ChevronLeft className="w-5 h-5" />Back</button>
+                  <button type="button" onClick={handleBack} className="flex items-center gap-2 px-6 py-3 text-gray-700 font-bold hover:text-gray-900"><ChevronLeft className="w-5 h-5" />Back</button>
                 ) : (
-                  <Link to="/dealer/login" className="text-neutral-600 hover:text-neutral-900 font-bold text-sm uppercase tracking-wide">Already registered? Sign in</Link>
+                  <Link to="/dealer/login" className="text-gray-600 hover:text-gray-900 font-bold text-sm uppercase tracking-wide">Already registered? Sign in</Link>
                 )}
                 {currentStep < 4 ? (
-                  <button type="button" onClick={handleNext} className="flex items-center gap-2 px-8 py-3 bg-neutral-900 text-white font-bold hover:bg-neutral-800">Continue<ChevronRight className="w-5 h-5" /></button>
+                  <button type="button" onClick={handleNext} className="flex items-center gap-2 px-8 py-3 bg-gray-900 text-white font-bold hover:bg-gray-800">Continue<ChevronRight className="w-5 h-5" /></button>
                 ) : (
-                  <button type="button" onClick={handleSubmit} disabled={isLoading} className="flex items-center gap-2 px-8 py-3 bg-amber-500 text-neutral-900 font-bold hover:bg-amber-400 disabled:opacity-50">
+                  <button type="button" onClick={handleSubmit} disabled={isLoading} className="flex items-center gap-2 px-8 py-3 bg-amber-500 text-gray-900 font-bold hover:bg-amber-400 disabled:opacity-50">
                     {isLoading ? (<><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>Submitting...</>) : (<>Submit Registration<ArrowRight className="w-5 h-5" /></>)}
                   </button>
                 )}
@@ -596,22 +596,22 @@ export function DealerOnboarding() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <div className="bg-neutral-900 text-white p-8 mb-6">
+              <div className="bg-gray-900 text-white p-8 mb-6">
                 <h3 className="text-xl font-bold mb-6">Why Join Hub4Estate?</h3>
                 <div className="space-y-6">
                   {benefits.map((benefit, index) => (
                     <div key={index} className="flex items-start gap-4">
                       <div className="w-10 h-10 bg-white/10 flex items-center justify-center flex-shrink-0"><benefit.icon className="w-5 h-5 text-amber-400" /></div>
-                      <div><h4 className="font-bold text-white mb-1">{benefit.title}</h4><p className="text-sm text-neutral-400">{benefit.description}</p></div>
+                      <div><h4 className="font-bold text-white mb-1">{benefit.title}</h4><p className="text-sm text-gray-400">{benefit.description}</p></div>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="border-2 border-neutral-200 p-6">
-                <h4 className="font-bold text-neutral-900 mb-4">Need Help?</h4>
-                <p className="text-sm text-neutral-600 mb-4">Our team is available to assist with your registration.</p>
-                <a href="tel:+917690001999" className="block w-full text-center py-3 border-2 border-neutral-900 font-bold hover:bg-neutral-900 hover:text-white transition-colors">Call: +91 76900 01999</a>
-                <a href="mailto:support@hub4estate.com" className="text-sm text-neutral-600 block text-center mt-3 hover:text-neutral-900">support@hub4estate.com</a>
+              <div className="border-2 border-gray-200 p-6">
+                <h4 className="font-bold text-gray-900 mb-4">Need Help?</h4>
+                <p className="text-sm text-gray-600 mb-4">Our team is available to assist with your registration.</p>
+                <a href="tel:+917690001999" className="block w-full text-center py-3 border-2 border-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-colors">Call: +91 76900 01999</a>
+                <a href="mailto:support@hub4estate.com" className="text-sm text-gray-600 block text-center mt-3 hover:text-gray-900">support@hub4estate.com</a>
               </div>
             </div>
           </div>
@@ -626,20 +626,20 @@ export function DealerRegistrationSuccess() {
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="max-w-lg text-center">
         <div className="w-24 h-24 bg-green-600 flex items-center justify-center mx-auto mb-8"><CheckCircle className="w-12 h-12 text-white" /></div>
-        <h1 className="text-4xl font-black text-neutral-900 mb-4">Registration Submitted!</h1>
-        <p className="text-xl text-neutral-600 mb-8">You can now access your dealer dashboard. Verification completes within <span className="font-bold text-neutral-900">24-48 hours</span>.</p>
-        <div className="bg-neutral-900 text-white p-8 mb-8 text-left">
+        <h1 className="text-4xl font-semibold text-gray-900 mb-4">Registration Submitted!</h1>
+        <p className="text-xl text-gray-600 mb-8">You can now access your dealer dashboard. Verification completes within <span className="font-bold text-gray-900">24-48 hours</span>.</p>
+        <div className="bg-gray-900 text-white p-8 mb-8 text-left">
           <h3 className="font-bold text-lg mb-4">What Happens Next?</h3>
           <div className="space-y-4">
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-neutral-900">1</span><span className="text-neutral-300">Access your dashboard immediately</span></div>
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-neutral-900">2</span><span className="text-neutral-300">Add your brands and service areas</span></div>
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-neutral-900">3</span><span className="text-neutral-300">Get verified and unlock all features</span></div>
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-neutral-900">4</span><span className="text-neutral-300">Start receiving RFQs from buyers</span></div>
+            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">1</span><span className="text-gray-300">Access your dashboard immediately</span></div>
+            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">2</span><span className="text-gray-300">Add your brands and service areas</span></div>
+            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">3</span><span className="text-gray-300">Get verified and unlock all features</span></div>
+            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">4</span><span className="text-gray-300">Start receiving RFQs from buyers</span></div>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/dealer" className="px-8 py-3 bg-neutral-900 text-white font-bold inline-flex items-center justify-center gap-2 hover:bg-neutral-800">Go to Dashboard<ArrowRight className="w-5 h-5" /></Link>
-          <Link to="/" className="px-8 py-3 border-2 border-neutral-900 font-bold inline-flex items-center justify-center hover:bg-neutral-100">Back to Home</Link>
+          <Link to="/dealer" className="px-8 py-3 bg-gray-900 text-white font-bold inline-flex items-center justify-center gap-2 hover:bg-gray-800">Go to Dashboard<ArrowRight className="w-5 h-5" /></Link>
+          <Link to="/" className="px-8 py-3 border-2 border-gray-900 font-bold inline-flex items-center justify-center hover:bg-gray-100">Back to Home</Link>
         </div>
       </div>
     </div>

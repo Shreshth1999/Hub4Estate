@@ -176,14 +176,14 @@ export function AdminBrandDealersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900">Brand Dealer Directory</h1>
-          <p className="text-neutral-500 text-sm mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900">Brand Dealer Directory</h1>
+          <p className="text-gray-500 text-sm mt-1">
             Manage external dealer contacts for each brand. {total} dealers total.
           </p>
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white font-bold text-sm hover:bg-neutral-800"
+          className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white font-medium text-sm hover:bg-gray-800"
         >
           <Plus className="w-4 h-4" />
           Add Dealer
@@ -195,7 +195,7 @@ export function AdminBrandDealersPage() {
         <select
           value={brandFilter}
           onChange={e => { setBrandFilter(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 border-2 border-neutral-200 bg-white text-sm font-medium min-w-[200px]"
+          className="px-4 py-2.5 border border-gray-200 bg-white text-sm font-medium min-w-[200px]"
         >
           <option value="">All Brands</option>
           {brands.map(b => (
@@ -205,16 +205,16 @@ export function AdminBrandDealersPage() {
 
         <form onSubmit={handleSearch} className="flex-1 flex gap-2">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search by name, phone, city..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
             />
           </div>
-          <button type="submit" className="px-6 py-2.5 bg-neutral-900 text-white font-bold text-sm hover:bg-neutral-800">
+          <button type="submit" className="px-6 py-2.5 bg-gray-900 text-white font-medium text-sm hover:bg-gray-800">
             Search
           </button>
         </form>
@@ -223,34 +223,34 @@ export function AdminBrandDealersPage() {
       {/* Table */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
         </div>
       ) : dealers.length === 0 ? (
-        <div className="text-center py-20 text-neutral-400">
+        <div className="text-center py-20 text-gray-400">
           <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p className="font-medium">No dealers found</p>
           <p className="text-sm mt-1">Add your first brand dealer contact above.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto border-2 border-neutral-200">
+        <div className="overflow-x-auto border border-gray-200">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-neutral-50 border-b-2 border-neutral-200">
-                <th className="text-left px-4 py-3 font-bold text-neutral-700">Dealer</th>
-                <th className="text-left px-4 py-3 font-bold text-neutral-700">Brand</th>
-                <th className="text-left px-4 py-3 font-bold text-neutral-700">Phone</th>
-                <th className="text-left px-4 py-3 font-bold text-neutral-700">City</th>
-                <th className="text-left px-4 py-3 font-bold text-neutral-700">Source</th>
-                <th className="text-left px-4 py-3 font-bold text-neutral-700">Status</th>
-                <th className="text-right px-4 py-3 font-bold text-neutral-700">Actions</th>
+              <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="text-left px-4 py-3 font-bold text-gray-700">Dealer</th>
+                <th className="text-left px-4 py-3 font-bold text-gray-700">Brand</th>
+                <th className="text-left px-4 py-3 font-bold text-gray-700">Phone</th>
+                <th className="text-left px-4 py-3 font-bold text-gray-700">City</th>
+                <th className="text-left px-4 py-3 font-bold text-gray-700">Source</th>
+                <th className="text-left px-4 py-3 font-bold text-gray-700">Status</th>
+                <th className="text-right px-4 py-3 font-bold text-gray-700">Actions</th>
               </tr>
             </thead>
             <tbody>
               {dealers.map(d => (
-                <tr key={d.id} className="border-b border-neutral-100 hover:bg-neutral-50">
+                <tr key={d.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <p className="font-bold text-neutral-900">{d.name}</p>
-                    {d.shopName && <p className="text-xs text-neutral-500">{d.shopName}</p>}
+                    <p className="font-bold text-gray-900">{d.name}</p>
+                    {d.shopName && <p className="text-xs text-gray-500">{d.shopName}</p>}
                   </td>
                   <td className="px-4 py-3">
                     <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-bold">
@@ -267,13 +267,13 @@ export function AdminBrandDealersPage() {
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="flex items-center gap-1 text-neutral-600">
+                    <span className="flex items-center gap-1 text-gray-600">
                       <MapPin className="w-3.5 h-3.5" />
                       {d.city}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-xs px-2 py-1 bg-neutral-100 text-neutral-600 font-medium">
+                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 font-medium">
                       {sourceLabel[d.source] || d.source}
                     </span>
                   </td>
@@ -283,7 +283,7 @@ export function AdminBrandDealersPage() {
                         <CheckCircle className="w-3.5 h-3.5" /> Verified
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-neutral-400 text-xs">
+                      <span className="flex items-center gap-1 text-gray-400 text-xs">
                         <AlertCircle className="w-3.5 h-3.5" /> Unverified
                       </span>
                     )}
@@ -292,10 +292,10 @@ export function AdminBrandDealersPage() {
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => openEdit(d)}
-                        className="p-2 hover:bg-neutral-200 rounded"
+                        className="p-2 hover:bg-gray-200 rounded"
                         title="Edit"
                       >
-                        <Edit2 className="w-4 h-4 text-neutral-500" />
+                        <Edit2 className="w-4 h-4 text-gray-500" />
                       </button>
                       <button
                         onClick={() => handleDelete(d.id)}
@@ -316,21 +316,21 @@ export function AdminBrandDealersPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-gray-500">
             Page {page} of {totalPages} ({total} dealers)
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-2 text-sm font-bold bg-neutral-100 hover:bg-neutral-200 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-bold bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50"
             >
               Previous
             </button>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 text-sm font-bold bg-neutral-100 hover:bg-neutral-200 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-bold bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50"
             >
               Next
             </button>
@@ -341,12 +341,12 @@ export function AdminBrandDealersPage() {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-neutral-900 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b-2 border-neutral-200 bg-neutral-50">
-              <h2 className="text-lg font-black text-neutral-900">
+          <div className="bg-white border border-gray-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <h2 className="text-lg font-semibold text-gray-900">
                 {editing ? 'Edit Dealer' : 'Add Brand Dealer'}
               </h2>
-              <button onClick={() => setShowModal(false)} className="p-2 hover:bg-neutral-200">
+              <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-200">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -354,14 +354,14 @@ export function AdminBrandDealersPage() {
             <div className="px-6 py-5 space-y-4">
               {/* Brand selection */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                   Brand *
                 </label>
                 <select
                   value={form.brandId}
                   onChange={e => setForm(f => ({ ...f, brandId: e.target.value }))}
                   disabled={!!editing}
-                  className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm disabled:bg-neutral-100"
+                  className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg disabled:bg-gray-100"
                 >
                   <option value="">Select Brand</option>
                   {brands.map(b => (
@@ -372,7 +372,7 @@ export function AdminBrandDealersPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                     Contact Name *
                   </label>
                   <input
@@ -380,11 +380,11 @@ export function AdminBrandDealersPage() {
                     value={form.name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     placeholder="Dealer name"
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                     Shop Name
                   </label>
                   <input
@@ -392,14 +392,14 @@ export function AdminBrandDealersPage() {
                     value={form.shopName}
                     onChange={e => setForm(f => ({ ...f, shopName: e.target.value }))}
                     placeholder="Business name"
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                     Phone *
                   </label>
                   <input
@@ -407,11 +407,11 @@ export function AdminBrandDealersPage() {
                     value={form.phone}
                     onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                     placeholder="+91 98765 43210"
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                     WhatsApp Number
                   </label>
                   <input
@@ -419,13 +419,13 @@ export function AdminBrandDealersPage() {
                     value={form.whatsappNumber}
                     onChange={e => setForm(f => ({ ...f, whatsappNumber: e.target.value }))}
                     placeholder="Same as phone if blank"
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                   Email
                 </label>
                 <input
@@ -433,13 +433,13 @@ export function AdminBrandDealersPage() {
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                   placeholder="dealer@example.com"
-                  className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                     City *
                   </label>
                   <input
@@ -447,11 +447,11 @@ export function AdminBrandDealersPage() {
                     value={form.city}
                     onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
                     placeholder="Delhi"
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                     State
                   </label>
                   <input
@@ -459,11 +459,11 @@ export function AdminBrandDealersPage() {
                     value={form.state}
                     onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
                     placeholder="Delhi"
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                     Pincode
                   </label>
                   <input
@@ -471,7 +471,7 @@ export function AdminBrandDealersPage() {
                     value={form.pincode}
                     onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))}
                     placeholder="110001"
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg"
                   />
                 </div>
               </div>
@@ -484,12 +484,12 @@ export function AdminBrandDealersPage() {
                     onChange={e => setForm(f => ({ ...f, isVerified: e.target.checked }))}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm font-medium text-neutral-700">Verified dealer</span>
+                  <span className="text-sm font-medium text-gray-700">Verified dealer</span>
                 </label>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
                   Notes
                 </label>
                 <textarea
@@ -497,22 +497,22 @@ export function AdminBrandDealersPage() {
                   onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   rows={2}
                   placeholder="Any additional notes..."
-                  className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm resize-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm rounded-lg resize-none"
                 />
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t-2 border-neutral-200 bg-neutral-50 flex items-center justify-between">
+            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-6 py-2.5 text-sm font-bold text-neutral-600 hover:text-neutral-900"
+                className="px-6 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-900"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-8 py-2.5 bg-neutral-900 text-white font-bold text-sm hover:bg-neutral-800 disabled:opacity-50"
+                className="flex items-center gap-2 px-8 py-2.5 bg-gray-900 text-white font-medium text-sm hover:bg-gray-800 disabled:opacity-50"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editing ? 'Update Dealer' : 'Add Dealer'}

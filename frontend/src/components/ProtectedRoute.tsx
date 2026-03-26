@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
-import { LoadingSpinner } from './ui';
+import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   requiredRole?: 'user' | 'dealer' | 'admin';
@@ -23,8 +23,8 @@ export function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <LoadingSpinner size="lg" />
-          <p className="mt-4 text-neutral-600 font-medium">Verifying access...</p>
+          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          <p className="mt-4 text-sm text-gray-500">Verifying access...</p>
         </div>
       </div>
     );

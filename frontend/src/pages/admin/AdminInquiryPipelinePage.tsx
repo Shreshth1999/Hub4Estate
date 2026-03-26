@@ -74,11 +74,11 @@ const statusOrder: Record<string, number> = {
 };
 
 const quoteStatusConfig: Record<string, { label: string; color: string; bg: string }> = {
-  PENDING: { label: 'Pending', color: 'text-neutral-700', bg: 'bg-neutral-100' },
+  PENDING: { label: 'Pending', color: 'text-gray-700', bg: 'bg-gray-100' },
   CONTACTED: { label: 'Contacted', color: 'text-blue-700', bg: 'bg-blue-100' },
   QUOTED: { label: 'Quoted', color: 'text-green-700', bg: 'bg-green-100' },
   NO_RESPONSE: { label: 'No Response', color: 'text-red-700', bg: 'bg-red-100' },
-  DECLINED: { label: 'Declined', color: 'text-neutral-700', bg: 'bg-neutral-200' },
+  DECLINED: { label: 'Declined', color: 'text-gray-700', bg: 'bg-gray-200' },
 };
 
 export function AdminInquiryPipelinePage() {
@@ -301,7 +301,7 @@ export function AdminInquiryPipelinePage() {
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -310,14 +310,14 @@ export function AdminInquiryPipelinePage() {
   if (!pipeline) {
     return (
       <div className="p-6 space-y-6">
-        <button onClick={() => navigate('/admin/inquiries')} className="flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900">
+        <button onClick={() => navigate('/admin/inquiries')} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900">
           <ArrowLeft className="w-4 h-4" /> Back to Inquiries
         </button>
 
         <div className="text-center py-20">
-          <Zap className="w-16 h-16 mx-auto mb-4 text-accent-500" />
-          <h2 className="text-2xl font-black text-neutral-900 mb-2">Start Dealer Quote Pipeline</h2>
-          <p className="text-neutral-500 max-w-md mx-auto mb-6">
+          <Zap className="w-16 h-16 mx-auto mb-4 text-orange-500" />
+          <h2 className="text-2xl font-black text-gray-900 mb-2">Start Dealer Quote Pipeline</h2>
+          <p className="text-gray-500 max-w-md mx-auto mb-6">
             AI will analyze this inquiry, identify the brand & product, find matching dealers,
             and generate WhatsApp message templates for outreach.
           </p>
@@ -325,7 +325,7 @@ export function AdminInquiryPipelinePage() {
           <button
             onClick={handleCreate}
             disabled={creating}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-accent-500 text-white font-bold hover:bg-accent-600 disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-orange-500 text-white font-bold hover:bg-orange-600 disabled:opacity-50"
           >
             {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
             {creating ? 'Analyzing...' : 'Start Pipeline'}
@@ -343,14 +343,14 @@ export function AdminInquiryPipelinePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/admin/inquiries')} className="p-2 hover:bg-neutral-200 rounded">
+          <button onClick={() => navigate('/admin/inquiries')} className="p-2 hover:bg-gray-200 rounded">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl font-black text-neutral-900">
+            <h1 className="text-xl font-black text-gray-900">
               Pipeline: {pipeline.inquiry.inquiryNumber || pipeline.inquiry.name}
             </h1>
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm text-gray-500">
               {pipeline.inquiry.name} | {pipeline.inquiry.phone} | {pipeline.inquiry.deliveryCity}
             </p>
           </div>
@@ -366,7 +366,7 @@ export function AdminInquiryPipelinePage() {
       </div>
 
       {/* Pipeline Stepper */}
-      <div className="bg-white border-2 border-neutral-200 p-5">
+      <div className="bg-white border-2 border-gray-200 p-5">
         <div className="flex items-center justify-between">
           {pipelineSteps.map((step, i) => {
             const Icon = step.icon;
@@ -377,21 +377,21 @@ export function AdminInquiryPipelinePage() {
                 <div className="flex flex-col items-center flex-1">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                     isComplete ? 'bg-green-500 text-white' :
-                    isCurrent ? 'bg-accent-500 text-white' :
-                    'bg-neutral-100 text-neutral-400'
+                    isCurrent ? 'bg-orange-500 text-white' :
+                    'bg-gray-100 text-gray-400'
                   }`}>
                     {isComplete ? <CheckCircle className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                   </div>
                   <span className={`text-xs mt-1.5 font-bold ${
                     isComplete ? 'text-green-600' :
-                    isCurrent ? 'text-accent-600' :
-                    'text-neutral-400'
+                    isCurrent ? 'text-orange-600' :
+                    'text-gray-400'
                   }`}>
                     {step.label}
                   </span>
                 </div>
                 {i < pipelineSteps.length - 1 && (
-                  <div className={`h-0.5 flex-1 mx-2 ${isComplete ? 'bg-green-400' : 'bg-neutral-200'}`} />
+                  <div className={`h-0.5 flex-1 mx-2 ${isComplete ? 'bg-green-400' : 'bg-gray-200'}`} />
                 )}
               </div>
             );
@@ -422,34 +422,34 @@ export function AdminInquiryPipelinePage() {
 
       {/* AI Analysis Card */}
       {aiData && (
-        <div className="bg-white border-2 border-neutral-200">
-          <div className="px-5 py-3 border-b border-neutral-100 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-accent-500" />
-            <h3 className="font-black text-neutral-900">AI Analysis</h3>
+        <div className="bg-white border-2 border-gray-200">
+          <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-orange-500" />
+            <h3 className="font-black text-gray-900">AI Analysis</h3>
           </div>
           <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Identified Brand</p>
-              <p className="text-lg font-black text-neutral-900">{aiData.identifiedBrand || 'Unknown'}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Identified Brand</p>
+              <p className="text-lg font-black text-gray-900">{aiData.identifiedBrand || 'Unknown'}</p>
               {aiData.brandConfidence !== undefined && (
                 <div className="mt-1 flex items-center gap-2">
-                  <div className="flex-1 h-2 bg-neutral-100 rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-accent-500 rounded-full"
+                      className="h-full bg-orange-500 rounded-full"
                       style={{ width: `${(aiData.brandConfidence * 100)}%` }}
                     />
                   </div>
-                  <span className="text-xs font-bold text-neutral-500">{Math.round(aiData.brandConfidence * 100)}%</span>
+                  <span className="text-xs font-bold text-gray-500">{Math.round(aiData.brandConfidence * 100)}%</span>
                 </div>
               )}
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Product</p>
-              <p className="font-bold text-neutral-900">{aiData.identifiedProduct || 'Not identified'}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Product</p>
+              <p className="font-bold text-gray-900">{aiData.identifiedProduct || 'Not identified'}</p>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Category</p>
-              <p className="font-bold text-neutral-900">{aiData.identifiedCategory || 'N/A'}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Category</p>
+              <p className="font-bold text-gray-900">{aiData.identifiedCategory || 'N/A'}</p>
             </div>
           </div>
 
@@ -473,11 +473,11 @@ export function AdminInquiryPipelinePage() {
           {/* Insights */}
           {aiData.insights?.length > 0 && (
             <div className="mx-5 mb-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">Insights</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Insights</p>
               <ul className="space-y-1">
                 {aiData.insights.map((insight: string, i: number) => (
-                  <li key={i} className="text-sm text-neutral-600 flex items-start gap-2">
-                    <ChevronRight className="w-3.5 h-3.5 mt-0.5 text-accent-500 flex-shrink-0" />
+                  <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                    <ChevronRight className="w-3.5 h-3.5 mt-0.5 text-orange-500 flex-shrink-0" />
                     {insight}
                   </li>
                 ))}
@@ -488,11 +488,11 @@ export function AdminInquiryPipelinePage() {
       )}
 
       {/* Dealer Quotes Section */}
-      <div className="bg-white border-2 border-neutral-200">
-        <div className="px-5 py-3 border-b border-neutral-100 flex items-center justify-between">
+      <div className="bg-white border-2 border-gray-200">
+        <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-neutral-600" />
-            <h3 className="font-black text-neutral-900">Dealers ({pipeline.dealerQuotes.length})</h3>
+            <Users className="w-5 h-5 text-gray-600" />
+            <h3 className="font-black text-gray-900">Dealers ({pipeline.dealerQuotes.length})</h3>
           </div>
           <div className="flex gap-2">
             <button
@@ -508,7 +508,7 @@ export function AdminInquiryPipelinePage() {
                 setAddForm(f => ({ ...f, whatsappMessage: aiData?.suggestedWhatsAppTemplate || '' }));
                 setShowAddDealer(true);
               }}
-              className="flex items-center gap-1 px-4 py-2 bg-neutral-900 text-white font-bold text-xs hover:bg-neutral-800"
+              className="flex items-center gap-1 px-4 py-2 bg-gray-900 text-white font-bold text-xs hover:bg-gray-800"
             >
               <Plus className="w-3.5 h-3.5" /> Add Dealer
             </button>
@@ -555,7 +555,7 @@ export function AdminInquiryPipelinePage() {
                     <div>
                       <span className="font-bold text-sm">{d.shopName || d.name}</span>
                       <span className="text-xs text-blue-600 ml-2">{d.city}</span>
-                      <span className="text-xs text-neutral-400 ml-2">{d.phone}</span>
+                      <span className="text-xs text-gray-400 ml-2">{d.phone}</span>
                     </div>
                     <button
                       onClick={() => addMatchedDealer(d, 'brand')}
@@ -576,13 +576,13 @@ export function AdminInquiryPipelinePage() {
 
         {/* Dealer Quote Cards */}
         {pipeline.dealerQuotes.length === 0 ? (
-          <div className="p-8 text-center text-neutral-400">
+          <div className="p-8 text-center text-gray-400">
             <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
             <p className="font-medium">No dealers added yet</p>
             <p className="text-sm">Use Auto-Match or add dealers manually.</p>
           </div>
         ) : (
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-gray-100">
             {pipeline.dealerQuotes.map(q => {
               const qs = quoteStatusConfig[q.responseStatus] || quoteStatusConfig.PENDING;
               const isEditing = editingQuote === q.id;
@@ -597,7 +597,7 @@ export function AdminInquiryPipelinePage() {
                     {/* Dealer Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-bold text-neutral-900">{q.dealerShopName || q.dealerName}</h4>
+                        <h4 className="font-bold text-gray-900">{q.dealerShopName || q.dealerName}</h4>
                         <span className={`px-2 py-0.5 text-xs font-bold ${qs.bg} ${qs.color}`}>
                           {qs.label}
                         </span>
@@ -607,7 +607,7 @@ export function AdminInquiryPipelinePage() {
                           </span>
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-4 text-sm text-neutral-500">
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                         <span className="flex items-center gap-1">
                           <User className="w-3.5 h-3.5" /> {q.dealerName}
                         </span>
@@ -636,10 +636,10 @@ export function AdminInquiryPipelinePage() {
                       {q.whatsappMessage && (
                         <button
                           onClick={() => copyToClipboard(q.whatsappMessage!)}
-                          className="p-1.5 hover:bg-neutral-200 rounded"
+                          className="p-1.5 hover:bg-gray-200 rounded"
                           title="Copy message"
                         >
-                          <Copy className="w-4 h-4 text-neutral-400" />
+                          <Copy className="w-4 h-4 text-gray-400" />
                         </button>
                       )}
                       <button
@@ -654,45 +654,45 @@ export function AdminInquiryPipelinePage() {
 
                   {/* Quote Details / Edit Form */}
                   {isEditing ? (
-                    <div className="mt-3 bg-neutral-50 border border-neutral-200 p-4 space-y-3">
+                    <div className="mt-3 bg-gray-50 border border-gray-200 p-4 space-y-3">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <div>
-                          <label className="block text-xs font-bold text-neutral-600 mb-1">Price (₹)</label>
+                          <label className="block text-xs font-bold text-gray-600 mb-1">Price (₹)</label>
                           <input
                             type="number"
                             value={quoteForm.quotedPrice}
                             onChange={e => setQuoteForm(f => ({ ...f, quotedPrice: e.target.value }))}
-                            className="w-full px-3 py-2 border border-neutral-300 text-sm outline-none focus:border-neutral-900"
+                            className="w-full px-3 py-2 border border-gray-300 text-sm outline-none focus:border-gray-900"
                             placeholder="e.g. 1200"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-neutral-600 mb-1">Shipping (₹)</label>
+                          <label className="block text-xs font-bold text-gray-600 mb-1">Shipping (₹)</label>
                           <input
                             type="number"
                             value={quoteForm.shippingCost}
                             onChange={e => setQuoteForm(f => ({ ...f, shippingCost: e.target.value }))}
-                            className="w-full px-3 py-2 border border-neutral-300 text-sm outline-none focus:border-neutral-900"
+                            className="w-full px-3 py-2 border border-gray-300 text-sm outline-none focus:border-gray-900"
                             placeholder="0"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-neutral-600 mb-1">Delivery (days)</label>
+                          <label className="block text-xs font-bold text-gray-600 mb-1">Delivery (days)</label>
                           <input
                             type="number"
                             value={quoteForm.deliveryDays}
                             onChange={e => setQuoteForm(f => ({ ...f, deliveryDays: e.target.value }))}
-                            className="w-full px-3 py-2 border border-neutral-300 text-sm outline-none focus:border-neutral-900"
+                            className="w-full px-3 py-2 border border-gray-300 text-sm outline-none focus:border-gray-900"
                             placeholder="3"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-neutral-600 mb-1">Warranty</label>
+                          <label className="block text-xs font-bold text-gray-600 mb-1">Warranty</label>
                           <input
                             type="text"
                             value={quoteForm.warrantyInfo}
                             onChange={e => setQuoteForm(f => ({ ...f, warrantyInfo: e.target.value }))}
-                            className="w-full px-3 py-2 border border-neutral-300 text-sm outline-none focus:border-neutral-900"
+                            className="w-full px-3 py-2 border border-gray-300 text-sm outline-none focus:border-gray-900"
                             placeholder="1 year"
                           />
                         </div>
@@ -706,7 +706,7 @@ export function AdminInquiryPipelinePage() {
                         </button>
                         <button
                           onClick={() => setEditingQuote(null)}
-                          className="px-4 py-2 text-neutral-500 font-bold text-xs hover:text-neutral-900"
+                          className="px-4 py-2 text-gray-500 font-bold text-xs hover:text-gray-900"
                         >
                           Cancel
                         </button>
@@ -739,13 +739,13 @@ export function AdminInquiryPipelinePage() {
                     <div className="mt-3 flex items-center gap-3">
                       <button
                         onClick={() => startEditQuote(q)}
-                        className="px-4 py-2 bg-accent-500 text-white font-bold text-xs hover:bg-accent-600"
+                        className="px-4 py-2 bg-orange-500 text-white font-bold text-xs hover:bg-orange-600"
                       >
                         Enter Quote
                       </button>
                       <button
                         onClick={() => markStatus(q.id, 'CONTACTED')}
-                        className="text-xs text-neutral-500 hover:text-neutral-900 font-medium"
+                        className="text-xs text-gray-500 hover:text-gray-900 font-medium"
                       >
                         Mark Contacted
                       </button>
@@ -782,65 +782,65 @@ export function AdminInquiryPipelinePage() {
       {/* Add Dealer Modal */}
       {showAddDealer && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-neutral-900 max-w-lg w-full">
-            <div className="flex items-center justify-between px-6 py-4 border-b-2 border-neutral-200 bg-neutral-50">
-              <h2 className="text-lg font-black text-neutral-900">Add Dealer to Pipeline</h2>
-              <button onClick={() => setShowAddDealer(false)} className="p-2 hover:bg-neutral-200">
+          <div className="bg-white border-2 border-gray-900 max-w-lg w-full">
+            <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50">
+              <h2 className="text-lg font-black text-gray-900">Add Dealer to Pipeline</h2>
+              <button onClick={() => setShowAddDealer(false)} className="p-2 hover:bg-gray-200">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Name *</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Name *</label>
                   <input
                     type="text"
                     value={addForm.dealerName}
                     onChange={e => setAddForm(f => ({ ...f, dealerName: e.target.value }))}
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 focus:border-gray-900 outline-none text-sm"
                     placeholder="Dealer name"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Phone *</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Phone *</label>
                   <input
                     type="text"
                     value={addForm.dealerPhone}
                     onChange={e => setAddForm(f => ({ ...f, dealerPhone: e.target.value }))}
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 focus:border-gray-900 outline-none text-sm"
                     placeholder="+91 98765 43210"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">Shop Name</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Shop Name</label>
                   <input
                     type="text"
                     value={addForm.dealerShopName}
                     onChange={e => setAddForm(f => ({ ...f, dealerShopName: e.target.value }))}
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 focus:border-gray-900 outline-none text-sm"
                     placeholder="Business name"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">City</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">City</label>
                   <input
                     type="text"
                     value={addForm.dealerCity}
                     onChange={e => setAddForm(f => ({ ...f, dealerCity: e.target.value }))}
-                    className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 focus:border-gray-900 outline-none text-sm"
                     placeholder="Delhi"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">WhatsApp Message</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">WhatsApp Message</label>
                 <textarea
                   value={addForm.whatsappMessage}
                   onChange={e => setAddForm(f => ({ ...f, whatsappMessage: e.target.value }))}
                   rows={3}
-                  className="w-full px-4 py-2.5 border-2 border-neutral-200 focus:border-neutral-900 outline-none text-sm resize-none"
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 focus:border-gray-900 outline-none text-sm resize-none"
                   placeholder="Pre-filled WhatsApp message..."
                 />
               </div>
@@ -851,17 +851,17 @@ export function AdminInquiryPipelinePage() {
                   onChange={e => setAddForm(f => ({ ...f, saveToDirectory: e.target.checked }))}
                   className="w-4 h-4"
                 />
-                <span className="text-sm text-neutral-700">Save to Brand Dealer Directory</span>
+                <span className="text-sm text-gray-700">Save to Brand Dealer Directory</span>
               </label>
             </div>
-            <div className="px-6 py-4 border-t-2 border-neutral-200 bg-neutral-50 flex justify-end gap-3">
-              <button onClick={() => setShowAddDealer(false)} className="px-6 py-2.5 text-sm font-bold text-neutral-600">
+            <div className="px-6 py-4 border-t-2 border-gray-200 bg-gray-50 flex justify-end gap-3">
+              <button onClick={() => setShowAddDealer(false)} className="px-6 py-2.5 text-sm font-bold text-gray-600">
                 Cancel
               </button>
               <button
                 onClick={handleAddDealer}
                 disabled={addingSaving || !addForm.dealerName || !addForm.dealerPhone}
-                className="flex items-center gap-2 px-6 py-2.5 bg-neutral-900 text-white font-bold text-sm hover:bg-neutral-800 disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 disabled:opacity-50"
               >
                 {addingSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                 Add Dealer
@@ -874,10 +874,10 @@ export function AdminInquiryPipelinePage() {
       {/* Send to Customer Modal */}
       {showSend && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-neutral-900 max-w-md w-full">
-            <div className="flex items-center justify-between px-6 py-4 border-b-2 border-neutral-200 bg-neutral-50">
-              <h2 className="text-lg font-black text-neutral-900">Send Quotes to Customer</h2>
-              <button onClick={() => setShowSend(false)} className="p-2 hover:bg-neutral-200">
+          <div className="bg-white border-2 border-gray-900 max-w-md w-full">
+            <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50">
+              <h2 className="text-lg font-black text-gray-900">Send Quotes to Customer</h2>
+              <button onClick={() => setShowSend(false)} className="p-2 hover:bg-gray-200">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -891,7 +891,7 @@ export function AdminInquiryPipelinePage() {
                 </p>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-2">Send Via</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-2">Send Via</label>
                 <div className="flex gap-3">
                   {['email', 'sms', 'both'].map(v => (
                     <label key={v} className="flex items-center gap-2 cursor-pointer">
@@ -915,8 +915,8 @@ export function AdminInquiryPipelinePage() {
                 </div>
               )}
             </div>
-            <div className="px-6 py-4 border-t-2 border-neutral-200 bg-neutral-50 flex justify-end gap-3">
-              <button onClick={() => setShowSend(false)} className="px-6 py-2.5 text-sm font-bold text-neutral-600">
+            <div className="px-6 py-4 border-t-2 border-gray-200 bg-gray-50 flex justify-end gap-3">
+              <button onClick={() => setShowSend(false)} className="px-6 py-2.5 text-sm font-bold text-gray-600">
                 Cancel
               </button>
               <button

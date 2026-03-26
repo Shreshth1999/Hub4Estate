@@ -149,19 +149,19 @@ export function ComparePage() {
   // Empty state
   if (!isLoading && products.length === 0) {
     return (
-      <div className="min-h-screen bg-neutral-50 py-12">
-        <div className="container-custom">
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-md mx-auto text-center">
-            <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Package className="w-8 h-8 text-neutral-400" />
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package className="w-8 h-8 text-gray-400" />
             </div>
-            <h1 className="text-2xl font-black text-neutral-900 mb-2">No Products to Compare</h1>
-            <p className="text-neutral-500 mb-6">
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">No Products to Compare</h1>
+            <p className="text-gray-500 mb-6">
               Browse our catalog and add products to compare their specifications side-by-side.
             </p>
-            <Link to="/user/categories" className="btn-primary">
+            <Link to="/user/categories" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
               Browse Products
-              <ChevronRight className="w-4 h-4 ml-2" />
+              <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -171,10 +171,10 @@ export function ComparePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-neutral-50 py-12">
-        <div className="container-custom">
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin w-8 h-8 border-4 border-neutral-200 border-t-neutral-900 rounded-full"></div>
+            <div className="animate-spin w-8 h-8 border-4 border-gray-200 border-t-gray-900 rounded-full"></div>
           </div>
         </div>
       </div>
@@ -183,14 +183,14 @@ export function ComparePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-neutral-50 py-12">
-        <div className="container-custom">
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-md mx-auto text-center">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-xl font-bold text-neutral-900 mb-2">Error Loading Products</h1>
-            <p className="text-neutral-500 mb-6">{error}</p>
-            <Link to="/user/categories" className="btn-secondary">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+            <h1 className="text-xl font-bold text-gray-900 mb-2">Error Loading Products</h1>
+            <p className="text-gray-500 mb-6">{error}</p>
+            <Link to="/user/categories" className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:border-gray-300 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
               Back to Products
             </Link>
           </div>
@@ -200,18 +200,18 @@ export function ComparePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b-2 border-neutral-200 sticky top-0 z-10">
-        <div className="container-custom py-4">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link to="/user/categories" className="p-2 hover:bg-neutral-100 rounded-lg">
+              <Link to="/user/categories" className="p-2 hover:bg-gray-100 rounded-lg">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
-                <h1 className="text-xl font-black text-neutral-900">Compare Products</h1>
-                <p className="text-sm text-neutral-500">
+                <h1 className="text-xl font-semibold text-gray-900">Compare Products</h1>
+                <p className="text-sm text-gray-500">
                   {products.length} of {MAX_COMPARE_PRODUCTS} products
                 </p>
               </div>
@@ -219,9 +219,9 @@ export function ComparePage() {
             {products.length < MAX_COMPARE_PRODUCTS && (
               <Link
                 to="/user/categories"
-                className="btn-secondary text-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:border-gray-300 transition-colors"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4" />
                 Add Product
               </Link>
             )}
@@ -229,31 +229,31 @@ export function ComparePage() {
         </div>
       </div>
 
-      <div className="container-custom py-6">
+      <div className="max-w-6xl mx-auto px-6 py-6">
         {/* Product Headers */}
-        <div className="bg-white border-2 border-neutral-200 overflow-x-auto">
+        <div className="bg-white border border-gray-200 overflow-x-auto">
           <table className="w-full min-w-[800px]">
             <thead>
-              <tr className="border-b-2 border-neutral-200">
-                <th className="w-48 p-4 text-left bg-neutral-50 border-r-2 border-neutral-200">
-                  <span className="text-sm font-bold text-neutral-600">Specifications</span>
+              <tr className="border-b border-gray-200">
+                <th className="w-48 p-4 text-left bg-gray-50 border-r border-gray-200">
+                  <span className="text-sm font-bold text-gray-600">Specifications</span>
                 </th>
                 {products.map((product, index) => (
                   <th
                     key={product.id}
-                    className={`p-4 text-left ${index < products.length - 1 ? 'border-r border-neutral-100' : ''}`}
+                    className={`p-4 text-left ${index < products.length - 1 ? 'border-r border-gray-100' : ''}`}
                     style={{ minWidth: '200px' }}
                   >
                     <div className="relative">
                       <button
                         onClick={() => removeProduct(product.id)}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-neutral-100 hover:bg-red-100 hover:text-red-600 rounded-full flex items-center justify-center"
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-gray-100 hover:bg-red-100 hover:text-red-600 rounded-full flex items-center justify-center"
                       >
                         <X className="w-3 h-3" />
                       </button>
 
                       {/* Product Image */}
-                      <div className="w-24 h-24 bg-neutral-100 flex items-center justify-center mb-3">
+                      <div className="w-24 h-24 bg-gray-100 flex items-center justify-center mb-3">
                         {product.images?.[0] ? (
                           <img
                             src={product.images[0]}
@@ -261,7 +261,7 @@ export function ComparePage() {
                             className="w-full h-full object-contain"
                           />
                         ) : (
-                          <Package className="w-10 h-10 text-neutral-300" />
+                          <Package className="w-10 h-10 text-gray-300" />
                         )}
                       </div>
 
@@ -270,18 +270,18 @@ export function ComparePage() {
                         {product.brand.logo ? (
                           <img src={product.brand.logo} alt={product.brand.name} className="h-4" />
                         ) : (
-                          <span className="text-xs font-bold text-neutral-500 uppercase">
+                          <span className="text-xs font-bold text-gray-500 uppercase">
                             {product.brand.name}
                           </span>
                         )}
                       </div>
 
                       {/* Product Name */}
-                      <h3 className="font-bold text-neutral-900 text-sm mb-1 line-clamp-2">
+                      <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2">
                         {product.name}
                       </h3>
                       {product.modelNumber && (
-                        <p className="text-xs text-neutral-500 mb-3">
+                        <p className="text-xs text-gray-500 mb-3">
                           Model: {product.modelNumber}
                         </p>
                       )}
@@ -289,7 +289,7 @@ export function ComparePage() {
                       {/* Add to Cart Button */}
                       <button
                         onClick={() => addToQuoteCart(product)}
-                        className="w-full py-2 px-3 bg-accent-500 text-white text-xs font-bold hover:bg-accent-600 transition-colors flex items-center justify-center gap-1"
+                        className="w-full py-2 px-3 bg-gray-900 text-white text-xs font-medium rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-1"
                       >
                         <ShoppingCart className="w-3 h-3" />
                         Add to Quote Cart
@@ -301,15 +301,15 @@ export function ComparePage() {
                 {Array.from({ length: MAX_COMPARE_PRODUCTS - products.length }).map((_, i) => (
                   <th
                     key={`empty-${i}`}
-                    className="p-4 border-r border-neutral-100 last:border-r-0"
+                    className="p-4 border-r border-gray-100 last:border-r-0"
                     style={{ minWidth: '200px' }}
                   >
                     <Link
                       to="/user/categories"
-                      className="block p-8 border-2 border-dashed border-neutral-200 hover:border-neutral-400 transition-colors text-center"
+                      className="block p-8 border-2 border-dashed border-gray-200 hover:border-gray-400 transition-colors text-center rounded-xl"
                     >
-                      <Plus className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
-                      <span className="text-sm text-neutral-400">Add Product</span>
+                      <Plus className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <span className="text-sm text-gray-400">Add Product</span>
                     </Link>
                   </th>
                 ))}
@@ -317,73 +317,73 @@ export function ComparePage() {
             </thead>
             <tbody>
               {/* Category Row */}
-              <tr className="border-b border-neutral-100">
-                <td className="p-4 bg-neutral-50 border-r-2 border-neutral-200 font-medium text-sm">
+              <tr className="border-b border-gray-100">
+                <td className="p-4 bg-gray-50 border-r border-gray-200 font-medium text-sm">
                   Category
                 </td>
                 {products.map((product, index) => (
-                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-neutral-100' : ''}`}>
+                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-gray-100' : ''}`}>
                     {product.productType.subCategory.category.name}
                   </td>
                 ))}
                 {Array.from({ length: MAX_COMPARE_PRODUCTS - products.length }).map((_, i) => (
-                  <td key={`empty-cat-${i}`} className="p-4 border-r border-neutral-100 last:border-r-0">
-                    <span className="text-neutral-300">-</span>
+                  <td key={`empty-cat-${i}`} className="p-4 border-r border-gray-100 last:border-r-0">
+                    <span className="text-gray-300">-</span>
                   </td>
                 ))}
               </tr>
 
               {/* Type Row */}
-              <tr className="border-b border-neutral-100">
-                <td className="p-4 bg-neutral-50 border-r-2 border-neutral-200 font-medium text-sm">
+              <tr className="border-b border-gray-100">
+                <td className="p-4 bg-gray-50 border-r border-gray-200 font-medium text-sm">
                   Product Type
                 </td>
                 {products.map((product, index) => (
-                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-neutral-100' : ''}`}>
+                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-gray-100' : ''}`}>
                     {product.productType.name}
                   </td>
                 ))}
                 {Array.from({ length: MAX_COMPARE_PRODUCTS - products.length }).map((_, i) => (
-                  <td key={`empty-type-${i}`} className="p-4 border-r border-neutral-100 last:border-r-0">
-                    <span className="text-neutral-300">-</span>
+                  <td key={`empty-type-${i}`} className="p-4 border-r border-gray-100 last:border-r-0">
+                    <span className="text-gray-300">-</span>
                   </td>
                 ))}
               </tr>
 
               {/* Warranty Row */}
-              <tr className="border-b border-neutral-100">
-                <td className="p-4 bg-neutral-50 border-r-2 border-neutral-200 font-medium text-sm">
+              <tr className="border-b border-gray-100">
+                <td className="p-4 bg-gray-50 border-r border-gray-200 font-medium text-sm">
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4 text-green-600" />
                     Warranty
                   </div>
                 </td>
                 {products.map((product, index) => (
-                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-neutral-100' : ''}`}>
+                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-gray-100' : ''}`}>
                     {product.warrantyYears ? (
                       <span className="text-green-600 font-medium">{product.warrantyYears} years</span>
                     ) : (
-                      <span className="text-neutral-400">Not specified</span>
+                      <span className="text-gray-400">Not specified</span>
                     )}
                   </td>
                 ))}
                 {Array.from({ length: MAX_COMPARE_PRODUCTS - products.length }).map((_, i) => (
-                  <td key={`empty-warranty-${i}`} className="p-4 border-r border-neutral-100 last:border-r-0">
-                    <span className="text-neutral-300">-</span>
+                  <td key={`empty-warranty-${i}`} className="p-4 border-r border-gray-100 last:border-r-0">
+                    <span className="text-gray-300">-</span>
                   </td>
                 ))}
               </tr>
 
               {/* Certifications Row */}
-              <tr className="border-b border-neutral-100">
-                <td className="p-4 bg-neutral-50 border-r-2 border-neutral-200 font-medium text-sm">
+              <tr className="border-b border-gray-100">
+                <td className="p-4 bg-gray-50 border-r border-gray-200 font-medium text-sm">
                   <div className="flex items-center gap-2">
                     <Star className="w-4 h-4 text-amber-500" />
                     Certifications
                   </div>
                 </td>
                 {products.map((product, index) => (
-                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-neutral-100' : ''}`}>
+                  <td key={product.id} className={`p-4 text-sm ${index < products.length - 1 ? 'border-r border-gray-100' : ''}`}>
                     {product.certifications?.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {product.certifications.map((cert, i) => (
@@ -393,13 +393,13 @@ export function ComparePage() {
                         ))}
                       </div>
                     ) : (
-                      <span className="text-neutral-400">Not specified</span>
+                      <span className="text-gray-400">Not specified</span>
                     )}
                   </td>
                 ))}
                 {Array.from({ length: MAX_COMPARE_PRODUCTS - products.length }).map((_, i) => (
-                  <td key={`empty-cert-${i}`} className="p-4 border-r border-neutral-100 last:border-r-0">
-                    <span className="text-neutral-300">-</span>
+                  <td key={`empty-cert-${i}`} className="p-4 border-r border-gray-100 last:border-r-0">
+                    <span className="text-gray-300">-</span>
                   </td>
                 ))}
               </tr>
@@ -407,7 +407,7 @@ export function ComparePage() {
               {/* Dynamic Specification Rows */}
               {comparisonSpecs.length > 0 && (
                 <tr>
-                  <td colSpan={MAX_COMPARE_PRODUCTS + 1} className="bg-neutral-900 text-white p-3">
+                  <td colSpan={MAX_COMPARE_PRODUCTS + 1} className="bg-gray-900 text-white p-3">
                     <div className="flex items-center gap-2">
                       <Zap className="w-4 h-4" />
                       <span className="font-bold text-sm">Technical Specifications</span>
@@ -416,8 +416,8 @@ export function ComparePage() {
                 </tr>
               )}
               {comparisonSpecs.map((spec, specIndex) => (
-                <tr key={spec.key} className="border-b border-neutral-100">
-                  <td className="p-4 bg-neutral-50 border-r-2 border-neutral-200 font-medium text-sm">
+                <tr key={spec.key} className="border-b border-gray-100">
+                  <td className="p-4 bg-gray-50 border-r border-gray-200 font-medium text-sm">
                     {spec.label}
                   </td>
                   {spec.values.map((value, productIndex) => {
@@ -432,21 +432,21 @@ export function ComparePage() {
                     return (
                       <td
                         key={productIndex}
-                        className={`p-4 text-sm ${productIndex < products.length - 1 ? 'border-r border-neutral-100' : ''}`}
+                        className={`p-4 text-sm ${productIndex < products.length - 1 ? 'border-r border-gray-100' : ''}`}
                       >
                         {value !== null ? (
                           <span className={isBestNumeric ? 'text-green-600 font-medium' : ''}>
                             {String(value)}
                           </span>
                         ) : (
-                          <span className="text-neutral-300">-</span>
+                          <span className="text-gray-300">-</span>
                         )}
                       </td>
                     );
                   })}
                   {Array.from({ length: MAX_COMPARE_PRODUCTS - products.length }).map((_, i) => (
-                    <td key={`empty-spec-${specIndex}-${i}`} className="p-4 border-r border-neutral-100 last:border-r-0">
-                      <span className="text-neutral-300">-</span>
+                    <td key={`empty-spec-${specIndex}-${i}`} className="p-4 border-r border-gray-100 last:border-r-0">
+                      <span className="text-gray-300">-</span>
                     </td>
                   ))}
                 </tr>
@@ -454,7 +454,7 @@ export function ComparePage() {
 
               {comparisonSpecs.length === 0 && (
                 <tr>
-                  <td colSpan={MAX_COMPARE_PRODUCTS + 1} className="p-8 text-center text-neutral-500">
+                  <td colSpan={MAX_COMPARE_PRODUCTS + 1} className="p-8 text-center text-gray-500">
                     No detailed specifications available for comparison
                   </td>
                 </tr>
@@ -464,17 +464,17 @@ export function ComparePage() {
         </div>
 
         {/* Bottom Actions */}
-        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white border-2 border-neutral-200">
-          <div className="text-sm text-neutral-500">
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white border border-gray-200">
+          <div className="text-sm text-gray-500">
             Compare up to {MAX_COMPARE_PRODUCTS} products side-by-side. Add products to your quote cart to get competitive prices.
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/user/categories" className="btn-secondary text-sm">
-              <Plus className="w-4 h-4 mr-2" />
+            <Link to="/user/categories" className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:border-gray-300 transition-colors">
+              <Plus className="w-4 h-4" />
               Add More Products
             </Link>
-            <Link to="/dashboard" className="btn-primary text-sm">
-              <ShoppingCart className="w-4 h-4 mr-2" />
+            <Link to="/dashboard" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
+              <ShoppingCart className="w-4 h-4" />
               View Quote Cart
             </Link>
           </div>
