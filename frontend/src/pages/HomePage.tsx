@@ -839,9 +839,9 @@ export function HomePage() {
                   </div>
                 ))}
               </div>
-              <Link to="/dealer/onboarding" className="btn-accent w-full justify-center">
+              <Link to="/dealer/onboarding" className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors">
                 Register as a Dealer — Free
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
           </div>
@@ -881,8 +881,8 @@ export function HomePage() {
                 highlight: 'You decide'
               },
             ].map((item, index) => (
-              <div key={index} className="card-feature group">
-                <div className="step-number mb-6">{item.step}</div>
+              <div key={index} className="bg-gray-50 border border-gray-200 rounded-xl p-8 hover:shadow-sm transition-all duration-300 group">
+                <div className="w-14 h-14 flex items-center justify-center bg-gray-900 text-white text-xl font-semibold rounded-xl mb-6">{item.step}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
                 <p className="text-gray-600 mb-4">{item.description}</p>
                 <span className="inline-flex items-center text-sm font-bold text-orange-600 uppercase tracking-wider">
@@ -916,9 +916,9 @@ export function HomePage() {
           <InteractiveCategoryGrid categories={categories} loading={loading} />
 
           <div className="text-center mt-12">
-            <Link to="/categories" className="btn-accent">
+            <Link to="/categories" className="inline-flex items-center gap-2 px-7 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors">
               Explore Full Catalog
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
         </div>
@@ -1019,7 +1019,7 @@ export function HomePage() {
 
       {/* Why We Exist */}
       <section className="section bg-white border-b border-gray-200">
-        <div className="container-tight">
+        <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
               The Same Product.<br />Very Different Prices.
@@ -1063,9 +1063,9 @@ export function HomePage() {
               We're not here to guarantee the lowest price in the universe.
               We're here to give you enough information to make the right call.
             </p>
-            <Link to="/rfq/create" className="btn-accent inline-flex">
+            <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors">
               Submit Your First Inquiry
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
         </div>

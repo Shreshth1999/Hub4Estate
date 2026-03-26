@@ -24,6 +24,54 @@ const FEATURED_TOPICS = [
   { icon: Lightbulb, title: 'Tips & Tricks', description: 'Expert advice for homeowners' },
 ];
 
+const STATIC_ARTICLES: Article[] = [
+  {
+    id: 's1', title: 'How to Choose the Right Wire Size for Your Home', slug: 'wire-size-guide',
+    summary: 'Understanding wire gauge, current capacity, and how to pick the right FRLS/FR wire for different circuits in a residential project.',
+    category: 'Buying Guides', readTime: 6, views: 2400, createdAt: '2026-01-10',
+  },
+  {
+    id: 's2', title: 'MCB vs MCCB: What\'s the Difference?', slug: 'mcb-vs-mccb',
+    summary: 'Miniature Circuit Breakers and Moulded Case Circuit Breakers explained — when to use which, and top brands to trust.',
+    category: 'Electrical Basics', readTime: 4, views: 1800, createdAt: '2026-01-15',
+  },
+  {
+    id: 's3', title: 'ISI Mark vs BIS Certification: What to Look For', slug: 'isi-bis-certification',
+    summary: 'A buyer\'s guide to understanding quality marks on electrical products in India — what\'s mandatory and what it means for you.',
+    category: 'Safety Standards', readTime: 5, views: 3100, createdAt: '2026-01-20',
+  },
+  {
+    id: 's4', title: 'Top 10 Electrical Brands in India Compared', slug: 'top-electrical-brands-india',
+    summary: 'Havells, Polycab, Legrand, Schneider, Anchor — a no-nonsense comparison of the best electrical brands across wires, switches, and MCBs.',
+    category: 'Buying Guides', readTime: 8, views: 5200, createdAt: '2026-01-25',
+  },
+  {
+    id: 's5', title: 'How to Read a Contractor\'s Material Slip', slug: 'reading-material-slip',
+    summary: 'Decode your contractor\'s electrical material list — understand specs, quantities, and spot overpricing before you pay.',
+    category: 'Tips & Tricks', readTime: 5, views: 2900, createdAt: '2026-02-01',
+  },
+  {
+    id: 's6', title: 'Polycab vs Finolex vs RR Kabel: Which Wire to Buy?', slug: 'polycab-finolex-rr-kabel-comparison',
+    summary: 'Detailed comparison of India\'s top 3 wire brands — quality, price range, availability, and warranty terms.',
+    category: 'Buying Guides', readTime: 7, views: 4100, createdAt: '2026-02-05',
+  },
+  {
+    id: 's7', title: 'Why Electrical Prices Vary So Much in India', slug: 'electrical-price-variation-india',
+    summary: 'The same Havells switch can cost ₹120 at one shop and ₹280 at another. Here\'s the full breakdown of why that happens.',
+    category: 'Tips & Tricks', readTime: 6, views: 3700, createdAt: '2026-02-10',
+  },
+  {
+    id: 's8', title: 'LED Lighting Buying Guide 2026', slug: 'led-lighting-buying-guide',
+    summary: 'Wattage, lumens, color temperature, and brand reliability — everything to know before buying LED panels or bulbs for your home or office.',
+    category: 'Buying Guides', readTime: 7, views: 2600, createdAt: '2026-02-15',
+  },
+  {
+    id: 's9', title: 'How Hub4Estate Works: Getting the Best Price', slug: 'how-hub4estate-works',
+    summary: 'Step-by-step guide on submitting an inquiry, understanding dealer quotes, and making the right buying decision.',
+    category: 'Tips & Tricks', readTime: 4, views: 6800, createdAt: '2026-02-20',
+  },
+];
+
 export function KnowledgePage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,9 +85,11 @@ export function KnowledgePage() {
         if (selectedCategory) params.category = selectedCategory;
         if (searchQuery) params.search = searchQuery;
         const response = await knowledgeApi.getArticles(params);
-        setArticles(response.data.articles || []);
-      } catch (error) {
-        console.error('Failed to fetch articles:', error);
+        const fetched = response.data.articles || [];
+        // Use static articles as fallback when API returns none
+        setArticles(fetched.length > 0 ? fetched : STATIC_ARTICLES);
+      } catch {
+        setArticles(STATIC_ARTICLES);
       } finally {
         setIsLoading(false);
       }
@@ -142,7 +192,7 @@ export function KnowledgePage() {
             {articles.map((article) => (
               <Link
                 key={article.id}
-                to={`/knowledge/${article.slug}`}
+                to={article.id.startsWith('s') ? '/knowledge' : `/knowledge/${article.slug}`}
                 className="group bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all overflow-hidden"
               >
                 <div className="aspect-video bg-gray-50 flex items-center justify-center border-b border-gray-100">

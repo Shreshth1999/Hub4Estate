@@ -116,6 +116,9 @@ function App() {
             PUBLIC ROUTES (Main Layout)
             Landing page and public-facing content
             ======================================== */}
+        {/* Standalone full-screen pages (no header/footer) */}
+        <Route path="/ai-assistant" element={<AIAssistantPage />} />
+
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/categories" element={<CategoriesPage />} />
@@ -130,7 +133,6 @@ function App() {
           <Route path="/join-team" element={<JoinTeamPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/track" element={<TrackInquiryPage />} />
           <Route path="/smart-scan" element={<SmartSlipScanPage />} />
         </Route>
@@ -149,6 +151,9 @@ function App() {
             <Route path="/user/categories/:slug" element={<CategoryDetailPage />} />
             <Route path="/user/product-types/:slug" element={<ProductTypePage />} />
             <Route path="/user/products/:id" element={<ProductDetailPage />} />
+            <Route path="/user/knowledge" element={<KnowledgePage />} />
+            <Route path="/user/community" element={<CommunityPage />} />
+            <Route path="/user/community/:id" element={<PostDetailPage />} />
             <Route path="/compare" element={<ComparePage />} />
             <Route path="/messages" element={<MessagesPage />} />
           </Route>

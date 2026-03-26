@@ -472,7 +472,7 @@ export function AIAssistantPage() {
       <header className="flex-shrink-0 border-b border-gray-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
-            to="/"
+            to={user ? '/dashboard' : '/'}
             className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />

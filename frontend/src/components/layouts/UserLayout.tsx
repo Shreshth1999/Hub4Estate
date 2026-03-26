@@ -2,7 +2,7 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
   User, LogOut, Zap, FileText, Package, Bookmark,
-  Home, Plus, MessageSquare, Sparkles, HelpCircle, Menu, X,
+  Home, Plus, MessageSquare, Sparkles, HelpCircle, Menu, X, Users,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
@@ -51,7 +51,8 @@ export function UserLayout() {
       label: 'More',
       items: [
         { path: '/messages', icon: MessageSquare, label: 'Messages' },
-        { path: '/knowledge', icon: HelpCircle, label: 'Guides' },
+        { path: '/user/knowledge', icon: HelpCircle, label: 'Guides' },
+        { path: '/user/community', icon: Users, label: 'Community' },
       ],
     },
   ];
