@@ -1,8 +1,8 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
-  User, LogOut, Zap, FileText, Package, Bookmark,
-  Home, Plus, MessageSquare, Sparkles, HelpCircle, Menu, X, Users,
+  User, LogOut, Zap, FileText, Package,
+  Home, Plus, MessageSquare, Sparkles, BookOpen, Menu, X, Users, Search,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
@@ -35,23 +35,23 @@ export function UserLayout() {
     {
       items: [
         { path: '/dashboard', icon: Home, label: 'Home' },
-        { path: '/rfq/my-rfqs', icon: FileText, label: 'My RFQs' },
-        { path: '/rfq/create', icon: Plus, label: 'New RFQ', highlight: true },
+        { path: '/rfq/create', icon: Plus, label: 'New Request', highlight: true },
+        { path: '/rfq/my-rfqs', icon: FileText, label: 'My Requests' },
       ],
     },
     {
-      label: 'Explore',
+      label: 'Tools',
       items: [
-        { path: '/user/categories', icon: Package, label: 'Products' },
-        { path: '/saved', icon: Bookmark, label: 'Saved' },
         { path: '/ai-assistant', icon: Sparkles, label: 'Spark AI' },
+        { path: '/user/categories', icon: Package, label: 'Browse Products' },
+        { path: '/messages', icon: MessageSquare, label: 'Messages' },
       ],
     },
     {
-      label: 'More',
+      label: 'Resources',
       items: [
-        { path: '/messages', icon: MessageSquare, label: 'Messages' },
-        { path: '/user/knowledge', icon: HelpCircle, label: 'Guides' },
+        { path: '/track', icon: Search, label: 'Track Request' },
+        { path: '/user/knowledge', icon: BookOpen, label: 'Guides' },
         { path: '/user/community', icon: Users, label: 'Community' },
       ],
     },

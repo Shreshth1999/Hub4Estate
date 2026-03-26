@@ -232,18 +232,50 @@ export async function* streamChatMessage(
   const base = import.meta.env.VITE_BACKEND_API_URL || '/api';
   const token = localStorage.getItem('token');
 
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+
   let response: Response;
   try {
     response = await fetch(`${base}/chat/message/stream`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
+      headers,
       body: JSON.stringify({ sessionId, message }),
     });
   } catch {
     yield { type: 'error', error: 'Network error. Check your connection.' };
+    return;
+  }
+
+  // Streaming endpoint not available (old backend) — fall back to regular endpoint
+  if (response.status === 404 || response.status === 405) {
+    try {
+      const fallback = await fetch(`${base}/chat/message`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ sessionId, message }),
+      });
+      if (fallback.ok) {
+        const data = await fallback.json();
+        const text: string = data.message?.content || '';
+        if (text) {
+          // Emit in small chunks to simulate streaming feel
+          const chunkSize = 4;
+          for (let i = 0; i < text.length; i += chunkSize) {
+            yield { type: 'text', text: text.slice(i, i + chunkSize) };
+          }
+          yield { type: 'done', messageId: data.message?.id };
+        } else {
+          yield { type: 'error', error: 'No response received.' };
+        }
+      } else {
+        yield { type: 'error', error: 'AI service unavailable. Please try again.' };
+      }
+    } catch {
+      yield { type: 'error', error: 'Connection failed. Please try again.' };
+    }
     return;
   }
 

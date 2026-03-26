@@ -1,107 +1,100 @@
 import { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authApi } from '../../lib/api';
+import { authApi, api } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
 import {
-  Building2, FileText, MapPin, CheckCircle, ArrowRight,
-  ChevronRight, ChevronLeft, Eye, EyeOff, Shield, Clock, TrendingUp, Users,
-  Upload, X, File, AlertCircle, Store, Truck, Wrench, Factory, Package
+  Building2, MapPin, CheckCircle, ArrowRight,
+  ChevronLeft, Eye, EyeOff, Shield, Clock, TrendingUp, Users,
+  Upload, X, Camera, Zap, Loader2, Store, Truck, Wrench,
+  Factory, Package, FileCheck, AlertCircle, Image as ImageIcon,
 } from 'lucide-react';
 
-// Dealer types with descriptions
+// ─── Constants ────────────────────────────────────────────────────────────────
+
 const DEALER_TYPES = [
-  { value: 'RETAILER', label: 'Retailer', icon: Store, description: 'Sell directly to end customers' },
-  { value: 'DISTRIBUTOR', label: 'Distributor', icon: Truck, description: 'Supply to retailers and dealers' },
-  { value: 'SYSTEM_INTEGRATOR', label: 'System Integrator', icon: Wrench, description: 'Provide complete solutions' },
-  { value: 'CONTRACTOR', label: 'Contractor', icon: Building2, description: 'Electrical contracting services' },
-  { value: 'OEM_PARTNER', label: 'OEM Partner', icon: Factory, description: 'Manufacturing partnership' },
-  { value: 'WHOLESALER', label: 'Wholesaler', icon: Package, description: 'Bulk supply operations' },
+  { value: 'RETAILER',         label: 'Retailer',         icon: Store,   description: 'Sell directly to end customers' },
+  { value: 'DISTRIBUTOR',      label: 'Distributor',       icon: Truck,   description: 'Supply to retailers and dealers' },
+  { value: 'SYSTEM_INTEGRATOR',label: 'System Integrator', icon: Wrench,  description: 'Complete installation solutions' },
+  { value: 'CONTRACTOR',       label: 'Contractor',        icon: Building2, description: 'Electrical contracting services' },
+  { value: 'OEM_PARTNER',      label: 'OEM Partner',       icon: Factory, description: 'Manufacturing partnership' },
+  { value: 'WHOLESALER',       label: 'Wholesaler',        icon: Package, description: 'Bulk supply operations' },
 ];
 
 const STATES = [
-  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
-  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
-  'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
-  'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi',
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa',
+  'Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala',
+  'Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland',
+  'Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura',
+  'Uttar Pradesh','Uttarakhand','West Bengal','Delhi',
 ];
 
 const YEARS_OPTIONS = [
   { value: 1, label: 'Less than 1 year' },
-  { value: 2, label: '1-2 years' },
-  { value: 5, label: '3-5 years' },
-  { value: 10, label: '5-10 years' },
+  { value: 2, label: '1–2 years' },
+  { value: 5, label: '3–5 years' },
+  { value: 10, label: '5–10 years' },
   { value: 15, label: '10+ years' },
 ];
 
-const benefits = [
-  { icon: Users, title: 'Get Quality Leads', description: 'Verified buyers actively looking for electrical products' },
-  { icon: TrendingUp, title: 'Grow Your Business', description: 'Reach buyers you could never find on your own' },
-  { icon: Clock, title: 'Save Time', description: 'No more chasing customers - they come to you' },
-  { icon: Shield, title: 'Verified Badge', description: 'Build trust with buyers through our verification' },
+// Matches a valid Indian GST number: 2-digit state + 5-letter PAN + 4 digits + 1 letter + 1 alphanumeric + Z + 1 alphanumeric
+const GST_REGEX = /\d{2}[A-Z]{5}\d{4}[A-Z][A-Z\d]Z[A-Z\d]/i;
+
+// Steps definition
+const STEPS = [
+  { label: 'Type',       icon: Store },
+  { label: 'Documents',  icon: FileCheck },
+  { label: 'Details',    icon: Building2 },
+  { label: 'Location',   icon: MapPin },
+  { label: 'Shop',       icon: ImageIcon },
+  { label: 'Account',    icon: Shield },
+  { label: 'Review',     icon: CheckCircle },
 ];
 
-// Input component - MUST be outside the main component to prevent re-mounting on state changes
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  error?: string;
-  helper?: string;
-  required?: boolean;
-}
+// ─── Sub-components ────────────────────────────────────────────────────────────
 
-function FormInput({ label, error, helper, required, ...props }: InputProps) {
+function Field({
+  label, value, onChange, type = 'text', placeholder, error, required, children,
+}: {
+  label: string; value: string; onChange: (v: string) => void;
+  type?: string; placeholder?: string; error?: string; required?: boolean;
+  children?: React.ReactNode;
+}) {
   return (
     <div>
-      <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
-      <input
-        className={`block w-full border-2 px-4 py-3 text-base font-medium transition-all duration-200 ${
-          error ? 'border-red-500 focus:border-red-600 bg-red-50' : 'border-gray-300 focus:border-gray-900'
-        } focus:outline-none focus:ring-0`}
-        {...props}
-      />
-      {error && <p className="mt-2 text-sm font-medium text-red-600">{error}</p>}
-      {helper && !error && <p className="mt-2 text-xs text-gray-500">{helper}</p>}
+      {children || (
+        <input
+          type={type}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`w-full px-4 py-2.5 border text-sm rounded-lg focus:outline-none transition-colors ${
+            error
+              ? 'border-red-300 bg-red-50 focus:border-red-400'
+              : 'border-gray-200 focus:border-gray-400'
+          }`}
+        />
+      )}
+      {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
     </div>
   );
 }
 
-// Alert component - MUST be outside the main component
-function FormAlert({ variant, title, children }: { variant: 'error' | 'info' | 'success'; title?: string; children: React.ReactNode }) {
-  const styles = {
-    error: 'bg-red-50 border-red-200 text-red-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800',
-    success: 'bg-green-50 border-green-200 text-green-800',
-  };
-  const icons = {
-    error: <AlertCircle className="w-5 h-5 text-red-500" />,
-    info: <AlertCircle className="w-5 h-5 text-blue-500" />,
-    success: <CheckCircle className="w-5 h-5 text-green-500" />,
-  };
-  return (
-    <div className={`border-2 p-4 mb-6 ${styles[variant]}`}>
-      <div className="flex gap-3">
-        {icons[variant]}
-        <div>
-          {title && <p className="font-bold mb-1">{title}</p>}
-          <p className="text-sm">{children}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+// ─── Main Component ────────────────────────────────────────────────────────────
 
 export function DealerOnboarding() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState('');
 
-  const [formData, setFormData] = useState({
+  // Form data
+  const [form, setForm] = useState({
     dealerType: '',
     yearsInOperation: 0,
     businessName: '',
@@ -117,502 +110,710 @@ export function DealerOnboarding() {
     pincode: '',
   });
 
-  const [gstDocument, setGstDocument] = useState<File | null>(null);
-  const [panDocument, setPanDocument] = useState<File | null>(null);
-  const [shopLicense, setShopLicense] = useState<File | null>(null);
+  // GST document state
+  const [gstFile, setGstFile] = useState<File | null>(null);
+  const [gstPreview, setGstPreview] = useState<string | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [extracted, setExtracted] = useState<{ gst?: string; businessName?: string; address?: string } | null>(null);
+  const [extractFailed, setExtractFailed] = useState(false);
+  const [skipDocUpload, setSkipDocUpload] = useState(false);
   const gstInputRef = useRef<HTMLInputElement>(null);
+
+  // Shop images state
+  const [shopImages, setShopImages] = useState<File[]>([]);
+  const [shopPreviews, setShopPreviews] = useState<string[]>([]);
+  const shopImgRef = useRef<HTMLInputElement>(null);
+
+  // PAN document
+  const [panFile, setPanFile] = useState<File | null>(null);
   const panInputRef = useRef<HTMLInputElement>(null);
-  const licenseInputRef = useRef<HTMLInputElement>(null);
 
-  const steps = [
-    { label: 'Type', description: 'Dealer type' },
-    { label: 'Business', description: 'Company details' },
-    { label: 'Documents', description: 'GST & PAN' },
-    { label: 'Location', description: 'Service area' },
-    { label: 'Review', description: 'Submit' },
-  ];
-
-  const updateField = (field: string, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-    setSubmitError(null);
+  const set = (field: string, value: string | number) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
+    setSubmitError('');
   };
 
-  const validateStep = (step: number): boolean => {
-    const newErrors: Record<string, string> = {};
+  // ── GST Document Extraction ────────────────────────────────────────────────
 
-    if (step === 0) {
-      if (!formData.dealerType) newErrors.dealerType = 'Please select your dealer type';
+  const handleGstUpload = async (file: File) => {
+    setGstFile(file);
+    setGstPreview(URL.createObjectURL(file));
+    setExtracted(null);
+    setExtractFailed(false);
+    setExtracting(true);
+
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await api.post('/slip-scanner/parse', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const raw = JSON.stringify(res.data);
+      const gstMatch = raw.match(GST_REGEX);
+      const gst = gstMatch ? gstMatch[0].toUpperCase() : undefined;
+
+      // Try to extract business name from returned items
+      let businessName: string | undefined;
+      const items: any[] = res.data.items || [];
+      if (items.length > 0 && items[0].productName) {
+        // Not a business name — ignore product-level extraction for name
+      }
+      // Look for "tradeName" or "legalName" in raw text
+      const tradeMatch = raw.match(/"(?:tradeName|legalName|businessName)"\s*:\s*"([^"]+)"/i);
+      if (tradeMatch) businessName = tradeMatch[1];
+
+      if (gst || businessName) {
+        setExtracted({ gst, businessName });
+        if (gst) set('gstNumber', gst);
+        if (businessName) set('businessName', businessName);
+      } else {
+        setExtractFailed(true);
+      }
+    } catch {
+      setExtractFailed(true);
+    } finally {
+      setExtracting(false);
     }
-
-    if (step === 1) {
-      if (!formData.businessName.trim()) newErrors.businessName = 'Business name is required';
-      if (!formData.ownerName.trim()) newErrors.ownerName = 'Owner name is required';
-      if (!formData.email.trim()) newErrors.email = 'Email is required';
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email address';
-      if (!formData.password) newErrors.password = 'Password is required';
-      else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-      if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-      else if (formData.phone.length < 10) newErrors.phone = 'Invalid phone number';
-    }
-
-    if (step === 2) {
-      if (!formData.gstNumber.trim()) newErrors.gstNumber = 'GST number is required';
-      else if (formData.gstNumber.length !== 15) newErrors.gstNumber = 'GST number must be 15 characters';
-      if (!formData.panNumber.trim()) newErrors.panNumber = 'PAN number is required';
-      else if (formData.panNumber.length !== 10) newErrors.panNumber = 'PAN number must be 10 characters';
-    }
-
-    if (step === 3) {
-      if (!formData.shopAddress.trim()) newErrors.shopAddress = 'Shop address is required';
-      if (!formData.city.trim()) newErrors.city = 'City is required';
-      if (!formData.state) newErrors.state = 'State is required';
-      if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
-      else if (formData.pincode.length !== 6) newErrors.pincode = 'Pincode must be 6 digits';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateStep(currentStep)) {
-      setCurrentStep(prev => prev + 1);
+  // ── Shop Images ────────────────────────────────────────────────────────────
+
+  const handleShopImages = (files: FileList) => {
+    const newFiles = Array.from(files).slice(0, 5 - shopImages.length);
+    setShopImages(prev => [...prev, ...newFiles]);
+    newFiles.forEach(f => {
+      const url = URL.createObjectURL(f);
+      setShopPreviews(prev => [...prev, url]);
+    });
+  };
+
+  const removeShopImage = (idx: number) => {
+    setShopImages(prev => prev.filter((_, i) => i !== idx));
+    setShopPreviews(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  // ── Validation ─────────────────────────────────────────────────────────────
+
+  const validate = (s: number): boolean => {
+    const e: Record<string, string> = {};
+
+    if (s === 0 && !form.dealerType) e.dealerType = 'Please select your dealer type';
+
+    if (s === 1 && !skipDocUpload) {
+      if (!gstFile && !form.gstNumber) {
+        // Allow passing if they manually filled GST
+        if (!form.gstNumber) e.gstNumber = 'Enter your GST number or upload a certificate';
+      }
+    }
+
+    if (s === 2) {
+      if (!form.businessName.trim()) e.businessName = 'Business name is required';
+      if (!form.ownerName.trim()) e.ownerName = 'Owner name is required';
+      if (!form.phone.trim()) e.phone = 'Phone number is required';
+      else if (!/^[6-9]\d{9}$/.test(form.phone.replace(/\s/g, ''))) e.phone = 'Enter a valid 10-digit mobile number';
+      if (form.gstNumber && form.gstNumber.length !== 15) e.gstNumber = 'GST number must be 15 characters';
+    }
+
+    if (s === 3) {
+      if (!form.shopAddress.trim()) e.shopAddress = 'Shop address is required';
+      if (!form.city.trim()) e.city = 'City is required';
+      if (!form.state) e.state = 'State is required';
+      if (!form.pincode.trim()) e.pincode = 'Pincode is required';
+      else if (!/^\d{6}$/.test(form.pincode)) e.pincode = 'Enter a valid 6-digit pincode';
+    }
+
+    if (s === 5) {
+      if (!form.email.trim()) e.email = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Enter a valid email address';
+      if (!form.password) e.password = 'Password is required';
+      else if (form.password.length < 8) e.password = 'Password must be at least 8 characters';
+    }
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const next = () => {
+    if (validate(step)) {
+      setStep(s => s + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const handleBack = () => {
-    setCurrentStep(prev => prev - 1);
+  const back = () => {
+    setStep(s => s - 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // ── Submit ─────────────────────────────────────────────────────────────────
+
   const handleSubmit = async () => {
-    setIsLoading(true);
-    setSubmitError(null);
-    setErrors({});
+    setIsSubmitting(true);
+    setSubmitError('');
 
     try {
-      const response = await authApi.dealerRegister({
-        email: formData.email,
-        password: formData.password,
-        businessName: formData.businessName,
-        ownerName: formData.ownerName,
-        phone: formData.phone,
-        dealerType: formData.dealerType || undefined, // Don't send empty string
-        yearsInOperation: formData.yearsInOperation || undefined,
-        gstNumber: formData.gstNumber,
-        panNumber: formData.panNumber,
-        shopAddress: formData.shopAddress,
-        city: formData.city,
-        state: formData.state,
-        pincode: formData.pincode,
+      const res = await authApi.dealerRegister({
+        email: form.email,
+        password: form.password,
+        businessName: form.businessName,
+        ownerName: form.ownerName,
+        phone: form.phone,
+        dealerType: form.dealerType || undefined,
+        yearsInOperation: form.yearsInOperation || undefined,
+        gstNumber: form.gstNumber || undefined,
+        panNumber: form.panNumber || undefined,
+        shopAddress: form.shopAddress,
+        city: form.city,
+        state: form.state,
+        pincode: form.pincode,
       });
 
-      if (response.data.token) {
-        // Set auth first, then navigate after a brief delay to ensure state is synced
-        setAuth(
-          {
-            id: response.data.dealer.id,
-            email: response.data.dealer.email,
-            name: response.data.dealer.businessName,
-            type: 'dealer',
-            status: response.data.dealer.status,
-            onboardingStep: response.data.dealer.onboardingStep,
-          },
-          response.data.token
-        );
-        // Use window.location for a clean navigation that ensures state is persisted
+      if (res.data.token) {
+        setAuth({
+          id: res.data.dealer.id,
+          email: res.data.dealer.email,
+          name: res.data.dealer.businessName,
+          type: 'dealer',
+          status: res.data.dealer.status,
+          onboardingStep: res.data.dealer.onboardingStep,
+        }, res.data.token);
         window.location.href = '/dealer';
       } else {
         navigate('/dealer/registration-success');
       }
     } catch (err: any) {
-      console.error('Registration error:', err);
-      let errorMessage = 'Registration failed. Please try again.';
-
-      if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.response?.data?.details && Array.isArray(err.response.data.details)) {
-        const details = err.response.data.details;
-        const fieldErrors: Record<string, string> = {};
-        details.forEach((d: any) => {
-          if (d.path) fieldErrors[d.path] = d.message;
-        });
-        if (Object.keys(fieldErrors).length > 0) {
-          setErrors(fieldErrors);
-          errorMessage = details.map((d: any) => d.message).filter(Boolean).join('. ');
-        }
+      const msg = err.response?.data?.error || 'Registration failed. Please try again.';
+      setSubmitError(msg);
+      if (err.response?.data?.details) {
+        const fe: Record<string, string> = {};
+        err.response.data.details.forEach((d: any) => { if (d.path) fe[d.path] = d.message; });
+        setErrors(fe);
       }
-      setSubmitError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
+  // ─── Render ───────────────────────────────────────────────────────────────
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="bg-gray-900 text-white py-8 border-b-4 border-amber-500">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <Link to="/" className="inline-flex items-center space-x-3 mb-4 hover:opacity-80 transition-opacity">
-                <div className="w-10 h-10 bg-white flex items-center justify-center">
-                  <span className="text-xl font-semibold text-gray-900">H4</span>
-                </div>
-                <span className="text-xl font-bold">Hub4Estate</span>
-              </Link>
-              <h1 className="text-3xl md:text-4xl font-semibold mb-2">
-                Register as a Dealer.<br />
-                <span className="text-amber-400">Reach More Buyers.</span>
-              </h1>
-              <p className="text-gray-400">Receive qualified buyer inquiries after verification</p>
+    <div className="min-h-screen bg-gray-50">
+
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+              <Zap className="w-4 h-4 text-white" />
             </div>
-            <div className="flex gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-semibold text-amber-400 mb-1">Free</div>
-                <div className="text-xs uppercase tracking-wider text-gray-400">To Register</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-semibold text-amber-400 mb-1">Real</div>
-                <div className="text-xs uppercase tracking-wider text-gray-400">Buyer Inquiries</div>
-              </div>
-            </div>
-          </div>
+            <span className="text-sm font-semibold text-gray-900">Hub4Estate</span>
+          </Link>
+          <span className="text-sm text-gray-400">Dealer Registration</span>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2">
-            <div className="mb-10">
-              <div className="flex items-center justify-between">
-                {steps.map((step, index) => (
-                  <div key={index} className="flex items-center">
-                    <div className="flex flex-col items-center">
-                      <div className={`w-10 h-10 flex items-center justify-center font-bold text-sm ${
-                        index < currentStep ? 'bg-green-600 text-white' : index === currentStep ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-500'
-                      }`}>
-                        {index < currentStep ? <CheckCircle className="w-5 h-5" /> : index + 1}
-                      </div>
-                      <span className="text-xs font-bold mt-2 uppercase tracking-wide text-gray-600">{step.label}</span>
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="grid lg:grid-cols-3 gap-10">
+
+          {/* ── Left: Why Join ──────────────────────────────────────────────── */}
+          <div className="hidden lg:block">
+            <div className="sticky top-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                Reach more buyers.<br />Grow your business.
+              </h2>
+              <p className="text-sm text-gray-500 mb-6">
+                Register once, get verified, and start receiving real buyer inquiries for electrical products.
+              </p>
+
+              <div className="space-y-4 mb-8">
+                {[
+                  { icon: Users, title: 'Qualified Leads', desc: 'Real buyers with specific requirements' },
+                  { icon: TrendingUp, title: 'Zero Upfront Cost', desc: 'Free to register and get started' },
+                  { icon: Shield, title: 'Verified Badge', desc: 'Build buyer trust through our verification' },
+                  { icon: Clock, title: 'Fast Onboarding', desc: 'Takes less than 5 minutes' },
+                ].map(({ icon: Icon, title, desc }) => (
+                  <div key={title} className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-4 h-4 text-gray-600" />
                     </div>
-                    {index < steps.length - 1 && (
-                      <div className={`h-0.5 w-8 md:w-16 mx-2 ${index < currentStep ? 'bg-green-600' : 'bg-gray-200'}`} />
-                    )}
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{title}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Step progress */}
+              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                {STEPS.map(({ label }, i) => (
+                  <div key={i} className="flex items-center gap-2.5">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold ${
+                      i < step ? 'bg-green-500 text-white' :
+                      i === step ? 'bg-gray-900 text-white' :
+                      'bg-gray-200 text-gray-500'
+                    }`}>
+                      {i < step ? '✓' : i + 1}
+                    </div>
+                    <span className={`text-xs ${i === step ? 'font-semibold text-gray-900' : i < step ? 'text-gray-400 line-through' : 'text-gray-400'}`}>
+                      {label}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
 
-            <div className="border-2 border-gray-900 bg-white p-8 lg:p-10">
-              {submitError && <FormAlert variant="error" title="Registration Failed">{submitError}</FormAlert>}
+          {/* ── Right: Form ─────────────────────────────────────────────────── */}
+          <div className="lg:col-span-2">
 
-              {currentStep === 0 && (
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><Store className="w-6 h-6" /></div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">What type of dealer are you?</h2>
-                      <p className="text-gray-500">This helps us match you with the right buyers</p>
-                    </div>
+            {/* Progress bar (mobile) */}
+            <div className="lg:hidden mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-gray-500">Step {step + 1} of {STEPS.length}</span>
+                <span className="text-xs font-medium text-gray-900">{STEPS[step].label}</span>
+              </div>
+              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gray-900 rounded-full transition-all duration-500"
+                  style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8">
+
+              {submitError && (
+                <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700">{submitError}</p>
+                </div>
+              )}
+
+              {/* ── Step 0: Business Type ──────────────────────────────────── */}
+              {step === 0 && (
+                <div className="space-y-5">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">What type of dealer are you?</h2>
+                    <p className="text-sm text-gray-500">This helps us match you with the right buyers</p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {DEALER_TYPES.map((type) => (
-                      <button key={type.value} type="button" onClick={() => updateField('dealerType', type.value)}
-                        className={`p-4 border-2 text-left transition-all ${formData.dealerType === type.value ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'}`}>
-                        <div className="flex items-start gap-3">
-                          <type.icon className={`w-6 h-6 ${formData.dealerType === type.value ? 'text-gray-900' : 'text-gray-400'}`} />
-                          <div>
-                            <p className="font-bold text-gray-900">{type.label}</p>
-                            <p className="text-sm text-gray-500">{type.description}</p>
-                          </div>
-                        </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {DEALER_TYPES.map(({ value, label, icon: Icon, description }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => set('dealerType', value)}
+                        className={`p-4 border rounded-xl text-left transition-all ${
+                          form.dealerType === value
+                            ? 'border-gray-900 bg-gray-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <Icon className={`w-5 h-5 mb-2.5 ${form.dealerType === value ? 'text-gray-900' : 'text-gray-400'}`} />
+                        <p className="text-sm font-semibold text-gray-900">{label}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{description}</p>
                       </button>
                     ))}
                   </div>
-                  {errors.dealerType && <p className="text-sm font-medium text-red-600">{errors.dealerType}</p>}
-                  <div className="mt-6">
-                    <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Years in Operation (Optional)</label>
-                    <select className="block w-full border-2 border-gray-300 px-4 py-3 text-base font-medium focus:border-gray-900 focus:outline-none"
-                      value={formData.yearsInOperation} onChange={(e) => updateField('yearsInOperation', parseInt(e.target.value) || 0)}>
-                      <option value={0}>Select years</option>
-                      {YEARS_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                  {errors.dealerType && <p className="text-sm text-red-600">{errors.dealerType}</p>}
+
+                  <Field
+                    label="Years in operation"
+                    value={String(form.yearsInOperation || '')}
+                    onChange={() => {}}
+                  >
+                    <select
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-gray-400 focus:outline-none"
+                      value={form.yearsInOperation}
+                      onChange={e => set('yearsInOperation', parseInt(e.target.value) || 0)}
+                    >
+                      <option value={0}>Select (optional)</option>
+                      {YEARS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
-                  </div>
+                  </Field>
                 </div>
               )}
 
-              {currentStep === 1 && (
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><Building2 className="w-6 h-6" /></div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
-                      <p className="text-gray-500">Tell us about your electrical business</p>
-                    </div>
+              {/* ── Step 1: GST Document ───────────────────────────────────── */}
+              {step === 1 && (
+                <div className="space-y-5">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Verify your business</h2>
+                    <p className="text-sm text-gray-500">
+                      Upload your GST certificate — we'll extract your details automatically
+                    </p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormInput
-                      label="Business Name"
-                      placeholder="e.g., Krishna Electricals"
-                      value={formData.businessName}
-                      onChange={(e) => updateField('businessName', e.target.value)}
-                      error={errors.businessName}
-                      required
-                    />
-                    <FormInput
-                      label="Owner Name"
-                      placeholder="Your full name"
-                      value={formData.ownerName}
-                      onChange={(e) => updateField('ownerName', e.target.value)}
-                      error={errors.ownerName}
-                      required
-                    />
-                  </div>
-                  <FormInput
-                    label="Email Address"
-                    type="email"
-                    placeholder="you@business.com"
-                    value={formData.email}
-                    onChange={(e) => updateField('email', e.target.value)}
-                    error={errors.email}
-                    required
-                  />
-                  <div className="relative">
-                    <FormInput
-                      label="Password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Minimum 8 characters"
-                      value={formData.password}
-                      onChange={(e) => updateField('password', e.target.value)}
-                      error={errors.password}
-                      required
-                    />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-11 text-gray-500 hover:text-gray-900">
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                  <FormInput
-                    label="Phone Number"
-                    type="tel"
-                    placeholder="10-digit mobile number"
-                    value={formData.phone}
-                    onChange={(e) => updateField('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    error={errors.phone}
-                    required
-                  />
-                </div>
-              )}
 
-              {currentStep === 2 && (
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><FileText className="w-6 h-6" /></div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Business Documents</h2>
-                      <p className="text-gray-500">Required for verification</p>
-                    </div>
-                  </div>
-                  <FormAlert variant="info">Your documents will be verified within <strong>24-48 hours</strong>. You can start using the platform immediately.</FormAlert>
-                  <div className="space-y-3">
-                    <FormInput
+                  {!skipDocUpload && (
+                    <>
+                      {!gstFile ? (
+                        <div>
+                          <input
+                            ref={gstInputRef}
+                            type="file"
+                            accept="image/*,.pdf"
+                            onChange={e => e.target.files?.[0] && handleGstUpload(e.target.files[0])}
+                            className="hidden"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => gstInputRef.current?.click()}
+                            className="w-full h-44 border border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-gray-400 hover:bg-gray-50 transition-all"
+                          >
+                            <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+                              <Upload className="w-6 h-6 text-gray-400" />
+                            </div>
+                            <div className="text-center">
+                              <p className="text-sm font-medium text-gray-700">Upload GST Certificate</p>
+                              <p className="text-xs text-gray-400 mt-1">JPG, PNG or PDF · Max 10MB</p>
+                            </div>
+                            <span className="text-xs font-medium text-orange-600 bg-orange-50 px-3 py-1.5 rounded-full">
+                              Auto-extracts GST number & business name
+                            </span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {/* Preview */}
+                          <div className="relative bg-gray-50 rounded-xl overflow-hidden border border-gray-200 h-36 flex items-center justify-center">
+                            {gstFile.type.startsWith('image/') ? (
+                              <img src={gstPreview!} alt="GST doc" className="h-full w-full object-contain" />
+                            ) : (
+                              <div className="flex flex-col items-center gap-2 text-gray-500">
+                                <FileCheck className="w-10 h-10 text-gray-300" />
+                                <span className="text-sm font-medium">{gstFile.name}</span>
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => { setGstFile(null); setGstPreview(null); setExtracted(null); setExtractFailed(false); }}
+                              className="absolute top-2 right-2 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center hover:bg-gray-700"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          {/* Extraction state */}
+                          {extracting && (
+                            <div className="flex items-center gap-3 p-3.5 bg-blue-50 border border-blue-100 rounded-xl">
+                              <Loader2 className="w-4 h-4 text-blue-500 animate-spin flex-shrink-0" />
+                              <p className="text-sm text-blue-700 font-medium">Scanning document...</p>
+                            </div>
+                          )}
+
+                          {extracted && (
+                            <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
+                              <div className="flex items-center gap-2 mb-3">
+                                <CheckCircle className="w-4 h-4 text-green-600" />
+                                <p className="text-sm font-semibold text-green-800">Details extracted successfully</p>
+                              </div>
+                              <div className="space-y-2">
+                                {extracted.gst && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs text-green-600 font-medium w-24">GST Number</span>
+                                    <span className="text-sm font-mono font-semibold text-green-900">{extracted.gst}</span>
+                                  </div>
+                                )}
+                                {extracted.businessName && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs text-green-600 font-medium w-24">Business</span>
+                                    <span className="text-sm font-semibold text-green-900">{extracted.businessName}</span>
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-xs text-green-600 mt-2">Form has been auto-filled. Review & edit in the next step.</p>
+                            </div>
+                          )}
+
+                          {extractFailed && (
+                            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5">
+                              <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                              <div>
+                                <p className="text-sm font-medium text-amber-800">Could not auto-extract details</p>
+                                <p className="text-xs text-amber-700 mt-0.5">No problem — you can fill them manually in the next step</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-3 text-xs text-gray-400">
+                        <div className="h-px flex-1 bg-gray-100" />
+                        <span>or</span>
+                        <div className="h-px flex-1 bg-gray-100" />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Manual GST entry */}
+                  <div>
+                    <Field
                       label="GST Number"
-                      placeholder="e.g., 29AABCU9603R1ZM"
-                      value={formData.gstNumber}
-                      onChange={(e) => updateField('gstNumber', e.target.value.toUpperCase().slice(0, 15))}
+                      value={form.gstNumber}
+                      onChange={v => set('gstNumber', v.toUpperCase())}
+                      placeholder="e.g. 08ABCDE1234F1Z5"
                       error={errors.gstNumber}
-                      helper="15-character GSTIN starting with state code"
-                      required
                     />
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">GST Certificate (Optional)</label>
-                      <input type="file" ref={gstInputRef} accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setGstDocument(e.target.files?.[0] || null)} className="hidden" />
-                      {gstDocument ? (
-                        <div className="flex items-center gap-3 p-3 bg-green-50 border-2 border-green-200">
-                          <File className="w-5 h-5 text-green-600" />
-                          <span className="flex-1 text-sm font-medium text-green-800 truncate">{gstDocument.name}</span>
-                          <button type="button" onClick={() => setGstDocument(null)} className="text-green-600 hover:text-green-800"><X className="w-5 h-5" /></button>
-                        </div>
-                      ) : (
-                        <button type="button" onClick={() => gstInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-gray-300 hover:border-gray-400 flex items-center justify-center gap-2 text-gray-600">
-                          <Upload className="w-5 h-5" /><span className="font-medium">Upload GST Certificate</span>
-                        </button>
-                      )}
-                    </div>
+                    <p className="text-xs text-gray-400 mt-1">15-character GST identification number</p>
                   </div>
-                  <div className="space-y-3">
-                    <FormInput
-                      label="PAN Number"
-                      placeholder="e.g., AABCU9603R"
-                      value={formData.panNumber}
-                      onChange={(e) => updateField('panNumber', e.target.value.toUpperCase().slice(0, 10))}
-                      error={errors.panNumber}
-                      helper="10-character PAN of business or proprietor"
-                      required
+
+                  <label className="flex items-center gap-2.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={skipDocUpload}
+                      onChange={e => setSkipDocUpload(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-gray-900"
                     />
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">PAN Card Copy (Optional)</label>
-                      <input type="file" ref={panInputRef} accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setPanDocument(e.target.files?.[0] || null)} className="hidden" />
-                      {panDocument ? (
-                        <div className="flex items-center gap-3 p-3 bg-green-50 border-2 border-green-200">
-                          <File className="w-5 h-5 text-green-600" />
-                          <span className="flex-1 text-sm font-medium text-green-800 truncate">{panDocument.name}</span>
-                          <button type="button" onClick={() => setPanDocument(null)} className="text-green-600 hover:text-green-800"><X className="w-5 h-5" /></button>
-                        </div>
-                      ) : (
-                        <button type="button" onClick={() => panInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-gray-300 hover:border-gray-400 flex items-center justify-center gap-2 text-gray-600">
-                          <Upload className="w-5 h-5" /><span className="font-medium">Upload PAN Card</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Shop License (Optional)</label>
-                    <input type="file" ref={licenseInputRef} accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setShopLicense(e.target.files?.[0] || null)} className="hidden" />
-                    {shopLicense ? (
-                      <div className="flex items-center gap-3 p-3 bg-green-50 border-2 border-green-200">
-                        <File className="w-5 h-5 text-green-600" />
-                        <span className="flex-1 text-sm font-medium text-green-800 truncate">{shopLicense.name}</span>
-                        <button type="button" onClick={() => setShopLicense(null)} className="text-green-600 hover:text-green-800"><X className="w-5 h-5" /></button>
-                      </div>
-                    ) : (
-                      <button type="button" onClick={() => licenseInputRef.current?.click()} className="w-full p-4 border-2 border-dashed border-gray-300 hover:border-gray-400 flex items-center justify-center gap-2 text-gray-600">
-                        <Upload className="w-5 h-5" /><span className="font-medium">Upload Shop License</span>
-                      </button>
-                    )}
-                    <p className="mt-2 text-xs text-gray-500">Accepted: PDF, JPG, PNG (max 5MB)</p>
-                  </div>
+                    <span className="text-sm text-gray-600">I don't have my GST certificate handy — I'll fill details manually</span>
+                  </label>
                 </div>
               )}
 
-              {currentStep === 3 && (
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-gray-900 text-white flex items-center justify-center"><MapPin className="w-6 h-6" /></div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Location Details</h2>
-                      <p className="text-gray-500">Where is your shop located?</p>
-                    </div>
-                  </div>
+              {/* ── Step 2: Business Details ───────────────────────────────── */}
+              {step === 2 && (
+                <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Shop Address <span className="text-red-500">*</span></label>
-                    <textarea className={`block w-full border-2 px-4 py-4 text-base font-medium ${errors.shopAddress ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:border-gray-900'} focus:outline-none`}
-                      rows={3} placeholder="Complete shop address with landmark" value={formData.shopAddress} onChange={(e) => updateField('shopAddress', e.target.value)} />
-                    {errors.shopAddress && <p className="mt-2 text-sm font-medium text-red-600">{errors.shopAddress}</p>}
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Business information</h2>
+                    <p className="text-sm text-gray-500">Tell us about your electrical business</p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormInput
-                      label="City"
-                      placeholder="e.g., Mumbai"
-                      value={formData.city}
-                      onChange={(e) => updateField('city', e.target.value)}
-                      error={errors.city}
-                      required
-                    />
-                    <div>
-                      <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">State <span className="text-red-500">*</span></label>
-                      <select className={`block w-full border-2 px-4 py-3 text-base font-medium ${errors.state ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:border-gray-900'} focus:outline-none`}
-                        value={formData.state} onChange={(e) => updateField('state', e.target.value)}>
-                        <option value="">Select state</option>
-                        {STATES.map(state => <option key={state} value={state}>{state}</option>)}
-                      </select>
-                      {errors.state && <p className="mt-2 text-sm font-medium text-red-600">{errors.state}</p>}
+                  {extracted?.gst && (
+                    <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                      <p className="text-xs text-green-700">Pre-filled from your GST certificate — review and edit if needed</p>
                     </div>
+                  )}
+                  <Field label="Business / Shop Name" value={form.businessName} onChange={v => set('businessName', v)}
+                    placeholder="e.g. Sharma Electricals" error={errors.businessName} required />
+                  <Field label="Owner / Proprietor Name" value={form.ownerName} onChange={v => set('ownerName', v)}
+                    placeholder="Your full name" error={errors.ownerName} required />
+                  <Field label="GST Number" value={form.gstNumber} onChange={v => set('gstNumber', v.toUpperCase())}
+                    placeholder="15-character GST number" error={errors.gstNumber} />
+                  <Field label="PAN Number" value={form.panNumber} onChange={v => set('panNumber', v.toUpperCase())}
+                    placeholder="10-character PAN" error={errors.panNumber} />
+                  <Field label="WhatsApp / Phone" value={form.phone} onChange={v => set('phone', v)}
+                    placeholder="10-digit mobile number" type="tel" error={errors.phone} required />
+                </div>
+              )}
+
+              {/* ── Step 3: Location ──────────────────────────────────────── */}
+              {step === 3 && (
+                <div className="space-y-5">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Your shop location</h2>
+                    <p className="text-sm text-gray-500">Where do buyers come to pick up or where you deliver from</p>
                   </div>
-                  <FormInput
-                    label="Pincode"
-                    placeholder="6-digit pincode"
-                    value={formData.pincode}
-                    onChange={(e) => updateField('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    error={errors.pincode}
-                    helper="You can add more service areas after registration"
-                    required
+                  <Field label="Shop Address" value={form.shopAddress} onChange={v => set('shopAddress', v)}
+                    placeholder="Shop number, street, area" error={errors.shopAddress} required />
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="City" value={form.city} onChange={v => set('city', v)}
+                      placeholder="e.g. Jaipur" error={errors.city} required />
+                    <Field label="Pincode" value={form.pincode} onChange={v => set('pincode', v.replace(/\D/g, '').slice(0, 6))}
+                      placeholder="6-digit pincode" type="tel" error={errors.pincode} required />
+                  </div>
+                  <Field label="State" value={form.state} onChange={() => {}} error={errors.state} required>
+                    <select
+                      value={form.state}
+                      onChange={e => set('state', e.target.value)}
+                      className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:border-gray-400 focus:outline-none ${
+                        errors.state ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                    >
+                      <option value="">Select state</option>
+                      {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </Field>
+                </div>
+              )}
+
+              {/* ── Step 4: Shop Images ───────────────────────────────────── */}
+              {step === 4 && (
+                <div className="space-y-5">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Add shop photos</h2>
+                    <p className="text-sm text-gray-500">
+                      Dealers with photos get 3× more trust from buyers. Upload your shop, products, or logo.
+                    </p>
+                  </div>
+
+                  <input
+                    ref={shopImgRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={e => e.target.files && handleShopImages(e.target.files)}
+                    className="hidden"
                   />
+
+                  {shopPreviews.length > 0 && (
+                    <div className="grid grid-cols-3 gap-3">
+                      {shopPreviews.map((src, i) => (
+                        <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-gray-200">
+                          <img src={src} alt={`Shop ${i + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeShopImage(i)}
+                            className="absolute top-1.5 right-1.5 w-6 h-6 bg-gray-900/80 text-white rounded-full flex items-center justify-center hover:bg-gray-900"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                      {shopImages.length < 5 && (
+                        <button
+                          type="button"
+                          onClick={() => shopImgRef.current?.click()}
+                          className="aspect-square rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center gap-1 hover:border-gray-400 hover:bg-gray-50 transition-all"
+                        >
+                          <Camera className="w-5 h-5 text-gray-400" />
+                          <span className="text-xs text-gray-400">Add more</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {shopPreviews.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => shopImgRef.current?.click()}
+                      className="w-full h-44 border border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-gray-400 hover:bg-gray-50 transition-all"
+                    >
+                      <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+                        <Camera className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-gray-700">Upload shop photos</p>
+                        <p className="text-xs text-gray-400 mt-1">Up to 5 photos · JPG or PNG</p>
+                      </div>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={next}
+                    className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    Skip for now →
+                  </button>
                 </div>
               )}
 
-              {currentStep === 4 && (
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3 mb-8">
-                    <div className="w-12 h-12 bg-green-600 text-white flex items-center justify-center"><CheckCircle className="w-6 h-6" /></div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">Review & Submit</h2>
-                      <p className="text-gray-500">Verify your details before submitting</p>
-                    </div>
+              {/* ── Step 5: Account ───────────────────────────────────────── */}
+              {step === 5 && (
+                <div className="space-y-5">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Create your account</h2>
+                    <p className="text-sm text-gray-500">You'll use these to log in and manage your leads</p>
                   </div>
-                  <div className="space-y-4">
-                    <div className="border-2 border-gray-200 p-6">
-                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><Store className="w-4 h-4 mr-2" />Dealer Type</h3>
-                      <p className="font-bold text-gray-900">{DEALER_TYPES.find(t => t.value === formData.dealerType)?.label || 'Not selected'}</p>
-                      {formData.yearsInOperation > 0 && <p className="text-gray-600 text-sm mt-1">{YEARS_OPTIONS.find(y => y.value === formData.yearsInOperation)?.label} experience</p>}
+                  <Field label="Work Email" value={form.email} onChange={v => set('email', v)}
+                    type="email" placeholder="you@yourshop.com" error={errors.email} required />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Password <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={form.password}
+                        onChange={e => set('password', e.target.value)}
+                        placeholder="At least 8 characters"
+                        className={`w-full px-4 py-2.5 border text-sm rounded-lg focus:outline-none pr-10 transition-colors ${
+                          errors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-gray-400'
+                        }`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(p => !p)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
-                    <div className="border-2 border-gray-200 p-6">
-                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><Building2 className="w-4 h-4 mr-2" />Business Information</h3>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div><span className="text-gray-500 block">Business Name</span><p className="font-bold text-gray-900">{formData.businessName}</p></div>
-                        <div><span className="text-gray-500 block">Owner</span><p className="font-bold text-gray-900">{formData.ownerName}</p></div>
-                        <div><span className="text-gray-500 block">Email</span><p className="font-bold text-gray-900">{formData.email}</p></div>
-                        <div><span className="text-gray-500 block">Phone</span><p className="font-bold text-gray-900">{formData.phone}</p></div>
-                      </div>
-                    </div>
-                    <div className="border-2 border-gray-200 p-6">
-                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><FileText className="w-4 h-4 mr-2" />Documents</h3>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div><span className="text-gray-500 block">GST Number</span><p className="font-bold text-gray-900 font-mono">{formData.gstNumber}</p>
-                          {gstDocument && <span className="inline-flex items-center gap-1 mt-1 text-xs text-green-600"><CheckCircle className="w-3 h-3" />Certificate uploaded</span>}</div>
-                        <div><span className="text-gray-500 block">PAN Number</span><p className="font-bold text-gray-900 font-mono">{formData.panNumber}</p>
-                          {panDocument && <span className="inline-flex items-center gap-1 mt-1 text-xs text-green-600"><CheckCircle className="w-3 h-3" />Card uploaded</span>}</div>
-                      </div>
-                    </div>
-                    <div className="border-2 border-gray-200 p-6">
-                      <h3 className="font-bold text-gray-900 mb-4 flex items-center uppercase tracking-wide text-sm"><MapPin className="w-4 h-4 mr-2" />Location</h3>
-                      <p className="font-bold text-gray-900">{formData.shopAddress}</p>
-                      <p className="text-gray-600">{formData.city}, {formData.state} - {formData.pincode}</p>
-                    </div>
+                    {errors.password && <p className="mt-1.5 text-xs text-red-600">{errors.password}</p>}
                   </div>
-                  <FormAlert variant="info">By submitting, you agree to our <Link to="/terms" className="font-bold underline">Terms of Service</Link> and confirm all information is accurate.</FormAlert>
                 </div>
               )}
 
-              <div className="flex items-center justify-between mt-10 pt-8 border-t-2 border-gray-200">
-                {currentStep > 0 ? (
-                  <button type="button" onClick={handleBack} className="flex items-center gap-2 px-6 py-3 text-gray-700 font-bold hover:text-gray-900"><ChevronLeft className="w-5 h-5" />Back</button>
+              {/* ── Step 6: Review ────────────────────────────────────────── */}
+              {step === 6 && (
+                <div className="space-y-5">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Review your details</h2>
+                    <p className="text-sm text-gray-500">Everything looks right? Submit to complete registration.</p>
+                  </div>
+
+                  <div className="space-y-3 divide-y divide-gray-100">
+                    {[
+                      { label: 'Business', value: form.businessName || '—' },
+                      { label: 'Owner', value: form.ownerName || '—' },
+                      { label: 'Type', value: DEALER_TYPES.find(d => d.value === form.dealerType)?.label || '—' },
+                      { label: 'Phone', value: form.phone || '—' },
+                      { label: 'Email', value: form.email || '—' },
+                      { label: 'GST', value: form.gstNumber || 'Not provided' },
+                      { label: 'City', value: `${form.city}${form.state ? ', ' + form.state : ''}` || '—' },
+                    ].map(({ label, value }) => (
+                      <div key={label} className="flex justify-between py-2.5">
+                        <span className="text-sm text-gray-500">{label}</span>
+                        <span className="text-sm font-medium text-gray-900 text-right max-w-xs">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                    <p className="text-sm text-blue-700">
+                      After submission, our team will review your details and verify your business within 24–48 hours.
+                      You'll get an email once you're approved.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Navigation ────────────────────────────────────────────── */}
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+                {step > 0 ? (
+                  <button
+                    type="button"
+                    onClick={back}
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Back
+                  </button>
                 ) : (
-                  <Link to="/dealer/login" className="text-gray-600 hover:text-gray-900 font-bold text-sm uppercase tracking-wide">Already registered? Sign in</Link>
+                  <Link
+                    to="/dealer/login"
+                    className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    Already registered? Sign in
+                  </Link>
                 )}
-                {currentStep < 4 ? (
-                  <button type="button" onClick={handleNext} className="flex items-center gap-2 px-8 py-3 bg-gray-900 text-white font-bold hover:bg-gray-800">Continue<ChevronRight className="w-5 h-5" /></button>
+
+                {step < STEPS.length - 1 ? (
+                  <button
+                    type="button"
+                    onClick={step === 4 ? next : next}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                  >
+                    Continue
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 ) : (
-                  <button type="button" onClick={handleSubmit} disabled={isLoading} className="flex items-center gap-2 px-8 py-3 bg-amber-500 text-gray-900 font-bold hover:bg-amber-400 disabled:opacity-50">
-                    {isLoading ? (<><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>Submitting...</>) : (<>Submit Registration<ArrowRight className="w-5 h-5" /></>)}
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-colors"
+                  >
+                    {isSubmitting ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
+                    ) : (
+                      <><CheckCircle className="w-4 h-4" /> Submit Registration</>
+                    )}
                   </button>
                 )}
               </div>
-            </div>
-          </div>
 
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <div className="bg-gray-900 text-white p-8 mb-6">
-                <h3 className="text-xl font-bold mb-6">Why Join Hub4Estate?</h3>
-                <div className="space-y-6">
-                  {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-white/10 flex items-center justify-center flex-shrink-0"><benefit.icon className="w-5 h-5 text-amber-400" /></div>
-                      <div><h4 className="font-bold text-white mb-1">{benefit.title}</h4><p className="text-sm text-gray-400">{benefit.description}</p></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="border-2 border-gray-200 p-6">
-                <h4 className="font-bold text-gray-900 mb-4">Need Help?</h4>
-                <p className="text-sm text-gray-600 mb-4">Our team is available to assist with your registration.</p>
-                <a href="tel:+917690001999" className="block w-full text-center py-3 border-2 border-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-colors">Call: +91 76900 01999</a>
-                <a href="mailto:support@hub4estate.com" className="text-sm text-gray-600 block text-center mt-3 hover:text-gray-900">support@hub4estate.com</a>
-              </div>
             </div>
           </div>
         </div>
@@ -621,26 +822,27 @@ export function DealerOnboarding() {
   );
 }
 
+// ─── Success Page ─────────────────────────────────────────────────────────────
+
 export function DealerRegistrationSuccess() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="max-w-lg text-center">
-        <div className="w-24 h-24 bg-green-600 flex items-center justify-center mx-auto mb-8"><CheckCircle className="w-12 h-12 text-white" /></div>
-        <h1 className="text-4xl font-semibold text-gray-900 mb-4">Registration Submitted!</h1>
-        <p className="text-xl text-gray-600 mb-8">You can now access your dealer dashboard. Verification completes within <span className="font-bold text-gray-900">24-48 hours</span>.</p>
-        <div className="bg-gray-900 text-white p-8 mb-8 text-left">
-          <h3 className="font-bold text-lg mb-4">What Happens Next?</h3>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">1</span><span className="text-gray-300">Access your dashboard immediately</span></div>
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">2</span><span className="text-gray-300">Add your brands and service areas</span></div>
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">3</span><span className="text-gray-300">Get verified and unlock all features</span></div>
-            <div className="flex items-start gap-3"><span className="w-6 h-6 bg-amber-500 flex items-center justify-center text-sm font-bold flex-shrink-0 text-gray-900">4</span><span className="text-gray-300">Start receiving RFQs from buyers</span></div>
-          </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+      <div className="text-center max-w-sm">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+          <CheckCircle className="w-8 h-8 text-green-600" />
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/dealer" className="px-8 py-3 bg-gray-900 text-white font-bold inline-flex items-center justify-center gap-2 hover:bg-gray-800">Go to Dashboard<ArrowRight className="w-5 h-5" /></Link>
-          <Link to="/" className="px-8 py-3 border-2 border-gray-900 font-bold inline-flex items-center justify-center hover:bg-gray-100">Back to Home</Link>
-        </div>
+        <h1 className="text-xl font-semibold text-gray-900 mb-2">Registration Submitted</h1>
+        <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+          We've received your details. Our team will review and verify your business within 24–48 hours.
+          You'll get an email when you're approved.
+        </p>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+        >
+          Back to Home
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </div>
   );
