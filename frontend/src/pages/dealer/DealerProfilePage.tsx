@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { dealerApi, productsApi } from '../../lib/api';
-import { useAuthStore } from '../../lib/store';
 import {
   ArrowLeft, Upload, FileText, Trash2, CheckCircle, X,
   Building2, Phone, Mail, MapPin, Award, Shield, Plus, Clock,
-  AlertCircle, Loader2
+  AlertCircle, Loader2, Edit3, Save, Image, Star, Globe,
+  Camera, Package, Calendar,
 } from 'lucide-react';
+
+const API_BASE = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
 interface DealerProfile {
   id: string;
@@ -23,68 +25,80 @@ interface DealerProfile {
   status: string;
   dealerType?: string;
   yearsInOperation?: number;
+  establishedYear?: number;
+  description?: string;
+  certifications?: string[];
+  website?: string;
+  shopPhoto?: string;
+  shopImages?: string[];
   gstDocument?: string;
   panDocument?: string;
   shopLicense?: string;
-  brandMappings: Array<{
-    id: string;
-    brand: { id: string; name: string; logo?: string };
-    isVerified: boolean;
-  }>;
-  categoryMappings: Array<{
-    id: string;
-    category: { id: string; name: string; slug: string };
-  }>;
-  serviceAreas: Array<{
-    id: string;
-    pincode: string;
-  }>;
+  brandMappings: Array<{ id: string; brand: { id: string; name: string; logo?: string }; isVerified: boolean }>;
+  categoryMappings: Array<{ id: string; category: { id: string; name: string; slug: string } }>;
+  serviceAreas: Array<{ id: string; pincode: string }>;
+  totalRFQs?: number;
+  quotesSubmitted?: number;
+  quotesWon?: number;
 }
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  subCategories?: Category[];
-}
+interface Category { id: string; name: string; slug: string }
+interface Brand { id: string; name: string; logo?: string }
 
-interface Brand {
-  id: string;
-  name: string;
-  logo?: string;
-}
+const STATUS_CONFIG: Record<string, { dot: string; color: string; bg: string; label: string }> = {
+  VERIFIED:             { dot: 'bg-green-400', color: 'text-green-700', bg: 'bg-green-50 border-green-200', label: 'Verified' },
+  PENDING_VERIFICATION: { dot: 'bg-amber-400', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', label: 'Pending Verification' },
+  DOCUMENTS_PENDING:    { dot: 'bg-orange-400', color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200', label: 'Documents Required' },
+  UNDER_REVIEW:         { dot: 'bg-blue-400',  color: 'text-blue-700',  bg: 'bg-blue-50 border-blue-200',  label: 'Under Review' },
+};
+
+const ALL_BRANDS = [
+  'Havells', 'Polycab', 'Legrand', 'Schneider Electric', 'L&T', 'Anchor by Panasonic',
+  'GM Modular', 'Finolex', 'V-Guard', 'Crompton', 'Syska', 'Philips', 'ABB', 'Siemens',
+  'KEI Industries', 'RR Kabel', 'Hager', 'Luminous', 'Bajaj Electricals', 'Orient Electric',
+  'Wipro Lighting', 'Goldmedal', 'Sterlite Power', 'CONA', 'Fybros',
+];
 
 export function DealerProfilePage() {
-  const { user } = useAuthStore();
   const [profile, setProfile] = useState<DealerProfile | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [brands] = useState<Brand[]>(ALL_BRANDS.map((n, i) => ({ id: String(i + 1), name: n })));
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Document upload state
+  // Edit mode
+  const [editMode, setEditMode] = useState<'none' | 'about' | 'contact'>('none');
+  const [editData, setEditData] = useState<Partial<DealerProfile>>({});
+  const [saving, setSaving] = useState(false);
+
+  // Documents
   const [uploadingDoc, setUploadingDoc] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const gstInputRef = useRef<HTMLInputElement>(null);
-  const panInputRef = useRef<HTMLInputElement>(null);
-  const licenseInputRef = useRef<HTMLInputElement>(null);
+  const gstRef = useRef<HTMLInputElement>(null);
+  const panRef = useRef<HTMLInputElement>(null);
+  const licenseRef = useRef<HTMLInputElement>(null);
 
-  // Category/Brand selection
+  // Shop images
+  const [uploadingImg, setUploadingImg] = useState(false);
+  const shopImgRef = useRef<HTMLInputElement>(null);
+
+  // Modals
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showBrandModal, setShowBrandModal] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
   const [savingCategories, setSavingCategories] = useState(false);
   const [savingBrands, setSavingBrands] = useState(false);
 
-  // Service area
+  // Service areas
   const [newPincode, setNewPincode] = useState('');
   const [addingArea, setAddingArea] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // Certifications
+  const [newCert, setNewCert] = useState('');
+
+  useEffect(() => { fetchData(); }, []);
 
   const fetchData = async () => {
     try {
@@ -93,130 +107,108 @@ export function DealerProfilePage() {
         dealerApi.getProfile(),
         productsApi.getCategories(),
       ]);
-
       setProfile(profileRes.data);
       setCategories(categoriesRes.data.categories || []);
-
-      // Set already selected categories
-      const existingCategoryIds = new Set<string>(
-        profileRes.data.categoryMappings?.map((m: any) => m.category.id as string) || []
-      );
-      setSelectedCategories(existingCategoryIds);
-
-      // Set already selected brands
-      const existingBrandIds = new Set<string>(
-        profileRes.data.brandMappings?.map((m: any) => m.brand.id as string) || []
-      );
-      setSelectedBrands(existingBrandIds);
-
-      // Fetch brands separately
-      // For now using mock brands - you would fetch from API
-      setBrands([
-        { id: '1', name: 'Havells' },
-        { id: '2', name: 'Polycab' },
-        { id: '3', name: 'Legrand' },
-        { id: '4', name: 'Schneider Electric' },
-        { id: '5', name: 'L&T' },
-        { id: '6', name: 'Anchor by Panasonic' },
-        { id: '7', name: 'GM Modular' },
-        { id: '8', name: 'Finolex' },
-        { id: '9', name: 'V-Guard' },
-        { id: '10', name: 'Crompton' },
-        { id: '11', name: 'Syska' },
-        { id: '12', name: 'Philips' },
-        { id: '13', name: 'ABB' },
-        { id: '14', name: 'Siemens' },
-        { id: '15', name: 'KEI' },
-      ]);
+      setSelectedCategories(new Set<string>(profileRes.data.categoryMappings?.map((m: any) => m.category.id) || []));
+      setSelectedBrands(new Set<string>(profileRes.data.brandMappings?.map((m: any) => m.brand.name) || []));
     } catch (err: any) {
-      console.error('Failed to fetch profile:', err);
       setError(err.response?.data?.error || 'Failed to load profile');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const showSuccess = (msg: string) => {
+    setSuccessMsg(msg);
+    setTimeout(() => setSuccessMsg(null), 3000);
+  };
+
+  const startEdit = (mode: 'about' | 'contact') => {
+    setEditData({
+      description: profile?.description || '',
+      establishedYear: profile?.establishedYear,
+      website: profile?.website || '',
+      businessName: profile?.businessName || '',
+      ownerName: profile?.ownerName || '',
+      phone: profile?.phone || '',
+      shopAddress: profile?.shopAddress || '',
+      city: profile?.city || '',
+      state: profile?.state || '',
+      pincode: profile?.pincode || '',
+    });
+    setEditMode(mode);
+  };
+
+  const saveEdit = async () => {
+    setSaving(true);
+    try {
+      await dealerApi.updateProfile(editData);
+      await fetchData();
+      setEditMode('none');
+      showSuccess('Profile updated');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to save');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleDocumentUpload = async (documentType: string, file: File) => {
-    if (!file) return;
-
-    // Validate file type
-    const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-    if (!validTypes.includes(file.type)) {
-      setUploadError('Invalid file type. Only PDF, JPG, and PNG are allowed.');
-      return;
-    }
-
-    // Validate file size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setUploadError('File too large. Maximum size is 5MB.');
-      return;
-    }
-
     setUploadingDoc(documentType);
     setUploadError(null);
-
     try {
       const response = await dealerApi.uploadDocument(documentType, file);
-      // Update profile with new document URL
-      setProfile(prev => prev ? {
-        ...prev,
-        [documentType]: response.data.url,
-        status: response.data.dealer.status,
-      } : null);
+      setProfile(prev => prev ? { ...prev, [documentType]: response.data.url, status: response.data.dealer.status } : null);
+      showSuccess('Document uploaded successfully');
     } catch (err: any) {
-      setUploadError(err.response?.data?.error || 'Failed to upload document');
+      setUploadError(err.response?.data?.error || 'Upload failed');
     } finally {
       setUploadingDoc(null);
     }
   };
 
   const handleDeleteDocument = async (documentType: string) => {
-    if (!confirm('Are you sure you want to delete this document?')) return;
-
+    if (!confirm('Delete this document?')) return;
     try {
       await dealerApi.deleteDocument(documentType);
       setProfile(prev => prev ? { ...prev, [documentType]: null } : null);
     } catch (err: any) {
-      setUploadError(err.response?.data?.error || 'Failed to delete document');
+      setUploadError(err.response?.data?.error || 'Delete failed');
     }
   };
 
-  const toggleCategory = (categoryId: string) => {
-    const newSelected = new Set(selectedCategories);
-    if (newSelected.has(categoryId)) {
-      newSelected.delete(categoryId);
-    } else {
-      newSelected.add(categoryId);
+  const handleShopImageUpload = async (file: File) => {
+    setUploadingImg(true);
+    try {
+      const res = await dealerApi.uploadShopImage(file);
+      setProfile(prev => prev ? { ...prev, shopImages: res.data.shopImages } : null);
+      showSuccess('Photo added');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Upload failed');
+    } finally {
+      setUploadingImg(false);
     }
-    setSelectedCategories(newSelected);
   };
 
-  const toggleBrand = (brandId: string) => {
-    const newSelected = new Set(selectedBrands);
-    if (newSelected.has(brandId)) {
-      newSelected.delete(brandId);
-    } else {
-      newSelected.add(brandId);
+  const handleDeleteShopImage = async (index: number) => {
+    try {
+      const res = await dealerApi.deleteShopImage(index);
+      setProfile(prev => prev ? { ...prev, shopImages: res.data.shopImages } : null);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Delete failed');
     }
-    setSelectedBrands(newSelected);
   };
 
   const saveCategories = async () => {
     setSavingCategories(true);
     try {
-      // Get current category IDs
       const currentIds = new Set(profile?.categoryMappings?.map(m => m.category.id) || []);
-
-      // Add new categories
-      for (const categoryId of selectedCategories) {
-        if (!currentIds.has(categoryId)) {
-          await dealerApi.addCategory({ categoryId });
-        }
+      for (const id of selectedCategories) {
+        if (!currentIds.has(id)) await dealerApi.addCategory({ categoryId: id });
       }
-
-      // Refresh profile
       await fetchData();
       setShowCategoryModal(false);
+      showSuccess('Categories saved');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to save categories');
     } finally {
@@ -227,19 +219,16 @@ export function DealerProfilePage() {
   const saveBrands = async () => {
     setSavingBrands(true);
     try {
-      // Get current brand IDs
-      const currentIds = new Set(profile?.brandMappings?.map(m => m.brand.id) || []);
-
-      // Add new brands
-      for (const brandId of selectedBrands) {
-        if (!currentIds.has(brandId)) {
-          await dealerApi.addBrand({ brandId });
+      const currentNames = new Set(profile?.brandMappings?.map(m => m.brand.name) || []);
+      for (const name of selectedBrands) {
+        if (!currentNames.has(name)) {
+          const brand = brands.find(b => b.name === name);
+          if (brand) await dealerApi.addBrand({ brandId: brand.id });
         }
       }
-
-      // Refresh profile
       await fetchData();
       setShowBrandModal(false);
+      showSuccess('Brands saved');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to save brands');
     } finally {
@@ -249,7 +238,6 @@ export function DealerProfilePage() {
 
   const addServiceArea = async () => {
     if (newPincode.length !== 6) return;
-
     setAddingArea(true);
     try {
       await dealerApi.addServiceArea({ pincode: newPincode });
@@ -262,460 +250,694 @@ export function DealerProfilePage() {
     }
   };
 
-  const removeServiceArea = async (areaId: string) => {
+  const saveCertification = async () => {
+    if (!newCert.trim()) return;
+    const updated = [...(profile?.certifications || []), newCert.trim()];
     try {
-      await dealerApi.removeServiceArea(areaId);
-      await fetchData();
+      await dealerApi.updateProfile({ certifications: updated });
+      setProfile(prev => prev ? { ...prev, certifications: updated } : null);
+      setNewCert('');
+      showSuccess('Certification added');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to remove service area');
+      setError('Failed to save');
     }
   };
 
-  const isPending = profile?.status && ['PENDING_VERIFICATION', 'DOCUMENTS_PENDING', 'UNDER_REVIEW'].includes(profile.status);
-
-  const getStatusBadge = () => {
-    switch (profile?.status) {
-      case 'VERIFIED':
-        return { color: 'green', icon: Shield, label: 'Verified Dealer' };
-      case 'PENDING_VERIFICATION':
-        return { color: 'amber', icon: Clock, label: 'Pending Verification' };
-      case 'DOCUMENTS_PENDING':
-        return { color: 'orange', icon: AlertCircle, label: 'Documents Required' };
-      case 'UNDER_REVIEW':
-        return { color: 'blue', icon: Clock, label: 'Under Review' };
-      default:
-        return { color: 'gray', icon: Clock, label: 'Processing' };
+  const removeCertification = async (index: number) => {
+    const updated = (profile?.certifications || []).filter((_, i) => i !== index);
+    try {
+      await dealerApi.updateProfile({ certifications: updated });
+      setProfile(prev => prev ? { ...prev, certifications: updated } : null);
+    } catch {
+      setError('Failed to remove');
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-neutral-400 mx-auto mb-4" />
-          <p className="text-neutral-600">Loading profile...</p>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
       </div>
     );
   }
 
   if (error && !profile) {
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="container-custom">
-          <div className="bg-red-50 border-2 border-red-200 p-6 text-center">
-            <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
-            <p className="text-red-800 font-bold">{error}</p>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+          <p className="text-sm text-gray-500">{error}</p>
         </div>
       </div>
     );
   }
 
-  const statusBadge = getStatusBadge();
-  const StatusIcon = statusBadge.icon;
+  const s = STATUS_CONFIG[profile?.status || ''] || { dot: 'bg-gray-300', color: 'text-gray-500', bg: 'bg-gray-50 border-gray-200', label: 'Processing' };
+  const isPending = profile?.status && ['PENDING_VERIFICATION', 'DOCUMENTS_PENDING', 'UNDER_REVIEW'].includes(profile.status);
+  const shopImages = profile?.shopImages || [];
+  const imgUrl = (p: string) => p.startsWith('http') ? p : `${API_BASE}${p}`;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
+      {/* Toasts */}
+      {successMsg && (
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-xl shadow-lg animate-slide-up">
+          <CheckCircle className="w-4 h-4 text-green-400" /> {successMsg}
+        </div>
+      )}
+
       {/* Header */}
-      <section className="bg-neutral-900 text-white py-12">
-        <div className="container-custom">
-          <Link to="/dealer" className="inline-flex items-center text-neutral-400 hover:text-white mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Link>
-          <div className="flex items-start justify-between">
-            <div>
-              <div className={`inline-flex items-center gap-2 px-4 py-2 bg-${statusBadge.color}-500 text-white text-sm font-bold uppercase tracking-wider mb-4`}>
-                <StatusIcon className="w-4 h-4" />
-                {statusBadge.label}
-              </div>
-              <h1 className="text-3xl md:text-4xl font-black">{profile?.businessName}</h1>
-              <p className="text-neutral-400 mt-2">{profile?.ownerName} • {profile?.city}</p>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <Link to="/dealer" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 mb-3 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
+        </Link>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium mb-2 ${s.bg} ${s.color}`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+              {s.label}
             </div>
+            <h1 className="text-xl font-semibold text-gray-900">{profile?.businessName}</h1>
+            <p className="text-sm text-gray-400 mt-0.5 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" />
+              {profile?.city}, {profile?.state}
+            </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      <div className="container-custom py-12">
+      <div className="px-6 py-6 max-w-5xl mx-auto">
+        {/* Alerts */}
         {error && (
-          <div className="bg-red-50 border-2 border-red-200 p-4 mb-6 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500" />
-            <p className="text-red-800">{error}</p>
-            <button onClick={() => setError(null)} className="ml-auto text-red-500 hover:text-red-700">
-              <X className="w-5 h-5" />
-            </button>
+          <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-3.5 py-3 mb-5">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            {error}
+            <button onClick={() => setError(null)} className="ml-auto"><X className="w-4 h-4" /></button>
+          </div>
+        )}
+        {isPending && (
+          <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl mb-5">
+            <Clock className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-gray-900">Complete Your Profile</p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {profile?.status === 'DOCUMENTS_PENDING'
+                  ? 'Please upload your GST certificate and PAN card to complete verification.'
+                  : 'Your application is under review. Add shop photos, brands and service areas while you wait.'}
+              </p>
+            </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Pending Status Alert */}
-            {isPending && (
-              <div className="bg-amber-50 border-2 border-amber-200 p-6">
-                <div className="flex items-start gap-4">
-                  <Clock className="w-6 h-6 text-amber-600 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-neutral-900">Complete Your Profile</h3>
-                    <p className="text-sm text-neutral-600 mt-1">
-                      {profile?.status === 'DOCUMENTS_PENDING'
-                        ? 'Please upload your GST certificate and PAN card to complete verification.'
-                        : 'Your application is being reviewed. Add brands and service areas while you wait.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ── Main Column ─────────────────────────────────── */}
+          <div className="lg:col-span-2 space-y-5">
 
-            {/* Business Details */}
-            <div className="bg-white border-2 border-neutral-200 shadow-brutal">
-              <div className="p-4 bg-neutral-900 text-white">
-                <h2 className="font-bold uppercase tracking-wider flex items-center gap-2">
-                  <Building2 className="w-5 h-5" />
-                  Business Details
-                </h2>
-              </div>
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">Business Name</label>
-                    <p className="text-lg font-bold text-neutral-900">{profile?.businessName}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">GST Number</label>
-                    <p className="text-lg font-bold text-neutral-900 font-mono">{profile?.gstNumber}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      <Phone className="w-4 h-4 inline mr-1" />Phone
-                    </label>
-                    <p className="text-lg font-bold text-neutral-900">{profile?.phone}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      <Mail className="w-4 h-4 inline mr-1" />Email
-                    </label>
-                    <p className="text-lg font-bold text-neutral-900">{profile?.email}</p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                      <MapPin className="w-4 h-4 inline mr-1" />Address
-                    </label>
-                    <p className="text-lg font-bold text-neutral-900">
-                      {profile?.shopAddress}, {profile?.city}, {profile?.state} - {profile?.pincode}
-                    </p>
-                  </div>
+            {/* Shop Photos */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Image className="w-3.5 h-3.5 text-gray-400" />
+                  <h2 className="text-sm font-semibold text-gray-900">Shop Photos</h2>
+                  <span className="text-xs text-gray-400">({shopImages.length}/6)</span>
                 </div>
-              </div>
-            </div>
-
-            {/* Document Upload Section */}
-            <div className="bg-white border-2 border-neutral-200 shadow-brutal">
-              <div className="p-4 bg-neutral-900 text-white">
-                <h2 className="font-bold uppercase tracking-wider flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Verification Documents
-                </h2>
-              </div>
-              <div className="p-6">
-                {uploadError && (
-                  <div className="bg-red-50 border-2 border-red-200 p-3 mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-500" />
-                    <p className="text-sm text-red-800">{uploadError}</p>
-                    <button onClick={() => setUploadError(null)} className="ml-auto"><X className="w-4 h-4 text-red-500" /></button>
-                  </div>
+                {shopImages.length < 6 && (
+                  <button
+                    onClick={() => shopImgRef.current?.click()}
+                    disabled={uploadingImg}
+                    className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors disabled:opacity-50"
+                  >
+                    {uploadingImg ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+                    Add Photo
+                  </button>
                 )}
-
-                <div className="space-y-4">
-                  {/* GST Document */}
-                  <DocumentUploadRow
-                    label="GST Certificate"
-                    required
-                    documentType="gstDocument"
-                    currentUrl={profile?.gstDocument}
-                    isUploading={uploadingDoc === 'gstDocument'}
-                    inputRef={gstInputRef}
-                    onUpload={(file) => handleDocumentUpload('gstDocument', file)}
-                    onDelete={() => handleDeleteDocument('gstDocument')}
-                  />
-
-                  {/* PAN Document */}
-                  <DocumentUploadRow
-                    label="PAN Card"
-                    required
-                    documentType="panDocument"
-                    currentUrl={profile?.panDocument}
-                    isUploading={uploadingDoc === 'panDocument'}
-                    inputRef={panInputRef}
-                    onUpload={(file) => handleDocumentUpload('panDocument', file)}
-                    onDelete={() => handleDeleteDocument('panDocument')}
-                  />
-
-                  {/* Shop License */}
-                  <DocumentUploadRow
-                    label="Shop License"
-                    documentType="shopLicense"
-                    currentUrl={profile?.shopLicense}
-                    isUploading={uploadingDoc === 'shopLicense'}
-                    inputRef={licenseInputRef}
-                    onUpload={(file) => handleDocumentUpload('shopLicense', file)}
-                    onDelete={() => handleDeleteDocument('shopLicense')}
-                  />
-                </div>
               </div>
-            </div>
-
-            {/* Categories */}
-            <div className="bg-white border-2 border-neutral-200 shadow-brutal">
-              <div className="p-4 bg-neutral-900 text-white flex items-center justify-between">
-                <h2 className="font-bold uppercase tracking-wider flex items-center gap-2">
-                  <Award className="w-5 h-5" />
-                  Product Categories
-                </h2>
-                <button
-                  onClick={() => setShowCategoryModal(true)}
-                  className="text-sm font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Category
-                </button>
-              </div>
-              <div className="p-6">
-                {profile?.categoryMappings && profile.categoryMappings.length > 0 ? (
-                  <div className="flex flex-wrap gap-3">
-                    {profile.categoryMappings.map((mapping) => (
-                      <span
-                        key={mapping.id}
-                        className="px-4 py-2 bg-neutral-100 border-2 border-neutral-200 font-bold text-neutral-900"
-                      >
-                        {mapping.category.name}
-                      </span>
+              <input
+                ref={shopImgRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (file) handleShopImageUpload(file);
+                  if (shopImgRef.current) shopImgRef.current.value = '';
+                }}
+              />
+              <div className="p-4">
+                {shopImages.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    {shopImages.map((img, i) => (
+                      <div key={i} className="relative aspect-square rounded-lg overflow-hidden group border border-gray-200">
+                        <img src={imgUrl(img)} alt={`Shop ${i + 1}`} className="w-full h-full object-cover" />
+                        <button
+                          onClick={() => handleDeleteShopImage(i)}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 bg-gray-900/80 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
                     ))}
+                    {shopImages.length < 6 && (
+                      <button
+                        onClick={() => shopImgRef.current?.click()}
+                        className="aspect-square rounded-lg border-2 border-dashed border-gray-200 hover:border-gray-400 flex flex-col items-center justify-center gap-1 transition-colors"
+                      >
+                        <Camera className="w-5 h-5 text-gray-300" />
+                        <span className="text-xs text-gray-400">Add</span>
+                      </button>
+                    )}
                   </div>
                 ) : (
-                  <p className="text-neutral-500">No categories added yet. Click "Add Category" to get started.</p>
+                  <button
+                    onClick={() => shopImgRef.current?.click()}
+                    className="w-full h-32 border-2 border-dashed border-gray-200 rounded-xl hover:border-gray-400 flex flex-col items-center justify-center gap-2 transition-colors"
+                  >
+                    <Camera className="w-6 h-6 text-gray-300" />
+                    <p className="text-sm font-medium text-gray-500">Add shop photos</p>
+                    <p className="text-xs text-gray-400">Shop, warehouse, products, team — up to 6 photos</p>
+                  </button>
                 )}
               </div>
             </div>
 
-            {/* Brands */}
-            <div className="bg-white border-2 border-neutral-200 shadow-brutal">
-              <div className="p-4 bg-neutral-900 text-white flex items-center justify-between">
-                <h2 className="font-bold uppercase tracking-wider flex items-center gap-2">
-                  <Award className="w-5 h-5" />
-                  Authorized Brands
-                </h2>
+            {/* About */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-3.5 h-3.5 text-gray-400" />
+                  <h2 className="text-sm font-semibold text-gray-900">About the Shop</h2>
+                </div>
+                {editMode !== 'about' ? (
+                  <button
+                    onClick={() => startEdit('about')}
+                    className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Edit
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setEditMode('none')} className="text-xs text-gray-400 hover:text-gray-700">Cancel</button>
+                    <button
+                      onClick={saveEdit}
+                      disabled={saving}
+                      className="flex items-center gap-1 text-xs font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                      Save
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="p-5 space-y-4">
+                {editMode === 'about' ? (
+                  <>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">About your shop</label>
+                      <textarea
+                        value={editData.description || ''}
+                        onChange={e => setEditData(d => ({ ...d, description: e.target.value }))}
+                        placeholder="Describe your shop, expertise, what you specialize in, years of experience..."
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 resize-none"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Established Year</label>
+                        <input
+                          type="number"
+                          value={editData.establishedYear || ''}
+                          onChange={e => setEditData(d => ({ ...d, establishedYear: parseInt(e.target.value) }))}
+                          placeholder="e.g. 2005"
+                          min="1900" max="2026"
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Website (optional)</label>
+                        <input
+                          type="url"
+                          value={editData.website || ''}
+                          onChange={e => setEditData(d => ({ ...d, website: e.target.value }))}
+                          placeholder="https://yourshop.com"
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400"
+                        />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {profile?.description ? (
+                      <p className="text-sm text-gray-700 leading-relaxed">{profile.description}</p>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic">Add a description of your shop to build trust with buyers.</p>
+                    )}
+                    <div className="flex flex-wrap gap-4 pt-1">
+                      {profile?.establishedYear && (
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <Calendar className="w-3.5 h-3.5" />
+                          Est. {profile.establishedYear}
+                        </div>
+                      )}
+                      {profile?.website && (
+                        <a href={profile.website} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700">
+                          <Globe className="w-3.5 h-3.5" />
+                          {profile.website.replace(/^https?:\/\//, '')}
+                        </a>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Contact Details */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 text-gray-400" />
+                  <h2 className="text-sm font-semibold text-gray-900">Contact & Location</h2>
+                </div>
+                {editMode !== 'contact' ? (
+                  <button
+                    onClick={() => startEdit('contact')}
+                    className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Edit
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setEditMode('none')} className="text-xs text-gray-400 hover:text-gray-700">Cancel</button>
+                    <button
+                      onClick={saveEdit}
+                      disabled={saving}
+                      className="flex items-center gap-1 text-xs font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 px-2.5 py-1 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                      Save
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="p-5">
+                {editMode === 'contact' ? (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Business Name</label>
+                        <input value={editData.businessName || ''} onChange={e => setEditData(d => ({ ...d, businessName: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Owner Name</label>
+                        <input value={editData.ownerName || ''} onChange={e => setEditData(d => ({ ...d, ownerName: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Phone</label>
+                      <input value={editData.phone || ''} onChange={e => setEditData(d => ({ ...d, phone: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Shop Address</label>
+                      <input value={editData.shopAddress || ''} onChange={e => setEditData(d => ({ ...d, shopAddress: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">City</label>
+                        <input value={editData.city || ''} onChange={e => setEditData(d => ({ ...d, city: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">State</label>
+                        <input value={editData.state || ''} onChange={e => setEditData(d => ({ ...d, state: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Pincode</label>
+                        <input value={editData.pincode || ''} onChange={e => setEditData(d => ({ ...d, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { label: 'Business Name', value: profile?.businessName, icon: Building2 },
+                      { label: 'Owner', value: profile?.ownerName, icon: null },
+                      { label: 'Phone', value: profile?.phone, icon: Phone },
+                      { label: 'Email', value: profile?.email, icon: Mail },
+                    ].map(({ label, value, icon: Icon }) => (
+                      <div key={label}>
+                        <p className="text-xs text-gray-400 mb-0.5">{label}</p>
+                        <p className="text-sm font-medium text-gray-900 flex items-center gap-1.5">
+                          {Icon && <Icon className="w-3.5 h-3.5 text-gray-400" />}
+                          {value}
+                        </p>
+                      </div>
+                    ))}
+                    <div className="md:col-span-2">
+                      <p className="text-xs text-gray-400 mb-0.5">Address</p>
+                      <p className="text-sm font-medium text-gray-900 flex items-start gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" />
+                        {profile?.shopAddress}, {profile?.city}, {profile?.state} — {profile?.pincode}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-0.5">GST Number</p>
+                      <p className="text-sm font-mono font-medium text-gray-900">{profile?.gstNumber}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Authorized Brands */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-3.5 h-3.5 text-gray-400" />
+                  <h2 className="text-sm font-semibold text-gray-900">Authorized Brands</h2>
+                  {profile?.brandMappings && profile.brandMappings.length > 0 && (
+                    <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">
+                      {profile.brandMappings.length}
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={() => setShowBrandModal(true)}
-                  className="text-sm font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                  className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
                 >
-                  <Plus className="w-4 h-4" />
-                  Add Brand
+                  <Plus className="w-3.5 h-3.5" /> Add
                 </button>
               </div>
-              <div className="p-6">
+              <div className="p-4">
                 {profile?.brandMappings && profile.brandMappings.length > 0 ? (
-                  <div className="flex flex-wrap gap-3">
-                    {profile.brandMappings.map((mapping) => (
-                      <span
-                        key={mapping.id}
-                        className={`px-4 py-2 border-2 font-bold ${
-                          mapping.isVerified
-                            ? 'bg-green-50 border-green-200 text-green-800'
-                            : 'bg-neutral-100 border-neutral-200 text-neutral-900'
+                  <div className="flex flex-wrap gap-2">
+                    {profile.brandMappings.map(m => (
+                      <div
+                        key={m.id}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border ${
+                          m.isVerified
+                            ? 'bg-green-50 text-green-700 border-green-200'
+                            : 'bg-gray-50 text-gray-700 border-gray-200'
                         }`}
                       >
-                        {mapping.brand.name}
-                        {mapping.isVerified && <CheckCircle className="w-4 h-4 inline ml-2" />}
+                        {m.brand.name}
+                        {m.isVerified && <CheckCircle className="w-3 h-3" />}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <Shield className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+                    <p className="text-sm text-gray-400">No brands added yet</p>
+                    <p className="text-xs text-gray-400 mt-1">Add brands you're authorized to sell</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Product Categories */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Package className="w-3.5 h-3.5 text-gray-400" />
+                  <h2 className="text-sm font-semibold text-gray-900">Product Categories</h2>
+                </div>
+                <button
+                  onClick={() => setShowCategoryModal(true)}
+                  className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add
+                </button>
+              </div>
+              <div className="p-4">
+                {profile?.categoryMappings && profile.categoryMappings.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {profile.categoryMappings.map(m => (
+                      <span key={m.id} className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-medium text-gray-700 border border-gray-200">
+                        {m.category.name}
                       </span>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-neutral-500">No brands added yet. Click "Add Brand" to get started.</p>
+                  <div className="text-center py-6">
+                    <Package className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+                    <p className="text-sm text-gray-400">No categories added yet</p>
+                  </div>
                 )}
+              </div>
+            </div>
+
+            {/* Verification Documents */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center gap-2">
+                <FileText className="w-3.5 h-3.5 text-gray-400" />
+                <h2 className="text-sm font-semibold text-gray-900">Verification Documents</h2>
+              </div>
+              <div className="p-4 space-y-3">
+                {uploadError && (
+                  <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3.5 py-2.5">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {uploadError}
+                    <button onClick={() => setUploadError(null)} className="ml-auto"><X className="w-3.5 h-3.5" /></button>
+                  </div>
+                )}
+                <DocumentRow label="GST Certificate" required documentType="gstDocument"
+                  currentUrl={profile?.gstDocument} isUploading={uploadingDoc === 'gstDocument'}
+                  inputRef={gstRef} onUpload={f => handleDocumentUpload('gstDocument', f)}
+                  onDelete={() => handleDeleteDocument('gstDocument')} />
+                <DocumentRow label="PAN Card" required documentType="panDocument"
+                  currentUrl={profile?.panDocument} isUploading={uploadingDoc === 'panDocument'}
+                  inputRef={panRef} onUpload={f => handleDocumentUpload('panDocument', f)}
+                  onDelete={() => handleDeleteDocument('panDocument')} />
+                <DocumentRow label="Shop License" documentType="shopLicense"
+                  currentUrl={profile?.shopLicense} isUploading={uploadingDoc === 'shopLicense'}
+                  inputRef={licenseRef} onUpload={f => handleDocumentUpload('shopLicense', f)}
+                  onDelete={() => handleDeleteDocument('shopLicense')} />
               </div>
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
+          {/* ── Sidebar ─────────────────────────────────────── */}
+          <div className="space-y-5">
             {/* Status Card */}
-            <div className={`bg-${statusBadge.color}-50 border-2 border-${statusBadge.color}-200 p-6`}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`w-10 h-10 bg-${statusBadge.color}-500 rounded-full flex items-center justify-center`}>
-                  <StatusIcon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className={`font-bold text-${statusBadge.color}-800`}>{statusBadge.label}</p>
-                </div>
+            <div className={`rounded-xl border p-4 ${s.bg}`}>
+              <div className="flex items-center gap-2 mb-2">
+                <div className={`w-2.5 h-2.5 rounded-full ${s.dot}`} />
+                <p className={`text-sm font-semibold ${s.color}`}>{s.label}</p>
               </div>
-              <p className={`text-sm text-${statusBadge.color}-700`}>
+              <p className="text-xs text-gray-600 leading-relaxed">
                 {profile?.status === 'VERIFIED'
-                  ? 'Your profile is complete and verified. You can receive and respond to RFQs.'
-                  : 'Complete your profile to get verified and start receiving RFQs.'}
+                  ? 'Your profile is live. You receive RFQs and can submit quotes.'
+                  : 'Complete your profile to get verified and start receiving inquiries.'}
               </p>
+              {profile?.status === 'VERIFIED' && (
+                <div className="mt-3 pt-3 border-t border-green-200 grid grid-cols-3 gap-2 text-center">
+                  {[
+                    { label: 'Quotes', value: profile.quotesSubmitted || 0 },
+                    { label: 'Won', value: profile.quotesWon || 0 },
+                    { label: 'RFQs', value: profile.totalRFQs || 0 },
+                  ].map(stat => (
+                    <div key={stat.label}>
+                      <p className="text-base font-semibold text-gray-900">{stat.value}</p>
+                      <p className="text-[10px] text-gray-500">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Service Areas */}
-            <div className="bg-white border-2 border-neutral-200 shadow-brutal">
-              <div className="p-4 bg-neutral-900 text-white">
-                <h3 className="font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Service Areas
-                </h3>
+            {/* Certifications */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center gap-2">
+                <Award className="w-3.5 h-3.5 text-gray-400" />
+                <h3 className="text-sm font-semibold text-gray-900">Certifications</h3>
               </div>
               <div className="p-4">
-                <div className="space-y-2 mb-4">
-                  {profile?.serviceAreas && profile.serviceAreas.length > 0 ? (
-                    profile.serviceAreas.map((area) => (
-                      <div key={area.id} className="flex items-center justify-between text-sm">
-                        <span className="font-medium text-neutral-700 flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                          {area.pincode}
-                        </span>
-                        <button
-                          onClick={() => removeServiceArea(area.id)}
-                          className="text-neutral-400 hover:text-red-500"
-                        >
-                          <X className="w-4 h-4" />
+                <div className="space-y-2 mb-3">
+                  {profile?.certifications && profile.certifications.length > 0 ? (
+                    profile.certifications.map((cert, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Star className="w-3.5 h-3.5 text-amber-500" />
+                          <span className="text-xs font-medium text-gray-700">{cert}</span>
+                        </div>
+                        <button onClick={() => removeCertification(i)} className="text-gray-300 hover:text-red-500 transition-colors">
+                          <X className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm text-neutral-500">No service areas added</p>
+                    <p className="text-xs text-gray-400">No certifications added</p>
                   )}
                 </div>
-
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Enter 6-digit pincode"
-                    value={newPincode}
-                    onChange={(e) => setNewPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="flex-1 px-3 py-2 border-2 border-neutral-200 text-sm focus:border-neutral-900 focus:outline-none"
+                    placeholder="e.g. Havells Certified"
+                    value={newCert}
+                    onChange={e => setNewCert(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && saveCertification()}
+                    className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-gray-400"
                   />
                   <button
-                    onClick={addServiceArea}
-                    disabled={newPincode.length !== 6 || addingArea}
-                    className="px-3 py-2 bg-neutral-900 text-white font-bold text-sm disabled:opacity-50"
+                    onClick={saveCertification}
+                    disabled={!newCert.trim()}
+                    className="px-3 py-1.5 bg-gray-900 text-white rounded-lg disabled:opacity-40 transition-colors"
                   >
-                    {addingArea ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Contact Support */}
-            <div className="bg-neutral-900 text-white p-6">
-              <h3 className="font-bold mb-4">Need Help?</h3>
-              <p className="text-sm text-neutral-400 mb-4">
-                Contact our team for any questions about your dealer account.
-              </p>
-              <div className="space-y-3 text-sm">
-                <a href="mailto:support@hub4estate.com" className="flex items-center gap-2 text-amber-400 hover:text-amber-300">
-                  <Mail className="w-4 h-4" />
-                  support@hub4estate.com
-                </a>
-                <a href="tel:+917690001999" className="flex items-center gap-2 text-amber-400 hover:text-amber-300">
-                  <Phone className="w-4 h-4" />
-                  +91 76900 01999
-                </a>
+            {/* Service Areas */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-gray-100 flex items-center gap-2">
+                <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                <h3 className="text-sm font-semibold text-gray-900">Service Areas</h3>
               </div>
+              <div className="p-4">
+                <div className="space-y-1.5 mb-3">
+                  {profile?.serviceAreas && profile.serviceAreas.length > 0 ? (
+                    profile.serviceAreas.map(area => (
+                      <div key={area.id} className="flex items-center justify-between py-1">
+                        <span className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-500" /> {area.pincode}
+                        </span>
+                        <button
+                          onClick={() => dealerApi.removeServiceArea(area.id).then(() => fetchData())}
+                          className="text-gray-300 hover:text-red-500 transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-xs text-gray-400">No service areas added</p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="6-digit pincode"
+                    value={newPincode}
+                    onChange={e => setNewPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    onKeyDown={e => e.key === 'Enter' && addServiceArea()}
+                    className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-gray-400"
+                  />
+                  <button
+                    onClick={addServiceArea}
+                    disabled={newPincode.length !== 6 || addingArea}
+                    className="px-3 py-1.5 bg-gray-900 text-white rounded-lg disabled:opacity-40 transition-colors"
+                  >
+                    {addingArea ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Support */}
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <p className="text-xs font-medium text-gray-700 mb-1">Need help?</p>
+              <p className="text-xs text-gray-500 mb-3">Contact our dealer support.</p>
+              <a href="tel:+917690001999"
+                className="flex items-center justify-center gap-2 w-full py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:border-gray-400 transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5" /> +91 76900 01999
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Category Selection Modal */}
+      {/* Category Modal */}
       {showCategoryModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col">
-            <div className="p-4 bg-neutral-900 text-white flex items-center justify-between">
-              <h3 className="font-bold">Select Categories</h3>
-              <button onClick={() => setShowCategoryModal(false)}><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col shadow-xl">
+            <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-900">Select Product Categories</h3>
+              <button onClick={() => setShowCategoryModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
-              <p className="text-sm text-neutral-600 mb-4">Select the product categories you deal in:</p>
-              <div className="space-y-2">
-                {categories.map((category) => (
-                  <div key={category.id}>
-                    <button
-                      onClick={() => toggleCategory(category.id)}
-                      className={`w-full flex items-center justify-between p-3 border-2 transition-all ${
-                        selectedCategories.has(category.id)
-                          ? 'border-neutral-900 bg-neutral-50'
-                          : 'border-neutral-200 hover:border-neutral-400'
-                      }`}
-                    >
-                      <span className="font-bold text-neutral-900">{category.name}</span>
-                      {selectedCategories.has(category.id) && <CheckCircle className="w-5 h-5 text-green-600" />}
-                    </button>
-                  </div>
-                ))}
-              </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-1.5">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    const s = new Set(selectedCategories);
+                    s.has(cat.id) ? s.delete(cat.id) : s.add(cat.id);
+                    setSelectedCategories(s);
+                  }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg border text-sm transition-colors text-left ${
+                    selectedCategories.has(cat.id) ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'
+                  }`}
+                >
+                  <span className="font-medium text-gray-900">{cat.name}</span>
+                  {selectedCategories.has(cat.id) && <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                </button>
+              ))}
             </div>
-            <div className="p-4 border-t-2 border-neutral-200 flex gap-3">
-              <button
-                onClick={() => setShowCategoryModal(false)}
-                className="flex-1 px-4 py-2 border-2 border-neutral-200 font-bold hover:bg-neutral-50"
-              >
+            <div className="p-4 border-t border-gray-100 flex gap-2">
+              <button onClick={() => setShowCategoryModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
                 Cancel
               </button>
-              <button
-                onClick={saveCategories}
-                disabled={savingCategories}
-                className="flex-1 px-4 py-2 bg-neutral-900 text-white font-bold disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {savingCategories && <Loader2 className="w-4 h-4 animate-spin" />}
-                Save Categories
+              <button onClick={saveCategories} disabled={savingCategories}
+                className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-colors">
+                {savingCategories && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                Save
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Brand Selection Modal */}
+      {/* Brand Modal */}
       {showBrandModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col">
-            <div className="p-4 bg-neutral-900 text-white flex items-center justify-between">
-              <h3 className="font-bold">Select Brands</h3>
-              <button onClick={() => setShowBrandModal(false)}><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col shadow-xl">
+            <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-900">Select Authorized Brands</h3>
+              <button onClick={() => setShowBrandModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-4 h-4" />
+              </button>
             </div>
             <div className="flex-1 overflow-y-auto p-4">
-              <p className="text-sm text-neutral-600 mb-4">Select the brands you are authorized to sell:</p>
-              <div className="grid grid-cols-2 gap-2">
-                {brands.map((brand) => (
+              <div className="grid grid-cols-2 gap-1.5">
+                {brands.map(brand => (
                   <button
                     key={brand.id}
-                    onClick={() => toggleBrand(brand.id)}
-                    className={`flex items-center justify-between p-3 border-2 transition-all text-left ${
-                      selectedBrands.has(brand.id)
-                        ? 'border-neutral-900 bg-neutral-50'
-                        : 'border-neutral-200 hover:border-neutral-400'
+                    onClick={() => {
+                      const s = new Set(selectedBrands);
+                      s.has(brand.name) ? s.delete(brand.name) : s.add(brand.name);
+                      setSelectedBrands(s);
+                    }}
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg border text-sm transition-colors text-left ${
+                      selectedBrands.has(brand.name) ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'
                     }`}
                   >
-                    <span className="font-bold text-neutral-900 text-sm">{brand.name}</span>
-                    {selectedBrands.has(brand.id) && <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                    <span className="font-medium text-gray-900 text-xs">{brand.name}</span>
+                    {selectedBrands.has(brand.name) && <CheckCircle className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="p-4 border-t-2 border-neutral-200 flex gap-3">
-              <button
-                onClick={() => setShowBrandModal(false)}
-                className="flex-1 px-4 py-2 border-2 border-neutral-200 font-bold hover:bg-neutral-50"
-              >
+            <div className="p-4 border-t border-gray-100 flex gap-2">
+              <button onClick={() => setShowBrandModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
                 Cancel
               </button>
-              <button
-                onClick={saveBrands}
-                disabled={savingBrands}
-                className="flex-1 px-4 py-2 bg-neutral-900 text-white font-bold disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {savingBrands && <Loader2 className="w-4 h-4 animate-spin" />}
-                Save Brands
+              <button onClick={saveBrands} disabled={savingBrands}
+                className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-colors">
+                {savingBrands && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                Save
               </button>
             </div>
           </div>
@@ -725,16 +947,8 @@ export function DealerProfilePage() {
   );
 }
 
-// Document Upload Row Component
-function DocumentUploadRow({
-  label,
-  required,
-  documentType,
-  currentUrl,
-  isUploading,
-  inputRef,
-  onUpload,
-  onDelete,
+function DocumentRow({
+  label, required, documentType, currentUrl, isUploading, inputRef, onUpload, onDelete,
 }: {
   label: string;
   required?: boolean;
@@ -745,59 +959,28 @@ function DocumentUploadRow({
   onUpload: (file: File) => void;
   onDelete: () => void;
 }) {
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      onUpload(file);
-    }
-    // Reset input
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
-  };
-
   return (
-    <div className="flex items-center justify-between p-4 border-2 border-neutral-200">
-      <div className="flex items-center gap-4">
-        <div className={`w-10 h-10 flex items-center justify-center ${currentUrl ? 'bg-green-100' : 'bg-neutral-100'}`}>
-          {currentUrl ? (
-            <CheckCircle className="w-5 h-5 text-green-600" />
-          ) : (
-            <FileText className="w-5 h-5 text-neutral-400" />
-          )}
+    <div className="flex items-center justify-between p-3.5 border border-gray-200 rounded-xl">
+      <div className="flex items-center gap-3">
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${currentUrl ? 'bg-green-50' : 'bg-gray-100'}`}>
+          {currentUrl ? <CheckCircle className="w-4 h-4 text-green-600" /> : <FileText className="w-4 h-4 text-gray-400" />}
         </div>
         <div>
-          <p className="font-bold text-neutral-900">
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+          <p className="text-sm font-medium text-gray-900">
+            {label}{required && <span className="text-red-400 ml-1">*</span>}
           </p>
-          <p className="text-sm text-neutral-500">
-            {currentUrl ? 'Uploaded' : 'Not uploaded'}
-          </p>
+          <p className="text-xs text-gray-400">{currentUrl ? 'Uploaded ✓' : 'Not yet uploaded'}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".pdf,.jpg,.jpeg,.png"
-          onChange={handleFileChange}
-          className="hidden"
-        />
+        <input ref={inputRef} type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => { const f = e.target.files?.[0]; if (f) onUpload(f); if (inputRef.current) inputRef.current.value = ''; }} className="hidden" />
         {currentUrl ? (
           <>
-            <a
-              href={currentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-2 border-2 border-neutral-200 text-sm font-bold hover:bg-neutral-50"
-            >
+            <a href={currentUrl} target="_blank" rel="noopener noreferrer"
+              className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors">
               View
             </a>
-            <button
-              onClick={onDelete}
-              className="p-2 text-neutral-400 hover:text-red-600"
-            >
+            <button onClick={onDelete} className="text-gray-300 hover:text-red-500 transition-colors">
               <Trash2 className="w-4 h-4" />
             </button>
           </>
@@ -805,19 +988,9 @@ function DocumentUploadRow({
           <button
             onClick={() => inputRef.current?.click()}
             disabled={isUploading}
-            className="px-4 py-2 bg-neutral-900 text-white text-sm font-bold disabled:opacity-50 flex items-center gap-2"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg disabled:opacity-50 transition-colors"
           >
-            {isUploading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="w-4 h-4" />
-                Upload
-              </>
-            )}
+            {isUploading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</> : <><Upload className="w-3.5 h-3.5" /> Upload</>}
           </button>
         )}
       </div>

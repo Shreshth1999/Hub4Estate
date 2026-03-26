@@ -131,6 +131,15 @@ export const dealerApi = {
     });
   },
   deleteDocument: (documentType: string) => api.delete(`/dealer/documents/${documentType}`),
+  // Shop images
+  uploadShopImage: (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return api.post('/dealer/shop-images', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  deleteShopImage: (index: number) => api.delete(`/dealer/shop-images/${index}`),
 };
 
 // Admin API
@@ -161,6 +170,14 @@ export const professionalApi = {
     api.post('/professional/onboarding', data, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+  uploadPortfolio: (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return api.post('/professional/portfolio', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  deleteDocument: (id: string) => api.delete(`/professional/documents/${id}`),
 };
 
 // Community API

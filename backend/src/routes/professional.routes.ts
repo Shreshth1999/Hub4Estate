@@ -156,6 +156,65 @@ router.post(
   }
 );
 
+// ── POST /api/professional/portfolio ──────────────────────────────────────────
+// Upload a portfolio image (or any additional document)
+router.post(
+  '/portfolio',
+  upload.single('image'),
+  async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+      const profile = await prisma.professionalProfile.findUnique({ where: { userId } });
+      if (!profile) return res.status(404).json({ error: 'Profile not found. Complete onboarding first.' });
+
+      const baseUrl = `${env.BACKEND_URL || ''}/uploads/professional-docs`;
+      const doc = await prisma.professionalDocument.create({
+        data: {
+          profileId: profile.id,
+          docType: 'portfolio',
+          fileUrl: `${baseUrl}/${req.file.filename}`,
+          fileName: req.file.originalname,
+          fileSize: req.file.size,
+          mimeType: req.file.mimetype,
+        },
+      });
+
+      res.status(201).json({ doc });
+    } catch (err) {
+      console.error('POST /professional/portfolio error:', err);
+      res.status(500).json({ error: 'Failed to upload portfolio image' });
+    }
+  }
+);
+
+// ── DELETE /api/professional/documents/:id ────────────────────────────────────
+router.delete('/documents/:id', async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.id;
+
+    const profile = await prisma.professionalProfile.findUnique({ where: { userId } });
+    if (!profile) return res.status(404).json({ error: 'Profile not found' });
+
+    const doc = await prisma.professionalDocument.findFirst({
+      where: { id: req.params.id, profileId: profile.id },
+    });
+    if (!doc) return res.status(404).json({ error: 'Document not found' });
+
+    // Delete file from disk
+    const filename = path.basename(doc.fileUrl);
+    const filePath = path.join(env.UPLOAD_DIR, 'professional-docs', filename);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+    await prisma.professionalDocument.delete({ where: { id: doc.id } });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('DELETE /professional/documents/:id error:', err);
+    res.status(500).json({ error: 'Failed to delete document' });
+  }
+});
+
 // ── PATCH /api/professional/profile ───────────────────────────────────────────
 router.patch('/profile', async (req: AuthRequest, res) => {
   try {

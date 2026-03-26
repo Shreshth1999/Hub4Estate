@@ -271,10 +271,13 @@ export function HomePage() {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors group">
+                <button
+                  onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors group"
+                >
                   Submit an Inquiry
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                </button>
                 <Link to="/track" className="inline-flex items-center gap-2 px-7 py-3.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:border-gray-400 transition-colors">
                   Track Your Inquiry
                 </Link>
@@ -297,7 +300,7 @@ export function HomePage() {
 
             {/* Right Side - Product Inquiry Form */}
             <div className="animate-slide-left">
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 shadow-lg">
+              <div id="inquiry-form" className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 shadow-lg">
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
@@ -803,10 +806,13 @@ export function HomePage() {
                   </div>
                 ))}
               </div>
-              <Link to="/rfq/create" className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors">
+              <button
+                onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+              >
                 Submit Your First Inquiry
                 <ArrowRight className="w-5 h-5" />
-              </Link>
+              </button>
             </div>
 
             {/* For Dealers */}
@@ -893,10 +899,13 @@ export function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors">
+            <button
+              onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+            >
               Submit Your Inquiry
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -1063,10 +1072,13 @@ export function HomePage() {
               We're not here to guarantee the lowest price in the universe.
               We're here to give you enough information to make the right call.
             </p>
-            <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors">
+            <button
+              onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
+            >
               Submit Your First Inquiry
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -1082,10 +1094,13 @@ export function HomePage() {
             No commitment. No spam. Just real quotes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/rfq/create" className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-colors">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
+            >
               Submit an Inquiry
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </button>
             <Link to="/track" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/30 text-white font-medium rounded-xl hover:border-white/60 transition-colors">
               Track an Existing Inquiry
             </Link>

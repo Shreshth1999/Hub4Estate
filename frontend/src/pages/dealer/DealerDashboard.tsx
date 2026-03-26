@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { dealerApi, quotesApi } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
-import { CardSkeleton, Alert } from '../../components/ui';
-import { TourGuide } from '../../components/TourGuide';
+import { Loader2 } from 'lucide-react';
 import {
   TrendingUp, FileText, CheckCircle, Clock, ArrowRight,
   Award, Bell, Shield, MapPin, AlertCircle,
   IndianRupee, Send, Eye, ChevronRight, Package,
-  Upload, FileCheck, Building2, Phone, Mail, Target,
+  Upload, FileCheck, Building2, Phone,
 } from 'lucide-react';
 
 interface DealerProfile {
@@ -63,11 +62,6 @@ export function DealerDashboard() {
         ]);
         setProfile(profileRes.data);
         setAnalytics(analyticsRes.data);
-        setRecentRFQs([
-          { id: '1', title: 'Wiring for 3BHK Apartment', buyerCity: 'Mumbai', itemCount: 12, createdAt: new Date(Date.now() - 2 * 3600000).toISOString(), estimatedValue: 85000 },
-          { id: '2', title: 'MCB Distribution Setup', buyerCity: 'Pune', itemCount: 8, createdAt: new Date(Date.now() - 5 * 3600000).toISOString(), estimatedValue: 45000 },
-          { id: '3', title: 'Complete Home Electrical', buyerCity: 'Mumbai', itemCount: 25, createdAt: new Date(Date.now() - 12 * 3600000).toISOString(), estimatedValue: 175000 },
-        ]);
       } catch (err: any) {
         console.error('Failed to fetch dealer data:', err);
         if (err.response?.status === 401 || err.response?.status === 403) {
@@ -92,18 +86,19 @@ export function DealerDashboard() {
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => <CardSkeleton key={i} />)}
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6">
-        <Alert variant="error">{error}</Alert>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+          <p className="text-sm text-gray-500">{error}</p>
+        </div>
       </div>
     );
   }
@@ -111,14 +106,12 @@ export function DealerDashboard() {
   const isPending = profile?.status && ['PENDING_VERIFICATION', 'DOCUMENTS_PENDING', 'UNDER_REVIEW'].includes(profile.status);
   if (isPending) return <PendingDealerDashboard profile={profile} />;
 
-  const pendingRFQs = 23;
+  const pendingRFQs = 0;
   const pendingQuotes = analytics?.insights.statusBreakdown?.SUBMITTED || 0;
   const winRate = ((analytics?.metrics.conversionRate || 0) * 100).toFixed(0);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <TourGuide tourKey="dealer" />
-
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-5">
         <div className="flex items-start justify-between gap-4">
@@ -248,7 +241,7 @@ export function DealerDashboard() {
                       </div>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
                         <Link
-                          to={`/dealer/rfqs/${rfq.id}`}
+                          to="/dealer/rfqs"
                           className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                           <Eye className="w-3.5 h-3.5 text-gray-500" />

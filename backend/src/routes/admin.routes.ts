@@ -232,30 +232,44 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       totalDealers,
       pendingDealers,
       totalRFQs,
-      totalQuotes,
+      activeRFQs,
       totalProducts,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.dealer.count({ where: { status: 'VERIFIED' } }),
       prisma.dealer.count({ where: { status: 'PENDING_VERIFICATION' } }),
       prisma.rFQ.count(),
-      prisma.quote.count(),
+      prisma.rFQ.count({ where: { status: 'PUBLISHED' } }),
       prisma.product.count({ where: { isActive: true } }),
     ]);
 
-    const recentRFQs = await prisma.rFQ.findMany({
-      take: 10,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-            city: true,
-          },
+    const [recentRFQs, recentDealers] = await Promise.all([
+      prisma.rFQ.findMany({
+        take: 6,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          createdAt: true,
+          deliveryCity: true,
         },
-      },
-    });
+      }),
+      prisma.dealer.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          businessName: true,
+          ownerName: true,
+          city: true,
+          state: true,
+          status: true,
+          dealerType: true,
+          createdAt: true,
+        },
+      }),
+    ]);
 
     return res.json({
       stats: {
@@ -263,10 +277,11 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
         totalDealers,
         pendingDealers,
         totalRFQs,
-        totalQuotes,
+        activeRFQs,
         totalProducts,
       },
       recentRFQs,
+      recentDealers,
     });
   } catch (error) {
     console.error('Get dashboard stats error:', error);

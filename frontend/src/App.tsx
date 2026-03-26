@@ -28,6 +28,7 @@ const RFQDetailPage = lazy(() => import('@/pages/rfq/RFQDetailPage').then(m => (
 
 const ProfessionalOnboardingLazy = lazy(() => import('@/pages/professional/ProfessionalOnboarding').then(m => ({ default: m.ProfessionalOnboarding })));
 const ProfessionalDashboard = lazy(() => import('@/pages/professional/ProfessionalDashboard').then(m => ({ default: m.ProfessionalDashboard })));
+const ProfessionalProfilePage = lazy(() => import('@/pages/professional/ProfessionalProfilePage').then(m => ({ default: m.ProfessionalProfilePage })));
 
 const DealerOnboardingLazy = lazy(() => import('@/pages/dealer/DealerOnboarding').then(m => ({ default: m.DealerOnboarding })));
 const DealerRegistrationSuccessLazy = lazy(() => import('@/pages/dealer/DealerOnboarding').then(m => ({ default: m.DealerRegistrationSuccess })));
@@ -166,9 +167,9 @@ function App() {
         <Route element={<ProtectedRoute requiredRole="user" />}>
           <Route element={<ProfessionalLayout />}>
             <Route path="/pro" element={<ProfessionalDashboard />} />
-            <Route path="/pro/profile" element={<UserDashboard />} />
+            <Route path="/pro/profile" element={<ProfessionalProfilePage />} />
             <Route path="/pro/documents" element={<ProfessionalOnboardingLazy />} />
-            <Route path="/pro/projects" element={<UserDashboard />} />
+            <Route path="/pro/projects" element={<ProfessionalProfilePage />} />
           </Route>
         </Route>
 

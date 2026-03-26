@@ -192,7 +192,14 @@ model Dealer {
   shopLicense       String?
   cancelledCheque   String?
   shopPhoto         String?
+  shopImages        String[]      // Multiple shop/warehouse/product images
   brandAuthProofs   String[]      // Array of URLs
+
+  // Storefront / public profile
+  description       String?       @db.Text   // About the shop — public facing
+  establishedYear   Int?          // Year business was established
+  certifications    String[]      // e.g. ["ISI Authorized", "Havells Certified Dealer"]
+  website           String?       // Optional website URL
 
   // Onboarding progress (0-100)
   onboardingStep    Int           @default(1)

@@ -109,6 +109,11 @@ const updateProfileSchema = z.object({
   city: z.string().min(2).optional(),
   state: z.string().min(2).optional(),
   pincode: z.string().length(6).optional(),
+  // Storefront fields
+  description: z.string().max(1000).optional(),
+  establishedYear: z.number().int().min(1900).max(2026).optional(),
+  certifications: z.array(z.string()).optional(),
+  website: z.string().url().optional().or(z.literal('')),
 });
 
 router.patch('/profile', authenticateDealer, validateBody(updateProfileSchema), async (req: AuthRequest, res) => {
@@ -439,6 +444,56 @@ router.delete('/documents/:documentType', authenticateDealer, async (req: AuthRe
   } catch (error) {
     console.error('Document delete error:', error);
     return res.status(500).json({ error: 'Failed to delete document' });
+  }
+});
+
+// Upload shop image (up to 6 images)
+router.post(
+  '/shop-images',
+  authenticateDealer,
+  upload.single('image'),
+  async (req: AuthRequest, res) => {
+    try {
+      const dealerId = req.user!.id;
+      if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+
+      const relativePath = `/uploads/dealer-documents/${req.file.filename}`;
+
+      const dealer = await prisma.dealer.findUnique({ where: { id: dealerId }, select: { shopImages: true } });
+      const current = dealer?.shopImages || [];
+      if (current.length >= 6) return res.status(400).json({ error: 'Maximum 6 shop images allowed' });
+
+      const updated = await prisma.dealer.update({
+        where: { id: dealerId },
+        data: { shopImages: [...current, relativePath] },
+        select: { shopImages: true },
+      });
+
+      return res.json({ url: relativePath, shopImages: updated.shopImages });
+    } catch (error) {
+      console.error('Shop image upload error:', error);
+      return res.status(500).json({ error: 'Failed to upload image' });
+    }
+  }
+);
+
+// Delete shop image
+router.delete('/shop-images/:index', authenticateDealer, async (req: AuthRequest, res) => {
+  try {
+    const dealerId = req.user!.id;
+    const index = parseInt(req.params.index, 10);
+    const dealer = await prisma.dealer.findUnique({ where: { id: dealerId }, select: { shopImages: true } });
+    const current = dealer?.shopImages || [];
+    if (isNaN(index) || index < 0 || index >= current.length) {
+      return res.status(400).json({ error: 'Invalid image index' });
+    }
+    const filePath = path.join('.', current[index] || '');
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    const updated = current.filter((_, i) => i !== index);
+    await prisma.dealer.update({ where: { id: dealerId }, data: { shopImages: updated } });
+    return res.json({ shopImages: updated });
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to delete image' });
   }
 });
 
