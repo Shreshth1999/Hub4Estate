@@ -316,7 +316,7 @@ export function AdminInquiryPipelinePage() {
 
         <div className="text-center py-20">
           <Zap className="w-16 h-16 mx-auto mb-4 text-orange-500" />
-          <h2 className="text-2xl font-black text-gray-900 mb-2">Start Dealer Quote Pipeline</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Start Dealer Quote Pipeline</h2>
           <p className="text-gray-500 max-w-md mx-auto mb-6">
             AI will analyze this inquiry, identify the brand & product, find matching dealers,
             and generate WhatsApp message templates for outreach.
@@ -347,7 +347,7 @@ export function AdminInquiryPipelinePage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl font-black text-gray-900">
+            <h1 className="text-xl font-semibold text-gray-900">
               Pipeline: {pipeline.inquiry.inquiryNumber || pipeline.inquiry.name}
             </h1>
             <p className="text-sm text-gray-500">
@@ -425,12 +425,12 @@ export function AdminInquiryPipelinePage() {
         <div className="bg-white border-2 border-gray-200">
           <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
             <Zap className="w-5 h-5 text-orange-500" />
-            <h3 className="font-black text-gray-900">AI Analysis</h3>
+            <h3 className="font-semibold text-gray-900">AI Analysis</h3>
           </div>
           <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Identified Brand</p>
-              <p className="text-lg font-black text-gray-900">{aiData.identifiedBrand || 'Unknown'}</p>
+              <p className="text-lg font-semibold text-gray-900">{aiData.identifiedBrand || 'Unknown'}</p>
               {aiData.brandConfidence !== undefined && (
                 <div className="mt-1 flex items-center gap-2">
                   <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -492,7 +492,7 @@ export function AdminInquiryPipelinePage() {
         <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users className="w-5 h-5 text-gray-600" />
-            <h3 className="font-black text-gray-900">Dealers ({pipeline.dealerQuotes.length})</h3>
+            <h3 className="font-semibold text-gray-900">Dealers ({pipeline.dealerQuotes.length})</h3>
           </div>
           <div className="flex gap-2">
             <button
@@ -769,7 +769,7 @@ export function AdminInquiryPipelinePage() {
         <div className="bg-green-50 border-2 border-green-300 p-5">
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle className="w-5 h-5 text-green-600" />
-            <h3 className="font-black text-green-800">Quotes Sent to Customer</h3>
+            <h3 className="font-semibold text-green-800">Quotes Sent to Customer</h3>
           </div>
           <p className="text-sm text-green-700">
             Sent via {pipeline.sentVia} on {new Date(pipeline.sentToCustomerAt).toLocaleDateString('en-IN', {
@@ -784,7 +784,7 @@ export function AdminInquiryPipelinePage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white border-2 border-gray-900 max-w-lg w-full">
             <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50">
-              <h2 className="text-lg font-black text-gray-900">Add Dealer to Pipeline</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Add Dealer to Pipeline</h2>
               <button onClick={() => setShowAddDealer(false)} className="p-2 hover:bg-gray-200">
                 <X className="w-5 h-5" />
               </button>
@@ -876,7 +876,7 @@ export function AdminInquiryPipelinePage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white border-2 border-gray-900 max-w-md w-full">
             <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50">
-              <h2 className="text-lg font-black text-gray-900">Send Quotes to Customer</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Send Quotes to Customer</h2>
               <button onClick={() => setShowSend(false)} className="p-2 hover:bg-gray-200">
                 <X className="w-5 h-5" />
               </button>
