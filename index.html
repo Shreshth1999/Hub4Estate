@@ -953,44 +953,87 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 
 
 <!-- ════════════════════════════════
-     12  WHY NOW
+     09  MARKET SIZE
 ════════════════════════════════ -->
-<section class="slide" id="s12">
-  <div class="s-wrap">
+<section class="slide" id="s09" style="padding:20px 52px 36px">
+  <div class="s-wrap" style="gap:14px">
     <div class="s-head">
-      <div class="label">Timing</div>
-      <h2 class="display" style="font-size:clamp(26px,4vw,44px)">Three Tailwinds. One Window.</h2>
-      <p class="caption a1" style="max-width:560px;text-align:center;font-style:italic;font-size:13px">Tailwinds = market forces already pushing in our direction. We didn't create them. We're riding them.</p>
+      <div class="label a1">Market Opportunity</div>
+      <h2 class="display a2" style="font-size:clamp(22px,3.4vw,40px)">A ₹2.6 Lakh Crore Market.<br><span style="color:var(--accent)">Still Largely Offline.</span></h2>
       <div class="sep"></div>
     </div>
 
-    <div class="why-grid">
-      <div class="why-card a1">
-        <div class="why-hero" style="font-size:36px">$1.4T<br><span style="font-size:15px;font-weight:700;letter-spacing:0;color:var(--text2)">(&#8377;111 lakh crore)</span></div>
-        <div class="why-icon">&#127959;&#65039;</div>
-        <div class="why-title">Infrastructure Boom</div>
-        <div class="why-body">India's National Infrastructure Pipeline is driving massive procurement demand in electricals. Tier 2/3 cities are the center of this build-out — exactly where we operate.</div>
+    <!-- Three TAM/SAM/SOM cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;width:100%;max-width:940px" class="a3">
+
+      <!-- TAM -->
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:22px 18px 16px;box-shadow:var(--sh-lg);display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;position:relative">
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);background:#6a5f52;color:#fff;font-size:8.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;padding:3px 16px;border-radius:0 0 10px 10px">TAM</div>
+        <div style="font-size:38px;font-weight:900;color:var(--text);font-family:'Inter',sans-serif;letter-spacing:-2px;line-height:1;margin-top:10px">&#8377;2.6L<span style="font-size:16px;font-weight:700">Cr</span></div>
+        <div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.3px">&#8776; $31 Billion</div>
+        <div style="width:36px;height:2px;background:var(--border);border-radius:2px"></div>
+        <div style="font-size:12.5px;font-weight:900;color:var(--text);line-height:1.4">India B2B Electrical<br>Goods Procurement</div>
+        <div style="font-size:10px;color:var(--text2);line-height:1.55">Total value of electrical components, cables, switchgear, panels &amp; fittings procured through B2B dealer networks annually</div>
+        <div style="background:var(--bg);border-radius:8px;padding:7px 10px;font-size:8.5px;color:var(--text3);line-height:1.6;width:100%;text-align:left;margin-top:4px">
+          <div style="font-weight:800;color:var(--text2);margin-bottom:2px;font-size:9px">&#128209; Sources</div>
+          IEEMA Industry Report FY2023&#8211;24<br>India Brand Equity Foundation (IBEF) Electricals Sector<br>Ministry of Heavy Industries — Domestic Market Data
+        </div>
       </div>
-      <div class="why-card a2">
-        <div class="why-hero" data-count="60" data-suffix=" Cr+">60 Cr+</div>
-        <div class="why-icon">&#128242;</div>
-        <div class="why-title">Digital-Ready Dealers</div>
-        <div class="why-body">Post-COVID, even traditional dealers in Rajasthan, UP, and Punjab are on WhatsApp daily. The behavior shift has happened — we're riding it, not fighting it.</div>
+
+      <!-- SAM -->
+      <div style="background:linear-gradient(160deg,var(--accent-lt) 0%,#fff8f0 100%);border:2px solid var(--accent);border-radius:18px;padding:22px 18px 16px;box-shadow:var(--sh-xl);display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;position:relative;transform:scale(1.035)">
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:8.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;padding:3px 16px;border-radius:0 0 10px 10px">SAM</div>
+        <div style="font-size:38px;font-weight:900;color:var(--accent);font-family:'Inter',sans-serif;letter-spacing:-2px;line-height:1;margin-top:10px">&#8377;1.7L<span style="font-size:16px;font-weight:700">Cr</span></div>
+        <div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.3px">&#8776; $20 Billion &#8212; 65% of TAM</div>
+        <div style="width:36px;height:2px;background:var(--accent);border-radius:2px;opacity:.5"></div>
+        <div style="font-size:12.5px;font-weight:900;color:var(--text);line-height:1.4">Tier 2/3 B2B<br>Procurement</div>
+        <div style="font-size:10px;color:var(--text2);line-height:1.55">Unorganised dealer-to-buyer trade in Tier 2/3 cities — underserved by existing digital platforms, highest friction zone</div>
+        <div style="background:#fff;border-radius:8px;padding:7px 10px;font-size:8.5px;color:var(--text3);line-height:1.6;width:100%;text-align:left;border:1px solid #e8d0b5;margin-top:4px">
+          <div style="font-weight:800;color:var(--text2);margin-bottom:2px;font-size:9px">&#128209; Sources</div>
+          DPIIT — SME B2B Procurement Study 2023<br>IndiaMART Annual Report FY24 (Tier 2/3 penetration)<br>CII — India B2B Digital Readiness Report 2023
+        </div>
       </div>
-      <div class="why-card a3">
-        <div class="why-hero" data-count="99" data-suffix="%+">99%+</div>
-        <div class="why-icon">&#129302;</div>
-        <div class="why-title">AI Costs Collapsed</div>
-        <div class="why-body">OCR + LLM tools now achieve 99%+ extraction accuracy at near-zero cost per scan. Our AI Slip Scanner is viable today in a way it wasn't 18 months ago.</div>
+
+      <!-- SOM -->
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:22px 18px 16px;box-shadow:var(--sh-lg);display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;position:relative">
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-size:8.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;padding:3px 16px;border-radius:0 0 10px 10px">SOM</div>
+        <div style="font-size:38px;font-weight:900;color:var(--green);font-family:'Inter',sans-serif;letter-spacing:-2px;line-height:1;margin-top:10px">&#8377;16,600<span style="font-size:16px;font-weight:700">Cr</span></div>
+        <div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.3px">&#8776; $2B &#8212; Y1&#8211;Y3 target</div>
+        <div style="width:36px;height:2px;background:var(--green);border-radius:2px;opacity:.5"></div>
+        <div style="font-size:12.5px;font-weight:900;color:var(--text);line-height:1.4">North India<br>Addressable (Y1–Y3)</div>
+        <div style="font-size:10px;color:var(--text2);line-height:1.55">Rajasthan, UP, Punjab, Haryana dealer ecosystem — &#8776;1% of SAM, reachable with current network &amp; team in 3 years</div>
+        <div style="background:var(--bg);border-radius:8px;padding:7px 10px;font-size:8.5px;color:var(--text3);line-height:1.6;width:100%;text-align:left;margin-top:4px">
+          <div style="font-weight:800;color:var(--text2);margin-bottom:2px;font-size:9px">&#128209; Sources</div>
+          Rajasthan Economic Survey FY2023&#8211;24<br>UP &amp; Haryana State Electrical Board procurement data<br>Hub4Estate ground validation (10 active clients)
+        </div>
       </div>
     </div>
 
-    <div class="a4" style="background:var(--accent-lt);border:1px solid #e8d0b5;border-radius:14px;padding:18px 28px;max-width:700px;width:100%;text-align:center">
-      <p style="font-size:15px;font-weight:700;color:var(--text);line-height:1.7">
-        "&#8377;2.6 lakh crore market. 2.5 crore dealers. One platform rated 1.8 stars running the show.<br>
-        <span style="font-weight:900;color:var(--accent)">That's not competition. That's an invitation.</span>"
-      </p>
+    <!-- Bottom stat strip -->
+    <div class="a4" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%;max-width:940px">
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:9px;box-shadow:var(--sh)">
+        <span style="font-size:18px">&#128200;</span>
+        <div>
+          <div style="font-size:12px;font-weight:900;color:var(--text)">16.7% CAGR</div>
+          <div style="font-size:9px;color:var(--text3)">India electrical equipment market FY24&#8211;FY28 &mdash; IEEMA</div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:9px;box-shadow:var(--sh)">
+        <span style="font-size:18px">&#127959;&#65039;</span>
+        <div>
+          <div style="font-size:12px;font-weight:900;color:var(--text)">&#8377;111 Lakh Crore NIP</div>
+          <div style="font-size:9px;color:var(--text3)">National Infrastructure Pipeline driving electrical demand &mdash; MoF</div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:9px;box-shadow:var(--sh)">
+        <span style="font-size:18px">&#128683;</span>
+        <div>
+          <div style="font-size:12px;font-weight:900;color:var(--text)">&lt;3% Digitised</div>
+          <div style="font-size:9px;color:var(--text3)">Dealer-buyer transactions on any digital platform today &mdash; IndiaMART data</div>
+        </div>
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -1361,7 +1404,7 @@ const dotsEl = document.getElementById('dots');
 const slideTitles = [
   'Hook — The Problem','Supply Side','Buyer Pain','The Solution','How It Works',
   'AI-First Platform','Real Deals','Platform Live',
-  'Why Now','Revenue Model','The Founder','The Vision','Sources'
+  'Market Size','Revenue Model','The Founder','The Vision','Sources'
 ];
 
 const toastEl = document.getElementById('slide-toast');
