@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Camera, Mic, BarChart2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useInView, revealStyle } from '../hooks/useInView';
 
 // ─── Static demo data ─────────────────────────────────────────────────────────
 const SCAN_ITEMS = [
@@ -29,23 +29,7 @@ export function AISection() {
   const { aiSection } = tx;
   const isHi = lang === 'hi';
 
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.08 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-
-  const fadeStyle = (delay: number) => ({
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(14px)',
-    transition: `opacity 0.45s ease ${delay}s, transform 0.45s ease ${delay}s`,
-  });
+  const { ref, inView } = useInView(0.06);
 
   const features = [
     {
@@ -53,14 +37,13 @@ export function AISection() {
       Icon: Camera,
       iconColor: 'text-orange-500',
       iconBg: 'bg-orange-50',
+      accentLine: 'bg-orange-500',
       label: aiSection.features[0].label,
       tagline: aiSection.features[0].tagline,
       desc: aiSection.features[0].desc,
       demo: (
         <div className="space-y-1.5">
-          <p className="text-[9px] text-gray-500 uppercase tracking-wider mb-2">
-            {isHi ? 'Detected items:' : 'Detected items:'}
-          </p>
+          <p className="text-[9px] text-gray-500 uppercase tracking-wider mb-2">Detected items:</p>
           {SCAN_ITEMS.map((item, i) => (
             <div key={i} className="flex items-center justify-between text-[11px]">
               <span className="text-gray-300">
@@ -80,6 +63,7 @@ export function AISection() {
       Icon: Mic,
       iconColor: 'text-violet-500',
       iconBg: 'bg-violet-50',
+      accentLine: 'bg-violet-500',
       label: aiSection.features[1].label,
       tagline: aiSection.features[1].tagline,
       desc: aiSection.features[1].desc,
@@ -105,6 +89,7 @@ export function AISection() {
       Icon: BarChart2,
       iconColor: 'text-green-500',
       iconBg: 'bg-green-50',
+      accentLine: 'bg-green-500',
       label: aiSection.features[2].label,
       tagline: aiSection.features[2].tagline,
       desc: aiSection.features[2].desc,
@@ -114,9 +99,7 @@ export function AISection() {
             <div
               key={i}
               className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 ${
-                q.best
-                  ? 'bg-green-900/30 border border-green-700/20'
-                  : 'bg-gray-800'
+                q.best ? 'bg-green-900/30 border border-green-700/20' : 'bg-gray-800'
               }`}
             >
               <div>
@@ -138,18 +121,27 @@ export function AISection() {
   ];
 
   return (
-    <section ref={ref} className="bg-gray-50 border-y border-gray-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <section className="bg-gray-50 border-y border-gray-100">
+      <div ref={ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
 
         {/* Header */}
-        <div className="mb-10" style={fadeStyle(0)}>
-          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
-            {aiSection.badge}
-          </p>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">
+        <div className="mb-12">
+          <div className="flex items-center gap-2 mb-4" style={revealStyle(inView, 0)}>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-900 text-white text-[11px] font-semibold rounded-full">
+              <span className="w-1 h-1 rounded-full bg-orange-400" />
+              {aiSection.badge}
+            </span>
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight"
+            style={revealStyle(inView, 0.06)}
+          >
             {aiSection.title}
           </h2>
-          <p className="text-sm sm:text-base text-gray-500 max-w-lg leading-relaxed">
+          <p
+            className="text-base text-gray-500 max-w-lg leading-relaxed"
+            style={revealStyle(inView, 0.12)}
+          >
             {aiSection.subtitle}
           </p>
         </div>
@@ -159,21 +151,24 @@ export function AISection() {
           {features.map((f, i) => (
             <div
               key={f.id}
-              className="rounded-2xl border border-gray-100 bg-white overflow-hidden"
-              style={fadeStyle(0.1 + i * 0.08)}
+              className="rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+              style={revealStyle(inView, 0.15 + i * 0.08)}
             >
+              {/* Top accent line */}
+              <div className={`h-0.5 ${f.accentLine}`} />
+
               {/* Info */}
-              <div className="p-4 sm:p-5">
+              <div className="p-5">
                 <div className={`w-9 h-9 ${f.iconBg} rounded-xl flex items-center justify-center mb-3`}>
                   <f.Icon className={`w-4 h-4 ${f.iconColor}`} />
                 </div>
                 <p className="text-sm font-semibold text-gray-900 mb-0.5">{f.label}</p>
-                <p className="text-xs text-gray-400 mb-2">{f.tagline}</p>
+                <p className="text-xs text-gray-400 mb-2.5">{f.tagline}</p>
                 <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
               </div>
 
               {/* Demo — always visible */}
-              <div className="border-t border-gray-50 bg-gray-900 p-3.5">
+              <div className="border-t border-gray-50 bg-gray-900 p-4">
                 {f.demo}
               </div>
             </div>
@@ -182,8 +177,8 @@ export function AISection() {
 
         {/* CTA bar */}
         <div
-          className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl border border-gray-100 px-5 py-4"
-          style={fadeStyle(0.38)}
+          className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5"
+          style={revealStyle(inView, 0.4)}
         >
           <div>
             <p className="text-sm font-semibold text-gray-900">
@@ -195,7 +190,7 @@ export function AISection() {
           </div>
           <button
             onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition-colors"
+            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-lg hover:shadow-gray-900/20"
           >
             {aiSection.cta} <ArrowRight className="w-4 h-4" />
           </button>

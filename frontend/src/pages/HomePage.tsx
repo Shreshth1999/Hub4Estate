@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
-import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { PersonaSection } from '../components/PersonaSection';
 import { AISection } from '../components/AISection';
 import { productsApi, api } from '../lib/api';
 import { Analytics } from '../lib/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useInView, revealStyle } from '../hooks/useInView';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
@@ -295,50 +295,94 @@ export function HomePage() {
     }
   };
 
+  const heroIn = useInView(0.05);
+  const howIn = useInView(0.06);
+  const dealsIn = useInView(0.06);
+  const whyIn = useInView(0.06);
+  const ctaIn = useInView(0.1);
+
   return (
     <div className="min-h-screen bg-white relative">
-      <ElectricalBackgroundSystem />
 
-      {/* Hero Section */}
-      <section className="relative bg-white border-b border-gray-200 overflow-hidden">
-        <div className="absolute inset-0 grid-bg"></div>
+      {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
+      <section className="relative bg-white overflow-hidden">
+        {/* Gradient orbs */}
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full -translate-y-1/3 translate-x-1/4 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(251,146,60,0.1) 0%, transparent 65%)' }} />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full translate-y-1/3 -translate-x-1/4 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 65%)' }} />
+        {/* Subtle grid */}
+        <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 relative py-20 lg:py-28">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div ref={heroIn.ref as any} className="max-w-6xl mx-auto px-6 relative py-20 lg:py-32">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
 
             {/* Left Content */}
-            <div className="animate-slide-up">
+            <div>
+              {/* Live badge */}
+              <div
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-orange-50 border border-orange-100 rounded-full mb-7"
+                style={revealStyle(heroIn.inView, 0)}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                <span className="text-xs font-semibold text-orange-700">
+                  {isHi ? 'Live — 500+ verified dealers' : 'Live — 500+ verified dealers across India'}
+                </span>
+              </div>
+
               {/* Main Headline */}
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-900 mb-6 leading-[0.9]">
+              <h1
+                className="text-5xl md:text-6xl lg:text-[4.25rem] font-semibold text-gray-900 mb-6 leading-[1.05] tracking-tight"
+                style={revealStyle(heroIn.inView, 0.06)}
+              >
                 {isHi ? tx.hero.headline : (
-                  <>We Will Get You The <span className="text-orange-600">Cheapest Price</span> Of Any Electrical Across India.</>
+                  <>We Will Get You The{' '}
+                    <span className="relative">
+                      <span className="text-orange-600">Cheapest Price</span>
+                    </span>{' '}
+                    Of Any Electrical Across India.
+                  </>
                 )}
               </h1>
 
               {/* Subheadline */}
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-xl font-medium leading-relaxed">
+              <p
+                className="text-lg md:text-xl text-gray-500 mb-8 max-w-xl leading-relaxed"
+                style={revealStyle(heroIn.inView, 0.12)}
+              >
                 {tx.hero.subheadline}
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-10">
+              <div
+                className="flex flex-col sm:flex-row gap-3 mb-10"
+                style={revealStyle(heroIn.inView, 0.18)}
+              >
                 <button
                   onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors group"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-xl hover:shadow-gray-900/20 group"
                 >
                   {tx.hero.ctaPrimary}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <Link to="/track" className="inline-flex items-center gap-2 px-7 py-3.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:border-gray-400 transition-colors">
+                <Link
+                  to="/track"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
+                >
                   {tx.hero.ctaSecondary}
                 </Link>
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-col gap-3">
+              <div
+                className="flex flex-col gap-2.5"
+                style={revealStyle(heroIn.inView, 0.24)}
+              >
                 {[IndianRupee, Shield, FileText].map((Icon, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <Icon className="w-5 h-5 text-gray-900 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2.5 text-sm text-gray-600">
+                    <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-gray-700" />
+                    </div>
                     <span>{tx.hero.trust[index]}</span>
                   </div>
                 ))}
@@ -346,8 +390,8 @@ export function HomePage() {
             </div>
 
             {/* Right Side - Product Inquiry Form */}
-            <div className="animate-slide-left">
-              <div id="inquiry-form" className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 shadow-lg">
+            <div style={revealStyle(heroIn.inView, 0.1)}>
+              <div id="inquiry-form" className="bg-white border border-gray-100 rounded-2xl p-6 lg:p-8 shadow-xl shadow-gray-900/8 ring-1 ring-gray-100">
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
@@ -797,25 +841,52 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="section bg-white border-y border-gray-100">
+      {/* ─── Stats Strip ──────────────────────────────────────────────────────── */}
+      <div className="bg-gray-950 py-10">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
+          <div className="grid grid-cols-3 divide-x divide-gray-800">
+            {[
+              { value: '₹10L+', label: isHi ? 'Buyers ne bachaye' : 'Saved by buyers', sub: isHi ? '120+ orders mein' : 'across 120+ orders' },
+              { value: '500+', label: isHi ? 'Verified dealers' : 'Verified dealers', sub: isHi ? '50 cities mein' : 'across 50 cities' },
+              { value: '100%', label: isHi ? 'GST Invoiced' : 'GST Invoiced', sub: isHi ? 'Har transaction mein' : 'every transaction' },
+            ].map((s, i) => (
+              <div key={i} className="text-center px-6 sm:px-10">
+                <p className="text-2xl sm:text-3xl font-semibold text-white mb-1">{s.value}</p>
+                <p className="text-sm font-medium text-gray-300">{s.label}</p>
+                <p className="text-xs text-gray-600 mt-0.5 hidden sm:block">{s.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── How It Works ─────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 bg-white">
+        <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16" style={revealStyle(howIn.inView, 0)}>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{tx.howItWorks.label}</p>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
               {tx.howItWorks.title}
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">
               {tx.howItWorks.subtitle}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto relative">
+            {/* Connecting dashed line on desktop */}
+            <div className="hidden md:block absolute left-[calc(16.66%+1.75rem)] right-[calc(16.66%+1.75rem)] border-t-2 border-dashed border-gray-200 pointer-events-none" style={{ top: '28px' }} />
+
             {tx.howItWorks.steps.map((item, index) => (
-              <div key={index} className="bg-gray-50 border border-gray-200 rounded-xl p-8 hover:shadow-sm transition-all duration-300 group">
-                <div className="w-14 h-14 flex items-center justify-center bg-gray-900 text-white text-xl font-semibold rounded-xl mb-6">{item.step}</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600 mb-4">{item.desc}</p>
-                <span className="inline-flex items-center text-sm font-bold text-orange-600 uppercase tracking-wider">
+              <div
+                key={index}
+                className="bg-gray-50 border border-gray-100 rounded-2xl p-7 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative"
+                style={revealStyle(howIn.inView, 0.1 + index * 0.1)}
+              >
+                <div className="w-14 h-14 flex items-center justify-center bg-gray-900 text-white text-lg font-semibold rounded-xl mb-6 ring-4 ring-gray-50 relative z-10">{item.step}</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">{item.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed mb-4">{item.desc}</p>
+                <span className="inline-flex items-center text-xs font-bold text-orange-600 uppercase tracking-widest">
                   {item.highlight}
                 </span>
               </div>
@@ -829,15 +900,14 @@ export function HomePage() {
       <AISection />
 
       {/* Categories Grid */}
-      <section className="section bg-gray-800 text-white">
+      <section className="py-20 sm:py-28 bg-gray-50 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold mb-4">
-              {tx.categories.title.split('.').map((part, i, arr) => (
-                <span key={i}>{part.trim()}{i < arr.length - 1 && <><br /></>}</span>
-              ))}
+          <div className="text-center mb-14">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Browse by category</p>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
+              {tx.categories.title}
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">
               {tx.categories.subtitle}
             </p>
           </div>
@@ -845,7 +915,10 @@ export function HomePage() {
           <InteractiveCategoryGrid categories={categories} loading={loading} />
 
           <div className="text-center mt-12">
-            <Link to="/categories" className="inline-flex items-center gap-2 px-7 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors">
+            <Link
+              to="/categories"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-xl hover:shadow-gray-900/20"
+            >
               {tx.categories.cta}
               <ArrowRight className="w-5 h-5" />
             </Link>
@@ -853,44 +926,49 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Real Deals */}
-      <section className="section bg-white border-y border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
+      {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 bg-white border-y border-gray-100">
+        <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-14" style={revealStyle(dealsIn.inView, 0)}>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{tx.realDeals.label}</p>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
               {tx.realDeals.title}
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">
               {tx.realDeals.subtitle}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {tx.realDeals.deals.map((deal, di) => {
               const savedAmounts = ['₹37,000', '₹24,000', '₹8,800'];
               return (
-                <div key={di} className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
-                  <div className="mb-6">
-                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">{deal.tag}</span>
+                <div
+                  key={di}
+                  className="bg-white border border-gray-100 rounded-2xl p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                  style={revealStyle(dealsIn.inView, 0.1 + di * 0.08)}
+                >
+                  <div className="mb-5">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">{deal.tag}</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-5">{deal.title}</h3>
-                  <div className="space-y-2 mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-5">{deal.title}</h3>
+                  <div className="space-y-2 mb-5">
                     {deal.rows.map((row, ri) => (
                       row.strikethrough ? (
                         <div key={ri} className="flex justify-between items-center py-2 border-b border-gray-100">
-                          <span className="text-sm text-gray-500">{row.label}</span>
-                          <span className="text-sm font-bold text-gray-400 line-through">{row.price}</span>
+                          <span className="text-sm text-gray-400">{row.label}</span>
+                          <span className="text-sm font-medium text-gray-300 line-through">{row.price}</span>
                         </div>
                       ) : (
-                        <div key={ri} className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
-                          <span className="text-sm font-bold text-white">{row.label}</span>
+                        <div key={ri} className="flex justify-between items-center py-2.5 bg-gray-950 px-3 rounded-xl">
+                          <span className="text-sm font-semibold text-white">{row.label}</span>
                           <span className="text-lg font-semibold text-orange-400">{row.price}</span>
                         </div>
                       )
                     ))}
                   </div>
-                  <div className="border-t-2 border-gray-200 pt-4">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">{deal.savedLabel}</p>
+                  <div className="border-t border-gray-100 pt-4">
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-1.5">{deal.savedLabel}</p>
                     <p className="text-2xl font-semibold text-green-600">{savedAmounts[di]}</p>
                     <p className="text-xs text-gray-400 mt-1">{deal.savedNote}</p>
                   </div>
@@ -899,38 +977,46 @@ export function HomePage() {
             })}
           </div>
 
-          <p className="text-center text-sm text-gray-500 mt-8">
+          <p className="text-center text-xs text-gray-400 mt-10" style={revealStyle(dealsIn.inView, 0.35)}>
             {tx.realDeals.footnote}
           </p>
         </div>
       </section>
 
       {/* Why We Exist */}
-      <section className="section bg-gray-50 border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
+      <section className="py-20 sm:py-28 bg-white border-b border-gray-100">
+        <div ref={whyIn.ref as any} className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-14" style={revealStyle(whyIn.inView, 0)}>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{tx.whyWeExist.label}</p>
+            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
               {tx.whyWeExist.title}
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.subtitle}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 gap-5 mb-8">
             {tx.whyWeExist.cards.map((item, index) => (
-              <div key={index} className="border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all duration-300">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+              <div
+                key={index}
+                className="bg-gray-50 border border-gray-100 rounded-2xl p-7 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                style={revealStyle(whyIn.inView, 0.1 + index * 0.08)}
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{item.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="bg-gray-900 text-white p-10 text-center rounded-2xl">
-            <h3 className="text-3xl font-semibold mb-4">
+          <div
+            className="bg-gray-950 text-white p-10 text-center rounded-2xl"
+            style={revealStyle(whyIn.inView, 0.35)}
+          >
+            <h3 className="text-2xl sm:text-3xl font-semibold mb-3">
               {tx.whyWeExist.summary.title}
             </h3>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-base text-gray-400 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.summary.desc}
             </p>
           </div>
@@ -941,23 +1027,47 @@ export function HomePage() {
       <PersonaSection />
 
       {/* Final CTA */}
-      <section className="py-20 bg-gray-900">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">
+      <section className="relative py-24 sm:py-32 bg-gray-950 overflow-hidden">
+        {/* Gradient orbs */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(251,146,60,0.08) 0%, transparent 65%)' }} />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 65%)' }} />
+
+        <div ref={ctaIn.ref as any} className="max-w-4xl mx-auto px-6 text-center relative">
+          <div style={revealStyle(ctaIn.inView, 0)}>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-white/70 text-[11px] font-semibold rounded-full mb-6">
+              <span className="w-1 h-1 rounded-full bg-orange-400" />
+              Free · No account required
+            </span>
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white mb-5 tracking-tight leading-tight"
+            style={revealStyle(ctaIn.inView, 0.07)}
+          >
             {tx.finalCta.title}
           </h2>
-          <p className="text-base text-gray-400 mb-10 max-w-2xl mx-auto">
+          <p
+            className="text-base text-gray-400 mb-10 max-w-xl mx-auto leading-relaxed"
+            style={revealStyle(ctaIn.inView, 0.13)}
+          >
             {tx.finalCta.subtitle}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+            style={revealStyle(ctaIn.inView, 0.19)}
+          >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-all duration-200 hover:shadow-xl hover:shadow-white/10 group"
             >
               {tx.finalCta.ctaPrimary}
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <Link to="/track" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/30 text-white font-medium rounded-xl hover:border-white/60 transition-colors">
+            <Link
+              to="/track"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-white/20 text-white font-medium rounded-xl hover:border-white/40 hover:bg-white/5 transition-all duration-200"
+            >
               {tx.finalCta.ctaSecondary}
             </Link>
           </div>

@@ -1,70 +1,15 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
-import { Menu, X, User, LogOut, ArrowRight, Zap, Search, Globe, Check, ChevronDown } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { Menu, X, User, LogOut, ArrowRight, Zap, Search } from 'lucide-react';
+import { useState } from 'react';
 import { AIAssistantWidget } from './AIAssistantWidget';
-import { useLanguage, LANGUAGES } from '../contexts/LanguageContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
-// ─── Language Selector ────────────────────────────────────────────────────────
-function LanguageSelector() {
-  const { lang, setLang } = useLanguage();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const current = LANGUAGES.find(l => l.code === lang);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    if (open) document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 hover:border-gray-300 transition-colors text-sm text-gray-600 hover:text-gray-900"
-      >
-        <Globe className="w-3.5 h-3.5" />
-        <span className="font-medium">{current?.native}</span>
-        <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      {open && (
-        <div className="absolute right-0 top-full mt-2 w-52 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 z-50 overflow-hidden">
-          <p className="px-4 pt-1.5 pb-2 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Choose Language</p>
-          {LANGUAGES.map(l => (
-            <button
-              key={l.code}
-              onClick={() => { if (l.available) { setLang(l.code); setOpen(false); } }}
-              disabled={!l.available}
-              className={`w-full flex items-center justify-between px-4 py-2 text-sm transition-colors ${
-                l.available ? 'hover:bg-gray-50 cursor-pointer' : 'cursor-not-allowed opacity-50'
-              }`}
-            >
-              <span className="flex items-baseline gap-2">
-                <span className={`${lang === l.code ? 'text-gray-900 font-semibold' : 'text-gray-700'}`}>
-                  {l.native}
-                </span>
-                <span className="text-[11px] text-gray-400">{l.name}</span>
-              </span>
-              {lang === l.code && <Check className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />}
-              {!l.available && <span className="text-[9px] font-semibold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full flex-shrink-0">Soon</span>}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Main Layout ──────────────────────────────────────────────────────────────
 export function Layout() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { lang, setLang, tx } = useLanguage();
+  const { tx } = useLanguage();
 
   const handleLogout = () => {
     logout();
@@ -75,13 +20,31 @@ export function Layout() {
     <div className="min-h-screen bg-white">
       <AIAssistantWidget />
 
+      {/* Announcement Bar */}
+      <div className="bg-gray-950 text-center py-2.5 px-4">
+        <p className="text-xs font-medium text-white/70 flex items-center justify-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
+          Real quotes from 500+ verified dealers. No middlemen. GST billed every time.
+          <Link
+            to="/"
+            onClick={(e) => {
+              const el = document.getElementById('inquiry-form');
+              if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+            }}
+            className="text-orange-400 hover:text-orange-300 font-semibold transition-colors underline underline-offset-2 ml-1"
+          >
+            Get quotes →
+          </Link>
+        </p>
+      </div>
+
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <header className="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center group-hover:bg-gray-800 transition-colors">
                 <Zap className="w-4 h-4 text-white" />
               </div>
               <span className="text-base font-semibold text-gray-900">Hub4Estate</span>
@@ -98,24 +61,22 @@ export function Layout() {
                 <Link
                   key={to}
                   to={to}
-                  className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                  className="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-150"
                 >
                   {label}
                 </Link>
               ))}
               <Link
                 to="/track"
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-150"
               >
                 <Search className="w-3.5 h-3.5" />
                 {tx.nav.track}
               </Link>
             </nav>
 
-            {/* Right side: language + auth */}
+            {/* Right side: auth */}
             <div className="hidden lg:flex items-center gap-2.5">
-              <LanguageSelector />
-
               {isAuthenticated ? (
                 <>
                   {user?.type === 'user' && (
@@ -146,7 +107,7 @@ export function Layout() {
                     const el = document.getElementById('inquiry-form');
                     if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
                   }}
-                  className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-lg hover:shadow-gray-900/20"
                 >
                   {tx.nav.getQuotes}
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -184,30 +145,6 @@ export function Layout() {
                   {label}
                 </Link>
               ))}
-
-              {/* Language options — mobile */}
-              <div className="pt-3 border-t border-gray-100 mt-3">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">{tx.nav.language}</p>
-                <div className="flex flex-wrap gap-2">
-                  {LANGUAGES.map(l => (
-                    <button
-                      key={l.code}
-                      onClick={() => { if (l.available) setLang(l.code); }}
-                      disabled={!l.available}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                        lang === l.code
-                          ? 'bg-gray-900 text-white border-gray-900'
-                          : l.available
-                            ? 'border-gray-200 text-gray-600 hover:border-gray-400'
-                            : 'border-gray-100 text-gray-300 cursor-not-allowed'
-                      }`}
-                    >
-                      {l.native}
-                      {!l.available && <span className="ml-1 text-[9px]">·soon</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               <div className="pt-4 border-t border-gray-100 mt-3">
                 {isAuthenticated ? (
@@ -250,7 +187,7 @@ export function Layout() {
       <main><Outlet /></main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white">
+      <footer className="bg-gray-950 text-white">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div>
