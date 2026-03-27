@@ -229,7 +229,7 @@ export function ProfessionalProfilePage() {
   const VerifIcon = verif.icon;
   const roleLabel = ROLE_LABELS[userData?.role || ''] || userData?.role || 'Professional';
 
-  const portfolioDocs = profile?.documents.filter(d => d.type === 'portfolio' || d.docType === 'portfolio') || [];
+  const portfolioDocs = profile?.documents.filter(d => d.docType === 'portfolio') || [];
   const verificationDocs = profile?.documents.filter(d => d.docType !== 'portfolio') || [];
 
   return (
