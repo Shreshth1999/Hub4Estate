@@ -798,9 +798,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Persona Section — immersive role-based storytelling */}
-      <PersonaSection />
-
       {/* How It Works */}
       <section className="section bg-white border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
@@ -1016,6 +1013,9 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Persona Section — second to last */}
+      <PersonaSection />
 
       {/* Final CTA */}
       <section className="py-20 bg-gray-900">
