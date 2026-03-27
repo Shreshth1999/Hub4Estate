@@ -1,443 +1,464 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Store, Palette, Wrench, Home, ArrowRight, CheckCircle, Shield, IndianRupee, Clock } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// ─── Persona data ──────────────────────────────────────────────────────────────
+// ─── Data ──────────────────────────────────────────────────────────────────────
 
 const PERSONAS = [
   {
     id: 'dealer',
-    label: 'Dealer',
-    emoji: '🏪',
-    Icon: Store,
-    accent: 'orange',
-    tabActive: 'bg-orange-500 text-white',
-    tabInactive: 'text-gray-600',
-    dotColor: 'bg-orange-500',
-    stepColor: 'text-orange-600 bg-orange-50 border-orange-200',
-    btnClass: 'bg-orange-500 hover:bg-orange-600 text-white',
-    headline: 'Asli buyers aate hain. Random calls nahi.',
-    headlineSub: 'Verified buyers, real requirements.',
-    problem: 'Aaj kal: 20 calls, 5 serious, 1 order. Bahut time waste.',
+    tab: 'Dealer',
+    bg: 'from-orange-500 to-orange-600',
+    lightBg: 'bg-orange-50',
+    border: 'border-orange-200',
+    accent: 'text-orange-600',
+    accentBg: 'bg-orange-500',
+    tabBg: 'bg-orange-500',
+    bigNumber: '₹37,000',
+    bigLabel: 'ek deal mein bachaye ek customer ne',
+    headline: 'Sahi buyer,\nsahi time pe.',
+    sub: 'Random calls band. Verified buyers directly aate hain — budget, product, city sab ready.',
     steps: [
-      { icon: '📲', title: 'Buyer request aati hai', detail: 'Exactly kya chahiye, kitna chahiye, budget kya hai — sab pehle se pata rehta hai' },
-      { icon: '👁️', title: 'Poori detail dekhte hain', detail: 'Product, quantity, budget, city, deadline — kuch bhi hidden nahi' },
-      { icon: '✍️', title: 'Apna rate submit karo', detail: 'Ek simple form. 60 seconds. Bas.' },
-      { icon: '🏆', title: 'Best price wala jeet ta hai', detail: 'Fair competition. Jo sabse achha offer kare, order mile.' },
+      { n: '1', text: 'Buyer request aati hai — product, quantity, budget sab pehle se' },
+      { n: '2', text: 'Aap quote submit karte ho — 60 seconds ka kaam' },
+      { n: '3', text: 'Best deal milti hai — fair competition, guaranteed order' },
     ],
-    ctaLabel: 'Dealer ke roop mein register karo — Free',
-    ctaHref: '/dealer/onboarding',
-    ctaIsLink: true,
-    mockTitle: '🔔 Naya Order Request',
-    mockBadge: 'Priority',
-    mockBadgeColor: 'bg-orange-100 text-orange-700',
-    mockContent: [
-      { label: 'Product', value: 'FRLS 2.5mm² Wire × 200m' },
-      { label: 'Brand', value: 'Polycab preferred' },
-      { label: 'Budget', value: '₹18,000 – ₹24,000' },
-      { label: 'City', value: 'Pune' },
-      { label: 'Deadline', value: '5 din mein chahiye' },
-    ],
-    mockBadges: ['✓ Verified Buyer', '2 orders placed'],
-    mockCta: 'Quote Submit Karo →',
+    cta: 'Dealer Register Karo — Free',
+    ctaLink: '/dealer/onboarding',
+    isLink: true,
+    notif: {
+      icon: '🔔',
+      title: 'Naya Order Request',
+      badge: 'Abhi Aaya',
+      badgeBg: 'bg-orange-100 text-orange-700',
+      rows: [
+        { k: 'Product', v: 'Polycab FRLS Wire 2.5mm × 200m' },
+        { k: 'Budget', v: '₹18,000 – ₹24,000' },
+        { k: 'City', v: 'Pune · 5 din mein' },
+      ],
+      tags: ['✓ Verified Buyer', 'GST Ready'],
+      btn: 'Quote Bhejo →',
+      btnBg: 'bg-orange-500',
+    },
   },
   {
     id: 'architect',
-    label: 'Architect',
-    emoji: '📐',
-    Icon: Palette,
-    accent: 'indigo',
-    tabActive: 'bg-indigo-600 text-white',
-    tabInactive: 'text-gray-600',
-    dotColor: 'bg-indigo-600',
-    stepColor: 'text-indigo-700 bg-indigo-50 border-indigo-200',
-    btnClass: 'bg-gray-900 hover:bg-gray-800 text-white',
-    headline: 'Sahi product, sahi price, client ke saamne confident raho.',
-    headlineSub: 'Specification + verified dealers + quote — sab ek jagah.',
-    problem: 'Aaj kal: Har project mein 10 dealers ko call karo, price compare karo. Ghante barbaad.',
+    tab: 'Architect',
+    bg: 'from-violet-600 to-violet-700',
+    lightBg: 'bg-violet-50',
+    border: 'border-violet-200',
+    accent: 'text-violet-600',
+    accentBg: 'bg-violet-600',
+    tabBg: 'bg-violet-600',
+    bigNumber: '10x',
+    bigLabel: 'faster sourcing than calling dealers manually',
+    headline: 'Sahi product\nconfidence ke saath.',
+    sub: 'Specification search karo, verified dealers compare karo, client ko proper quote do.',
     steps: [
-      { icon: '🔍', title: 'Specification ke saath search karo', detail: 'Finish, rating, brand, wattage — sab filter karo. Exact product milega.' },
-      { icon: '📊', title: 'Verified dealers compare karo', detail: 'Kaun ke paas stock hai, price kya hai, delivery kab hogi — sab ek table mein.' },
-      { icon: '📄', title: 'Quote download karo', detail: 'Client presentation ke liye proper quote PDF. Professional lag ta hai.' },
-      { icon: '🔒', title: '48 ghante price lock karo', detail: 'Client se approval lo — price wahi rahega. Surprise nahi.' },
+      { n: '1', text: 'Specification ke saath search — brand, finish, rating, wattage' },
+      { n: '2', text: '3–5 verified dealers compare karo — price, stock, lead time' },
+      { n: '3', text: 'Quote download karo — client presentation ke liye ready' },
     ],
-    ctaLabel: 'Inquiry Submit Karo',
-    ctaHref: 'inquiry-form',
-    ctaIsLink: false,
-    mockTitle: '🔍 Search Results',
-    mockBadge: '3 Dealers Found',
-    mockBadgeColor: 'bg-indigo-100 text-indigo-700',
-    mockContent: [
-      { label: 'Search', value: '15A Modular Switch, Brushed Steel' },
-      { label: '★ Best', value: 'Havells Crabtree — ₹185/pc · 2 din' },
-      { label: 'Mid', value: 'Anchor Advance — ₹210/pc · 1 din' },
-      { label: 'High', value: 'Legrand Myrius — ₹228/pc · 3 din' },
-    ],
-    mockBadges: ['✓ BIS Certified', '48hr Price Lock'],
-    mockCta: 'Quote Download Karo →',
+    cta: 'Inquiry Submit Karo',
+    ctaLink: 'inquiry-form',
+    isLink: false,
+    notif: {
+      icon: '🔍',
+      title: 'Search Result',
+      badge: '3 Dealers Found',
+      badgeBg: 'bg-violet-100 text-violet-700',
+      rows: [
+        { k: '★ Best', v: 'Havells Crabtree — ₹185/pc · 2 din' },
+        { k: 'Mid', v: 'Anchor Advance — ₹210/pc · 1 din' },
+        { k: 'High', v: 'Legrand Myrius — ₹228/pc · 3 din' },
+      ],
+      tags: ['BIS Certified', '48hr Price Lock'],
+      btn: 'Quote Download Karo →',
+      btnBg: 'bg-violet-600',
+    },
   },
   {
     id: 'contractor',
-    label: 'Contractor',
-    emoji: '🏗️',
-    Icon: Wrench,
-    accent: 'slate',
-    tabActive: 'bg-gray-800 text-white',
-    tabInactive: 'text-gray-600',
-    dotColor: 'bg-gray-800',
-    stepColor: 'text-gray-800 bg-gray-100 border-gray-300',
-    btnClass: 'bg-gray-900 hover:bg-gray-800 text-white',
-    headline: 'Puri materials list ek baar. Quotes saare dealers se.',
-    headlineSub: '120 calls ki jagah 1 submission. Bas.',
-    problem: 'Aaj kal: 20 items × 6 dealers = 120 calls. Price change hota rehta hai. Delivery miss hoti hai.',
+    tab: 'Contractor',
+    bg: 'from-gray-800 to-gray-900',
+    lightBg: 'bg-gray-100',
+    border: 'border-gray-300',
+    accent: 'text-gray-800',
+    accentBg: 'bg-gray-800',
+    tabBg: 'bg-gray-800',
+    bigNumber: '120→1',
+    bigLabel: 'calls ki jagah ek submission — pura materials list',
+    headline: 'Pura list,\nEk baar.',
+    sub: 'Photo khicho apni materials list ki. AI sab padh ta hai. 4+ dealers compete karte hain.',
     steps: [
-      { icon: '📷', title: 'Apni list upload karo', detail: 'Photo khicho ya type karo. AI turant sab padh leta hai.' },
-      { icon: '🤖', title: 'AI sab cheez nikalta hai', detail: 'Brand, quantity, specification — khud automatically bhar deta hai.' },
-      { icon: '📬', title: '4+ dealers quotes bhejte hain', detail: 'Poori list ke liye compete karte hain. Tumhe kuch karna nahi.' },
-      { icon: '🚚', title: 'Best deal chuno, site pe delivery', detail: 'GST bill, proper documentation, tracked delivery.' },
+      { n: '1', text: 'List ki photo lo ya type karo — AI turant 12+ items nikalta hai' },
+      { n: '2', text: 'Multiple dealers ek saath quote karte hain — koi call nahi' },
+      { n: '3', text: 'Best deal chuno, site pe delivery — GST billed, tracked' },
     ],
-    ctaLabel: 'Materials List Submit Karo',
-    ctaHref: 'inquiry-form',
-    ctaIsLink: false,
-    mockTitle: '🤖 AI Scan Complete',
-    mockBadge: '12 Items Found',
-    mockBadgeColor: 'bg-green-100 text-green-700',
-    mockContent: [
-      { label: '1.', value: 'FRLS 2.5mm² Wire — 200m · Polycab' },
-      { label: '2.', value: 'MCB 32A Double Pole — 4 pcs · Schneider' },
-      { label: '3.', value: 'DB Box 8-way — 2 pcs · Legrand' },
-      { label: '4.', value: '16A Switch Socket — 20 pcs · Havells' },
-    ],
-    mockBadges: ['+ 8 aur items', '4 dealers quoting'],
-    mockCta: 'Saare Items ke Quotes Lo →',
+    cta: 'Materials List Submit Karo',
+    ctaLink: 'inquiry-form',
+    isLink: false,
+    notif: {
+      icon: '🤖',
+      title: 'AI Scan Complete',
+      badge: '12 Items Mile',
+      badgeBg: 'bg-green-100 text-green-700',
+      rows: [
+        { k: '1.', v: 'FRLS Wire 2.5mm — 200m · Polycab' },
+        { k: '2.', v: 'MCB 32A — 4 pcs · Schneider' },
+        { k: '3.', v: 'DB Box 8-way — 2 pcs · Legrand' },
+      ],
+      tags: ['+ 9 aur items', '4 dealers quoting'],
+      btn: 'Saare Quotes Lo →',
+      btnBg: 'bg-gray-800',
+    },
   },
   {
     id: 'homeowner',
-    label: 'Homeowner',
-    emoji: '🏠',
-    Icon: Home,
-    accent: 'green',
-    tabActive: 'bg-green-600 text-white',
-    tabInactive: 'text-gray-600',
-    dotColor: 'bg-green-600',
-    stepColor: 'text-green-700 bg-green-50 border-green-200',
-    btnClass: 'bg-green-600 hover:bg-green-700 text-white',
-    headline: 'Paise bachao. Overcharge mat hone do.',
-    headlineSub: 'Sirf ek dealer ko call karna band karo.',
-    problem: 'Aaj kal: Jo pehla rate mila, wahi de diya. Pata bhi nahi chala ki ₹5,000 zyada diye.',
+    tab: 'Homeowner',
+    bg: 'from-green-500 to-green-600',
+    lightBg: 'bg-green-50',
+    border: 'border-green-200',
+    accent: 'text-green-700',
+    accentBg: 'bg-green-600',
+    tabBg: 'bg-green-600',
+    bigNumber: '₹24,000',
+    bigLabel: 'ek ghar wale ne bachaye — sirf LED lights order karke',
+    headline: 'Jo price milti hai,\nwoh sahi hai?',
+    sub: 'Ek dealer se mat poochho. Hum 3–5 se poochhhte hain. Aap compare karo, best chuno.',
     steps: [
-      { icon: '📝', title: 'Kya chahiye batao', detail: 'Product ka naam, kitna chahiye, kaunsa shehar — bas itna. 2 minute.' },
-      { icon: '📞', title: 'Hum dealers se baat karte hain', detail: 'Aapko kuch nahi karna. Hum 3-5 verified dealers ko contact karte hain.' },
-      { icon: '💬', title: 'Quotes aate hain', detail: 'Kuch ghanton mein — asli prices, asli dealers.' },
-      { icon: '✅', title: 'Compare karo, best chuno', detail: 'Sab ek jagah. Jo sahi lage, wahi lo. Koi pressure nahi.' },
+      { n: '1', text: 'Product batao — naam, quantity, shehar. 2 minute.' },
+      { n: '2', text: 'Hum verified dealers se quote mangwate hain — aapko kuch nahi karna' },
+      { n: '3', text: 'Quotes compare karo, best chuno — GST bill, warranty sab included' },
     ],
-    ctaLabel: 'Inquiry Submit Karo — Free',
-    ctaHref: 'inquiry-form',
-    ctaIsLink: false,
-    mockTitle: '💬 Aapke Quotes Aa Gaye',
-    mockBadge: '3 Quotes Received',
-    mockBadgeColor: 'bg-green-100 text-green-700',
-    mockContent: [
-      { label: 'Product', value: 'Philips 15W LED Panel × 20' },
-      { label: '★ Best', value: 'Delhi Electricals — ₹425/pc · 2 din' },
-      { label: 'Mid', value: 'Jaipur Traders — ₹495/pc · 1 din' },
-      { label: 'High', value: 'Local Store — ₹585/pc · Same day' },
-    ],
-    mockBadges: ['GST Bill included', 'Aap bachate hain ₹3,200'],
-    mockCta: 'Best Quote Chuno →',
+    cta: 'Free Inquiry Karo',
+    ctaLink: 'inquiry-form',
+    isLink: false,
+    notif: {
+      icon: '💬',
+      title: 'Aapke Quotes Aaye',
+      badge: '3 Quotes',
+      badgeBg: 'bg-green-100 text-green-700',
+      rows: [
+        { k: '★ Best', v: 'Delhi Store — ₹425/pc · 2 din' },
+        { k: 'Mid', v: 'Jaipur Traders — ₹495/pc · 1 din' },
+        { k: 'High', v: 'Local — ₹585/pc · Same day' },
+      ],
+      tags: ['GST Bill Included', 'Aap Bachate: ₹3,200'],
+      btn: 'Best Quote Chuno →',
+      btnBg: 'bg-green-600',
+    },
   },
 ] as const;
 
-type PersonaId = typeof PERSONAS[number]['id'];
+type Idx = 0 | 1 | 2 | 3;
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export function PersonaSection() {
-  const [active, setActive] = useState<number>(0);
-  const [visible, setVisible] = useState(true);
+  const [idx, setIdx] = useState<number>(0);
+  const [animating, setAnimating] = useState(false);
+  const [dir, setDir] = useState<'left' | 'right'>('right');
+  const [paused, setPaused] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const transitioning = useRef(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const tabsRef = useRef<HTMLDivElement>(null);
 
-  const switchTo = (idx: number) => {
-    if (transitioning.current) return;
-    transitioning.current = true;
-    setVisible(false);
+  const go = (next: number, direction: 'left' | 'right' = 'right') => {
+    if (animating) return;
+    setDir(direction);
+    setAnimating(true);
     setTimeout(() => {
-      setActive(idx);
+      setIdx(next);
       setProgressKey(k => k + 1);
-      setVisible(true);
-      transitioning.current = false;
-    }, 220);
+      setAnimating(false);
+    }, 280);
   };
 
-  const advance = () => {
-    setActive(prev => {
-      const next = (prev + 1) % PERSONAS.length;
-      switchTo(next);
-      return prev;
-    });
-  };
+  const prev = () => go((idx - 1 + PERSONAS.length) % PERSONAS.length, 'left');
+  const next = () => go((idx + 1) % PERSONAS.length, 'right');
 
   useEffect(() => {
-    if (isPaused) return;
-    timerRef.current = setTimeout(advance, 6000);
+    if (paused) return;
+    timerRef.current = setTimeout(() => go((idx + 1) % PERSONAS.length, 'right'), 5500);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [active, isPaused, progressKey]);
+  }, [idx, paused, progressKey]);
 
-  const handleTabClick = (idx: number) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    switchTo(idx);
-  };
-
-  // Scroll active tab into view on mobile
-  useEffect(() => {
-    const tab = tabsRef.current?.children[active] as HTMLElement | undefined;
-    tab?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  }, [active]);
-
-  const persona = PERSONAS[active];
+  const p = PERSONAS[idx];
 
   return (
     <section
-      ref={sectionRef}
-      className="relative bg-white border-y border-gray-100 overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      data-persona-section
+      className="bg-white border-y border-gray-100 overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
-      {/* Progress bar animation CSS */}
       <style>{`
-        @keyframes persona-bar {
-          from { width: 0%; }
-          to   { width: 100%; }
+        @keyframes pg-bar {
+          from { transform: scaleX(0); }
+          to   { transform: scaleX(1); }
         }
-        .persona-progress-bar {
-          animation: persona-bar ${isPaused ? '99999s' : '6s'} linear forwards;
+        .pg-bar-inner {
+          transform-origin: left;
+          animation: pg-bar ${paused ? '9999s' : '5.5s'} linear forwards;
         }
-        @keyframes persona-fade-up {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
+        @keyframes slide-in-right {
+          from { opacity: 0; transform: translateX(32px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
-        .persona-animate {
-          animation: persona-fade-up 0.45s ease forwards;
+        @keyframes slide-in-left {
+          from { opacity: 0; transform: translateX(-32px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
-        @keyframes persona-pop {
-          0%   { transform: scale(0.95); opacity: 0; }
-          60%  { transform: scale(1.02); }
-          100% { transform: scale(1); opacity: 1; }
+        @keyframes slide-out-right {
+          from { opacity: 1; transform: translateX(0); }
+          to   { opacity: 0; transform: translateX(-32px); }
         }
-        .persona-mock-pop {
-          animation: persona-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        @keyframes slide-out-left {
+          from { opacity: 1; transform: translateX(0); }
+          to   { opacity: 0; transform: translateX(32px); }
         }
+        .ps-enter-right { animation: slide-in-right 0.3s ease forwards; }
+        .ps-enter-left  { animation: slide-in-left  0.3s ease forwards; }
+        .ps-exit-right  { animation: slide-out-right 0.28s ease forwards; }
+        .ps-exit-left   { animation: slide-out-left  0.28s ease forwards; }
+        .touch-card { -webkit-tap-highlight-color: transparent; }
       `}</style>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
-        {/* ── Header ── */}
-        <div className="text-center mb-8 md:mb-12">
-          <p className="text-xs font-bold uppercase tracking-widest text-orange-600 mb-2">Hub4Estate for Everyone</p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-900 leading-tight">
-            Aap kaun hain? <span className="text-orange-600">Hum dekhate hain.</span>
+        {/* ── Top label ── */}
+        <div className="pt-10 sm:pt-14 pb-6 sm:pb-8 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mb-3">Platform ki Khaasiyat</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-900">
+            Aap kaun hain?
           </h2>
-          <p className="mt-3 text-base sm:text-lg text-gray-500 max-w-xl mx-auto">
-            Har role ke liye alag solution. Apna role choose karo.
-          </p>
+          <p className="text-gray-400 mt-2 text-sm sm:text-base">Apna role select karo — dekhte hain kaise kaam karta hai</p>
         </div>
 
-        {/* ── Tabs ── */}
-        <div className="relative mb-8 md:mb-10">
-          <div
-            ref={tabsRef}
-            className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide snap-x snap-mandatory"
-            style={{ WebkitOverflowScrolling: 'touch' }}
-          >
-            {PERSONAS.map((p, i) => (
-              <button
-                key={p.id}
-                onClick={() => handleTabClick(i)}
-                className={`
-                  relative flex-shrink-0 snap-start flex items-center gap-2
-                  px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl font-semibold text-sm sm:text-base
-                  transition-all duration-300 min-h-[52px] touch-manipulation
-                  ${i === active ? p.tabActive + ' shadow-md scale-105' : 'bg-gray-100 ' + p.tabInactive + ' hover:bg-gray-200'}
-                `}
-              >
-                <span className="text-lg">{p.emoji}</span>
-                <span>{p.label}</span>
-                {/* Progress bar under active */}
-                {i === active && (
-                  <span
-                    key={progressKey}
-                    className="persona-progress-bar absolute bottom-0 left-0 h-0.5 bg-white/50 rounded-full"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Main content ── */}
-        <div
-          className="transition-all duration-300"
-          style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(12px)' }}
-        >
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-start">
-
-            {/* LEFT — Story */}
-            <div className={visible ? 'persona-animate' : ''}>
-              {/* Persona badge */}
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">{persona.emoji}</span>
-                <span className={`text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border ${persona.stepColor}`}>
-                  {persona.label}
-                </span>
-              </div>
-
-              {/* Headline */}
-              <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 leading-tight mb-2">
-                {persona.headline}
-              </h3>
-              <p className="text-base sm:text-lg text-gray-500 mb-2">{persona.headlineSub}</p>
-
-              {/* Pain point */}
-              <div className="flex items-start gap-2 mb-6 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
-                <span className="text-base mt-0.5">😤</span>
-                <p className="text-sm text-red-700 font-medium">{persona.problem}</p>
-              </div>
-
-              {/* Steps */}
-              <div className="space-y-3 mb-8">
-                {persona.steps.map((step, i) => (
-                  <div key={i} className="flex items-start gap-3 bg-gray-50 rounded-xl p-3.5 sm:p-4">
-                    <span className="text-xl sm:text-2xl flex-shrink-0 mt-0.5">{step.icon}</span>
-                    <div className="min-w-0">
-                      <p className="font-semibold text-gray-900 text-sm sm:text-base leading-snug">{step.title}</p>
-                      <p className="text-sm text-gray-500 mt-0.5 leading-relaxed">{step.detail}</p>
-                    </div>
-                    <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-1" />
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA */}
-              {persona.ctaIsLink ? (
-                <Link
-                  to={persona.ctaHref as string}
-                  className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold text-base transition-colors ${persona.btnClass}`}
-                >
-                  {persona.ctaLabel}
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              ) : (
-                <button
-                  onClick={() => document.getElementById(persona.ctaHref as string)?.scrollIntoView({ behavior: 'smooth' })}
-                  className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold text-base transition-colors ${persona.btnClass}`}
-                >
-                  {persona.ctaLabel}
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-
-            {/* RIGHT — Mock UI card */}
-            <div className={`lg:sticky lg:top-8 ${visible ? 'persona-mock-pop' : 'opacity-0'}`}>
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
-
-                {/* Card header */}
-                <div className="px-5 py-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-sm font-bold text-gray-800">{persona.mockTitle}</span>
-                  </div>
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${persona.mockBadgeColor}`}>
-                    {persona.mockBadge}
-                  </span>
-                </div>
-
-                {/* Card body */}
-                <div className="p-5 space-y-3">
-                  {persona.mockContent.map((row, i) => (
-                    <div
-                      key={i}
-                      className={`flex items-start justify-between gap-3 ${i === 0 ? 'pb-3 border-b border-gray-100' : ''}`}
-                    >
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-wider flex-shrink-0 mt-0.5 w-14">
-                        {row.label}
-                      </span>
-                      <span className={`text-sm font-semibold text-right ${i === 1 && persona.id === 'homeowner' ? 'text-green-700' : 'text-gray-800'}`}>
-                        {row.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Badges */}
-                <div className="px-5 pb-4 flex flex-wrap gap-2">
-                  {persona.mockBadges.map((badge, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full"
-                    >
-                      {badge}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Card CTA */}
-                <div className="px-5 pb-5">
-                  <div className={`w-full py-3 px-4 rounded-xl text-sm font-bold text-center text-white ${persona.btnClass.split(' ')[0]}`}>
-                    {persona.mockCta}
-                  </div>
-                </div>
-
-                {/* Trust bar */}
-                <div className="px-5 pb-4 flex items-center justify-center gap-4 border-t border-gray-100 pt-4">
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <Shield className="w-3.5 h-3.5 text-green-500" />
-                    Verified Platform
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <IndianRupee className="w-3.5 h-3.5 text-orange-500" />
-                    GST Billed
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <Clock className="w-3.5 h-3.5 text-blue-500" />
-                    Fast Response
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating stat */}
-              <div className="mt-4 grid grid-cols-3 gap-3">
-                {[
-                  { num: '₹37K', label: 'Max saved on one deal' },
-                  { num: '8+', label: 'Dealers compared' },
-                  { num: '100%', label: 'GST documented' },
-                ].map(({ num, label }) => (
-                  <div key={label} className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
-                    <p className="text-lg sm:text-xl font-bold text-gray-900">{num}</p>
-                    <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Dot nav (mobile) ── */}
-        <div className="flex justify-center gap-2 mt-8 lg:hidden">
-          {PERSONAS.map((p, i) => (
+        {/* ── Tab bar ── */}
+        <div className="flex gap-2 overflow-x-auto pb-1 mb-6 sm:mb-8 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+          {PERSONAS.map((persona, i) => (
             <button
-              key={p.id}
-              onClick={() => handleTabClick(i)}
-              className={`h-2 rounded-full transition-all duration-300 touch-manipulation ${
-                i === active ? `w-8 ${p.dotColor}` : 'w-2 bg-gray-300'
+              key={persona.id}
+              onClick={() => go(i, i > idx ? 'right' : 'left')}
+              className={`
+                relative flex-shrink-0 px-4 sm:px-6 py-3 sm:py-3.5 rounded-2xl font-bold
+                text-sm sm:text-base transition-all duration-300 touch-card min-h-[52px]
+                ${i === idx
+                  ? `${persona.tabBg} text-white shadow-lg scale-105`
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}
+              `}
+            >
+              {persona.tab}
+              {/* Progress bar */}
+              {i === idx && (
+                <span
+                  key={progressKey}
+                  className="pg-bar-inner absolute bottom-0 left-0 right-0 h-0.5 bg-white/40 rounded-b-2xl"
+                />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Main card ── */}
+        <div className="relative pb-10 sm:pb-14">
+          <div
+            className={animating
+              ? (dir === 'right' ? 'ps-exit-right' : 'ps-exit-left')
+              : (dir === 'right' ? 'ps-enter-right' : 'ps-enter-left')
+            }
+          >
+            <div className="grid lg:grid-cols-2 gap-5 sm:gap-6 lg:gap-10 items-start">
+
+              {/* LEFT: Story */}
+              <div className="flex flex-col gap-4 sm:gap-5">
+
+                {/* Big number hero */}
+                <div className={`rounded-2xl p-5 sm:p-7 bg-gradient-to-br ${p.bg} text-white`}>
+                  <p className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight mb-1 leading-none">
+                    {p.bigNumber}
+                  </p>
+                  <p className="text-sm sm:text-base text-white/80 font-medium">{p.bigLabel}</p>
+                </div>
+
+                {/* Headline + sub */}
+                <div className="px-1">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-900 leading-tight whitespace-pre-line mb-2">
+                    {p.headline}
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-500 leading-relaxed">{p.sub}</p>
+                </div>
+
+                {/* Steps */}
+                <div className="space-y-2.5">
+                  {p.steps.map((s) => (
+                    <div key={s.n} className="flex items-start gap-3">
+                      <span className={`
+                        flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center
+                        text-xs font-black text-white ${p.accentBg}
+                      `}>
+                        {s.n}
+                      </span>
+                      <p className="text-sm sm:text-base text-gray-700 leading-snug pt-0.5">{s.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <div className="pt-1">
+                  {p.isLink ? (
+                    <Link
+                      to={p.ctaLink as string}
+                      className={`
+                        w-full sm:w-auto inline-flex items-center justify-center gap-2
+                        px-6 py-4 rounded-2xl font-bold text-base text-white
+                        transition-opacity active:opacity-80 touch-card ${p.accentBg}
+                      `}
+                    >
+                      {p.cta}
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => document.getElementById(p.ctaLink as string)?.scrollIntoView({ behavior: 'smooth' })}
+                      className={`
+                        w-full sm:w-auto inline-flex items-center justify-center gap-2
+                        px-6 py-4 rounded-2xl font-bold text-base text-white
+                        transition-opacity active:opacity-80 touch-card ${p.accentBg}
+                      `}
+                    >
+                      {p.cta}
+                      <ArrowRight className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* RIGHT: Notification card */}
+              <div className="lg:sticky lg:top-8">
+                {/* Phone frame */}
+                <div className="relative mx-auto max-w-xs sm:max-w-sm">
+                  {/* Simulated status bar */}
+                  <div className="bg-gray-900 rounded-t-3xl px-5 pt-3 pb-2 flex items-center justify-between">
+                    <span className="text-[10px] text-gray-300 font-medium">9:41</span>
+                    <div className="w-16 h-4 bg-gray-800 rounded-full mx-auto absolute left-1/2 -translate-x-1/2" />
+                    <div className="flex gap-1 items-center">
+                      <div className="w-3 h-1.5 border border-gray-400 rounded-sm">
+                        <div className="w-2 h-full bg-green-400 rounded-sm" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* App header */}
+                  <div className="bg-gray-900 px-4 py-3 flex items-center gap-2 border-b border-gray-800">
+                    <div className="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center">
+                      <span className="text-white text-[10px] font-black">H4</span>
+                    </div>
+                    <div>
+                      <p className="text-white text-xs font-semibold">Hub4Estate</p>
+                      <div className="flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                        <span className="text-[10px] text-gray-400">Online</span>
+                      </div>
+                    </div>
+                    <div className="ml-auto flex gap-2">
+                      <div className="w-1 h-1 rounded-full bg-gray-600" />
+                      <div className="w-1 h-1 rounded-full bg-gray-600" />
+                      <div className="w-1 h-1 rounded-full bg-gray-600" />
+                    </div>
+                  </div>
+
+                  {/* Notification card (WhatsApp-style message) */}
+                  <div className="bg-[#ECE5DD] px-3 py-4 rounded-b-3xl min-h-[240px]">
+                    {/* Timestamp */}
+                    <p className="text-center text-[10px] text-gray-500 bg-white/60 rounded-full px-3 py-0.5 w-fit mx-auto mb-3">
+                      Aaj, 11:24 AM
+                    </p>
+
+                    {/* Message bubble */}
+                    <div className="bg-white rounded-2xl rounded-tl-sm shadow-sm p-3.5 max-w-[90%]">
+                      {/* Badge row */}
+                      <div className="flex items-center justify-between mb-2.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-base">{p.notif.icon}</span>
+                          <span className="text-xs font-bold text-gray-800">{p.notif.title}</span>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${p.notif.badgeBg}`}>
+                          {p.notif.badge}
+                        </span>
+                      </div>
+
+                      {/* Rows */}
+                      <div className="space-y-1.5 mb-2.5">
+                        {p.notif.rows.map((row, i) => (
+                          <div key={i} className="flex items-start justify-between gap-2">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide flex-shrink-0 w-10">{row.k}</span>
+                            <span className={`text-xs font-semibold text-right ${i === 0 && p.id === 'homeowner' ? 'text-green-700' : 'text-gray-800'}`}>{row.v}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {p.notif.tags.map((tag) => (
+                          <span key={tag} className="text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Action button */}
+                      <button className={`w-full py-2.5 rounded-xl text-xs font-bold text-white ${p.notif.btnBg}`}>
+                        {p.notif.btn}
+                      </button>
+
+                      {/* Read receipt */}
+                      <p className="text-right text-[9px] text-gray-400 mt-1">✓✓ Delivered</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Trust row below phone */}
+                <div className="mt-4 flex justify-center gap-4 sm:gap-6">
+                  {[
+                    { v: '500+', l: 'Verified Dealers' },
+                    { v: '100%', l: 'GST Billed' },
+                    { v: '0', l: 'Hidden Charges' },
+                  ].map(({ v, l }) => (
+                    <div key={l} className="text-center">
+                      <p className="text-base sm:text-lg font-bold text-gray-900">{v}</p>
+                      <p className="text-[11px] text-gray-400">{l}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Prev / Next arrows */}
+          <button
+            onClick={prev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-10 h-10 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center text-gray-600 hover:bg-gray-50 active:scale-95 transition-all hidden sm:flex"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-10 h-10 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center text-gray-600 hover:bg-gray-50 active:scale-95 transition-all hidden sm:flex"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* ── Dot nav ── */}
+        <div className="flex justify-center gap-2 pb-10 sm:pb-14">
+          {PERSONAS.map((persona, i) => (
+            <button
+              key={persona.id}
+              onClick={() => go(i, i > idx ? 'right' : 'left')}
+              className={`h-2 rounded-full transition-all duration-300 touch-card ${
+                i === idx ? `w-8 ${persona.tabBg}` : 'w-2 bg-gray-200'
               }`}
-              aria-label={p.label}
             />
           ))}
         </div>
