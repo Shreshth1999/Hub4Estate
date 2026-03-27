@@ -30,7 +30,8 @@ export function HomePage() {
 
   // Inquiry form state - restore from sessionStorage on refresh
   const savedInquiry = sessionStorage.getItem('hub4estate_inquiry');
-  const savedData = savedInquiry ? JSON.parse(savedInquiry) : null;
+  let savedData: any = null;
+  try { savedData = savedInquiry ? JSON.parse(savedInquiry) : null; } catch { sessionStorage.removeItem('hub4estate_inquiry'); }
 
   const [inquiryForm, setInquiryForm] = useState<InquiryForm>(
     savedData?.form || defaultForm
