@@ -1,15 +1,31 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
-import { Menu, X, User, LogOut, ArrowRight, Zap, Search } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, X, User, LogOut, ArrowRight, Zap, Search, Globe } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { AIAssistantWidget } from './AIAssistantWidget';
 import { useLanguage } from '../contexts/LanguageContext';
+import type { LangCode } from '../i18n/translations';
+
+const LANG_OPTIONS: { code: LangCode; label: string }[] = [
+  { code: 'en', label: 'English' },
+  { code: 'hi', label: 'हिंदी' },
+];
 
 export function Layout() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { tx } = useLanguage();
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
+  const { lang, setLang, tx } = useLanguage();
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -74,6 +90,34 @@ export function Layout() {
                 {tx.nav.track}
               </Link>
             </nav>
+
+            {/* Language switcher */}
+            <div className="hidden lg:block relative" ref={langRef}>
+              <button
+                onClick={() => setLangOpen(o => !o)}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-150"
+              >
+                <Globe className="w-3.5 h-3.5" />
+                <span>{lang === 'hi' ? 'हिंदी' : 'EN'}</span>
+              </button>
+              {langOpen && (
+                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50 min-w-[110px]">
+                  {LANG_OPTIONS.map(opt => (
+                    <button
+                      key={opt.code}
+                      onClick={() => { setLang(opt.code); setLangOpen(false); }}
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                        lang === opt.code
+                          ? 'text-gray-900 font-semibold bg-gray-50'
+                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Right side: auth */}
             <div className="hidden lg:flex items-center gap-2.5">
@@ -145,6 +189,23 @@ export function Layout() {
                   {label}
                 </Link>
               ))}
+
+              {/* Mobile language toggle */}
+              <div className="flex gap-2 pt-3 pb-1">
+                {LANG_OPTIONS.map(opt => (
+                  <button
+                    key={opt.code}
+                    onClick={() => { setLang(opt.code); setMobileMenuOpen(false); }}
+                    className={`flex-1 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                      lang === opt.code
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
 
               <div className="pt-4 border-t border-gray-100 mt-3">
                 {isAuthenticated ? (

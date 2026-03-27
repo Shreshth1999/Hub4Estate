@@ -29,15 +29,18 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // Language selector is disabled — always English.
-  // Remove any stale language saved in localStorage so returning Hindi users see English.
   const [lang, setLangState] = useState<LangCode>(() => {
-    try { localStorage.removeItem('h4e_lang'); } catch {}
+    try {
+      const saved = localStorage.getItem('h4e_lang') as LangCode | null;
+      // Only restore if we actually have translations for it
+      if (saved && (saved === 'en' || saved === 'hi')) return saved;
+    } catch {}
     return 'en';
   });
 
   const setLang = (l: LangCode) => {
     setLangState(l);
+    try { localStorage.setItem('h4e_lang', l); } catch {}
   };
 
   const t = (en: string, hi: string) => lang === 'hi' ? hi : en;
