@@ -1,54 +1,49 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import {
+  LangCode,
+  LANGUAGES as LANG_OPTIONS,
+  LanguageOption,
+  SiteTranslations,
+  getTranslations,
+} from '../i18n/translations';
 
-export type Lang = 'en' | 'hi' | 'mr' | 'ta' | 'te' | 'bn' | 'gu' | 'kn' | 'pa' | 'ml';
-
-export interface LanguageOption {
-  code: Lang;
-  name: string;
-  native: string;
-  available: boolean;
-}
-
-export const LANGUAGES: LanguageOption[] = [
-  { code: 'en', name: 'English',    native: 'English',     available: true  },
-  { code: 'hi', name: 'Hindi',      native: 'हिंदी',        available: true  },
-  { code: 'mr', name: 'Marathi',    native: 'मराठी',        available: false },
-  { code: 'ta', name: 'Tamil',      native: 'தமிழ்',        available: false },
-  { code: 'te', name: 'Telugu',     native: 'తెలుగు',       available: false },
-  { code: 'bn', name: 'Bengali',    native: 'বাংলা',        available: false },
-  { code: 'gu', name: 'Gujarati',   native: 'ગુજરાતી',      available: false },
-  { code: 'kn', name: 'Kannada',    native: 'ಕನ್ನಡ',        available: false },
-  { code: 'pa', name: 'Punjabi',    native: 'ਪੰਜਾਬੀ',       available: false },
-  { code: 'ml', name: 'Malayalam',  native: 'മലയാളം',       available: false },
-];
+// Re-exports for backward compatibility
+export type Lang = LangCode;
+export type { LanguageOption };
+export { LANG_OPTIONS as LANGUAGES };
 
 interface LanguageContextType {
-  lang: Lang;
-  setLang: (l: Lang) => void;
+  lang: LangCode;
+  setLang: (l: LangCode) => void;
+  /** Quick inline translation helper */
   t: (en: string, hi: string) => string;
+  /** Full typed translation object for the current language */
+  tx: SiteTranslations;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: 'en',
   setLang: () => {},
   t: (en) => en,
+  tx: getTranslations('en'),
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(() => {
-    try { return (localStorage.getItem('h4e_lang') as Lang) || 'en'; }
+  const [lang, setLangState] = useState<LangCode>(() => {
+    try { return (localStorage.getItem('h4e_lang') as LangCode) || 'en'; }
     catch { return 'en'; }
   });
 
-  const setLang = (l: Lang) => {
+  const setLang = (l: LangCode) => {
     setLangState(l);
     try { localStorage.setItem('h4e_lang', l); } catch {}
   };
 
   const t = (en: string, hi: string) => lang === 'hi' ? hi : en;
+  const tx = getTranslations(lang);
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
+    <LanguageContext.Provider value={{ lang, setLang, t, tx }}>
       {children}
     </LanguageContext.Provider>
   );

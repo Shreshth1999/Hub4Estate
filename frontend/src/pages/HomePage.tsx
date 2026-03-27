@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Truck, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff } from 'lucide-react';
+import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { PersonaSection } from '../components/PersonaSection';
 import { AISection } from '../components/AISection';
 import { productsApi, api } from '../lib/api';
 import { Analytics } from '../lib/analytics';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
@@ -21,6 +22,8 @@ interface InquiryForm {
 const defaultForm: InquiryForm = { name: '', phone: '', modelNumber: '', quantity: '1', deliveryCity: '' };
 
 export function HomePage() {
+  const { lang, tx } = useLanguage();
+  const isHi = lang === 'hi';
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -307,12 +310,14 @@ export function HomePage() {
             <div className="animate-slide-up">
               {/* Main Headline */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-900 mb-6 leading-[0.9]">
-                We Will Get You The <span className="text-orange-600">Cheapest Price</span> Of Any Electrical Across India.
+                {isHi ? tx.hero.headline : (
+                  <>We Will Get You The <span className="text-orange-600">Cheapest Price</span> Of Any Electrical Across India.</>
+                )}
               </h1>
 
               {/* Subheadline */}
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-xl font-medium leading-relaxed">
-                Wires, switches, MCBs, fans, lights — tell us what you need, we contact verified dealers, you compare their real prices and pick the best deal.
+                {tx.hero.subheadline}
               </p>
 
               {/* CTA Buttons */}
@@ -321,24 +326,20 @@ export function HomePage() {
                   onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
                   className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors group"
                 >
-                  Submit an Inquiry
+                  {tx.hero.ctaPrimary}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <Link to="/track" className="inline-flex items-center gap-2 px-7 py-3.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:border-gray-400 transition-colors">
-                  Track Your Inquiry
+                  {tx.hero.ctaSecondary}
                 </Link>
               </div>
 
-              {/* Honest Trust Indicators */}
+              {/* Trust Indicators */}
               <div className="flex flex-col gap-3">
-                {[
-                  { icon: IndianRupee, text: 'Multiple quotes from real dealers — compare side by side' },
-                  { icon: Shield, text: 'We verify dealers before connecting you' },
-                  { icon: FileText, text: 'Full transparency — you see every quote, no hidden fees' },
-                ].map((benefit, index) => (
+                {[IndianRupee, Shield, FileText].map((Icon, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <benefit.icon className="w-5 h-5 text-gray-900" />
-                    <span>{benefit.text}</span>
+                    <Icon className="w-5 h-5 text-gray-900 flex-shrink-0" />
+                    <span>{tx.hero.trust[index]}</span>
                   </div>
                 ))}
               </div>
@@ -350,20 +351,20 @@ export function HomePage() {
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">Inquiry Submitted!</h3>
-                    <p className="text-gray-600 mb-4">We'll get back to you with the best price shortly.</p>
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">{tx.hero.submitted.title}</h3>
+                    <p className="text-gray-600 mb-4">{tx.hero.submitted.subtitle}</p>
                     {submittedInquiryId && (
                       <div className="bg-gray-50 border border-gray-200 p-4 mb-4 text-left">
-                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Your Inquiry Number</p>
+                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{tx.hero.submitted.inquiryLabel}</p>
                         <p className="font-mono text-lg font-semibold text-gray-900">{submittedInquiryId}</p>
-                        <p className="text-xs text-gray-400 mt-1">Save this number to track your inquiry anytime</p>
+                        <p className="text-xs text-gray-400 mt-1">{tx.hero.submitted.inquiryHint}</p>
                       </div>
                     )}
                     <Link
                       to={`/track?phone=${encodeURIComponent(inquiryForm.phone)}`}
                       className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
                     >
-                      Track Your Request
+                      {tx.hero.submitted.trackBtn}
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                     <button
@@ -376,18 +377,18 @@ export function HomePage() {
                       }}
                       className="mt-4 block mx-auto text-orange-600 font-bold underline text-sm"
                     >
-                      Submit Another Inquiry
+                      {tx.hero.submitted.submitAnother}
                     </button>
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-xl font-semibold text-gray-900">Get the Best Price</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">{tx.hero.formTitle}</h3>
                       <span className="flex items-center gap-1 text-[11px] font-medium text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">
                         <Sparkles className="w-3 h-3" /> AI-powered
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mb-6">Tell us what you need — speak, type, or scan a slip</p>
+                    <p className="text-sm text-gray-500 mb-6">{tx.hero.formSubtitle}</p>
 
                     {/* Toggle: Manual vs AI Scan */}
                     <div className="relative mb-6 bg-gray-100 border border-gray-200 p-1">
@@ -403,7 +404,7 @@ export function HomePage() {
                         >
                           <div className="flex items-center justify-center gap-2">
                             <FileText className="w-4 h-4" />
-                            <span>Manual Entry</span>
+                            <span>{tx.hero.formModeTabs.manual}</span>
                           </div>
                         </button>
                         <button
@@ -417,7 +418,7 @@ export function HomePage() {
                         >
                           <div className="flex items-center justify-center gap-2">
                             <Sparkles className="w-4 h-4" />
-                            <span>AI Scan Slip</span>
+                            <span>{tx.hero.formModeTabs.aiScan}</span>
                           </div>
                         </button>
                       </div>
@@ -431,14 +432,12 @@ export function HomePage() {
                             <Sparkles className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <h4 className="text-sm font-bold text-gray-900 mb-1">Scan Your Material Slip</h4>
-                            <p className="text-xs text-gray-600 leading-relaxed">
-                              Upload a photo of your contractor's slip or materials list. AI will extract products, quantities, and brands automatically.
-                            </p>
+                            <h4 className="text-sm font-bold text-gray-900 mb-1">{tx.hero.aiScan.title}</h4>
+                            <p className="text-xs text-gray-600 leading-relaxed">{tx.hero.aiScan.desc}</p>
                           </div>
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-center">
-                          {['Upload Photo', 'AI Reads It', 'Auto-Fill Form'].map((step, i) => (
+                          {tx.hero.aiScan.steps.map((step, i) => (
                             <div key={i} className="bg-white border border-gray-200 p-2">
                               <div className="text-lg font-semibold text-orange-600 mb-0.5">{i + 1}</div>
                               <div className="text-xs font-medium text-gray-700">{step}</div>
@@ -605,8 +604,8 @@ export function HomePage() {
                                 <div className="w-12 h-12 bg-gray-900 flex items-center justify-center">
                                   <Upload className="w-6 h-6 text-white" />
                                 </div>
-                                <span className="text-sm font-bold text-gray-900">Click to Upload Slip</span>
-                                <span className="text-xs text-gray-500">or drag and drop here · JPG, PNG · Max 10MB</span>
+                                <span className="text-sm font-bold text-gray-900">{tx.hero.aiScan.upload}</span>
+                                <span className="text-xs text-gray-500">{tx.hero.aiScan.uploadHint}</span>
                               </button>
 
                               {/* Divider */}
@@ -615,7 +614,7 @@ export function HomePage() {
                                   <div className="w-full border-t border-gray-200"></div>
                                 </div>
                                 <div className="relative flex justify-center text-xs">
-                                  <span className="px-3 bg-white text-gray-500 font-medium">OR</span>
+                                  <span className="px-3 bg-white text-gray-500 font-medium">{tx.hero.aiScan.or}</span>
                                 </div>
                               </div>
 
@@ -626,16 +625,16 @@ export function HomePage() {
                                 className="w-full px-4 py-3 bg-gray-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
                               >
                                 <Camera className="w-5 h-5" />
-                                <span>Use Camera</span>
+                                <span>{tx.hero.aiScan.camera}</span>
                               </button>
 
                               {/* Tips */}
                               <div className="bg-gray-50 border border-gray-200 p-4">
-                                <p className="text-xs font-bold text-gray-700 mb-2">For best results:</p>
+                                <p className="text-xs font-bold text-gray-700 mb-2">{tx.hero.aiScan.tips.title}</p>
                                 <ul className="text-xs text-gray-600 space-y-1">
-                                  <li>• Good lighting — natural light works best</li>
-                                  <li>• Capture the full slip in frame</li>
-                                  <li>• Avoid blurry or angled shots</li>
+                                  {tx.hero.aiScan.tips.items.map((tip, i) => (
+                                    <li key={i}>• {tip}</li>
+                                  ))}
                                 </ul>
                               </div>
                             </div>
@@ -674,7 +673,7 @@ export function HomePage() {
                       {/* Model Number */}
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
-                          <span>Product / Model Number</span>
+                          <span>{tx.hero.formLabels.productModel}</span>
                           <button
                             type="button"
                             onClick={isVoiceListening ? stopVoiceInput : startVoiceInput}
@@ -685,7 +684,7 @@ export function HomePage() {
                             }`}
                           >
                             {isVoiceListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
-                            {isVoiceListening ? 'Stop' : 'Speak'}
+                            {isVoiceListening ? tx.hero.formLabels.stop : tx.hero.formLabels.speak}
                           </button>
                         </label>
                         <input
@@ -705,7 +704,7 @@ export function HomePage() {
                       {/* Quantity & City */}
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Quantity</label>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">{tx.hero.formLabels.quantity}</label>
                           <input
                             type="number"
                             min="1"
@@ -716,14 +715,14 @@ export function HomePage() {
                         </div>
                         <div>
                           <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
-                            <span>Delivery City</span>
+                            <span>{tx.hero.formLabels.city}</span>
                             <button
                               type="button"
                               onClick={detectLocation}
                               className="text-xs text-orange-600 hover:text-orange-700 font-normal normal-case flex items-center gap-1"
                             >
                               <MapPin className="w-3 h-3" />
-                              Auto-detect
+                              {tx.hero.formLabels.autoDetect}
                             </button>
                           </label>
                           <input
@@ -738,7 +737,7 @@ export function HomePage() {
 
                       {/* Name & Phone */}
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Your Name</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">{tx.hero.formLabels.yourName}</label>
                         <input
                           type="text"
                           placeholder="Full name"
@@ -749,7 +748,7 @@ export function HomePage() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Phone Number</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">{tx.hero.formLabels.phone}</label>
                         <input
                           type="tel"
                           placeholder="10-digit mobile number"
@@ -776,18 +775,18 @@ export function HomePage() {
                         {submitting ? (
                           <>
                             <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                            <span>Submitting...</span>
+                            <span>{tx.hero.formLabels.submitting}</span>
                           </>
                         ) : (
                           <>
-                            <span>Get the Best Price</span>
+                            <span>{tx.hero.formLabels.getPrice}</span>
                             <ArrowRight className="ml-2 w-5 h-5" />
                           </>
                         )}
                       </button>
 
                       <p className="text-xs text-gray-400 text-center">
-                        We'll reach out with dealer quotes. No spam, ever.
+                        {tx.hero.formLabels.noSpam}
                       </p>
                     </form>
                   </>
@@ -803,38 +802,19 @@ export function HomePage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
-              How It Works
+              {tx.howItWorks.title}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Submit your inquiry. We do the sourcing. You compare and choose.
+              {tx.howItWorks.subtitle}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                step: '01',
-                title: 'Submit Your Inquiry',
-                description: 'Tell us what you need — product name, model, quantity, and your city. Upload a photo or a contractor\'s material slip if you have one.',
-                highlight: 'Takes 2 minutes'
-              },
-              {
-                step: '02',
-                title: 'We Source Quotes',
-                description: 'We reach out to our network of verified dealers who stock what you need. They compete to give you the best price.',
-                highlight: 'We do the work'
-              },
-              {
-                step: '03',
-                title: 'Compare & Choose',
-                description: 'We share the dealer quotes with you. Review prices, terms, and ratings. Pick the deal that makes sense for you.',
-                highlight: 'You decide'
-              },
-            ].map((item, index) => (
+            {tx.howItWorks.steps.map((item, index) => (
               <div key={index} className="bg-gray-50 border border-gray-200 rounded-xl p-8 hover:shadow-sm transition-all duration-300 group">
                 <div className="w-14 h-14 flex items-center justify-center bg-gray-900 text-white text-xl font-semibold rounded-xl mb-6">{item.step}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600 mb-4">{item.description}</p>
+                <p className="text-gray-600 mb-4">{item.desc}</p>
                 <span className="inline-flex items-center text-sm font-bold text-orange-600 uppercase tracking-wider">
                   {item.highlight}
                 </span>
@@ -853,10 +833,12 @@ export function HomePage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold mb-4">
-              Everything Electrical.<br />One Platform.
+              {tx.categories.title.split('.').map((part, i, arr) => (
+                <span key={i}>{part.trim()}{i < arr.length - 1 && <><br /></>}</span>
+              ))}
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Havells, Polycab, Schneider, Legrand, Anchor — all major brands with verified specs and warranty details.
+              {tx.categories.subtitle}
             </p>
           </div>
 
@@ -864,7 +846,7 @@ export function HomePage() {
 
           <div className="text-center mt-12">
             <Link to="/categories" className="inline-flex items-center gap-2 px-7 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors">
-              Explore Full Catalog
+              {tx.categories.cta}
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -876,90 +858,49 @@ export function HomePage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
-              What Real Price Access Looks Like
+              {tx.realDeals.title}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Actual deals closed through Hub4Estate. Real numbers, no fabrications.
+              {tx.realDeals.subtitle}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Deal 1: Sony Speaker */}
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
-              <div className="mb-6">
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">Audio Equipment</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-5">Sony Tower Speaker + 2 Mics</h3>
-              <div className="space-y-2 mb-6">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-500">MRP</span>
-                  <span className="text-sm font-bold text-gray-400 line-through">₹1,15,000</span>
+            {tx.realDeals.deals.map((deal, di) => {
+              const savedAmounts = ['₹37,000', '₹24,000', '₹8,800'];
+              return (
+                <div key={di} className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
+                  <div className="mb-6">
+                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">{deal.tag}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-5">{deal.title}</h3>
+                  <div className="space-y-2 mb-6">
+                    {deal.rows.map((row, ri) => (
+                      row.strikethrough ? (
+                        <div key={ri} className="flex justify-between items-center py-2 border-b border-gray-100">
+                          <span className="text-sm text-gray-500">{row.label}</span>
+                          <span className="text-sm font-bold text-gray-400 line-through">{row.price}</span>
+                        </div>
+                      ) : (
+                        <div key={ri} className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
+                          <span className="text-sm font-bold text-white">{row.label}</span>
+                          <span className="text-lg font-semibold text-orange-400">{row.price}</span>
+                        </div>
+                      )
+                    ))}
+                  </div>
+                  <div className="border-t-2 border-gray-200 pt-4">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">{deal.savedLabel}</p>
+                    <p className="text-2xl font-semibold text-green-600">{savedAmounts[di]}</p>
+                    <p className="text-xs text-gray-400 mt-1">{deal.savedNote}</p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-500">Croma (retail)</span>
-                  <span className="text-sm font-bold text-gray-500 line-through">₹1,05,000</span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
-                  <span className="text-sm font-bold text-white">Hub4Estate</span>
-                  <span className="text-lg font-semibold text-orange-400">₹68,000</span>
-                </div>
-              </div>
-              <div className="border-t-2 border-gray-200 pt-4">
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Saved vs Croma</p>
-                <p className="text-2xl font-semibold text-green-600">₹37,000</p>
-                <p className="text-xs text-gray-400 mt-1">We tracked 8 dealers to find this price</p>
-              </div>
-            </div>
-
-            {/* Deal 2: Philips LED */}
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
-              <div className="mb-6">
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">LED Lighting</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-5">Philips 15W LED Panels × 200 units</h3>
-              <div className="space-y-2 mb-6">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-500">Local dealer (per piece)</span>
-                  <span className="text-sm font-bold text-gray-500 line-through">₹585/pc</span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
-                  <span className="text-sm font-bold text-white">Hub4Estate (incl. shipping)</span>
-                  <span className="text-lg font-semibold text-orange-400">₹465/pc</span>
-                </div>
-              </div>
-              <div className="border-t-2 border-gray-200 pt-4">
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Total Saved on Order</p>
-                <p className="text-2xl font-semibold text-green-600">₹24,000</p>
-                <p className="text-xs text-gray-400 mt-1">₹120 saved per unit × 200 units</p>
-              </div>
-            </div>
-
-            {/* Deal 3: FRLS Wire */}
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all">
-              <div className="mb-6">
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5">Wiring & Cable</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-5">FRLS 2.5mm² Wire × 200 metres</h3>
-              <div className="space-y-2 mb-6">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-500">Highest dealer quote</span>
-                  <span className="text-sm font-bold text-gray-500 line-through">₹127/m</span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 bg-gray-900 px-3">
-                  <span className="text-sm font-bold text-white">Best dealer (via Hub4Estate)</span>
-                  <span className="text-lg font-semibold text-orange-400">₹83/m</span>
-                </div>
-              </div>
-              <div className="border-t-2 border-gray-200 pt-4">
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-1">Saved on 200m Order</p>
-                <p className="text-2xl font-semibold text-green-600">₹8,800</p>
-                <p className="text-xs text-gray-400 mt-1">6 dealers quoted — ₹44/m spread between them</p>
-              </div>
-            </div>
+              );
+            })}
           </div>
 
           <p className="text-center text-sm text-gray-500 mt-8">
-            These are real, verified deals. We don't fabricate numbers or testimonials.
+            {tx.realDeals.footnote}
           </p>
         </div>
       </section>
@@ -969,46 +910,28 @@ export function HomePage() {
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
-              The Same Product.<br />Very Different Prices.
+              {tx.whyWeExist.title}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              The price you're quoted depends entirely on who you ask. Most buyers never find out.
+              {tx.whyWeExist.subtitle}
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-16">
-            {[
-              {
-                title: 'The Information Gap',
-                description: 'Dealers know exactly what they paid for the product. You don\'t. The same Sony speaker set was priced at ₹1,05,000 at one retailer and ₹68,000 through our network. That gap is real — and it\'s common.',
-              },
-              {
-                title: 'The Local Monopoly Problem',
-                description: 'If there are only one or two dealers near you, they set the price. No competition means no transparency. Calling 5–6 dealers manually takes hours. Most people don\'t bother — and pay the first price they\'re given.',
-              },
-              {
-                title: 'The Documentation Problem',
-                description: 'Cash purchases, no proper GST bills, no warranty cards in your name. When something fails, you\'re left with no recourse and no proof of purchase.',
-              },
-              {
-                title: 'What We\'re Fixing',
-                description: 'We connect buyers to multiple verified dealers at once. You see all the quotes side by side. The dealer who wins your business earns it fairly. That\'s the whole model.',
-              },
-            ].map((item, index) => (
+            {tx.whyWeExist.cards.map((item, index) => (
               <div key={index} className="border border-gray-200 rounded-xl p-8 hover:border-gray-300 hover:shadow-sm transition-all duration-300">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
           <div className="bg-gray-900 text-white p-10 text-center rounded-2xl">
             <h3 className="text-3xl font-semibold mb-4">
-              Transparent Pricing. Verified Dealers. Your Choice.
+              {tx.whyWeExist.summary.title}
             </h3>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              We're not here to guarantee the lowest price in the universe.
-              We're here to give you enough information to make the right call.
+              {tx.whyWeExist.summary.desc}
             </p>
           </div>
         </div>
@@ -1021,22 +944,21 @@ export function HomePage() {
       <section className="py-20 bg-gray-900">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-semibold text-white mb-4">
-            Ready to Find the Best Price?
+            {tx.finalCta.title}
           </h2>
           <p className="text-base text-gray-400 mb-10 max-w-2xl mx-auto">
-            Submit an inquiry and let our dealer network do the work.
-            No commitment. No spam. Just real quotes.
+            {tx.finalCta.subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
             >
-              Submit an Inquiry
+              {tx.finalCta.ctaPrimary}
               <ArrowRight className="w-5 h-5" />
             </button>
             <Link to="/track" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/30 text-white font-medium rounded-xl hover:border-white/60 transition-colors">
-              Track an Existing Inquiry
+              {tx.finalCta.ctaSecondary}
             </Link>
           </div>
         </div>

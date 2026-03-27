@@ -64,7 +64,7 @@ export function Layout() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { lang, setLang } = useLanguage();
+  const { lang, setLang, tx } = useLanguage();
 
   const handleLogout = () => {
     logout();
@@ -90,10 +90,10 @@ export function Layout() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-0.5">
               {[
-                { to: '/categories', label: 'Products' },
-                { to: '/knowledge', label: 'Guides' },
-                { to: '/community', label: 'Community' },
-                { to: '/dealer/onboarding', label: 'For Dealers' },
+                { to: '/categories', label: tx.nav.products },
+                { to: '/knowledge', label: tx.nav.guides },
+                { to: '/community', label: tx.nav.community },
+                { to: '/dealer/onboarding', label: tx.nav.forDealers },
               ].map(({ to, label }) => (
                 <Link
                   key={to}
@@ -108,7 +108,7 @@ export function Layout() {
                 className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
               >
                 <Search className="w-3.5 h-3.5" />
-                Track
+                {tx.nav.track}
               </Link>
             </nav>
 
@@ -120,14 +120,14 @@ export function Layout() {
                 <>
                   {user?.type === 'user' && (
                     <Link to="/dashboard" className="flex items-center gap-1.5 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
-                      My Dashboard <ArrowRight className="w-3.5 h-3.5" />
+                      {tx.nav.myDashboard} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   )}
                   {user?.type === 'dealer' && (
-                    <Link to="/dealer" className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">Dealer Portal</Link>
+                    <Link to="/dealer" className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">{tx.nav.dealerPortal}</Link>
                   )}
                   {user?.type === 'admin' && (
-                    <Link to="/admin" className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">Admin Panel</Link>
+                    <Link to="/admin" className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">{tx.nav.adminPanel}</Link>
                   )}
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100">
                     <div className="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
@@ -148,7 +148,7 @@ export function Layout() {
                   }}
                   className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
                 >
-                  Get Quotes
+                  {tx.nav.getQuotes}
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               )}
@@ -169,11 +169,11 @@ export function Layout() {
           <div className="lg:hidden border-t border-gray-100 bg-white">
             <div className="px-4 py-4 space-y-0.5">
               {[
-                { to: '/categories', label: 'Products' },
-                { to: '/knowledge', label: 'Guides' },
-                { to: '/community', label: 'Community' },
-                { to: '/dealer/onboarding', label: 'For Dealers' },
-                { to: '/track', label: 'Track Request' },
+                { to: '/categories', label: tx.nav.products },
+                { to: '/knowledge', label: tx.nav.guides },
+                { to: '/community', label: tx.nav.community },
+                { to: '/dealer/onboarding', label: tx.nav.forDealers },
+                { to: '/track', label: tx.nav.track },
               ].map(({ to, label }) => (
                 <Link
                   key={to}
@@ -187,7 +187,7 @@ export function Layout() {
 
               {/* Language options — mobile */}
               <div className="pt-3 border-t border-gray-100 mt-3">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Language</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">{tx.nav.language}</p>
                 <div className="flex flex-wrap gap-2">
                   {LANGUAGES.map(l => (
                     <button
@@ -220,16 +220,16 @@ export function Layout() {
                     </div>
                     {user?.type === 'user' && (
                       <Link to="/dashboard" className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-xl" onClick={() => setMobileMenuOpen(false)}>
-                        My Dashboard <ArrowRight className="w-4 h-4" />
+                        {tx.nav.myDashboard} <ArrowRight className="w-4 h-4" />
                       </Link>
                     )}
                     {user?.type === 'dealer' && (
                       <Link to="/dealer" className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-xl" onClick={() => setMobileMenuOpen(false)}>
-                        Dealer Portal
+                        {tx.nav.dealerPortal}
                       </Link>
                     )}
                     <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                      <LogOut className="w-4 h-4" /> Logout
+                      <LogOut className="w-4 h-4" /> {tx.nav.logout}
                     </button>
                   </div>
                 ) : (
@@ -238,7 +238,7 @@ export function Layout() {
                     className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl"
                     onClick={() => { setMobileMenuOpen(false); setTimeout(() => { document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}
                   >
-                    Get Free Quotes <ArrowRight className="w-4 h-4" />
+                    {tx.nav.getQuotes} <ArrowRight className="w-4 h-4" />
                   </Link>
                 )}
               </div>
@@ -260,19 +260,19 @@ export function Layout() {
                 </div>
                 <span className="text-base font-semibold">Hub4Estate</span>
               </div>
-              <p className="text-gray-400 text-sm leading-relaxed mb-4">India's marketplace for electrical procurement. Dealers compete. You save.</p>
-              <p className="text-gray-500 text-xs">Hub4Estate LLP · Registered in India</p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-4">{tx.footer.tagline}</p>
+              <p className="text-gray-500 text-xs">{tx.footer.registered}</p>
             </div>
 
             <div>
-              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Products</h4>
+              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-4">{tx.footer.sections.products}</h4>
               <ul className="space-y-2.5 text-sm">
                 {[
                   { to: '/categories/wires-cables', label: 'Wires & Cables' },
                   { to: '/categories/switchgear-protection', label: 'Switchgear & MCBs' },
                   { to: '/categories/switches-sockets', label: 'Switches & Sockets' },
                   { to: '/categories/lighting', label: 'Lighting' },
-                  { to: '/categories', label: 'View All →', highlight: true },
+                  { to: '/categories', label: tx.footer.links.viewAll, highlight: true },
                 ].map(({ to, label, highlight }) => (
                   <li key={to}><Link to={to} className={`transition-colors ${highlight ? 'text-orange-400 hover:text-orange-300' : 'text-gray-400 hover:text-white'}`}>{label}</Link></li>
                 ))}
@@ -280,13 +280,13 @@ export function Layout() {
             </div>
 
             <div>
-              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Resources</h4>
+              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-4">{tx.footer.sections.resources}</h4>
               <ul className="space-y-2.5 text-sm">
                 {[
-                  { to: '/knowledge', label: 'Buying Guides' },
-                  { to: '/community', label: 'Community' },
-                  { to: '/ai-assistant', label: 'AI Assistant' },
-                  { to: '/track', label: 'Track Request', highlight: true },
+                  { to: '/knowledge', label: tx.footer.links.buyingGuides },
+                  { to: '/community', label: tx.footer.links.community },
+                  { to: '/ai-assistant', label: tx.footer.links.aiAssistant },
+                  { to: '/track', label: tx.footer.links.trackRequest, highlight: true },
                 ].map(({ to, label, highlight }) => (
                   <li key={to}><Link to={to} className={`transition-colors ${highlight ? 'text-orange-400 hover:text-orange-300' : 'text-gray-400 hover:text-white'}`}>{label}</Link></li>
                 ))}
@@ -294,10 +294,10 @@ export function Layout() {
             </div>
 
             <div>
-              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-4">For Dealers</h4>
+              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-4">{tx.footer.sections.forDealers}</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><Link to="/dealer/onboarding" className="text-gray-400 hover:text-white transition-colors">Join as Dealer</Link></li>
-                <li><Link to="/dealer/login" className="text-gray-400 hover:text-white transition-colors">Dealer Login</Link></li>
+                <li><Link to="/dealer/onboarding" className="text-gray-400 hover:text-white transition-colors">{tx.footer.links.joinDealer}</Link></li>
+                <li><Link to="/dealer/login" className="text-gray-400 hover:text-white transition-colors">{tx.footer.links.dealerLogin}</Link></li>
               </ul>
               <div className="mt-5 pt-5 border-t border-gray-800">
                 <a href="mailto:shreshth.agarwal@hub4estate.com" className="text-sm text-gray-400 hover:text-white transition-colors block">shreshth.agarwal@hub4estate.com</a>
@@ -307,12 +307,16 @@ export function Layout() {
           </div>
 
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-600 text-sm">&copy; 2026 Hub4Estate LLP. All rights reserved.</p>
+            <p className="text-gray-600 text-sm">{tx.footer.bottom.copyright}</p>
             <div className="flex items-center gap-5 text-sm text-gray-600">
-              {['/about', '/contact', '/privacy', '/terms', '/join-team'].map((to, i) => (
-                <Link key={to} to={to} className="hover:text-white transition-colors">
-                  {['About', 'Contact', 'Privacy', 'Terms', 'Careers'][i]}
-                </Link>
+              {[
+                { to: '/about', label: tx.footer.bottom.about },
+                { to: '/contact', label: tx.footer.bottom.contact },
+                { to: '/privacy', label: tx.footer.bottom.privacy },
+                { to: '/terms', label: tx.footer.bottom.terms },
+                { to: '/join-team', label: tx.footer.bottom.careers },
+              ].map(({ to, label }) => (
+                <Link key={to} to={to} className="hover:text-white transition-colors">{label}</Link>
               ))}
             </div>
           </div>
