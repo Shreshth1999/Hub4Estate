@@ -8,6 +8,7 @@ import { productsApi, api } from '../lib/api';
 import { Analytics } from '../lib/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { ElectricWireDivider } from '../components/ElectricWireDivider';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
@@ -324,7 +325,7 @@ export function HomePage() {
               >
                 <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
                 <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">
-                  {isHi ? 'Live — 500+ verified dealers' : 'Live — 500+ Verified Dealers Across India'}
+                  {isHi ? 'Live — Verified Dealer Network' : 'Live — Verified Dealer Network Across India'}
                 </span>
               </div>
 
@@ -377,12 +378,16 @@ export function HomePage() {
                 className="flex flex-col gap-3"
                 style={revealStyle(heroIn.inView, 0.24)}
               >
-                {[IndianRupee, Shield, FileText].map((Icon, index) => (
+                {[
+                { Icon: IndianRupee, text: 'Always free for buyers — zero commission, zero fee' },
+                { Icon: Shield, text: 'Every dealer verified before they can respond to your inquiry' },
+                { Icon: CheckCircle, text: 'Your inquiry stays private — you choose who you deal with' },
+              ].map(({ Icon, text }, index) => (
                   <div key={index} className="flex items-center gap-3 text-sm text-white/50">
                     <div className="w-7 h-7 rounded-lg bg-orange-500/15 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
                       <Icon className="w-3.5 h-3.5 text-orange-400" />
                     </div>
-                    <span>{tx.hero.trust[index]}</span>
+                    <span>{text}</span>
                   </div>
                 ))}
               </div>
@@ -870,14 +875,15 @@ export function HomePage() {
         </div>
       </div>
 
+      <ElectricWireDivider dark />
       {/* ─── Trust Pillars ─────────────────────────────────────────────────────── */}
       <div className="bg-[#09090B] border-t border-white/5 py-12">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/8">
             {[
-              { icon: '🔍', title: 'Verified Dealers Only', desc: 'Every dealer is vetted before they can quote. No random shops, no middlemen.' },
-              { icon: '⚡', title: 'Real Competition', desc: 'Multiple dealers quote simultaneously — prices drop when they compete for your order.' },
-              { icon: '🧾', title: 'GST on Every Order', desc: 'Full GST invoice, warranty in your name, proper documentation always.' },
+              { icon: '🔍', title: 'Verified Dealers Only', desc: 'Every dealer is vetted before they can respond to an inquiry. No random shops, no unknown sources.' },
+              { icon: '⚡', title: 'Dealers Compete For You', desc: 'Multiple dealers quote your inquiry simultaneously — prices drop when they compete for your business.' },
+              { icon: '🤝', title: 'You Stay In Control', desc: 'All quotes in one place. Compare prices, delivery, and ratings. You decide — no pressure, no commitment.' },
             ].map((p, i) => (
               <div key={i} className="bg-[#09090B] px-8 py-8 hover:bg-white/[0.03] transition-colors duration-300">
                 <div className="text-3xl mb-4">{p.icon}</div>
@@ -889,6 +895,7 @@ export function HomePage() {
         </div>
       </div>
 
+      <ElectricWireDivider />
       {/* ─── How It Works ─────────────────────────────────────────────────────── */}
       <section className="bg-white overflow-hidden">
         <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6">
@@ -1063,8 +1070,10 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* AI Section — animated, mobile-first */}
+      {/* AI Section */}
+      <ElectricWireDivider dark />
       <AISection />
+      <ElectricWireDivider />
 
       {/* Categories Grid */}
       <section className="py-20 sm:py-28 bg-white">
@@ -1093,6 +1102,7 @@ export function HomePage() {
         </div>
       </section>
 
+      <ElectricWireDivider dark />
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
       <section className="py-20 sm:py-28 bg-[#09090B] relative overflow-hidden">
         {/* Ambient glow */}
@@ -1154,6 +1164,7 @@ export function HomePage() {
         </div>
       </section>
 
+      <ElectricWireDivider dark />
       {/* Why We Exist */}
       <section className="py-20 sm:py-28 bg-[#09090B] relative overflow-hidden blueprint-bg-dark">
         <div className="absolute inset-0 pointer-events-none"
@@ -1198,8 +1209,10 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Persona Section — second to last */}
+      {/* Persona Section */}
+      <ElectricWireDivider />
       <PersonaSection />
+      <ElectricWireDivider dark />
 
       {/* Final CTA */}
       <section className="relative py-24 sm:py-32 overflow-hidden"

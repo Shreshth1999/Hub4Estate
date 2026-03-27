@@ -605,3 +605,8 @@ input:-webkit-autofill:focus {
   box-shadow: 0 0 30px rgba(249, 115, 22, 0.45), 0 8px 20px rgba(249, 115, 22, 0.2);
   transform: translateY(-2px);
 }
+
+@keyframes electricDashForward {
+  0% { stroke-dashoffset: 18; }
+  100% { stroke-dashoffset: 0; }
+}

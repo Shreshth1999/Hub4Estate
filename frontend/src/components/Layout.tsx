@@ -3,6 +3,7 @@ import { useAuthStore } from '@/lib/store';
 import { Menu, X, User, LogOut, ArrowRight, Zap, Search, Globe } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { AIAssistantWidget } from './AIAssistantWidget';
+import { ElectricalCursor } from './ElectricalCursor';
 import { useLanguage } from '../contexts/LanguageContext';
 import type { LangCode } from '../i18n/translations';
 
@@ -35,12 +36,13 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-white">
       <AIAssistantWidget />
+      <ElectricalCursor />
 
       {/* Announcement Bar */}
       <div className="bg-gray-950 text-center py-2.5 px-4">
         <p className="text-xs font-medium text-white/70 flex items-center justify-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
-          Real quotes from 500+ verified dealers. No middlemen. GST billed every time.
+          Real quotes from verified dealers across India. No middlemen. Always free for buyers.
           <Link
             to="/"
             onClick={(e) => {
