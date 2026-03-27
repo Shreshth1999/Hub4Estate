@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Search, Clock, CheckCircle, Phone, MapPin, Package,
-  AlertCircle, Loader2, IndianRupee, Truck, MessageSquare, Hash,
+  AlertCircle, Loader2, IndianRupee, Truck, MessageSquare, Hash, Zap,
 } from 'lucide-react';
 import { api } from '../lib/api';
 import { ImagePreview } from '../components/common/ImagePreview';
+import { ElectricWireDivider } from '../components/ElectricWireDivider';
+import { useInView, revealStyle } from '../hooks/useInView';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
@@ -49,6 +51,8 @@ export function TrackInquiryPage() {
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
 
+  const { ref: heroRef, inView: heroIn } = useInView(0.05);
+
   const fetchInquiries = async () => {
     const query = searchBy === 'phone' ? phone.trim() : inquiryNumber.trim();
     if (!query) {
@@ -88,25 +92,38 @@ export function TrackInquiryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-8">
-        <div className="max-w-2xl mx-auto text-center">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-1">Track Your Inquiry</h1>
-          <p className="text-sm text-gray-500">Check the status of your product inquiry — no sign-in required.</p>
+    <div className="min-h-screen bg-white">
+
+      {/* Hero — dark */}
+      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+        </div>
+        <div ref={heroRef as any} className="max-w-2xl mx-auto px-6 py-20 text-center relative">
+          <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6" style={revealStyle(heroIn, 0)}>
+            <Zap className="w-6 h-6 text-orange-400" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-3 tracking-tight" style={revealStyle(heroIn, 0.06)}>
+            Track Your Inquiry
+          </h1>
+          <p className="text-gray-400 text-base" style={revealStyle(heroIn, 0.1)}>
+            Check the status of your product inquiry — no sign-in required.
+          </p>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+      <ElectricWireDivider />
+
+      <div className="max-w-2xl mx-auto px-4 py-10 space-y-6">
 
         {/* Search Card */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
           {/* Toggle */}
           <div className="flex gap-2 mb-4">
             <button
               type="button"
               onClick={() => { setSearchBy('phone'); setError(''); }}
-              className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`px-4 py-2 text-sm font-semibold rounded-xl transition-colors ${
                 searchBy === 'phone'
                   ? 'bg-gray-900 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -117,7 +134,7 @@ export function TrackInquiryPage() {
             <button
               type="button"
               onClick={() => { setSearchBy('number'); setError(''); }}
-              className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`px-4 py-2 text-sm font-semibold rounded-xl transition-colors ${
                 searchBy === 'number'
                   ? 'bg-gray-900 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -134,7 +151,7 @@ export function TrackInquiryPage() {
                 placeholder="Enter your 10-digit phone number"
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
-                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 transition-colors"
               />
             ) : (
               <input
@@ -142,13 +159,13 @@ export function TrackInquiryPage() {
                 placeholder="e.g. HUB-HAVELLS-MCB-0001"
                 value={inquiryNumber}
                 onChange={e => setInquiryNumber(e.target.value)}
-                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-sm font-mono focus:outline-none focus:border-gray-400 transition-colors"
+                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-gray-400 transition-colors"
               />
             )}
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors flex items-center gap-2"
+              className="px-5 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-gray-800 disabled:opacity-50 transition-colors flex items-center gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
               Track
@@ -173,15 +190,17 @@ export function TrackInquiryPage() {
 
         {/* Empty state */}
         {!loading && !searched && (
-          <div className="text-center py-12">
-            <Search className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-            <p className="text-sm text-gray-500">Enter your phone or inquiry number above to track your request.</p>
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-gray-300" />
+            </div>
+            <p className="text-sm font-medium text-gray-500">Enter your phone or inquiry number above to track your request.</p>
           </div>
         )}
 
         {/* No results */}
         {!loading && searched && inquiries.length === 0 && !error && (
-          <div className="text-center py-12">
+          <div className="text-center py-16">
             <AlertCircle className="w-10 h-10 text-gray-200 mx-auto mb-3" />
             <p className="text-sm text-gray-500">
               No inquiries found for this {searchBy === 'phone' ? 'phone number' : 'inquiry number'}.
@@ -192,7 +211,7 @@ export function TrackInquiryPage() {
         {/* Results */}
         {!loading && inquiries.length > 0 && (
           <div className="space-y-4">
-            <p className="text-xs text-gray-400 font-medium">
+            <p className="text-xs text-gray-400 font-semibold">
               {inquiries.length} inquiry{inquiries.length !== 1 ? 's' : ''} found
             </p>
 
@@ -201,18 +220,18 @@ export function TrackInquiryPage() {
               const hasQuote = inq.quotedPrice !== null;
 
               return (
-                <div key={inq.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div key={inq.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
                   {/* Header */}
                   <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                     <div className="flex items-center gap-2">
                       <Hash className="w-3.5 h-3.5 text-gray-400" />
-                      <span className="font-mono text-sm font-medium text-gray-900">
+                      <span className="font-mono text-sm font-bold text-gray-900">
                         {inq.inquiryNumber || inq.id.slice(0, 8).toUpperCase()}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
-                      <span className={`text-xs font-medium ${status.color}`}>{status.label}</span>
+                      <div className={`w-1.5 h-1.5 rounded-full ${status.dot} animate-pulse`} />
+                      <span className={`text-xs font-semibold ${status.color}`}>{status.label}</span>
                     </div>
                   </div>
 
@@ -224,7 +243,7 @@ export function TrackInquiryPage() {
                         const current = idx === status.step - 1;
                         return (
                           <div key={stepLabel} className="flex flex-col items-center flex-1">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium mb-1 ${
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold mb-1 ${
                               done && !current
                                 ? 'bg-green-500 text-white'
                                 : current
@@ -233,7 +252,7 @@ export function TrackInquiryPage() {
                             }`}>
                               {done && !current ? <CheckCircle className="w-3.5 h-3.5" /> : idx + 1}
                             </div>
-                            <span className={`text-[10px] text-center ${done ? 'text-gray-700 font-medium' : 'text-gray-400'}`}>
+                            <span className={`text-[10px] text-center ${done ? 'text-gray-700 font-semibold' : 'text-gray-400'}`}>
                               {stepLabel}
                             </span>
                           </div>
@@ -257,7 +276,7 @@ export function TrackInquiryPage() {
                         <Package className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-[11px] text-gray-400 mb-0.5">Product</p>
-                          <p className="text-sm text-gray-900">{inq.modelNumber}</p>
+                          <p className="text-sm font-medium text-gray-900">{inq.modelNumber}</p>
                         </div>
                       </div>
                     )}
@@ -265,16 +284,16 @@ export function TrackInquiryPage() {
                       <MapPin className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="text-[11px] text-gray-400 mb-0.5">Delivery city</p>
-                        <p className="text-sm text-gray-900">{inq.deliveryCity}</p>
+                        <p className="text-sm font-medium text-gray-900">{inq.deliveryCity}</p>
                       </div>
                     </div>
                     <div>
                       <p className="text-[11px] text-gray-400 mb-0.5">Quantity</p>
-                      <p className="text-sm text-gray-900">{inq.quantity} units</p>
+                      <p className="text-sm font-medium text-gray-900">{inq.quantity} units</p>
                     </div>
                     <div>
                       <p className="text-[11px] text-gray-400 mb-0.5">Submitted</p>
-                      <p className="text-sm text-gray-900">
+                      <p className="text-sm font-medium text-gray-900">
                         {new Date(inq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </p>
                     </div>
@@ -292,21 +311,21 @@ export function TrackInquiryPage() {
 
                   {/* Quote */}
                   {hasQuote && (
-                    <div className="mx-5 mb-5 bg-green-50 rounded-xl border border-green-100 p-4">
+                    <div className="mx-5 mb-5 bg-green-50 rounded-2xl border border-green-100 p-4">
                       <div className="flex items-center gap-2 mb-3">
                         <IndianRupee className="w-4 h-4 text-green-700" />
-                        <h4 className="text-sm font-semibold text-green-900">Your Quote</h4>
+                        <h4 className="text-sm font-bold text-green-900">Your Quote</h4>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <p className="text-[11px] text-green-600 mb-0.5">Price per unit</p>
-                          <p className="text-xl font-semibold text-green-900">
+                          <p className="text-xl font-bold text-green-900">
                             ₹{inq.quotedPrice!.toLocaleString('en-IN')}
                           </p>
                         </div>
                         <div>
                           <p className="text-[11px] text-green-600 mb-0.5">Shipping</p>
-                          <p className="text-xl font-semibold text-green-900">
+                          <p className="text-xl font-bold text-green-900">
                             ₹{(inq.shippingCost || 0).toLocaleString('en-IN')}
                           </p>
                         </div>
@@ -314,7 +333,7 @@ export function TrackInquiryPage() {
                           <p className="text-[11px] text-green-600">
                             Total ({inq.quantity} units + shipping)
                           </p>
-                          <p className="text-2xl font-semibold text-green-900">
+                          <p className="text-2xl font-black text-green-900">
                             ₹{(inq.totalPrice || 0).toLocaleString('en-IN')}
                           </p>
                         </div>

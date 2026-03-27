@@ -4,17 +4,19 @@ import { ArrowLeft, FileText } from 'lucide-react';
 export function TermsPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-12">
+      {/* Header — dark */}
+      <div className="bg-[#09090B] px-6 py-16">
         <div className="max-w-3xl mx-auto">
-          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 mb-8 transition-colors">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to home
           </Link>
           <div className="flex items-center gap-3 mb-2">
-            <FileText className="w-5 h-5 text-gray-500" />
-            <h1 className="text-3xl font-bold text-gray-900">Terms of Service</h1>
+            <div className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center">
+              <FileText className="w-5 h-5 text-orange-400" />
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight">Terms of Service</h1>
           </div>
-          <p className="text-sm text-gray-400 mt-2">Last updated: 17 March 2026</p>
+          <p className="text-sm text-gray-500 mt-3">Last updated: 17 March 2026</p>
         </div>
       </div>
 

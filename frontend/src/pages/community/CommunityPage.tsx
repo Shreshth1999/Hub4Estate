@@ -7,6 +7,7 @@ import {
   Clock, User, MapPin, ArrowRight, Users, Store, Shield,
   HelpCircle, FileText, Briefcase, CheckCircle, X, Loader2
 } from 'lucide-react';
+import { ElectricWireDivider } from '../../components/ElectricWireDivider';
 
 interface Post {
   id: string;
@@ -128,21 +129,24 @@ export function CommunityPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+      {/* Hero — dark */}
+      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 py-16 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-600 mb-4">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-800 text-gray-300 text-[11px] font-semibold rounded-full mb-6">
                 <Users className="w-3.5 h-3.5" />
                 Community
               </div>
-              <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-3">
+              <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight">
                 Community Hub.<br />
-                <span className="text-orange-500">Learn & Share.</span>
+                <span className="gradient-text-orange">Learn & Share.</span>
               </h1>
-              <p className="text-gray-500 mb-6">
-                Connect with homeowners and professionals. Share experiences, ask questions, and get advice.
+              <p className="text-gray-400 mb-6 leading-relaxed">
+                Connect with homeowners and professionals. Share experiences, ask questions, and get advice on electrical products.
               </p>
               <div className="relative max-w-xl">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -151,23 +155,25 @@ export function CommunityPage() {
                   placeholder="Search discussions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-gray-400 focus:outline-none"
+                  className="w-full pl-9 pr-4 py-3 bg-white/10 border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 focus:border-white/20 focus:outline-none transition-all"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-50 rounded-xl border border-gray-200 p-5">
-                <div className="text-2xl font-semibold text-gray-900 mb-1">5K+</div>
-                <div className="text-xs text-gray-500">Members</div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                <div className="text-2xl font-black text-white mb-1">{posts.length || '—'}</div>
+                <div className="text-xs text-gray-400">Active Discussions</div>
               </div>
-              <div className="bg-gray-50 rounded-xl border border-gray-200 p-5">
-                <div className="text-2xl font-semibold text-gray-900 mb-1">{posts.length}</div>
-                <div className="text-xs text-gray-500">Discussions</div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                <div className="text-2xl font-black text-orange-400 mb-1">Free</div>
+                <div className="text-xs text-gray-400">Always open to all</div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <ElectricWireDivider />
 
       {/* Main content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
