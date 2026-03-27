@@ -8,10 +8,58 @@ import { generateAdminInsights } from '../services/ai.service';
 const router = Router();
 
 // ============================================
-// DEALER VERIFICATION
+// DEALER MANAGEMENT
 // ============================================
 
-// Get pending dealers
+// List all dealers with optional status/search/page filter
+router.get('/dealers', authenticateAdmin, async (req, res) => {
+  try {
+    const { status, page = '1', limit = '20', search } = req.query;
+
+    const where: any = {};
+    if (status && status !== 'ALL') where.status = String(status);
+    if (search) {
+      where.OR = [
+        { businessName: { contains: String(search), mode: 'insensitive' } },
+        { ownerName: { contains: String(search), mode: 'insensitive' } },
+        { email: { contains: String(search), mode: 'insensitive' } },
+        { gstNumber: { contains: String(search), mode: 'insensitive' } },
+      ];
+    }
+
+    const skip = (parseInt(String(page)) - 1) * parseInt(String(limit));
+
+    const [dealers, total, pending, verified, suspended, rejected] = await Promise.all([
+      prisma.dealer.findMany({
+        where,
+        skip,
+        take: parseInt(String(limit)),
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.dealer.count({ where }),
+      prisma.dealer.count({ where: { status: 'PENDING_VERIFICATION' } }),
+      prisma.dealer.count({ where: { status: 'VERIFIED' } }),
+      prisma.dealer.count({ where: { status: 'SUSPENDED' } }),
+      prisma.dealer.count({ where: { status: 'REJECTED' } }),
+    ]);
+
+    return res.json({
+      dealers,
+      counts: { pending, verified, suspended, rejected },
+      pagination: {
+        total,
+        page: parseInt(String(page)),
+        limit: parseInt(String(limit)),
+        pages: Math.ceil(total / parseInt(String(limit))),
+      },
+    });
+  } catch (error) {
+    console.error('Get dealers error:', error);
+    return res.status(500).json({ error: 'Failed to fetch dealers' });
+  }
+});
+
+// Get pending dealers (legacy, keep for compat)
 router.get('/dealers/pending', authenticateAdmin, async (req, res) => {
   try {
     const dealers = await prisma.dealer.findMany({
@@ -235,6 +283,9 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       totalRFQs,
       activeRFQs,
       totalProducts,
+      totalInquiries,
+      openFraudFlags,
+      totalQuotes,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.dealer.count({ where: { status: 'VERIFIED' } }),
@@ -242,6 +293,9 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
       prisma.rFQ.count(),
       prisma.rFQ.count({ where: { status: 'PUBLISHED' } }),
       prisma.product.count({ where: { isActive: true } }),
+      prisma.productInquiry.count(),
+      prisma.fraudFlag.count({ where: { status: 'open' } }),
+      prisma.quote.count(),
     ]);
 
     const [recentRFQs, recentDealers] = await Promise.all([
@@ -280,6 +334,9 @@ router.get('/dashboard/stats', authenticateAdmin, async (req, res) => {
         totalRFQs,
         activeRFQs,
         totalProducts,
+        totalInquiries,
+        openFraudFlags,
+        totalQuotes,
       },
       recentRFQs,
       recentDealers,

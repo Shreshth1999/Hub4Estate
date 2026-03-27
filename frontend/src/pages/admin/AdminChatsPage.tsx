@@ -132,7 +132,7 @@ export function AdminChatsPage() {
             <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-100 rounded-xl p-4 mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-3.5 h-3.5 text-violet-600" />
-                <span className="text-xs font-semibold text-violet-700">Spark Engagement Intelligence</span>
+                <span className="text-xs font-semibold text-violet-700">Volt Engagement Intelligence</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-white/70 rounded-lg px-3 py-2.5">

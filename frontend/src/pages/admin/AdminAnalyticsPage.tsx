@@ -127,7 +127,7 @@ export function AdminAnalyticsPage() {
                 <Sparkles className="w-4 h-4 text-violet-600" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Spark AI Insights</h3>
+                <h3 className="text-sm font-semibold text-gray-900">Volt AI Insights</h3>
                 {insightsGenerated && <p className="text-xs text-gray-400">Generated at {insightsGenerated}</p>}
               </div>
             </div>
@@ -150,13 +150,13 @@ export function AdminAnalyticsPage() {
                 onClick={fetchInsights}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-colors"
               >
-                <Sparkles className="w-4 h-4" /> Generate with Spark AI
+                <Sparkles className="w-4 h-4" /> Generate with Volt AI
               </button>
             </div>
           ) : insightsLoading ? (
             <div className="px-5 py-10 text-center">
               <Loader2 className="w-6 h-6 animate-spin text-violet-500 mx-auto mb-3" />
-              <p className="text-sm text-gray-500">Spark is analyzing your platform data...</p>
+              <p className="text-sm text-gray-500">Volt is analyzing your platform data...</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-100">

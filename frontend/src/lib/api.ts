@@ -153,6 +153,8 @@ export const dealerApi = {
 // Admin API
 export const adminApi = {
   getDashboardStats: () => api.get('/admin/dashboard/stats'),
+  getAllDealers: (params?: { status?: string; page?: number; limit?: number; search?: string }) =>
+    api.get('/admin/dealers', { params }),
   getPendingDealers: () => api.get('/admin/dealers/pending'),
   verifyDealer: (id: string, action: 'verify' | 'reject', notes?: string) =>
     api.post(`/admin/dealers/${id}/verify`, { action, notes }),
