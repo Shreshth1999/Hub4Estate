@@ -16,7 +16,7 @@ export function initAnalytics() {
     autocapture: true,              // Auto-capture all clicks, form submits, inputs
     session_recording: {
       maskAllInputs: false,         // Record form inputs (mask if you want privacy)
-      maskInputOptions: { password: true, creditCard: true },
+      maskInputOptions: { password: true },
     },
     persistence: 'localStorage',
     loaded: (ph) => {

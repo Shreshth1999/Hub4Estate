@@ -125,6 +125,16 @@ function ToolResultCard({ toolResults }: { toolResults: ToolResult[] }) {
             </div>
           );
         }
+        if (tr.tool === 'track_inquiry' && tr.result?.found) {
+          return (
+            <div key={i} className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-xs font-bold text-blue-800 mb-1">Inquiry Status</p>
+              <p className="text-xs font-mono text-blue-700">{tr.result.inquiryNumber}</p>
+              <p className="text-xs text-blue-600 mt-1">{tr.result.statusLabel}</p>
+              <p className="text-xs text-blue-500 mt-0.5">{tr.result.product} · {tr.result.deliveryCity}</p>
+            </div>
+          );
+        }
         return null;
       })}
     </div>
@@ -191,8 +201,8 @@ export function AIAssistantWidget() {
       setSessionId(response.data.sessionId);
 
       const greeting = user?.name
-        ? `Namaste ${user.name}! 👋 I'm **Spark**, Hub4Estate's AI assistant.`
-        : `Namaste! 👋 I'm **Spark**, Hub4Estate's AI assistant.`;
+        ? `Namaste ${user.name}! 👋 I'm **Volt**, Hub4Estate's AI assistant.`
+        : `Namaste! 👋 I'm **Volt**, Hub4Estate's AI assistant.`;
 
       setMessages([{
         id: 'welcome',
@@ -391,7 +401,7 @@ I can help you with:
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-sm">Spark AI</h3>
+                  <h3 className="font-semibold text-sm">Volt AI</h3>
                   <span className="text-[10px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded font-medium">
                     by Hub4Estate
                   </span>
@@ -427,7 +437,7 @@ I can help you with:
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">Connecting Spark...</p>
+                      <p className="text-sm text-gray-500">Connecting Volt...</p>
                     </div>
                   </div>
                 ) : sessionError ? (
@@ -436,7 +446,7 @@ I can help you with:
                       <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
                         <Bot className="w-6 h-6 text-orange-500" />
                       </div>
-                      <p className="text-sm font-medium text-gray-900 mb-1">Spark is unavailable right now</p>
+                      <p className="text-sm font-medium text-gray-900 mb-1">Volt is unavailable right now</p>
                       <p className="text-xs text-gray-500 mb-4">Our AI assistant couldn't connect. You can retry or reach us directly.</p>
                       <button
                         onClick={initSession}
@@ -539,7 +549,7 @@ I can help you with:
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={isListening ? 'Listening...' : 'Message Spark... (Hindi / English)'}
+                    placeholder={isListening ? 'Listening...' : 'Message Volt... (Hindi / English)'}
                     className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors bg-gray-50 focus:bg-white"
                     disabled={isLoading || !sessionId}
                   />
@@ -570,7 +580,7 @@ I can help you with:
                   </button>
                 </div>
                 <p className="text-[10px] text-gray-400 mt-1.5 text-center">
-                  Powered by <span className="font-semibold text-orange-500">Spark AI</span> · Hub4Estate
+                  Powered by <span className="font-semibold text-orange-500">Volt AI</span> · Hub4Estate
                 </p>
               </div>
             </>
