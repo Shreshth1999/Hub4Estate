@@ -802,7 +802,7 @@ export function HomePage() {
       <PersonaSection />
 
       {/* How It Works */}
-      <section className="section bg-gray-50 border-y border-gray-200">
+      <section className="section bg-white border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
@@ -845,15 +845,6 @@ export function HomePage() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <button
-              onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
-            >
-              Submit Your Inquiry
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
         </div>
       </section>
 
@@ -884,7 +875,7 @@ export function HomePage() {
       </section>
 
       {/* Real Deals */}
-      <section className="section bg-gray-50">
+      <section className="section bg-white border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
@@ -977,7 +968,7 @@ export function HomePage() {
       </section>
 
       {/* Why We Exist */}
-      <section className="section bg-white border-b border-gray-200">
+      <section className="section bg-gray-50 border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
@@ -1014,21 +1005,14 @@ export function HomePage() {
             ))}
           </div>
 
-          <div className="bg-gray-900 text-white p-10 text-center">
+          <div className="bg-gray-900 text-white p-10 text-center rounded-2xl">
             <h3 className="text-3xl font-semibold mb-4">
               Transparent Pricing. Verified Dealers. Your Choice.
             </h3>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               We're not here to guarantee the lowest price in the universe.
               We're here to give you enough information to make the right call.
             </p>
-            <button
-              onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
-            >
-              Submit Your First Inquiry
-              <ArrowRight className="w-5 h-5" />
-            </button>
           </div>
         </div>
       </section>

@@ -3,11 +3,13 @@ import { useAuthStore } from '@/lib/store';
 import { Menu, X, User, LogOut, ArrowRight, Zap, Search } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from './AIAssistantWidget';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function Layout() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { lang, toggleLang } = useLanguage();
 
   const handleLogout = () => {
     logout();
@@ -54,6 +56,17 @@ export function Layout() {
                 Track Request
               </Link>
             </nav>
+
+            {/* Language Toggle */}
+            <button
+              onClick={toggleLang}
+              className="hidden lg:flex items-center gap-0.5 px-3 py-1.5 rounded-full border border-gray-200 hover:border-gray-400 transition-colors text-sm"
+              title="Switch language"
+            >
+              <span className={`font-semibold px-1 ${lang === 'en' ? 'text-gray-900' : 'text-gray-400'}`}>EN</span>
+              <span className="text-gray-300 text-xs">|</span>
+              <span className={`font-semibold px-1 ${lang === 'hi' ? 'text-gray-900' : 'text-gray-400'}`}>हिं</span>
+            </button>
 
             {/* Auth / CTA Section */}
             <div className="hidden lg:flex items-center gap-3">
@@ -150,6 +163,16 @@ export function Layout() {
                 <Search className="w-4 h-4" />
                 Track Request
               </Link>
+
+              {/* Language toggle — mobile */}
+              <button
+                onClick={toggleLang}
+                className="flex items-center gap-1 mt-1 py-2.5 text-sm font-medium text-gray-600"
+              >
+                <span className={lang === 'en' ? 'text-gray-900 font-bold' : 'text-gray-400'}>English</span>
+                <span className="text-gray-300 mx-1">|</span>
+                <span className={lang === 'hi' ? 'text-gray-900 font-bold' : 'text-gray-400'}>हिंदी</span>
+              </button>
 
               <div className="pt-4 border-t border-gray-100 space-y-2">
                 {isAuthenticated ? (
