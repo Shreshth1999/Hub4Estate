@@ -1,6 +1,7 @@
 import { useEffect, useState, ReactNode } from 'react';
 import { useAuthStore } from '@/lib/store';
 import { authApi } from '@/lib/api';
+import { identifyUser, resetUser } from '@/lib/analytics';
 import { Loader2 } from 'lucide-react';
 
 interface AuthProviderProps {
@@ -55,10 +56,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
           type: serverUser.type, // Server-authoritative type
         });
 
+        // Identify user in analytics
+        identifyUser({
+          id: serverUser.id,
+          email: serverUser.email,
+          name: serverUser.name,
+          role: serverUser.role,
+          city: serverUser.city,
+          type: serverUser.type,
+        });
+
         setVerified(true);
       } catch (error: any) {
         // Token invalid or expired or backend down - log user out
         console.error('Auth verification failed:', error);
+        resetUser();
         logout();
       } finally {
         setIsInitializing(false);

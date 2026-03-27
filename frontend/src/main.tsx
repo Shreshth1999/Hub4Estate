@@ -5,7 +5,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import { AuthProvider } from './components/AuthProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { initAnalytics } from './lib/analytics';
 import './index.css';
+
+initAnalytics();
 
 const queryClient = new QueryClient({
   defaultOptions: {

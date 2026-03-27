@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { chatApi, streamChatMessage, StreamEvent } from '../lib/api';
 import { useAuthStore } from '../lib/store';
+import { Analytics } from '../lib/analytics';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -221,6 +222,7 @@ I can help you with:
     if (!text || !sessionId || isLoading || isStreaming) return;
 
     setHasInteracted(true);
+    Analytics.sparkMessageSent(false);
     setMessages(prev => [...prev, {
       id: `user-${Date.now()}`,
       role: 'user',
@@ -332,7 +334,7 @@ I can help you with:
     <>
       {/* Floating Button */}
       <button
-        onClick={() => { setIsOpen(true); setIsMinimized(false); }}
+        onClick={() => { setIsOpen(true); setIsMinimized(false); Analytics.sparkOpened(); }}
         className={`
           fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full
           bg-gray-900 text-white

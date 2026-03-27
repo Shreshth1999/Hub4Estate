@@ -4,6 +4,7 @@ import { ArrowRight, Shield, CheckCircle, TrendingUp, Users, Store, IndianRupee,
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { productsApi, api } from '../lib/api';
+import { Analytics } from '../lib/analytics';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
@@ -272,6 +273,11 @@ export function HomePage() {
       const inquiryNumber = response.data.inquiryNumber || response.data.inquiryId || '';
       setSubmittedInquiryId(inquiryNumber);
       setSubmitted(true);
+      Analytics.inquirySubmitted({
+        city: inquiryForm.deliveryCity,
+        hasPhoto: !!productPhoto,
+        hasModel: !!inquiryForm.modelNumber,
+      });
       sessionStorage.setItem('hub4estate_inquiry', JSON.stringify({
         submitted: true,
         inquiryNumber,
@@ -353,7 +359,7 @@ export function HomePage() {
                     )}
                     <Link
                       to={`/track?phone=${encodeURIComponent(inquiryForm.phone)}`}
-                      className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 font-bold text-sm hover:bg-gray-800 transition-colors"
+                      className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
                     >
                       Track Your Request
                       <ArrowRight className="w-4 h-4" />
