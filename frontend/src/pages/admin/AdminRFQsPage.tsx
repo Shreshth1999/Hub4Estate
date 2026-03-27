@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../lib/api';
 import {
-  FileText, MapPin, Package, Clock, Users,
-  MessageSquare, Loader2,
+  FileText, MapPin, Clock, Users,
+  Loader2, Search,
 } from 'lucide-react';
 
 interface RFQProduct { name: string }
@@ -48,6 +48,7 @@ export function AdminRFQsPage() {
   const [rfqs, setRfqs] = useState<RFQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<StatusTab>('ALL');
+  const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<Pagination>({ total: 0, page: 1, limit: 20, pages: 1 });
   const [stats, setStats] = useState({ total: 0, active: 0, totalQuotes: 0 });
@@ -57,6 +58,7 @@ export function AdminRFQsPage() {
     try {
       const params: Record<string, string | number> = { page, limit: 20 };
       if (activeTab !== 'ALL') params.status = activeTab;
+      if (search) params.search = search;
 
       const res = await api.get<RFQResponse>('/admin/rfqs', { params });
       setRfqs(res.data.rfqs);
@@ -76,9 +78,10 @@ export function AdminRFQsPage() {
     }
   };
 
-  useEffect(() => { fetchRFQs(); }, [activeTab, page]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchRFQs(); }, [activeTab, page, search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleTabChange = (tab: StatusTab) => { setActiveTab(tab); setPage(1); };
+  const handleSearch = (e: React.FormEvent) => { e.preventDefault(); setPage(1); fetchRFQs(); };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -126,6 +129,29 @@ export function AdminRFQsPage() {
       </div>
 
       <div className="px-6 py-6 max-w-5xl mx-auto">
+        {/* Search */}
+        <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by title, user name, email, or city..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 bg-white rounded-lg focus:border-gray-400 outline-none text-sm transition-colors"
+            />
+          </div>
+          {search && (
+            <button
+              type="button"
+              onClick={() => { setSearch(''); setPage(1); }}
+              className="px-4 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:border-gray-400 transition-colors bg-white"
+            >
+              Clear
+            </button>
+          )}
+        </form>
+
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
