@@ -349,53 +349,58 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 ════════════════════════════════ -->
 <section class="slide active" id="s01">
 
-  <!-- Ambient warm glow behind the name -->
-  <div style="position:absolute;width:700px;height:340px;background:radial-gradient(ellipse at center,rgba(181,103,42,.1) 0%,transparent 72%);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-54%);border-radius:50%"></div>
+  <!-- Warm ambient bloom — behind name -->
+  <div style="position:absolute;width:780px;height:380px;background:radial-gradient(ellipse at center,rgba(181,103,42,.09) 0%,transparent 68%);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-54%);border-radius:50%;z-index:1"></div>
 
-  <!-- Decorative arcs — very subtle, draw in slowly -->
-  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="8%" cy="50%" rx="22%" ry="38%" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".07"
-      style="stroke-dasharray:1100;stroke-dashoffset:1100;animation:drawCircle 4s cubic-bezier(.4,0,.2,1) 1s forwards"/>
-    <ellipse cx="92%" cy="50%" rx="16%" ry="28%" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".05"
-      style="stroke-dasharray:800;stroke-dashoffset:800;animation:drawCircle 4s cubic-bezier(.4,0,.2,1) 1.6s forwards"/>
+  <!-- Subtle left arc, draws in -->
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="-2%" cy="50%" r="34%" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".06"
+      style="stroke-dasharray:900;stroke-dashoffset:900;animation:drawCircle 3.8s cubic-bezier(.4,0,.2,1) .9s forwards"/>
+    <circle cx="102%" cy="50%" r="24%" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".04"
+      style="stroke-dasharray:660;stroke-dashoffset:660;animation:drawCircle 3.8s cubic-bezier(.4,0,.2,1) 1.5s forwards"/>
   </svg>
 
-  <!-- Main content — dead center, generous whitespace -->
-  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px;position:relative;z-index:2">
+  <!-- 3 floating ambient stats — bottom, subtle -->
+  <div class="floater" style="bottom:14%;left:9%;--fd:5s;--fd-d:.5s;--dx:4px;--dy:-10px;z-index:3;font-size:12px;opacity:.85">&#9889; 10 Active Clients</div>
+  <div class="floater" style="bottom:14%;right:9%;--fd:4.6s;--fd-d:1.2s;--dx:-4px;--dy:-11px;z-index:3;font-size:12px;opacity:.85">&#128176; &#8377;1.25L+ Saved</div>
+  <div class="floater" style="bottom:8%;left:50%;transform:translateX(-50%);--fd:5.2s;--fd-d:.8s;--dx:0px;--dy:-9px;z-index:3;font-size:11.5px;opacity:.8">&#127963;&#65039; Rajasthan &rarr; All of India</div>
 
-    <!-- Small eyebrow -->
-    <div class="a1" style="font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--accent);opacity:.8">2026 &nbsp;·&nbsp; India</div>
+  <!-- Main content -->
+  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px;position:relative;z-index:2">
 
-    <!-- THE NAME — big, beautiful, gradient -->
-    <div class="a2" style="position:relative;display:inline-block">
-      <h1 class="display" style="font-size:clamp(64px,11.5vw,124px);line-height:.95;letter-spacing:-4px;background:linear-gradient(135deg,#b5672a 0%,#e07830 38%,#d4842a 65%,#8c4f1e 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Hub4Estate</h1>
-      <!-- Left sparkle -->
-      <svg width="34" height="34" viewBox="0 0 32 32" style="position:absolute;left:-30px;top:-8px;animation:sparkle 2.6s ease-in-out 1.4s infinite">
-        <path d="M16 4 L17.8 13.5 L26 10 L19.5 17 L24 26 L16 20 L8 26 L12.5 17 L6 10 L14.2 13.5 Z" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round" opacity=".7"/>
+    <!-- Eyebrow -->
+    <div class="a1" style="font-size:10.5px;font-weight:700;letter-spacing:4.5px;text-transform:uppercase;color:var(--accent)">India &nbsp;·&nbsp; 2026</div>
+
+    <!-- THE NAME -->
+    <div class="a2" style="position:relative;display:inline-block;padding:0 38px">
+      <h1 class="display" style="font-size:clamp(68px,12vw,130px);line-height:.92;letter-spacing:-5px;background:linear-gradient(135deg,#9a4e1a 0%,#c8702a 30%,#e8902a 55%,#c0641e 80%,#8a4018 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Hub4Estate</h1>
+      <!-- Left sparkle — filled solid star -->
+      <svg width="26" height="26" viewBox="0 0 24 24" style="position:absolute;left:4px;top:6px;animation:sparkle 2.8s ease-in-out 1.2s infinite">
+        <polygon points="12,2 14.4,9.2 22,9.2 16,13.9 18.5,21.1 12,16.4 5.5,21.1 8,13.9 2,9.2 9.6,9.2" fill="var(--accent)" opacity=".55"/>
       </svg>
-      <!-- Right sparkle -->
-      <svg width="22" height="22" viewBox="0 0 24 24" style="position:absolute;right:-20px;bottom:2px;animation:sparkle 2.6s ease-in-out 2s infinite">
-        <path d="M12 3 L13.3 9.7 L20 7 L14.6 12 L18 19 L12 15 L6 19 L9.4 12 L4 7 L10.7 9.7 Z" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" opacity=".6"/>
+      <!-- Right sparkle — smaller -->
+      <svg width="18" height="18" viewBox="0 0 24 24" style="position:absolute;right:8px;bottom:8px;animation:sparkle 2.8s ease-in-out 1.9s infinite">
+        <polygon points="12,2 14.4,9.2 22,9.2 16,13.9 18.5,21.1 12,16.4 5.5,21.1 8,13.9 2,9.2 9.6,9.2" fill="var(--accent)" opacity=".4"/>
       </svg>
     </div>
 
-    <!-- Separator — fades and grows in -->
-    <div class="a3" style="width:64px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:2px"></div>
+    <!-- Animated separator line -->
+    <div class="a3" style="width:56px;height:2.5px;background:var(--accent);border-radius:2px;transform-origin:center;animation:scaleIn .5s cubic-bezier(.34,1.4,.64,1) .38s both"></div>
 
-    <!-- Tagline — word-by-word reveal, italic serif -->
-    <p style="font-family:'Playfair Display',serif;font-size:clamp(18px,2.4vw,27px);font-style:italic;color:var(--text2);max-width:600px;line-height:1.5;margin:0">
-      <span class="wrd" style="--wd:.38s">The</span><span class="wrd" style="--wd:.5s"> real</span><span class="wrd" style="--wd:.62s"> price</span><span class="wrd" style="--wd:.74s"> has</span><span class="wrd" style="--wd:.86s"> always</span><span class="wrd" style="--wd:.98s"> existed.</span><br>
-      <span class="wrd" style="--wd:1.18s">We</span><span class="wrd" style="--wd:1.3s"> just</span><span class="wrd" style="--wd:1.42s"> made</span><span class="wrd" style="--wd:1.54s"> it</span>&nbsp;<span class="wrd" style="color:var(--accent);font-style:normal;font-weight:900;--wd:1.66s">visible.</span>
+    <!-- Tagline — single block fadeUp, no broken word spans -->
+    <p class="a4" style="font-family:'Playfair Display',serif;font-size:clamp(19px,2.5vw,28px);font-style:italic;color:var(--text2);max-width:580px;line-height:1.55;margin:0;font-weight:400">
+      "The real price has always existed.<br>
+      We just made it <span style="color:var(--accent);font-weight:900;font-style:normal">visible.</span>"
     </p>
 
     <!-- Descriptor -->
-    <div class="a5" style="font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3)">
+    <div class="a5" style="font-size:11.5px;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;color:var(--text3)">
       Verified Procurement &nbsp;·&nbsp; Electricals First &nbsp;·&nbsp; India
     </div>
 
-    <!-- LLP badge — minimal pill -->
-    <div class="a6" style="font-size:10.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.3px;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 22px;box-shadow:var(--sh);margin-top:4px">
-      HUB4ESTATE LLP &nbsp;·&nbsp; ACW-4269 &nbsp;·&nbsp; Incorporated March 2026
+    <!-- LLP pill -->
+    <div class="a6" style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.4px;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:5px 20px;box-shadow:var(--sh)">
+      HUB4ESTATE LLP &nbsp;·&nbsp; LLPIN ACW-4269 &nbsp;·&nbsp; March 2026, Rajasthan
     </div>
 
   </div>
