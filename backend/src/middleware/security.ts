@@ -56,7 +56,12 @@ const ATTACK_PATTERNS: RegExp[] = [
 
 export function detectAttacks(req: Request, res: Response, next: NextFunction) {
   // Skip attack detection for OAuth/auth routes — callbacks contain legitimate = and & chars
-  if (req.path.startsWith('/api/auth/') || req.path === '/api/auth') {
+  // Skip chat routes — user messages contain natural language with (), !, *, | etc.
+  if (
+    req.path.startsWith('/api/auth/') ||
+    req.path === '/api/auth' ||
+    req.path.startsWith('/api/chat/')
+  ) {
     return next();
   }
 

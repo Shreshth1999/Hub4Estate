@@ -12,7 +12,7 @@ if (env.ANTHROPIC_API_KEY) {
 // SYSTEM PROMPT — Full Hub4Estate Knowledge
 // ============================================
 
-const HUB4ESTATE_SYSTEM_PROMPT = `You are Spark — the official AI agent for Hub4Estate, India's electrical products marketplace. You are deeply integrated into the platform and act as an intelligent agent, not just a chatbot.
+const HUB4ESTATE_SYSTEM_PROMPT = `You are Volt — the official AI agent for Hub4Estate, India's electrical products marketplace. You are deeply integrated into the platform and act as an intelligent agent, not just a chatbot.
 
 ## ⚡ LANGUAGE LOCK — CRITICAL, NON-NEGOTIABLE
 Detect the language of the FIRST user message and lock to it for the ENTIRE conversation.
@@ -36,7 +36,7 @@ Hub4Estate is for ANYONE who wants the best price on electrical products — hom
 ## ABOUT THE PLATFORM — REAL FACTS ONLY
 - Incorporated: HUB4ESTATE LLP, 17 March 2026, LLPIN: ACW-4269
 - Founder: Shreshth Agarwal, 18 years old
-- Business address: WeWork Arekere, Bengaluru
+- Registered address: Jawahar Nagar, Sri Ganganagar, Rajasthan
 - Platform: hub4estate.com
 - Status: Early-stage, actively serving clients, real deals closed
 
@@ -94,7 +94,8 @@ Havells, Polycab, Finolex, Legrand, Schneider Electric, Siemens, ABB, Crompton, 
 3. Submit product inquiries on the user's behalf → use submit_inquiry tool
 4. Search and compare products → use search_products / compare_products tools
 5. Generate professional dealer quotes from natural language → use generate_dealer_quote tool
-6. Share information about Shreshth and Hub4Estate
+6. Track the status of an existing inquiry by number → use track_inquiry tool
+7. Share information about Shreshth and Hub4Estate
 
 ## INQUIRY SUBMISSION RULES
 - Required fields: name, phone (10 digits), product description, delivery city
@@ -113,7 +114,11 @@ Havells, Polycab, Finolex, Legrand, Schneider Electric, Siemens, ABB, Crompton, 
 - Match user energy and formality level
 - Never fabricate prices — always direct to inquiry for real quotes
 - If unsure about something, say so clearly
-- For serious business queries: suggest shreshth.agarwal@hub4estate.com directly`;
+- For serious business queries: suggest shreshth.agarwal@hub4estate.com directly
+- When a user mentions an inquiry number (e.g. "HUB-..." or asks "mera inquiry ka kya hua?"), use track_inquiry immediately
+- Proactively offer to submit an inquiry when user describes a product need
+- If a user is asking about wire sizing or safety — always give the BIS standard, never guess
+- Keep responses concise: 2-4 lines for simple questions, structured bullets for complex ones`;
 
 // ============================================
 // TOOL DEFINITIONS
@@ -188,6 +193,18 @@ const CHAT_TOOLS: Anthropic.Tool[] = [
         notes: { type: 'string', description: 'Additional terms, conditions, or discounts' },
       },
       required: ['raw_input'],
+    },
+  },
+  {
+    name: 'track_inquiry',
+    description: 'Look up the status of a product inquiry by its inquiry number (e.g. HUB-WIRE-0001). Use when the user asks about their order, inquiry, or request status.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        inquiry_number: { type: 'string', description: 'The inquiry number (e.g. HUB-CABLE-0023)' },
+        phone: { type: 'string', description: 'Phone number to verify identity (optional fallback if no inquiry number)' },
+      },
+      required: [],
     },
   },
 ];
@@ -318,6 +335,51 @@ async function executeGenerateDealerQuote(input: any): Promise<string> {
   });
 }
 
+async function executeTrackInquiry(input: any): Promise<string> {
+  try {
+    let inquiry = null;
+
+    if (input.inquiry_number) {
+      inquiry = await prisma.productInquiry.findFirst({
+        where: { inquiryNumber: { equals: input.inquiry_number, mode: 'insensitive' } },
+      });
+    } else if (input.phone) {
+      // Find most recent inquiry for this phone number
+      inquiry = await prisma.productInquiry.findFirst({
+        where: { phone: input.phone },
+        orderBy: { createdAt: 'desc' },
+      });
+    }
+
+    if (!inquiry) {
+      return JSON.stringify({
+        found: false,
+        message: 'No inquiry found. Please check the inquiry number or contact us at +91 76900 01999.',
+      });
+    }
+
+    const statusLabel: Record<string, string> = {
+      new: 'Received — we are reaching out to dealers',
+      contacted: 'In progress — our team has contacted dealers',
+      quoted: 'Quotes received — our team will call you with the best price soon',
+      closed: 'Closed',
+    };
+
+    return JSON.stringify({
+      found: true,
+      inquiryNumber: inquiry.inquiryNumber,
+      product: inquiry.modelNumber || 'Not specified',
+      quantity: inquiry.quantity,
+      deliveryCity: inquiry.deliveryCity,
+      status: inquiry.status,
+      statusLabel: statusLabel[inquiry.status] || inquiry.status,
+      submittedAt: inquiry.createdAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+    });
+  } catch (error: any) {
+    return JSON.stringify({ found: false, error: error.message });
+  }
+}
+
 async function executeTool(name: string, input: any): Promise<string> {
   switch (name) {
     case 'submit_inquiry':
@@ -328,6 +390,8 @@ async function executeTool(name: string, input: any): Promise<string> {
       return executeCompareProducts(input);
     case 'generate_dealer_quote':
       return executeGenerateDealerQuote(input);
+    case 'track_inquiry':
+      return executeTrackInquiry(input);
     default:
       return JSON.stringify({ error: `Unknown tool: ${name}` });
   }
@@ -404,6 +468,7 @@ export async function* streamChatResponse(
     search_products: 'Searching products...',
     compare_products: 'Comparing products...',
     generate_dealer_quote: 'Structuring your quote...',
+    track_inquiry: 'Tracking your inquiry...',
   };
 
   let iteration = 0;
@@ -471,7 +536,7 @@ export async function* streamChatResponse(
       // Unexpected stop
       return;
     } catch (err: any) {
-      console.error('[Spark] Stream error:', err);
+      console.error('[Volt] Stream error:', err);
       yield { type: 'error', error: 'Connection interrupted. Please try again.' };
       return;
     }
@@ -568,7 +633,7 @@ export async function generateChatResponse(
 
     return { response: "I'm having trouble completing that. Please try again.", toolResults };
   } catch (error: any) {
-    console.error('[Spark] Chat error:', error);
+    console.error('[Volt] Chat error:', error);
     return {
       response:
         "I'm experiencing difficulties. Please try again or contact shreshth.agarwal@hub4estate.com.",
@@ -724,7 +789,7 @@ export async function parseDealerQuoteFromText(rawText: string): Promise<ParsedD
     }
     return { raw_input: rawText };
   } catch (error) {
-    console.error('[Spark] parseDealerQuote error:', error);
+    console.error('[Volt] parseDealerQuote error:', error);
     return { raw_input: rawText };
   }
 }
@@ -791,7 +856,7 @@ Return ONLY a raw JSON array (no markdown):
     }
     return [];
   } catch (error) {
-    console.error('[Spark] generateAdminInsights error:', error);
+    console.error('[Volt] generateAdminInsights error:', error);
     return [];
   }
 }

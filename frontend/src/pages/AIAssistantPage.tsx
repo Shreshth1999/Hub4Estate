@@ -436,7 +436,7 @@ export function AIAssistantPage() {
           <div className="w-16 h-16 bg-orange-500 flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Zap className="w-8 h-8 text-white" />
           </div>
-          <p className="text-gray-400 text-sm font-medium">Starting Spark...</p>
+          <p className="text-gray-400 text-sm font-medium">Starting Volt...</p>
         </div>
       </div>
     );
@@ -482,7 +482,7 @@ export function AIAssistantPage() {
               <Zap className="w-4 h-4 text-white" />
             </div>
             <div>
-              <span className="text-white font-semibold text-sm tracking-tight">Spark</span>
+              <span className="text-white font-semibold text-sm tracking-tight">Volt</span>
               {isDealer && (
                 <span className="ml-2 text-xs text-orange-400 font-bold uppercase tracking-wider">
                   Dealer
@@ -720,7 +720,7 @@ export function AIAssistantPage() {
         </div>
 
         <p className="text-center text-gray-700 text-xs mt-2 max-w-3xl mx-auto">
-          Spark · Powered by Claude · Hub4Estate
+          Volt · Powered by Claude · Hub4Estate
         </p>
       </div>
     </div>

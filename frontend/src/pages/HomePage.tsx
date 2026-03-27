@@ -696,7 +696,7 @@ export function HomePage() {
                           }`}
                         />
                         {isVoiceListening && (
-                          <p className="text-[11px] text-violet-500 mt-1">Say the product, quantity, and city — Spark AI will fill the form</p>
+                          <p className="text-[11px] text-violet-500 mt-1">Say the product, quantity, and city — Volt AI will fill the form</p>
                         )}
                       </div>
 
@@ -981,14 +981,14 @@ export function HomePage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-center gap-2 mb-8 justify-center">
             <Sparkles className="w-4 h-4 text-violet-600" />
-            <span className="text-xs font-semibold text-violet-700 uppercase tracking-wider">Powered by Spark AI</span>
+            <span className="text-xs font-semibold text-violet-700 uppercase tracking-wider">Powered by Volt AI</span>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
                 icon: Mic,
                 title: 'Voice Inquiry',
-                desc: 'Say what you need in Hindi or English. Spark extracts the product, quantity, and city — zero typing required.',
+                desc: 'Say what you need in Hindi or English. Volt extracts the product, quantity, and city — zero typing required.',
                 tag: 'Hinglish supported',
                 color: 'text-violet-600',
                 bg: 'bg-violet-50',
@@ -996,7 +996,7 @@ export function HomePage() {
               {
                 icon: Camera,
                 title: 'Slip Scanner',
-                desc: 'Photo your contractor\'s material list. Spark AI reads it, identifies every product, and auto-fills your inquiry form.',
+                desc: 'Photo your contractor\'s material list. Volt AI reads it, identifies every product, and auto-fills your inquiry form.',
                 tag: 'Claude Vision AI',
                 color: 'text-orange-600',
                 bg: 'bg-orange-50',
@@ -1004,7 +1004,7 @@ export function HomePage() {
               {
                 icon: TrendingUp,
                 title: 'Smart Quote Compare',
-                desc: 'When quotes arrive, Spark analyzes price, delivery speed, and dealer reliability — and tells you which one to pick.',
+                desc: 'When quotes arrive, Volt analyzes price, delivery speed, and dealer reliability — and tells you which one to pick.',
                 tag: 'Auto-comparison',
                 color: 'text-green-600',
                 bg: 'bg-green-50',

@@ -14,3 +14,7 @@ frontend:
     baseDirectory: frontend/dist
     files:
       - '**/*'
+  customRules:
+    - source: /<*>
+      target: /index.html
+      status: '200'

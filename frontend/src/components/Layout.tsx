@@ -266,7 +266,6 @@ export function Layout() {
                 {[
                   { to: '/knowledge', label: 'Buying Guides' },
                   { to: '/community', label: 'Community Forum' },
-                  { to: '/rfq/create', label: 'Get Quote' },
                   { to: '/ai-assistant', label: 'AI Assistant' },
                   { to: '/track', label: 'Track Your Request', highlight: true },
                 ].map(({ to, label, highlight }) => (

@@ -213,7 +213,9 @@ export function DealerOnboarding() {
       if (!form.ownerName.trim()) e.ownerName = 'Owner name is required';
       if (!form.phone.trim()) e.phone = 'Phone number is required';
       else if (!/^[6-9]\d{9}$/.test(form.phone.replace(/\s/g, ''))) e.phone = 'Enter a valid 10-digit mobile number';
-      if (form.gstNumber && form.gstNumber.length !== 15) e.gstNumber = 'GST number must be 15 characters';
+      if (!form.gstNumber.trim()) e.gstNumber = 'GST number is required';
+      else if (form.gstNumber.length !== 15) e.gstNumber = 'GST number must be exactly 15 characters';
+      if (form.panNumber && form.panNumber.length !== 10) e.panNumber = 'PAN number must be exactly 10 characters';
     }
 
     if (s === 3) {
@@ -589,9 +591,9 @@ export function DealerOnboarding() {
                   <Field label="Owner / Proprietor Name" value={form.ownerName} onChange={v => set('ownerName', v)}
                     placeholder="Your full name" error={errors.ownerName} required />
                   <Field label="GST Number" value={form.gstNumber} onChange={v => set('gstNumber', v.toUpperCase())}
-                    placeholder="15-character GST number" error={errors.gstNumber} />
+                    placeholder="15-character GST number" error={errors.gstNumber} required />
                   <Field label="PAN Number" value={form.panNumber} onChange={v => set('panNumber', v.toUpperCase())}
-                    placeholder="10-character PAN" error={errors.panNumber} />
+                    placeholder="10-character PAN (optional)" error={errors.panNumber} />
                   <Field label="WhatsApp / Phone" value={form.phone} onChange={v => set('phone', v)}
                     placeholder="10-digit mobile number" type="tel" error={errors.phone} required />
                 </div>
