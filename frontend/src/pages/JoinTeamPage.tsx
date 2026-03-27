@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft, Zap, Mail, Phone, MapPin, Users, Briefcase, Code, TrendingUp,
-  Send, CheckCircle, Linkedin, User, FileText
+  Send, CheckCircle, Linkedin, User, FileText,
 } from 'lucide-react';
 
 interface ApplicationForm {
@@ -66,15 +66,11 @@ export function JoinTeamPage() {
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     const subject = encodeURIComponent(`Job Application: ${formData.position || 'General'} - ${formData.name}`);
     const body = encodeURIComponent(
 `New Job Application for Hub4Estate
@@ -98,7 +94,6 @@ ${formData.vision}
 ---
 Submitted via Hub4Estate Join Team Page`
     );
-
     window.location.href = `mailto:shreshth.agarwal@hub4estate.com?subject=${subject}&body=${body}`;
     setSubmitted(true);
   };
@@ -106,315 +101,269 @@ Submitted via Hub4Estate Join Team Page`
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-neutral-900 text-white py-16">
-        <div className="container-custom">
-          <Link to="/" className="inline-flex items-center text-neutral-400 hover:text-white mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+      <div className="bg-white border-b border-gray-200 px-6 py-12">
+        <div className="max-w-3xl mx-auto">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 mb-8 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to home
           </Link>
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent-500 text-white text-sm font-bold uppercase tracking-wider mb-6">
-              <Users className="w-4 h-4" />
-              We're Hiring
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4">
-              Join the Mission
-            </h1>
-            <p className="text-xl text-neutral-300">
-              We're building the price transparency infrastructure for electrical procurement in India.
-              We want people who want to solve hard, unsexy problems with real market impact.
-            </p>
-          </div>
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">We're hiring</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
+            Join the Mission
+          </h1>
+          <p className="text-lg text-gray-500 leading-relaxed">
+            We're building the price transparency infrastructure for electrical procurement in India.
+            We want people who want to solve hard, unsexy problems with real market impact.
+          </p>
         </div>
       </div>
 
       {/* Benefits */}
-      <section className="py-16 bg-neutral-50 border-b-2 border-neutral-200">
-        <div className="container-custom">
-          <h2 className="text-2xl font-black text-neutral-900 mb-8 text-center">Why Join Hub4Estate?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {benefits.map((benefit, index) => {
+      <div className="bg-gray-50 border-b border-gray-200 px-6 py-14">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-xl font-semibold text-gray-900 mb-8 text-center">Why Join Hub4Estate?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {benefits.map((benefit, i) => {
               const Icon = benefit.icon;
               return (
-                <div key={index} className="bg-white border-2 border-neutral-200 p-6 text-center">
-                  <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-6 h-6 text-white" />
+                <div key={i} className="bg-white border border-gray-200 rounded-xl p-5 text-center">
+                  <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Icon className="w-4.5 h-4.5 text-gray-600" />
                   </div>
-                  <h3 className="font-bold text-neutral-900 mb-2">{benefit.title}</h3>
-                  <p className="text-sm text-neutral-600">{benefit.description}</p>
+                  <h3 className="text-sm font-semibold text-gray-900 mb-1">{benefit.title}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">{benefit.description}</p>
                 </div>
               );
             })}
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Open Positions */}
-      <section className="py-16">
-        <div className="container-custom">
-          <h2 className="text-2xl font-black text-neutral-900 mb-8">Open Positions</h2>
-          <div className="space-y-4">
-            {openPositions.map((position, index) => (
-              <div key={index} className="bg-white border-2 border-neutral-200 hover:border-neutral-900 hover:shadow-brutal transition-all p-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-neutral-900">{position.title}</h3>
-                    <div className="flex flex-wrap gap-3 mt-2">
-                      <span className="inline-flex items-center text-sm text-neutral-600">
-                        <Briefcase className="w-4 h-4 mr-1" />
-                        {position.type}
-                      </span>
-                      <span className="inline-flex items-center text-sm text-neutral-600">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {position.location}
-                      </span>
-                    </div>
-                    <p className="text-accent-700 font-semibold mt-3">Problem you'll own: {position.problem}</p>
-                    <p className="text-neutral-600 mt-2">{position.description}</p>
+      <div className="px-6 py-14 max-w-4xl mx-auto">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Open Positions</h2>
+        <div className="space-y-3">
+          {openPositions.map((position, i) => (
+            <div key={i} className="bg-white border border-gray-200 rounded-xl p-5 hover:border-gray-300 transition-colors">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-gray-900">{position.title}</h3>
+                  <div className="flex flex-wrap gap-3 mt-1.5">
+                    <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                      <Briefcase className="w-3 h-3" /> {position.type}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                      <MapPin className="w-3 h-3" /> {position.location}
+                    </span>
                   </div>
-                  <a
-                    href="#apply"
-                    className="btn-urgent whitespace-nowrap"
-                  >
-                    Apply Now
-                  </a>
+                  <p className="text-sm font-medium text-gray-700 mt-3">
+                    <span className="text-gray-400">You'll own: </span>{position.problem}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">{position.description}</p>
                 </div>
+                <a
+                  href="#apply"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors flex-shrink-0"
+                >
+                  Apply
+                </a>
               </div>
-            ))}
-          </div>
-
-          <div className="mt-8 p-6 bg-neutral-50 border-2 border-neutral-200 text-center">
-            <p className="text-neutral-600">
-              Don't see your role? If you understand the problem we're solving and can contribute —
-              <a href="#apply" className="text-neutral-900 font-bold hover:text-accent-600 ml-1">send a general application.</a>
-            </p>
-          </div>
+            </div>
+          ))}
         </div>
-      </section>
+
+        <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-xl text-center">
+          <p className="text-sm text-gray-500">
+            Don't see your role? If you understand the problem we're solving and can contribute —{' '}
+            <a href="#apply" className="text-gray-900 font-medium hover:underline">send a general application.</a>
+          </p>
+        </div>
+      </div>
 
       {/* Application Form */}
-      <section id="apply" className="py-16 bg-neutral-50 border-y-2 border-neutral-200">
-        <div className="container-custom">
-          <div className="max-w-2xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-black text-neutral-900 mb-4">Apply Now</h2>
-              <p className="text-neutral-600">
-                Tell us who you are, what you've done, and why Hub4Estate.
-              </p>
-            </div>
-
-            {submitted ? (
-              <div className="bg-white border-2 border-green-500 shadow-brutal p-8 text-center">
-                <div className="w-16 h-16 bg-green-500 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-black text-neutral-900 mb-2">Application Sent!</h3>
-                <p className="text-neutral-600 mb-6">
-                  Your email client should have opened with your application.
-                  If it didn't, email directly to:
-                </p>
-                <a
-                  href="mailto:shreshth.agarwal@hub4estate.com"
-                  className="text-accent-600 font-bold hover:underline"
-                >
-                  shreshth.agarwal@hub4estate.com
-                </a>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="block mx-auto mt-6 text-neutral-600 hover:text-neutral-900 font-medium"
-                >
-                  Submit another application
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="bg-white border-2 border-neutral-200 shadow-brutal p-8">
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        <User className="w-4 h-4 inline mr-1" />
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors"
-                        placeholder="Your full name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        <Mail className="w-4 h-4 inline mr-1" />
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors"
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        <Phone className="w-4 h-4 inline mr-1" />
-                        Phone *
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors"
-                        placeholder="+91 98765 43210"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        <Linkedin className="w-4 h-4 inline mr-1" />
-                        LinkedIn Profile
-                      </label>
-                      <input
-                        type="url"
-                        name="linkedin"
-                        value={formData.linkedin}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors"
-                        placeholder="https://linkedin.com/in/yourprofile"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        <Briefcase className="w-4 h-4 inline mr-1" />
-                        Position *
-                      </label>
-                      <select
-                        name="position"
-                        value={formData.position}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors bg-white"
-                      >
-                        <option value="">Select a position</option>
-                        {openPositions.map((pos, i) => (
-                          <option key={i} value={pos.title}>{pos.title}</option>
-                        ))}
-                        <option value="Other">Other / General Application</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        <FileText className="w-4 h-4 inline mr-1" />
-                        Years of Experience *
-                      </label>
-                      <select
-                        name="experience"
-                        value={formData.experience}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors bg-white"
-                      >
-                        <option value="">Select experience</option>
-                        <option value="0-1 years">0-1 years (Fresher / Student)</option>
-                        <option value="1-3 years">1-3 years</option>
-                        <option value="3-5 years">3-5 years</option>
-                        <option value="5-10 years">5-10 years</option>
-                        <option value="10+ years">10+ years</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-neutral-900 mb-2">
-                      <Zap className="w-4 h-4 inline mr-1" />
-                      Why Hub4Estate? *
-                    </label>
-                    <p className="text-sm text-neutral-500 mb-2">
-                      Tell us what you've done that's relevant, and why you want in on this specifically.
-                    </p>
-                    <textarea
-                      name="vision"
-                      value={formData.vision}
-                      onChange={handleChange}
-                      required
-                      rows={6}
-                      className="w-full px-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none transition-colors resize-none"
-                      placeholder="What have you built or done that's relevant? Why does this problem matter to you?"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="btn-urgent w-full justify-center text-lg py-4"
-                  >
-                    <Send className="w-5 h-5 mr-2" />
-                    Submit Application
-                  </button>
-
-                  <p className="text-sm text-neutral-500 text-center">
-                    By submitting, you agree to our{' '}
-                    <Link to="/privacy" className="text-neutral-900 font-bold hover:text-accent-600">
-                      Privacy Policy
-                    </Link>
-                  </p>
-                </div>
-              </form>
-            )}
+      <div id="apply" className="bg-gray-50 border-y border-gray-200 px-6 py-14">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Apply Now</h2>
+            <p className="text-sm text-gray-500">Tell us who you are, what you've done, and why Hub4Estate.</p>
           </div>
+
+          {submitted ? (
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+              <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Application sent!</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Your email client should have opened. If it didn't, email directly:
+              </p>
+              <a href="mailto:shreshth.agarwal@hub4estate.com" className="text-sm font-medium text-gray-900 hover:underline">
+                shreshth.agarwal@hub4estate.com
+              </a>
+              <button
+                onClick={() => setSubmitted(false)}
+                className="block mx-auto mt-5 text-sm text-gray-400 hover:text-gray-700"
+              >
+                Submit another application
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    Full name <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                    placeholder="Your full name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    Email <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                    placeholder="your@email.com"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    Phone <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                    placeholder="+91 98765 43210"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">LinkedIn (optional)</label>
+                  <input
+                    type="url"
+                    name="linkedin"
+                    value={formData.linkedin}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                    placeholder="linkedin.com/in/yourprofile"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    Position <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    name="position"
+                    value={formData.position}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 bg-white transition-colors"
+                  >
+                    <option value="">Select a position</option>
+                    {openPositions.map((pos, i) => (
+                      <option key={i} value={pos.title}>{pos.title}</option>
+                    ))}
+                    <option value="Other">Other / General Application</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                    Experience <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 bg-white transition-colors"
+                  >
+                    <option value="">Select experience</option>
+                    <option value="0-1 years">0–1 years (Fresher / Student)</option>
+                    <option value="1-3 years">1–3 years</option>
+                    <option value="3-5 years">3–5 years</option>
+                    <option value="5-10 years">5–10 years</option>
+                    <option value="10+ years">10+ years</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                  Why Hub4Estate? <span className="text-red-400">*</span>
+                </label>
+                <p className="text-xs text-gray-400 mb-2">What you've done that's relevant, and why you want in on this specifically.</p>
+                <textarea
+                  name="vision"
+                  value={formData.vision}
+                  onChange={handleChange}
+                  required
+                  rows={5}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors resize-none"
+                  placeholder="What have you built or done that's relevant? Why does this problem matter to you?"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <Send className="w-4 h-4" />
+                Submit application
+              </button>
+
+              <p className="text-xs text-gray-400 text-center">
+                By submitting, you agree to our{' '}
+                <Link to="/privacy" className="text-gray-600 hover:text-gray-900">Privacy Policy</Link>
+              </p>
+            </form>
+          )}
         </div>
-      </section>
+      </div>
 
       {/* Contact */}
-      <section className="py-16 bg-neutral-900 text-white">
-        <div className="container-custom">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-black mb-4">Questions?</h2>
-            <p className="text-neutral-300 mb-8">
-              Reach out directly to our founder.
-            </p>
-            <div className="bg-white/10 border border-white/20 p-8 text-left">
-              <h3 className="font-bold text-lg mb-4">Shreshth Agarwal — Founder, Hub4Estate</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-accent-400" />
-                  <a href="mailto:shreshth.agarwal@hub4estate.com" className="hover:text-accent-400">
-                    shreshth.agarwal@hub4estate.com
-                  </a>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-accent-400" />
-                  <a href="tel:+917690001999" className="hover:text-accent-400">
-                    +91 76900 01999
-                  </a>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Linkedin className="w-5 h-5 text-accent-400" />
-                  <a
-                    href="https://linkedin.com/in/sa-h4e"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-accent-400"
-                  >
-                    linkedin.com/in/sa-h4e
-                  </a>
-                </div>
-              </div>
+      <div className="bg-gray-900 px-6 py-14">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl font-semibold text-white mb-2">Questions?</h2>
+          <p className="text-gray-400 mb-8 text-sm">Reach out directly to our founder.</p>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-left">
+            <p className="text-sm font-semibold text-white mb-4">Shreshth Agarwal — Founder, Hub4Estate</p>
+            <div className="space-y-3">
+              <a href="mailto:shreshth.agarwal@hub4estate.com" className="flex items-center gap-3 text-sm text-gray-300 hover:text-white transition-colors">
+                <Mail className="w-4 h-4 flex-shrink-0" />
+                shreshth.agarwal@hub4estate.com
+              </a>
+              <a href="tel:+917690001999" className="flex items-center gap-3 text-sm text-gray-300 hover:text-white transition-colors">
+                <Phone className="w-4 h-4 flex-shrink-0" />
+                +91 76900 01999
+              </a>
+              <a href="https://linkedin.com/in/sa-h4e" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-gray-300 hover:text-white transition-colors">
+                <Linkedin className="w-4 h-4 flex-shrink-0" />
+                linkedin.com/in/sa-h4e
+              </a>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

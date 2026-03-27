@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../../lib/store';
 import { authApi } from '../../lib/api';
-import { LoadingSpinner } from '../../components/ui';
+import { Loader2, XCircle } from 'lucide-react';
 
 export function AuthCallback() {
   const [searchParams] = useSearchParams();
@@ -102,31 +102,25 @@ export function AuthCallback() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-primary-50">
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center max-w-md">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center max-w-md w-full mx-4">
+          <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <XCircle className="w-7 h-7 text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Authentication Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <p className="text-sm text-gray-500">Redirecting to login...</p>
+          <h2 className="text-base font-semibold text-gray-900 mb-2">Authentication Error</h2>
+          <p className="text-sm text-gray-600 mb-3">{error}</p>
+          <p className="text-xs text-gray-400">Redirecting to login...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-primary-50">
-      <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-        <div className="mb-6">
-          <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto">
-            <LoadingSpinner size="lg" />
-          </div>
-        </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Signing you in...</h2>
-        <p className="text-gray-600">Please wait while we complete your authentication.</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400 mx-auto mb-4" />
+        <h2 className="text-base font-semibold text-gray-900 mb-1">Signing you in...</h2>
+        <p className="text-sm text-gray-500">Please wait while we complete your authentication.</p>
       </div>
     </div>
   );

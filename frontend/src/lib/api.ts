@@ -31,15 +31,23 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Don't redirect on 401 during auth callback or if on login page
-    // The components will handle auth errors appropriately
     const isAuthCallbackPage = window.location.pathname === '/auth/callback';
     const isLoginPage = window.location.pathname === '/login';
     const isCompleteProfilePage = window.location.pathname === '/complete-profile';
+    const hadToken = !!localStorage.getItem('token');
 
-    if (error.response?.status === 401 && !isAuthCallbackPage && !isLoginPage && !isCompleteProfilePage) {
+    // Only redirect if the user HAD a valid token that's now expired/invalid.
+    // Anonymous users getting 401 on public endpoints (chat, track, etc.) should
+    // NOT be redirected — the component's catch block will handle it gracefully.
+    if (
+      error.response?.status === 401 &&
+      hadToken &&
+      !isAuthCallbackPage &&
+      !isLoginPage &&
+      !isCompleteProfilePage
+    ) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      window.location.href = '/'; // Go home, not to /login
     }
     return Promise.reject(error);
   }

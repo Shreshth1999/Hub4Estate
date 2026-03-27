@@ -3,7 +3,7 @@ import { z } from 'zod';
 import prisma from '../config/database';
 import { validateBody } from '../middleware/validation';
 import { optionalAuth, authenticateAdmin, AuthRequest } from '../middleware/auth';
-import { generateChatResponse, streamChatResponse, ChatMessage } from '../services/ai.service';
+import { generateChatResponse, streamChatResponse, parseDealerQuoteFromText, ChatMessage } from '../services/ai.service';
 
 const router = Router();
 
@@ -58,8 +58,8 @@ router.post(
         where: { id: sessionId },
         include: {
           messages: {
-            orderBy: { createdAt: 'asc' },
-            take: 20, // Last 20 messages for context
+            orderBy: { createdAt: 'desc' },
+            take: 20,
           },
         },
       });
@@ -77,8 +77,8 @@ router.post(
         },
       });
 
-      // Build message history for context
-      const messageHistory: ChatMessage[] = session.messages.map((m) => ({
+      // Build message history for context (reverse to get chronological order)
+      const messageHistory: ChatMessage[] = session.messages.reverse().map((m) => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       }));
@@ -162,7 +162,7 @@ router.post(
         where: { id: sessionId },
         include: {
           messages: {
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'desc' },
             take: 20,
           },
         },
@@ -179,8 +179,8 @@ router.post(
         data: { sessionId, role: 'user', content: message },
       });
 
-      // Build message history
-      const messageHistory: ChatMessage[] = session.messages.map((m) => ({
+      // Build message history (reverse to get chronological order)
+      const messageHistory: ChatMessage[] = session.messages.reverse().map((m) => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       }));
@@ -261,6 +261,30 @@ router.get(
     } catch (error) {
       console.error('Get messages error:', error);
       return res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+  }
+);
+
+// ============================================
+// DEALER QUOTE PARSER (voice/text → structured quote)
+// ============================================
+
+router.post(
+  '/parse-quote',
+  optionalAuth,
+  async (req: AuthRequest, res: Response) => {
+    const { rawText } = req.body;
+
+    if (!rawText || typeof rawText !== 'string' || rawText.trim().length < 3) {
+      return res.status(400).json({ error: 'rawText is required' });
+    }
+
+    try {
+      const parsed = await parseDealerQuoteFromText(rawText.trim());
+      return res.json(parsed);
+    } catch (error) {
+      console.error('[parse-quote] Error:', error);
+      return res.status(500).json({ error: 'Failed to parse quote' });
     }
   }
 );

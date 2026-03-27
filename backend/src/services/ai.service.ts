@@ -413,8 +413,8 @@ export async function* streamChatResponse(
 
     try {
       const stream = anthropicClient.messages.stream({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2048,
+        model: 'claude-opus-4-6',
+        max_tokens: 4096,
         system: systemPrompt,
         tools: CHAT_TOOLS,
         messages: formattedMessages,
@@ -521,8 +521,8 @@ export async function generateChatResponse(
       iteration++;
 
       const response = await anthropicClient.messages.create({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2048,
+        model: 'claude-opus-4-6',
+        max_tokens: 4096,
         system: systemPrompt,
         tools: CHAT_TOOLS,
         messages: formattedMessages,
@@ -668,6 +668,131 @@ Cover: what it is, where it's used, why brand matters, what to check before buyi
     return msg.content[0].type === 'text' ? msg.content[0].text : 'Explanation unavailable';
   } catch {
     return 'Explanation temporarily unavailable';
+  }
+}
+
+// ============================================
+// DEALER QUOTE PARSER — Parse natural language into structured quote
+// ============================================
+
+export interface ParsedDealerQuote {
+  price_per_unit?: number;
+  unit_type?: string;
+  delivery_days?: number;
+  warranty_info?: string;
+  shipping_info?: string;
+  minimum_order?: number;
+  validity_days?: number;
+  notes?: string;
+  formatted_quote?: string;
+  raw_input: string;
+}
+
+export async function parseDealerQuoteFromText(rawText: string): Promise<ParsedDealerQuote> {
+  if (!anthropicClient) return { raw_input: rawText };
+
+  try {
+    const response = await anthropicClient.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 512,
+      tools: [CHAT_TOOLS.find(t => t.name === 'generate_dealer_quote')!],
+      tool_choice: { type: 'any' },
+      messages: [{
+        role: 'user',
+        content: `Parse the following dealer quote input and extract all quote details using the generate_dealer_quote tool. Extract price, delivery time, warranty, shipping info etc.\n\nDealer said: "${rawText}"`,
+      }],
+    });
+
+    for (const block of response.content) {
+      if (block.type === 'tool_use' && block.name === 'generate_dealer_quote') {
+        const input = block.input as any;
+        const result = await executeGenerateDealerQuote(input);
+        const parsed = JSON.parse(result);
+        return {
+          raw_input: rawText,
+          price_per_unit: input.price_per_unit,
+          unit_type: input.unit_type || 'piece',
+          delivery_days: input.delivery_days,
+          warranty_info: input.warranty_info,
+          shipping_info: input.shipping_info,
+          minimum_order: input.minimum_order,
+          validity_days: input.validity_days || 3,
+          notes: input.notes,
+          formatted_quote: parsed.formatted_quote,
+        };
+      }
+    }
+    return { raw_input: rawText };
+  } catch (error) {
+    console.error('[Spark] parseDealerQuote error:', error);
+    return { raw_input: rawText };
+  }
+}
+
+// ============================================
+// ADMIN AI INSIGHTS — Platform intelligence
+// ============================================
+
+export interface AdminAIInsight {
+  type: 'hot_lead' | 'demand_trend' | 'dealer_tip' | 'city_activity' | 'action_needed';
+  title: string;
+  body: string;
+  priority: 'high' | 'medium' | 'low';
+}
+
+export async function generateAdminInsights(platformData: {
+  totalInquiries: number;
+  topCities: Array<{ city: string; count: number }>;
+  topCategories: Array<{ name: string; count: number }>;
+  pendingDealers: number;
+  openFraudFlags: number;
+  activeRFQs: number;
+  totalQuotes: number;
+  recentProducts: string[];
+}): Promise<AdminAIInsight[]> {
+  if (!anthropicClient) {
+    return [{
+      type: 'action_needed',
+      title: 'AI Insights unavailable',
+      body: 'Configure ANTHROPIC_API_KEY to enable AI-powered insights.',
+      priority: 'low',
+    }];
+  }
+
+  try {
+    const prompt = `You are an AI analyst for Hub4Estate, India's electrical products B2B marketplace.
+
+Analyze this real-time platform data and return 4-5 actionable insights as JSON:
+
+Data:
+- Total inquiries: ${platformData.totalInquiries}
+- Active RFQs: ${platformData.activeRFQs}
+- Total quotes submitted: ${platformData.totalQuotes}
+- Pending dealer verifications: ${platformData.pendingDealers}
+- Open fraud flags: ${platformData.openFraudFlags}
+- Top demand cities: ${platformData.topCities.slice(0, 5).map(c => `${c.city}(${c.count})`).join(', ')}
+- Top product categories: ${platformData.topCategories.slice(0, 5).map(c => `${c.name}(${c.count})`).join(', ')}
+- Recent inquired products: ${platformData.recentProducts.slice(0, 8).join(', ')}
+
+Return ONLY a raw JSON array (no markdown):
+[{"type":"hot_lead|demand_trend|dealer_tip|city_activity|action_needed","title":"concise title","body":"1-2 sentence insight","priority":"high|medium|low"}]`;
+
+    const msg = await anthropicClient.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 600,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const text = msg.content[0].type === 'text' ? msg.content[0].text : '[]';
+    const match = text.match(/\[[\s\S]*\]/);
+    if (match) {
+      const result = JSON.parse(match[0]);
+      return Array.isArray(result) ? result.slice(0, 5) : [];
+    }
+    return [];
+  } catch (error) {
+    console.error('[Spark] generateAdminInsights error:', error);
+    return [];
   }
 }
 

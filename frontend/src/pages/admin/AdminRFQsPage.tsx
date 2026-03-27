@@ -1,29 +1,14 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../lib/api';
 import {
-  FileText, Search, MapPin, Package, Clock, Users,
-  MessageSquare, CheckCircle, XCircle, AlertCircle, Loader2
+  FileText, MapPin, Package, Clock, Users,
+  MessageSquare, Loader2,
 } from 'lucide-react';
 
-interface RFQProduct {
-  name: string;
-}
-
-interface RFQItem {
-  id: string;
-  quantity: number;
-  product: RFQProduct;
-}
-
-interface RFQQuote {
-  id: string;
-}
-
-interface RFQUser {
-  name: string;
-  email: string;
-}
-
+interface RFQProduct { name: string }
+interface RFQItem { id: string; quantity: number; product: RFQProduct }
+interface RFQQuote { id: string }
+interface RFQUser { name: string; email: string }
 interface RFQ {
   id: string;
   title: string;
@@ -34,18 +19,8 @@ interface RFQ {
   items: RFQItem[];
   quotes: RFQQuote[];
 }
-
-interface Pagination {
-  total: number;
-  page: number;
-  limit: number;
-  pages: number;
-}
-
-interface RFQResponse {
-  rfqs: RFQ[];
-  pagination: Pagination;
-}
+interface Pagination { total: number; page: number; limit: number; pages: number }
+interface RFQResponse { rfqs: RFQ[]; pagination: Pagination }
 
 type StatusTab = 'ALL' | 'PUBLISHED' | 'QUOTES_RECEIVED' | 'DEALER_SELECTED' | 'COMPLETED' | 'CANCELLED';
 
@@ -58,17 +33,16 @@ const STATUS_TABS: { key: StatusTab; label: string }[] = [
   { key: 'CANCELLED', label: 'Cancelled' },
 ];
 
-const statusStyles: Record<string, { bg: string; text: string }> = {
-  PUBLISHED: { bg: 'bg-blue-100', text: 'text-blue-800' },
-  QUOTES_RECEIVED: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-  DEALER_SELECTED: { bg: 'bg-purple-100', text: 'text-purple-800' },
-  COMPLETED: { bg: 'bg-green-100', text: 'text-green-800' },
-  CANCELLED: { bg: 'bg-red-100', text: 'text-red-800' },
+const STATUS_CONFIG: Record<string, { dot: string; color: string; label: string }> = {
+  PUBLISHED:       { dot: 'bg-blue-400',   color: 'text-blue-600',   label: 'Published' },
+  QUOTES_RECEIVED: { dot: 'bg-amber-400',  color: 'text-amber-600',  label: 'Quotes Received' },
+  DEALER_SELECTED: { dot: 'bg-purple-400', color: 'text-purple-600', label: 'Dealer Selected' },
+  COMPLETED:       { dot: 'bg-green-400',  color: 'text-green-600',  label: 'Completed' },
+  CANCELLED:       { dot: 'bg-red-400',    color: 'text-red-500',    label: 'Cancelled' },
 };
 
-function getStatusStyle(status: string) {
-  return statusStyles[status] || { bg: 'bg-neutral-100', text: 'text-neutral-800' };
-}
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export function AdminRFQsPage() {
   const [rfqs, setRfqs] = useState<RFQ[]>([]);
@@ -82,26 +56,18 @@ export function AdminRFQsPage() {
     setLoading(true);
     try {
       const params: Record<string, string | number> = { page, limit: 20 };
-      if (activeTab !== 'ALL') {
-        params.status = activeTab;
-      }
+      if (activeTab !== 'ALL') params.status = activeTab;
 
       const res = await api.get<RFQResponse>('/admin/rfqs', { params });
-      const data = res.data;
-      setRfqs(data.rfqs);
-      setPagination(data.pagination);
+      setRfqs(res.data.rfqs);
+      setPagination(res.data.pagination);
 
-      // Calculate stats from the full dataset (when no filter)
       if (activeTab === 'ALL') {
-        const totalQuotes = data.rfqs.reduce((sum, rfq) => sum + rfq.quotes.length, 0);
-        const activeCount = data.rfqs.filter(
-          (rfq) => rfq.status === 'PUBLISHED' || rfq.status === 'QUOTES_RECEIVED' || rfq.status === 'DEALER_SELECTED'
+        const totalQuotes = res.data.rfqs.reduce((sum, rfq) => sum + rfq.quotes.length, 0);
+        const activeCount = res.data.rfqs.filter(r =>
+          ['PUBLISHED', 'QUOTES_RECEIVED', 'DEALER_SELECTED'].includes(r.status)
         ).length;
-        setStats({
-          total: data.pagination.total,
-          active: activeCount,
-          totalQuotes,
-        });
+        setStats({ total: res.data.pagination.total, active: activeCount, totalQuotes });
       }
     } catch (err) {
       console.error('Failed to fetch RFQs:', err);
@@ -110,215 +76,155 @@ export function AdminRFQsPage() {
     }
   };
 
-  useEffect(() => {
-    fetchRFQs();
-  }, [activeTab, page]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchRFQs(); }, [activeTab, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleTabChange = (tab: StatusTab) => {
-    setActiveTab(tab);
-    setPage(1);
-  };
+  const handleTabChange = (tab: StatusTab) => { setActiveTab(tab); setPage(1); };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-black text-neutral-900">RFQ Management</h1>
-        <p className="text-neutral-500 text-sm mt-1">
-          View and manage all Request for Quotations across the platform.
-        </p>
-      </div>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <h1 className="text-lg font-semibold text-gray-900">RFQ Management</h1>
+        <p className="text-sm text-gray-500 mt-0.5">View and manage all Request for Quotations across the platform.</p>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white border-2 border-neutral-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-neutral-900 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
+        {/* Stats inline */}
+        {!loading && (
+          <div className="flex items-center gap-5 mt-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-semibold text-gray-900">{stats.total}</span>
+              <span className="text-sm text-gray-400">total</span>
             </div>
-            <div>
-              <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Total RFQs</p>
-              <p className="text-2xl font-black text-neutral-900">{stats.total}</p>
+            <div className="w-px h-4 bg-gray-200" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-semibold text-blue-600">{stats.active}</span>
+              <span className="text-sm text-gray-400">active</span>
+            </div>
+            <div className="w-px h-4 bg-gray-200" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-semibold text-green-600">{stats.totalQuotes}</span>
+              <span className="text-sm text-gray-400">quotes</span>
             </div>
           </div>
-        </div>
-        <div className="bg-blue-50 border-2 border-blue-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 flex items-center justify-center">
-              <AlertCircle className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-blue-600 uppercase tracking-wider">Active RFQs</p>
-              <p className="text-2xl font-black text-blue-900">{stats.active}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-green-50 border-2 border-green-200 p-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-600 flex items-center justify-center">
-              <MessageSquare className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-green-600 uppercase tracking-wider">Total Quotes</p>
-              <p className="text-2xl font-black text-green-900">{stats.totalQuotes}</p>
-            </div>
-          </div>
+        )}
+
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-1 mt-4">
+          {STATUS_TABS.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => handleTabChange(tab.key)}
+              className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Status Tabs */}
-      <div className="flex flex-wrap gap-2">
-        {STATUS_TABS.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => handleTabChange(tab.key)}
-            className={`px-4 py-2 text-sm font-bold transition-colors ${
-              activeTab === tab.key
-                ? 'bg-neutral-900 text-white'
-                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* RFQ List */}
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
-        </div>
-      ) : rfqs.length === 0 ? (
-        <div className="text-center py-20 text-neutral-400">
-          <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-          <p className="font-medium">No RFQs found</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {rfqs.map((rfq) => {
-            const style = getStatusStyle(rfq.status);
-            return (
-              <div
-                key={rfq.id}
-                className="border-2 border-neutral-200 bg-white hover:border-neutral-400 transition-colors"
-              >
-                {/* Top row */}
-                <div className="flex items-center justify-between px-5 py-3 border-b border-neutral-100">
-                  <div className="flex items-center gap-3">
-                    <span className={`px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${style.bg} ${style.text}`}>
-                      {rfq.status.replace(/_/g, ' ')}
-                    </span>
-                    <span className="font-mono text-sm font-bold text-neutral-900">
-                      {rfq.id.slice(0, 8)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-neutral-400">
-                    <Clock className="w-3.5 h-3.5" />
-                    {new Date(rfq.createdAt).toLocaleDateString('en-IN', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </div>
-                </div>
-
-                {/* Main content */}
-                <div className="px-5 py-4">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {/* Title & User */}
-                    <div className="md:col-span-2 space-y-2">
-                      <h3 className="font-bold text-neutral-900 text-base">{rfq.title}</h3>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-neutral-400" />
-                        <span className="text-sm text-neutral-700 font-medium">{rfq.user.name}</span>
-                        <span className="text-xs text-neutral-400">{rfq.user.email}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-neutral-400" />
-                        <span className="text-sm text-neutral-600">{rfq.deliveryCity}</span>
-                      </div>
+      <div className="px-6 py-6 max-w-5xl mx-auto">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          </div>
+        ) : rfqs.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-4 py-14 text-center">
+            <FileText className="w-8 h-8 text-gray-200 mx-auto mb-3" />
+            <p className="text-sm font-medium text-gray-500">No RFQs found</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {rfqs.map(rfq => {
+              const s = STATUS_CONFIG[rfq.status] || { dot: 'bg-gray-300', color: 'text-gray-500', label: rfq.status };
+              return (
+                <div key={rfq.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  {/* Top row */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+                      <span className={`text-xs font-medium ${s.color}`}>{s.label}</span>
+                      <span className="text-xs text-gray-300 mx-1">·</span>
+                      <span className="font-mono text-xs text-gray-400">{rfq.id.slice(0, 8)}</span>
                     </div>
-
-                    {/* Items Count */}
-                    <div className="flex flex-col justify-center">
-                      <div className="bg-neutral-50 border border-neutral-200 p-3">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Package className="w-4 h-4 text-neutral-500" />
-                          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Items</span>
-                        </div>
-                        <p className="text-xl font-black text-neutral-900">{rfq.items.length}</p>
-                        {rfq.items.length > 0 && (
-                          <p className="text-xs text-neutral-400 mt-1 truncate">
-                            {rfq.items.map((item) => item.product.name).join(', ')}
-                          </p>
-                        )}
-                      </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                      <Clock className="w-3 h-3" />
+                      {fmtDate(rfq.createdAt)}
                     </div>
+                  </div>
 
-                    {/* Quotes Count */}
-                    <div className="flex flex-col justify-center">
-                      <div className={`p-3 border ${
-                        rfq.quotes.length > 0
-                          ? 'bg-green-50 border-green-200'
-                          : 'bg-amber-50 border-amber-200'
-                      }`}>
-                        <div className="flex items-center gap-2 mb-1">
-                          <MessageSquare className={`w-4 h-4 ${
-                            rfq.quotes.length > 0 ? 'text-green-500' : 'text-amber-500'
-                          }`} />
-                          <span className={`text-xs font-bold uppercase tracking-wider ${
-                            rfq.quotes.length > 0 ? 'text-green-600' : 'text-amber-600'
-                          }`}>
-                            Quotes
+                  {/* Main content */}
+                  <div className="px-4 py-4">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-semibold text-gray-900">{rfq.title}</h3>
+                        <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                          <span className="flex items-center gap-1">
+                            <Users className="w-3 h-3" /> {rfq.user.name}
+                            <span className="text-gray-300">·</span>
+                            {rfq.user.email}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" /> {rfq.deliveryCity}
                           </span>
                         </div>
-                        <p className={`text-xl font-black ${
-                          rfq.quotes.length > 0 ? 'text-green-800' : 'text-amber-800'
-                        }`}>
-                          {rfq.quotes.length}
-                        </p>
-                        <p className={`text-xs mt-1 ${
-                          rfq.quotes.length > 0 ? 'text-green-600' : 'text-amber-500'
-                        }`}>
-                          {rfq.quotes.length > 0 ? 'Quotes received' : 'Awaiting quotes'}
-                        </p>
+                      </div>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="text-center">
+                          <p className="text-sm font-semibold text-gray-900">{rfq.items.length}</p>
+                          <p className="text-[11px] text-gray-400">items</p>
+                        </div>
+                        <div className="w-px h-8 bg-gray-100" />
+                        <div className="text-center">
+                          <p className={`text-sm font-semibold ${rfq.quotes.length > 0 ? 'text-green-600' : 'text-amber-600'}`}>
+                            {rfq.quotes.length}
+                          </p>
+                          <p className="text-[11px] text-gray-400">quotes</p>
+                        </div>
                       </div>
                     </div>
+                    {rfq.items.length > 0 && (
+                      <p className="text-xs text-gray-400 mt-2 truncate">
+                        {rfq.items.map(item => item.product.name).join(', ')}
+                      </p>
+                    )}
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {pagination.pages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-neutral-500">
-            Showing {(page - 1) * pagination.limit + 1}&ndash;{Math.min(page * pagination.limit, pagination.total)} of {pagination.total}
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-4 py-2 text-sm font-bold bg-neutral-100 hover:bg-neutral-200 disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span className="px-4 py-2 text-sm font-medium text-neutral-600">
-              Page {page} of {pagination.pages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}
-              disabled={page === pagination.pages}
-              className="px-4 py-2 text-sm font-bold bg-neutral-100 hover:bg-neutral-200 disabled:opacity-50"
-            >
-              Next
-            </button>
+              );
+            })}
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Pagination */}
+        {pagination.pages > 1 && (
+          <div className="flex items-center justify-between mt-4">
+            <p className="text-sm text-gray-400">
+              {(page - 1) * pagination.limit + 1}–{Math.min(page * pagination.limit, pagination.total)} of {pagination.total}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              >
+                Previous
+              </button>
+              <span className="px-3.5 py-1.5 text-sm text-gray-500">
+                {page} / {pagination.pages}
+              </span>
+              <button
+                onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
+                disabled={page === pagination.pages}
+                className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

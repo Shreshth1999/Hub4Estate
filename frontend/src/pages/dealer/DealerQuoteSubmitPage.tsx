@@ -1,11 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { quotesApi, rfqApi } from '../../lib/api';
-import { Button, Input, PageLoader, Alert, EmptyState } from '../../components/ui';
+import { quotesApi, api } from '../../lib/api';
 import {
-  Package, MapPin, Clock, ChevronLeft, Send, Plus, Minus,
-  Calendar, Truck, DollarSign, FileText, CheckCircle, AlertTriangle
+  Package, MapPin, Clock, ArrowLeft, Send, Truck,
+  FileText, Loader2, AlertCircle, Mic, MicOff, Sparkles, CheckCircle,
 } from 'lucide-react';
+
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 
 interface RFQItem {
   id: string;
@@ -15,15 +21,7 @@ interface RFQItem {
   product: {
     id: string;
     name: string;
-    modelNumber?: string;
     brand: { id: string; name: string };
-    productType: {
-      name: string;
-      subCategory: {
-        name: string;
-        category: { name: string };
-      };
-    };
   };
 }
 
@@ -33,16 +31,10 @@ interface RFQ {
   description?: string;
   deliveryCity: string;
   deliveryPincode: string;
-  deliveryAddress?: string;
   deliveryPreference: 'delivery' | 'pickup' | 'both';
   urgency: string | null;
-  status: string;
   publishedAt: string;
   items: RFQItem[];
-  user: {
-    city: string;
-    role: string;
-  };
 }
 
 interface QuoteItem {
@@ -54,6 +46,9 @@ interface QuoteItem {
   totalPrice: number;
 }
 
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
 export function DealerQuoteSubmitPage() {
   const { rfqId } = useParams<{ rfqId: string }>();
   const navigate = useNavigate();
@@ -63,7 +58,6 @@ export function DealerQuoteSubmitPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  // Quote form data
   const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([]);
   const [shippingCost, setShippingCost] = useState(0);
   const [deliveryDate, setDeliveryDate] = useState('');
@@ -71,92 +65,109 @@ export function DealerQuoteSubmitPage() {
   const [validUntil, setValidUntil] = useState('');
   const [notes, setNotes] = useState('');
 
+  // Voice AI notes
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [voiceText, setVoiceText] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
+  const [voiceParsed, setVoiceParsed] = useState(false);
+  const [voiceError, setVoiceError] = useState('');
+  const recognitionRef = useRef<any>(null);
+
   useEffect(() => {
-    const fetchRFQs = async () => {
-      try {
-        // Note: We need to fetch from available RFQs since individual RFQ fetch requires user auth
-        const response = await quotesApi.getAvailableRFQs();
-        const foundRFQ = response.data.rfqs?.find((r: RFQ) => r.id === rfqId);
-
-        if (foundRFQ) {
-          setRfq(foundRFQ);
-          // Initialize quote items from RFQ items
-          setQuoteItems(
-            foundRFQ.items.map((item: RFQItem) => ({
-              productId: item.product.id,
-              name: item.product.name,
-              brand: item.product.brand.name,
-              quantity: item.quantity,
-              unitPrice: 0,
-              totalPrice: 0,
-            }))
-          );
-        }
-      } catch (error) {
-        console.error('Failed to fetch RFQ:', error);
-        setError('Failed to load RFQ details');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (rfqId) {
-      fetchRFQs();
-    }
-  }, [rfqId]);
-
-  // Set default valid until date (7 days from now)
-  useEffect(() => {
-    const defaultValidUntil = new Date();
-    defaultValidUntil.setDate(defaultValidUntil.getDate() + 7);
-    setValidUntil(defaultValidUntil.toISOString().split('T')[0]);
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    setValidUntil(d.toISOString().split('T')[0]);
   }, []);
 
+  useEffect(() => {
+    if (!rfqId) return;
+    quotesApi.getAvailableRFQs()
+      .then(res => {
+        const found = res.data.rfqs?.find((r: RFQ) => r.id === rfqId);
+        if (found) {
+          setRfq(found);
+          setQuoteItems(found.items.map((item: RFQItem) => ({
+            productId: item.product.id,
+            name: item.product.name,
+            brand: item.product.brand.name,
+            quantity: item.quantity,
+            unitPrice: 0,
+            totalPrice: 0,
+          })));
+        }
+      })
+      .catch(() => setError('Failed to load RFQ details'))
+      .finally(() => setIsLoading(false));
+  }, [rfqId]);
+
   const handlePriceChange = (productId: string, unitPrice: number) => {
-    setQuoteItems((prev) =>
-      prev.map((item) =>
-        item.productId === productId
-          ? { ...item, unitPrice, totalPrice: unitPrice * item.quantity }
-          : item
-      )
-    );
+    setQuoteItems(prev => prev.map(item =>
+      item.productId === productId
+        ? { ...item, unitPrice, totalPrice: unitPrice * item.quantity }
+        : item
+    ));
   };
 
-  const totalAmount = quoteItems.reduce((sum, item) => sum + item.totalPrice, 0) + shippingCost;
+  const totalAmount = quoteItems.reduce((sum, i) => sum + i.totalPrice, 0) + shippingCost;
 
-  const validateForm = (): boolean => {
-    setError('');
+  const startVoice = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { setVoiceError('Voice not supported. Type your terms below.'); return; }
+    const recognition = new SR();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'hi-IN';
+    recognition.onresult = (e: any) => setVoiceText(Array.from(e.results).map((r: any) => r[0].transcript).join(''));
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => { setIsListening(false); setVoiceError('Could not hear clearly. Type below.'); };
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+    setVoiceError('');
+  };
 
-    // Check all items have prices
-    const allPriced = quoteItems.every((item) => item.unitPrice > 0);
-    if (!allPriced) {
-      setError('Please enter unit price for all items');
-      return false;
+  const stopVoice = () => { recognitionRef.current?.stop(); setIsListening(false); };
+
+  const parseVoiceTerms = async () => {
+    if (!voiceText.trim()) { setVoiceError('Please speak or type your quote terms first.'); return; }
+    setIsParsing(true);
+    setVoiceError('');
+    try {
+      const res = await api.post('/chat/parse-quote', { rawText: voiceText.trim() });
+      const data = res.data;
+      if (data.delivery_days) {
+        const d = new Date();
+        d.setDate(d.getDate() + data.delivery_days);
+        setDeliveryDate(d.toISOString().split('T')[0]);
+      }
+      const noteParts = [data.warranty_info, data.shipping_info, data.notes].filter(Boolean);
+      if (noteParts.length) setNotes(noteParts.join('. '));
+      if (data.price_per_unit && quoteItems.length > 0) {
+        setQuoteItems(prev => prev.map(item => ({
+          ...item,
+          unitPrice: data.price_per_unit,
+          totalPrice: data.price_per_unit * item.quantity,
+        })));
+      }
+      setVoiceParsed(true);
+    } catch {
+      setVoiceError('Could not parse terms. Fill manually.');
+    } finally {
+      setIsParsing(false);
     }
-
-    // Check valid until date
-    if (!validUntil) {
-      setError('Please set quote validity date');
-      return false;
-    }
-
-    // Check at least one delivery option
-    if (rfq?.deliveryPreference !== 'pickup' && !deliveryDate) {
-      setError('Please set an expected delivery date');
-      return false;
-    }
-
-    return true;
   };
 
   const handleSubmit = async () => {
-    if (!validateForm() || !rfq) return;
+    setError('');
+    if (!quoteItems.every(i => i.unitPrice > 0)) { setError('Enter unit price for all items.'); return; }
+    if (!validUntil) { setError('Set a quote validity date.'); return; }
+    if (rfq?.deliveryPreference !== 'pickup' && !deliveryDate) { setError('Set an expected delivery date.'); return; }
+    if (!rfq) return;
 
     setIsSubmitting(true);
-    setError('');
-
     try {
-      const quoteData = {
+      await quotesApi.submitQuote({
         rfqId: rfq.id,
         totalAmount,
         shippingCost,
@@ -164,15 +175,13 @@ export function DealerQuoteSubmitPage() {
         pickupDate: pickupDate ? new Date(pickupDate).toISOString() : undefined,
         validUntil: new Date(validUntil).toISOString(),
         notes: notes || undefined,
-        items: quoteItems.map((item) => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          totalPrice: item.totalPrice,
+        items: quoteItems.map(i => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          totalPrice: i.totalPrice,
         })),
-      };
-
-      await quotesApi.submitQuote(quoteData);
+      });
       navigate('/dealer/quotes', { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to submit quote. Please try again.');
@@ -181,356 +190,333 @@ export function DealerQuoteSubmitPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
-
   if (isLoading) {
-    return <PageLoader message="Loading RFQ details..." />;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+      </div>
+    );
   }
 
   if (!rfq) {
     return (
-      <div className="container-custom py-16">
-        <EmptyState
-          icon={FileText}
-          title="RFQ not found"
-          description="This RFQ may have been closed or is no longer available."
-          action={
-            <Link to="/dealer/rfqs" className="btn-primary">
-              View Available RFQs
-            </Link>
-          }
-        />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+          <p className="text-sm font-medium text-gray-500">RFQ not found or no longer available</p>
+          <Link to="/dealer/rfqs" className="inline-flex items-center gap-1 mt-3 text-sm text-gray-500 hover:text-gray-900">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to RFQs
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <section className="bg-neutral-900 text-white">
-        <div className="container-custom py-8">
-          <Link
-            to="/dealer/rfqs"
-            className="inline-flex items-center text-neutral-400 hover:text-white mb-4 transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4 mr-1" />
-            Back to RFQs
-          </Link>
-
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent-500 text-white text-xs font-bold uppercase tracking-wider mb-3">
-                {rfq.urgency === 'urgent' ? 'Urgent RFQ' : 'Quote Request'}
-              </div>
-              <h1 className="text-2xl md:text-3xl font-black">{rfq.title}</h1>
-              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-neutral-400">
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {rfq.deliveryCity}, {rfq.deliveryPincode}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Package className="w-4 h-4" />
-                  {rfq.items.length} items
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  Posted {formatDate(rfq.publishedAt)}
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-white/10 border border-white/20 p-4 text-center">
-              <div className="text-3xl font-black text-white">
-                ₹{totalAmount.toLocaleString('en-IN')}
-              </div>
-              <div className="text-xs text-neutral-400 uppercase tracking-wider">
-                Total Quote Amount
-              </div>
-            </div>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <Link
+          to="/dealer/rfqs"
+          className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 mb-3 transition-colors"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to RFQs
+        </Link>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-lg font-semibold text-gray-900">{rfq.title}</h1>
+            <p className="text-xs text-gray-400 mt-0.5">
+              <MapPin className="inline w-3 h-3 mr-0.5" />
+              {rfq.deliveryCity}, {rfq.deliveryPincode}
+              {' · '}<Clock className="inline w-3 h-3 mr-0.5" />
+              Posted {fmtDate(rfq.publishedAt)}
+            </p>
+          </div>
+          <div className="text-right flex-shrink-0">
+            <p className="text-lg font-semibold text-gray-900">₹{totalAmount.toLocaleString('en-IN')}</p>
+            <p className="text-xs text-gray-400">total quote</p>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Main Content */}
-      <section className="py-10">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Quote Form */}
-            <div className="lg:col-span-2 space-y-8">
-              {error && (
-                <Alert variant="error" title="Error">
-                  {error}
-                </Alert>
-              )}
+      <div className="px-6 py-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-              {/* Item Pricing */}
-              <div className="border-2 border-neutral-200 p-6">
-                <h2 className="text-xl font-black text-neutral-900 mb-6 flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" />
-                  Item Pricing
-                </h2>
+          {/* Form */}
+          <div className="lg:col-span-2 space-y-4">
+            {error && (
+              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3.5 py-3">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                {error}
+              </div>
+            )}
 
-                <div className="space-y-4">
-                  {quoteItems.map((item, index) => (
-                    <div
-                      key={item.productId}
-                      className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 bg-neutral-50 border border-neutral-200"
-                    >
-                      {/* Product Info */}
-                      <div className="md:col-span-5">
-                        <p className="font-bold text-neutral-900">{item.name}</p>
-                        <p className="text-sm text-neutral-500">{item.brand}</p>
-                        {rfq.items[index]?.notes && (
-                          <p className="text-xs text-accent-600 mt-1">
-                            Note: {rfq.items[index].notes}
-                          </p>
-                        )}
+            {/* Item Pricing */}
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+                <Package className="w-3.5 h-3.5 text-gray-400" />
+                <h2 className="text-sm font-medium text-gray-900">Item pricing</h2>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {quoteItems.map(item => (
+                  <div key={item.productId} className="p-4">
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                        <p className="text-xs text-gray-400">{item.brand} · qty {item.quantity}</p>
                       </div>
-
-                      {/* Quantity */}
-                      <div className="md:col-span-2">
-                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
-                          Qty
-                        </label>
-                        <p className="text-lg font-bold text-neutral-900">{item.quantity}</p>
-                      </div>
-
-                      {/* Unit Price */}
-                      <div className="md:col-span-2">
-                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1">
-                          Unit Price (₹)
-                        </label>
-                        <input
-                          type="number"
-                          value={item.unitPrice || ''}
-                          onChange={(e) =>
-                            handlePriceChange(item.productId, parseFloat(e.target.value) || 0)
-                          }
-                          placeholder="0"
-                          className="w-full border-2 border-neutral-300 px-3 py-2 font-bold text-right focus:border-neutral-900 focus:outline-none"
-                        />
-                      </div>
-
-                      {/* Total */}
-                      <div className="md:col-span-3 text-right">
-                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block mb-1">
-                          Total
-                        </label>
-                        <p className="text-lg font-black text-neutral-900">
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-sm font-semibold text-gray-900">
                           ₹{item.totalPrice.toLocaleString('en-IN')}
                         </p>
+                        <p className="text-xs text-gray-400">total</p>
                       </div>
                     </div>
-                  ))}
-                </div>
-
-                {/* Shipping */}
-                <div className="mt-6 pt-6 border-t-2 border-neutral-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <label className="text-sm font-bold text-neutral-900">
-                        Shipping Cost (₹)
-                      </label>
-                      <p className="text-xs text-neutral-500">
-                        Enter 0 for free shipping
-                      </p>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-400 flex-shrink-0">Unit price (₹)</label>
+                      <input
+                        type="number"
+                        value={item.unitPrice || ''}
+                        onChange={e => handlePriceChange(item.productId, parseFloat(e.target.value) || 0)}
+                        placeholder="0"
+                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-right focus:outline-none focus:border-gray-400 transition-colors"
+                      />
                     </div>
-                    <input
-                      type="number"
-                      value={shippingCost || ''}
-                      onChange={(e) => setShippingCost(parseFloat(e.target.value) || 0)}
-                      placeholder="0"
-                      className="w-32 border-2 border-neutral-300 px-3 py-2 font-bold text-right focus:border-neutral-900 focus:outline-none"
-                    />
                   </div>
-                </div>
-
-                {/* Total */}
-                <div className="mt-4 pt-4 border-t-2 border-neutral-900 flex items-center justify-between">
-                  <span className="text-lg font-bold text-neutral-900">TOTAL</span>
-                  <span className="text-2xl font-black text-neutral-900">
-                    ₹{totalAmount.toLocaleString('en-IN')}
-                  </span>
-                </div>
+                ))}
               </div>
 
-              {/* Delivery Options */}
-              <div className="border-2 border-neutral-200 p-6">
-                <h2 className="text-xl font-black text-neutral-900 mb-6 flex items-center gap-2">
-                  <Truck className="w-5 h-5" />
-                  Delivery Options
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {(rfq.deliveryPreference === 'delivery' || rfq.deliveryPreference === 'both') && (
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        Expected Delivery Date *
-                      </label>
-                      <input
-                        type="date"
-                        value={deliveryDate}
-                        onChange={(e) => setDeliveryDate(e.target.value)}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="w-full border-2 border-neutral-300 px-4 py-3 focus:border-neutral-900 focus:outline-none"
-                      />
-                    </div>
-                  )}
-
-                  {(rfq.deliveryPreference === 'pickup' || rfq.deliveryPreference === 'both') && (
-                    <div>
-                      <label className="block text-sm font-bold text-neutral-900 mb-2">
-                        Available for Pickup From
-                      </label>
-                      <input
-                        type="date"
-                        value={pickupDate}
-                        onChange={(e) => setPickupDate(e.target.value)}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="w-full border-2 border-neutral-300 px-4 py-3 focus:border-neutral-900 focus:outline-none"
-                      />
-                    </div>
-                  )}
+              {/* Shipping + Total */}
+              <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 space-y-2">
+                <div className="flex items-center justify-between gap-4">
+                  <label className="text-sm text-gray-500">Shipping cost (₹, 0 = free)</label>
+                  <input
+                    type="number"
+                    value={shippingCost || ''}
+                    onChange={e => setShippingCost(parseFloat(e.target.value) || 0)}
+                    placeholder="0"
+                    className="w-28 px-3 py-2 border border-gray-200 rounded-lg text-sm text-right focus:outline-none focus:border-gray-400 bg-white transition-colors"
+                  />
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                  <span className="text-sm font-medium text-gray-900">Total</span>
+                  <span className="text-lg font-semibold text-gray-900">₹{totalAmount.toLocaleString('en-IN')}</span>
                 </div>
               </div>
+            </div>
 
-              {/* Quote Details */}
-              <div className="border-2 border-neutral-200 p-6">
-                <h2 className="text-xl font-black text-neutral-900 mb-6 flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Quote Details
-                </h2>
-
-                <div className="space-y-6">
+            {/* Delivery Options */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <h2 className="text-sm font-medium text-gray-900 mb-4 flex items-center gap-2">
+                <Truck className="w-3.5 h-3.5 text-gray-400" /> Delivery options
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {(rfq.deliveryPreference === 'delivery' || rfq.deliveryPreference === 'both') && (
                   <div>
-                    <label className="block text-sm font-bold text-neutral-900 mb-2">
-                      Quote Valid Until *
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                      Expected delivery date <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="date"
-                      value={validUntil}
-                      onChange={(e) => setValidUntil(e.target.value)}
+                      value={deliveryDate}
+                      onChange={e => setDeliveryDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="w-full border-2 border-neutral-300 px-4 py-3 focus:border-neutral-900 focus:outline-none"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
                     />
-                    <p className="text-xs text-neutral-500 mt-1">
-                      Your quote will expire after this date
-                    </p>
                   </div>
-
+                )}
+                {(rfq.deliveryPreference === 'pickup' || rfq.deliveryPreference === 'both') && (
                   <div>
-                    <label className="block text-sm font-bold text-neutral-900 mb-2">
-                      Additional Notes (Optional)
-                    </label>
-                    <textarea
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      rows={3}
-                      placeholder="Any additional details about your quote, payment terms, warranty info, etc."
-                      className="w-full border-2 border-neutral-300 px-4 py-3 focus:border-neutral-900 focus:outline-none resize-none"
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Available for pickup from</label>
+                    <input
+                      type="date"
+                      value={pickupDate}
+                      onChange={e => setPickupDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
                     />
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
-            {/* Sidebar - RFQ Summary */}
-            <div className="space-y-6">
-              {/* RFQ Summary */}
-              <div className="bg-neutral-50 border-2 border-neutral-200 p-6 sticky top-24">
-                <h3 className="font-bold text-neutral-900 mb-4 uppercase tracking-wide text-sm">
-                  RFQ Summary
-                </h3>
+            {/* Quote details */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                  <FileText className="w-3.5 h-3.5 text-gray-400" /> Quote details
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => { setIsVoiceMode(v => !v); setVoiceError(''); setVoiceParsed(false); }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+                    isVoiceMode
+                      ? 'bg-violet-100 text-violet-700 border border-violet-200'
+                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200 border border-transparent'
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3" />
+                  Spark AI
+                </button>
+              </div>
 
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <span className="text-neutral-500">Customer Location</span>
-                    <p className="font-bold text-neutral-900">
-                      {rfq.deliveryCity}, {rfq.deliveryPincode}
-                    </p>
+              {/* Spark AI Voice Panel */}
+              {isVoiceMode && (
+                <div className="rounded-xl border border-violet-100 bg-violet-50 p-4 space-y-3">
+                  <p className="text-xs text-violet-600 font-medium">
+                    Speak your quote terms in Hindi, English, or Hinglish — Spark will fill the form for you.
+                  </p>
+                  <p className="text-[11px] text-violet-400 italic">
+                    e.g. "Price hai 850 rupaye per piece, delivery 5 din mein, 1 saal warranty rahegi"
+                  </p>
+
+                  {/* Mic + Text */}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={isListening ? stopVoice : startVoice}
+                      className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                        isListening
+                          ? 'bg-red-500 text-white animate-pulse'
+                          : 'bg-violet-600 text-white hover:bg-violet-700'
+                      }`}
+                    >
+                      {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                    </button>
+                    <textarea
+                      value={voiceText}
+                      onChange={e => { setVoiceText(e.target.value); setVoiceParsed(false); }}
+                      rows={2}
+                      placeholder={isListening ? 'Listening...' : 'Speak or type your terms here...'}
+                      className="flex-1 px-3 py-2 border border-violet-200 rounded-lg text-sm bg-white focus:outline-none focus:border-violet-400 transition-colors resize-none"
+                    />
                   </div>
 
-                  <div>
-                    <span className="text-neutral-500">Delivery Preference</span>
-                    <p className="font-bold text-neutral-900 capitalize">
-                      {rfq.deliveryPreference === 'both' ? 'Flexible' : rfq.deliveryPreference}
-                    </p>
-                  </div>
+                  {voiceError && (
+                    <p className="text-xs text-red-500">{voiceError}</p>
+                  )}
 
-                  {rfq.description && (
-                    <div>
-                      <span className="text-neutral-500">Customer Notes</span>
-                      <p className="font-bold text-neutral-900">{rfq.description}</p>
+                  {/* Parse button */}
+                  {!voiceParsed && (
+                    <button
+                      type="button"
+                      onClick={parseVoiceTerms}
+                      disabled={isParsing || !voiceText.trim()}
+                      className="w-full flex items-center justify-center gap-2 py-2 bg-violet-600 text-white text-xs font-medium rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                    >
+                      {isParsing ? (
+                        <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Analyzing...</>
+                      ) : (
+                        <><Sparkles className="w-3.5 h-3.5" /> Analyze with Spark</>
+                      )}
+                    </button>
+                  )}
+
+                  {/* Parsed success preview */}
+                  {voiceParsed && (
+                    <div className="bg-green-50 border border-green-100 rounded-lg p-3 space-y-2">
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-green-700">
+                        <CheckCircle className="w-3.5 h-3.5" /> Spark filled the form below
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {deliveryDate && (
+                          <span className="text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                            Delivery: {new Date(deliveryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                          </span>
+                        )}
+                        {notes && notes.includes('warranty') && (
+                          <span className="text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Warranty filled</span>
+                        )}
+                        {notes && notes.includes('shipping') && (
+                          <span className="text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Shipping notes added</span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setVoiceParsed(false); setVoiceText(''); }}
+                        className="text-[11px] text-green-600 hover:text-green-800 underline"
+                      >
+                        Redo voice input
+                      </button>
                     </div>
                   )}
                 </div>
+              )}
 
-                {/* Items List */}
-                <div className="mt-6 pt-6 border-t border-neutral-300">
-                  <h4 className="font-bold text-neutral-900 mb-3 text-sm uppercase tracking-wider">
-                    Requested Items
-                  </h4>
-                  <div className="space-y-2">
-                    {rfq.items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span className="text-neutral-600 truncate flex-1 mr-2">
-                          {item.product.name}
-                        </span>
-                        <span className="font-bold text-neutral-900">x{item.quantity}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <div className="mt-8">
-                  <Button
-                    onClick={handleSubmit}
-                    isLoading={isSubmitting}
-                    variant="accent"
-                    size="lg"
-                    className="w-full"
-                  >
-                    <Send className="w-5 h-5 mr-2" />
-                    Submit Quote
-                  </Button>
-                  <p className="text-xs text-neutral-500 text-center mt-3">
-                    Once submitted, customer will be notified of your quote
-                  </p>
-                </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                  Valid until <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={validUntil}
+                  onChange={e => setValidUntil(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                />
               </div>
-
-              {/* Tips */}
-              <div className="bg-neutral-900 text-white p-6">
-                <h3 className="font-bold mb-3 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-accent-400" />
-                  Quote Tips
-                </h3>
-                <ul className="text-sm text-neutral-300 space-y-2">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                    Competitive pricing wins orders
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                    Faster delivery dates are preferred
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-                    Clear notes build trust
-                  </li>
-                </ul>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes (optional)</label>
+                <textarea
+                  value={notes}
+                  onChange={e => setNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Payment terms, warranty, additional details..."
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors resize-none"
+                />
               </div>
             </div>
           </div>
+
+          {/* Sidebar */}
+          <div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sticky top-6">
+              <h3 className="text-sm font-medium text-gray-900 mb-4">RFQ summary</h3>
+              <div className="space-y-3 text-sm mb-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Location</span>
+                  <span className="text-gray-900 font-medium">{rfq.deliveryCity}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Delivery</span>
+                  <span className="text-gray-900 font-medium capitalize">
+                    {rfq.deliveryPreference === 'both' ? 'Flexible' : rfq.deliveryPreference}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Items</span>
+                  <span className="text-gray-900 font-medium">{rfq.items.length}</span>
+                </div>
+              </div>
+
+              <div className="border-t border-gray-100 pt-4 mb-4 space-y-2">
+                {rfq.items.map(item => (
+                  <div key={item.id} className="flex justify-between text-sm">
+                    <span className="text-gray-600 truncate mr-2">{item.product.name}</span>
+                    <span className="text-gray-400 flex-shrink-0">×{item.quantity}</span>
+                  </div>
+                ))}
+              </div>
+
+              {rfq.description && (
+                <p className="text-xs text-gray-500 mb-4 pb-4 border-b border-gray-100">{rfq.description}</p>
+              )}
+
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              >
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                Submit quote
+              </button>
+              <p className="text-[11px] text-gray-400 text-center mt-2">
+                Buyer will be notified of your quote
+              </p>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

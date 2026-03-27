@@ -7,7 +7,6 @@ import {
   FolderOpen, CheckCircle2, AlertCircle, Clock,
 } from 'lucide-react';
 import { UserBadge } from '@/components/common/UserBadge';
-import { TourGuide } from '@/components/TourGuide';
 
 const RFQ_STATUS: Record<string, { label: string; dot: string; color: string }> = {
   DRAFT:           { label: 'Draft',          dot: 'bg-gray-300',   color: 'text-gray-500' },
@@ -45,8 +44,6 @@ export function ProfessionalDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <TourGuide tourKey="professional" />
-
       {/* Page header */}
       <div className="bg-white border-b border-gray-200 px-6 py-5">
         <div className="flex items-start justify-between gap-4">

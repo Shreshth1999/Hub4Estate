@@ -1,10 +1,22 @@
 import { useState, useEffect } from 'react';
 import { adminApi } from '../../lib/api';
-import { Tabs, StatusBadge, EmptyState, ListSkeleton, Button, Modal } from '../../components/ui';
 import {
-  Store, MapPin, Calendar, CheckCircle, XCircle, Ban,
-  FileText, ChevronRight, Phone, Mail, Shield
+  Store, MapPin, CheckCircle, XCircle, Ban,
+  FileText, Phone, Mail, X, Loader2, ChevronDown, ChevronUp, Sparkles,
 } from 'lucide-react';
+
+function dealerCompleteness(dealer: Dealer) {
+  const checks = [
+    { label: 'GST number', ok: !!dealer.gstNumber },
+    { label: 'PAN number', ok: !!dealer.panNumber },
+    { label: 'Phone', ok: !!dealer.phone },
+    { label: 'Email', ok: !!dealer.email },
+    { label: 'Shop address', ok: !!dealer.shopAddress },
+    { label: 'City & state', ok: !!(dealer.city && dealer.state) },
+  ];
+  const score = Math.round((checks.filter(c => c.ok).length / checks.length) * 100);
+  return { checks, score };
+}
 
 interface Dealer {
   id: string;
@@ -22,354 +34,221 @@ interface Dealer {
   createdAt: string;
 }
 
-const tabs = [
+const STATUS_CONFIG: Record<string, { label: string; dot: string; color: string }> = {
+  PENDING_VERIFICATION: { label: 'Pending',   dot: 'bg-amber-400', color: 'text-amber-600' },
+  VERIFIED:             { label: 'Verified',   dot: 'bg-green-400', color: 'text-green-600' },
+  SUSPENDED:            { label: 'Suspended',  dot: 'bg-red-400',   color: 'text-red-600' },
+  REJECTED:             { label: 'Rejected',   dot: 'bg-gray-400',  color: 'text-gray-500' },
+};
+
+const TABS = [
   { id: 'PENDING_VERIFICATION', label: 'Pending' },
   { id: 'VERIFIED', label: 'Verified' },
   { id: 'SUSPENDED', label: 'Suspended' },
   { id: 'REJECTED', label: 'Rejected' },
 ];
 
-const statusConfig: Record<string, { label: string; variant: 'success' | 'warning' | 'error' | 'info' | 'pending' | 'default' }> = {
-  PENDING_VERIFICATION: { label: 'Pending', variant: 'pending' },
-  VERIFIED: { label: 'Verified', variant: 'success' },
-  SUSPENDED: { label: 'Suspended', variant: 'error' },
-  REJECTED: { label: 'Rejected', variant: 'error' },
-};
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export function AdminDealersPage() {
   const [dealers, setDealers] = useState<Dealer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('PENDING_VERIFICATION');
-  const [selectedDealer, setSelectedDealer] = useState<Dealer | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [actionNotes, setActionNotes] = useState('');
 
   useEffect(() => {
-    const fetchDealers = async () => {
-      setIsLoading(true);
-      try {
-        let response;
-        if (activeTab === 'PENDING_VERIFICATION') {
-          response = await adminApi.getPendingDealers();
-        } else {
-          response = await adminApi.getPendingDealers();
-        }
-        setDealers(response.data.dealers || []);
-      } catch (error) {
-        console.error('Failed to fetch dealers:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDealers();
+    setIsLoading(true);
+    adminApi.getPendingDealers()
+      .then(res => setDealers(res.data.dealers || []))
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, [activeTab]);
 
-  const handleVerify = async (action: 'verify' | 'reject') => {
-    if (!selectedDealer) return;
-
+  const handleVerify = async (dealer: Dealer, action: 'verify' | 'reject') => {
     setActionLoading(true);
     try {
-      await adminApi.verifyDealer(selectedDealer.id, action, actionNotes);
-
-      setDealers(prev => prev.filter(d => d.id !== selectedDealer.id));
-      setShowModal(false);
-      setSelectedDealer(null);
+      await adminApi.verifyDealer(dealer.id, action, actionNotes);
+      setDealers(prev => prev.filter(d => d.id !== dealer.id));
+      setExpanded(null);
       setActionNotes('');
-    } catch (error) {
-      console.error('Failed to verify dealer:', error);
-    } finally {
-      setActionLoading(false);
-    }
+    } catch (e) { console.error(e); }
+    finally { setActionLoading(false); }
   };
 
-  const handleSuspend = async () => {
-    if (!selectedDealer) return;
-
+  const handleSuspend = async (dealer: Dealer) => {
     setActionLoading(true);
     try {
-      await adminApi.suspendDealer(selectedDealer.id, actionNotes || 'Account suspended by admin');
-      setDealers(prev => prev.filter(d => d.id !== selectedDealer.id));
-      setShowModal(false);
-      setSelectedDealer(null);
-    } catch (error) {
-      console.error('Failed to suspend dealer:', error);
-    } finally {
-      setActionLoading(false);
-    }
+      await adminApi.suspendDealer(dealer.id, actionNotes || 'Account suspended by admin');
+      setDealers(prev => prev.filter(d => d.id !== dealer.id));
+      setExpanded(null);
+    } catch (e) { console.error(e); }
+    finally { setActionLoading(false); }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
+  const filtered = dealers.filter(d => d.status === activeTab);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <section className="bg-neutral-900 text-white">
-        <div className="container-custom py-12">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-accent-500 flex items-center justify-center">
-              <Store className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black tracking-tight">Dealer Management</h1>
-              <p className="text-neutral-300 font-medium">Verify, manage, and monitor dealer accounts</p>
-            </div>
-          </div>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <h1 className="text-lg font-semibold text-gray-900">Dealer Management</h1>
+        <p className="text-sm text-gray-500 mt-0.5">Verify, manage, and monitor dealer accounts</p>
+
+        <div className="flex gap-1 mt-4">
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* Main Content */}
-      <section className="py-8">
-        <div className="container-custom">
-          {/* Tabs */}
-          <div className="mb-8 flex items-center gap-1 overflow-x-auto border-b-2 border-neutral-200">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-4 text-sm font-bold uppercase tracking-wider border-b-4 transition-all whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'border-neutral-900 text-neutral-900 bg-neutral-50'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+      <div className="px-6 py-6 max-w-4xl mx-auto">
+        {isLoading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
           </div>
-
-          {/* Dealers List */}
-          {isLoading ? (
-            <ListSkeleton count={5} />
-          ) : dealers.length === 0 ? (
-            <div className="bg-neutral-50 border-2 border-neutral-200 p-12">
-              <EmptyState
-                icon={Store}
-                title="No dealers found"
-                description={`No dealers with status "${statusConfig[activeTab]?.label || activeTab}"`}
-              />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {dealers.map((dealer, index) => {
-                const status = statusConfig[dealer.status] || statusConfig.PENDING_VERIFICATION;
-
-                return (
-                  <div
-                    key={dealer.id}
-                    className="bg-white border-2 border-neutral-200 hover:border-neutral-900 hover:shadow-brutal transition-all p-6"
-                    style={{ animationDelay: `${index * 0.05}s` }}
+        ) : filtered.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-4 py-14 text-center">
+            <Store className="w-8 h-8 text-gray-200 mx-auto mb-3" />
+            <p className="text-sm font-medium text-gray-500">No dealers found</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filtered.map(dealer => {
+              const s = STATUS_CONFIG[dealer.status] || STATUS_CONFIG.PENDING_VERIFICATION;
+              const isOpen = expanded === dealer.id;
+              return (
+                <div key={dealer.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <button
+                    onClick={() => setExpanded(isOpen ? null : dealer.id)}
+                    className="w-full flex items-center gap-3 px-4 py-4 hover:bg-gray-50 text-left transition-colors"
                   >
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                      {/* Dealer Info */}
-                      <div className="flex items-center space-x-4 flex-1">
-                        <div className="w-14 h-14 bg-neutral-900 flex items-center justify-center">
-                          <span className="text-xl font-black text-white">
-                            {dealer.businessName.charAt(0)}
+                    <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-semibold text-gray-700">{dealer.businessName.charAt(0)}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{dealer.businessName}</p>
+                      <p className="text-xs text-gray-400">
+                        {dealer.ownerName}
+                        <MapPin className="inline w-3 h-3 mx-1" />
+                        {dealer.city}, {dealer.state}
+                        {' · '}{fmtDate(dealer.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className={`flex items-center gap-1.5`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+                        <span className={`text-xs font-medium ${s.color}`}>{s.label}</span>
+                      </div>
+                      {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                    </div>
+                  </button>
+
+                  {isOpen && (() => {
+                    const { checks, score } = dealerCompleteness(dealer);
+                    const scoreColor = score === 100 ? 'bg-green-500' : score >= 66 ? 'bg-amber-400' : 'bg-red-400';
+                    const missing = checks.filter(c => !c.ok);
+                    return (
+                    <div className="border-t border-gray-100 px-4 py-4 space-y-4">
+                      {/* Profile completeness */}
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <Sparkles className="w-3 h-3 text-gray-400" />
+                            <span className="text-xs font-medium text-gray-600">Profile completeness</span>
+                          </div>
+                          <span className={`text-xs font-semibold ${score === 100 ? 'text-green-600' : score >= 66 ? 'text-amber-600' : 'text-red-500'}`}>
+                            {score}%
                           </span>
                         </div>
-                        <div className="min-w-0">
-                          <div className="flex items-center space-x-3 mb-1">
-                            <h3 className="font-bold text-neutral-900 truncate">
-                              {dealer.businessName}
-                            </h3>
-                            <StatusBadge status={status.label} variant={status.variant} />
-                          </div>
-                          <p className="text-sm text-neutral-500 font-medium">{dealer.ownerName}</p>
-                          <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-neutral-500 font-medium">
-                            <span className="flex items-center">
-                              <MapPin className="w-3 h-3 mr-1" />
-                              {dealer.city}, {dealer.state}
-                            </span>
-                            <span className="flex items-center">
-                              <Calendar className="w-3 h-3 mr-1" />
-                              {formatDate(dealer.createdAt)}
-                            </span>
-                          </div>
+                        <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div className={`h-full ${scoreColor} rounded-full transition-all`} style={{ width: `${score}%` }} />
+                        </div>
+                        {missing.length > 0 && (
+                          <p className="text-[11px] text-gray-400 mt-2">
+                            Missing: {missing.map(c => c.label).join(', ')}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-[11px] text-gray-400 mb-0.5">Contact</p>
+                          <p className="flex items-center gap-1 text-gray-700"><Mail className="w-3 h-3" /> {dealer.email}</p>
+                          <p className="flex items-center gap-1 text-gray-700 mt-1"><Phone className="w-3 h-3" /> {dealer.phone}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] text-gray-400 mb-0.5">Documents</p>
+                          <p className="text-gray-700">GST: <span className="font-mono font-medium">{dealer.gstNumber || '—'}</span></p>
+                          <p className="text-gray-700 mt-1">PAN: <span className="font-mono font-medium">{dealer.panNumber || '—'}</span></p>
+                        </div>
+                        <div className="col-span-2">
+                          <p className="text-[11px] text-gray-400 mb-0.5">Address</p>
+                          <p className="text-gray-700">{dealer.shopAddress}, {dealer.city}, {dealer.state} - {dealer.pincode}</p>
                         </div>
                       </div>
 
-                      {/* Documents */}
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="px-3 py-2 bg-neutral-100 border-2 border-neutral-200">
-                          <span className="text-neutral-500 font-medium">GST:</span>
-                          <span className="ml-2 font-mono font-bold text-neutral-900">{dealer.gstNumber}</span>
-                        </div>
-                        <div className="px-3 py-2 bg-neutral-100 border-2 border-neutral-200">
-                          <span className="text-neutral-500 font-medium">PAN:</span>
-                          <span className="ml-2 font-mono font-bold text-neutral-900">{dealer.panNumber}</span>
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedDealer(dealer);
-                            setShowModal(true);
-                          }}
-                          className="btn-secondary text-sm"
-                        >
-                          View Details
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </button>
-
-                        {dealer.status === 'PENDING_VERIFICATION' && (
-                          <>
+                      {dealer.status === 'PENDING_VERIFICATION' && (
+                        <div>
+                          <textarea
+                            rows={2}
+                            placeholder="Notes (optional)"
+                            value={actionNotes}
+                            onChange={e => setActionNotes(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors resize-none mb-3"
+                          />
+                          <div className="flex gap-2">
                             <button
-                              onClick={() => {
-                                setSelectedDealer(dealer);
-                                handleVerify('verify');
-                              }}
-                              className="btn-primary text-sm"
+                              onClick={() => handleVerify(dealer, 'verify')}
+                              disabled={actionLoading}
+                              className="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
                             >
-                              <CheckCircle className="w-4 h-4 mr-1" />
+                              {actionLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />}
                               Verify
                             </button>
                             <button
-                              onClick={() => {
-                                setSelectedDealer(dealer);
-                                handleVerify('reject');
-                              }}
-                              className="btn-secondary text-sm"
+                              onClick={() => handleVerify(dealer, 'reject')}
+                              disabled={actionLoading}
+                              className="flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-600 border border-red-200 text-sm font-medium rounded-lg hover:bg-red-100 disabled:opacity-50 transition-colors"
                             >
-                              <XCircle className="w-4 h-4 mr-1" />
+                              <XCircle className="w-3.5 h-3.5" />
                               Reject
                             </button>
-                          </>
-                        )}
+                          </div>
+                        </div>
+                      )}
 
-                        {dealer.status === 'VERIFIED' && (
-                          <button
-                            onClick={() => {
-                              setSelectedDealer(dealer);
-                              handleSuspend();
-                            }}
-                            className="btn-secondary text-sm"
-                          >
-                            <Ban className="w-4 h-4 mr-1" />
-                            Suspend
-                          </button>
-                        )}
-                      </div>
+                      {dealer.status === 'VERIFIED' && (
+                        <button
+                          onClick={() => handleSuspend(dealer)}
+                          disabled={actionLoading}
+                          className="flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-600 border border-red-200 text-sm font-medium rounded-lg hover:bg-red-100 disabled:opacity-50 transition-colors"
+                        >
+                          <Ban className="w-3.5 h-3.5" />
+                          Suspend account
+                        </button>
+                      )}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Dealer Detail Modal */}
-      <Modal
-        isOpen={showModal}
-        onClose={() => {
-          setShowModal(false);
-          setSelectedDealer(null);
-          setActionNotes('');
-        }}
-        title="Dealer Details"
-        size="lg"
-      >
-        {selectedDealer && (
-          <div className="space-y-6">
-            {/* Basic Info */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-neutral-500 font-bold uppercase tracking-wider">Business Name</label>
-                <p className="font-bold text-neutral-900 mt-1">{selectedDealer.businessName}</p>
-              </div>
-              <div>
-                <label className="text-sm text-neutral-500 font-bold uppercase tracking-wider">Owner Name</label>
-                <p className="font-bold text-neutral-900 mt-1">{selectedDealer.ownerName}</p>
-              </div>
-            </div>
-
-            {/* Contact */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 text-neutral-400" />
-                <span className="text-neutral-900 font-medium">{selectedDealer.email}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-neutral-400" />
-                <span className="text-neutral-900 font-medium">{selectedDealer.phone}</span>
-              </div>
-            </div>
-
-            {/* Documents */}
-            <div className="bg-neutral-100 border-2 border-neutral-200 p-4">
-              <h4 className="font-bold text-neutral-900 mb-3 flex items-center uppercase tracking-wider text-sm">
-                <FileText className="w-4 h-4 mr-2" />
-                Documents
-              </h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <label className="text-neutral-500 font-medium">GST Number</label>
-                  <p className="font-mono font-bold text-neutral-900">{selectedDealer.gstNumber}</p>
+                    );
+                  })()}
                 </div>
-                <div>
-                  <label className="text-neutral-500 font-medium">PAN Number</label>
-                  <p className="font-mono font-bold text-neutral-900">{selectedDealer.panNumber}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Address */}
-            <div>
-              <label className="text-sm text-neutral-500 font-bold uppercase tracking-wider">Shop Address</label>
-              <p className="font-bold text-neutral-900 mt-1">{selectedDealer.shopAddress}</p>
-              <p className="text-neutral-600 font-medium">{selectedDealer.city}, {selectedDealer.state} - {selectedDealer.pincode}</p>
-            </div>
-
-            {/* Action Notes */}
-            {selectedDealer.status === 'PENDING_VERIFICATION' && (
-              <div>
-                <label className="block text-sm font-bold text-neutral-900 mb-2 uppercase tracking-wider">
-                  Notes (Optional)
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Add notes about this verification..."
-                  value={actionNotes}
-                  onChange={(e) => setActionNotes(e.target.value)}
-                  className="input-primary"
-                />
-              </div>
-            )}
-
-            {/* Actions */}
-            {selectedDealer.status === 'PENDING_VERIFICATION' && (
-              <div className="flex gap-4 pt-4 border-t-2 border-neutral-200">
-                <button
-                  className="btn-primary flex-1 justify-center"
-                  onClick={() => handleVerify('verify')}
-                  disabled={actionLoading}
-                >
-                  <CheckCircle className="w-5 h-5 mr-2" />
-                  {actionLoading ? 'Processing...' : 'Verify Dealer'}
-                </button>
-                <button
-                  className="btn-secondary flex-1 justify-center"
-                  onClick={() => handleVerify('reject')}
-                  disabled={actionLoading}
-                >
-                  <XCircle className="w-5 h-5 mr-2" />
-                  Reject
-                </button>
-              </div>
-            )}
+              );
+            })}
           </div>
         )}
-      </Modal>
+      </div>
     </div>
   );
 }

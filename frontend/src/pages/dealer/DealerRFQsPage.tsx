@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { quotesApi } from '../../lib/api';
-import { ListSkeleton } from '../../components/ui';
 import {
   FileText, MapPin, Package, Clock, ChevronRight, Zap,
-  TrendingUp, Bell,
+  TrendingUp, Bell, Loader2,
 } from 'lucide-react';
 import { UserBadge } from '../../components/common/UserBadge';
 
@@ -106,7 +105,9 @@ export function DealerRFQsPage() {
 
         {/* RFQ List */}
         {isLoading ? (
-          <ListSkeleton count={4} />
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          </div>
         ) : filteredRFQs.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 px-6 py-12 text-center">
             <FileText className="w-8 h-8 text-gray-200 mx-auto mb-3" />

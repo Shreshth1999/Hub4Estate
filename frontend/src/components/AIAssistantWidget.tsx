@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Bot, X, Send, Loader2, Zap, MessageCircle, Sparkles,
-  ChevronDown, Mic, MicOff, CheckCircle, Search, Package,
+  ChevronDown, Mic, MicOff, CheckCircle, Search, Package, Phone,
 } from 'lucide-react';
 import { chatApi, streamChatMessage, StreamEvent } from '../lib/api';
 import { useAuthStore } from '../lib/store';
@@ -154,6 +154,7 @@ export function AIAssistantWidget() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [sessionError, setSessionError] = useState(false);
 
   // Voice
   const [isListening, setIsListening] = useState(false);
@@ -183,6 +184,7 @@ export function AIAssistantWidget() {
 
   const initSession = async () => {
     setIsInitializing(true);
+    setSessionError(false);
     try {
       const response = await chatApi.createSession();
       setSessionId(response.data.sessionId);
@@ -208,12 +210,7 @@ I can help you with:
         createdAt: new Date(),
       }]);
     } catch {
-      setMessages([{
-        id: 'error',
-        role: 'assistant',
-        content: 'Sorry, I had trouble connecting. Please try again or call +91 7690001999.',
-        createdAt: new Date(),
-      }]);
+      setSessionError(true);
     } finally {
       setIsInitializing(false);
     }
@@ -429,6 +426,30 @@ I can help you with:
                     <div className="text-center">
                       <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-2" />
                       <p className="text-sm text-gray-500">Connecting Spark...</p>
+                    </div>
+                  </div>
+                ) : sessionError ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center px-4">
+                      <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <Bot className="w-6 h-6 text-orange-500" />
+                      </div>
+                      <p className="text-sm font-medium text-gray-900 mb-1">Spark is unavailable right now</p>
+                      <p className="text-xs text-gray-500 mb-4">Our AI assistant couldn't connect. You can retry or reach us directly.</p>
+                      <button
+                        onClick={initSession}
+                        className="w-full px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors mb-3"
+                      >
+                        Retry connection
+                      </button>
+                      <a
+                        href="tel:+917690001999"
+                        className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-gray-200 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <Phone className="w-4 h-4 text-orange-500" />
+                        Call +91 76900 01999
+                      </a>
+                      <p className="text-[11px] text-gray-400 mt-3">Mon–Sat, 10am–7pm IST</p>
                     </div>
                   </div>
                 ) : (

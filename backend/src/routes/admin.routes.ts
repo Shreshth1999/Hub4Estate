@@ -3,6 +3,7 @@ import { z } from 'zod';
 import prisma from '../config/database';
 import { authenticateAdmin, AuthRequest } from '../middleware/auth';
 import { validateBody } from '../middleware/validation';
+import { generateAdminInsights } from '../services/ai.service';
 
 const router = Router();
 
@@ -533,6 +534,77 @@ router.post('/professionals/:id/verify', authenticateAdmin, async (req: AuthRequ
   } catch (err) {
     console.error('POST /admin/professionals/:id/verify error:', err);
     res.status(500).json({ error: 'Failed to update verification status' });
+  }
+});
+
+// ============================================
+// AI INSIGHTS ENDPOINT
+// ============================================
+
+router.get('/ai-insights', authenticateAdmin, async (_req, res) => {
+  try {
+    // Pull real-time platform data
+    const [
+      totalInquiries,
+      activeRFQs,
+      totalQuotes,
+      pendingDealers,
+      openFraudFlags,
+      recentInquiries,
+    ] = await Promise.all([
+      prisma.productInquiry.count(),
+      prisma.rFQ.count({ where: { status: 'PUBLISHED' } }),
+      prisma.quote.count(),
+      prisma.dealer.count({ where: { status: 'PENDING_VERIFICATION' } }),
+      prisma.fraudFlag.count({ where: { status: 'OPEN' } }),
+      prisma.productInquiry.findMany({
+        take: 30,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          deliveryCity: true,
+          modelNumber: true,
+          category: { select: { name: true } },
+        },
+      }),
+    ]);
+
+    // Aggregate top cities
+    const cityCounts: Record<string, number> = {};
+    const categoryCounts: Record<string, number> = {};
+    const recentProducts: string[] = [];
+
+    for (const inq of recentInquiries) {
+      if (inq.deliveryCity) cityCounts[inq.deliveryCity] = (cityCounts[inq.deliveryCity] || 0) + 1;
+      const catName = inq.category?.name;
+      if (catName) categoryCounts[catName] = (categoryCounts[catName] || 0) + 1;
+      if (inq.modelNumber) recentProducts.push(inq.modelNumber);
+    }
+
+    const topCities = Object.entries(cityCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([city, count]) => ({ city, count }));
+
+    const topCategories = Object.entries(categoryCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, count]) => ({ name, count }));
+
+    const insights = await generateAdminInsights({
+      totalInquiries,
+      topCities,
+      topCategories,
+      pendingDealers,
+      openFraudFlags,
+      activeRFQs,
+      totalQuotes,
+      recentProducts,
+    });
+
+    return res.json({ insights, generatedAt: new Date().toISOString() });
+  } catch (error) {
+    console.error('AI Insights error:', error);
+    return res.status(500).json({ error: 'Failed to generate insights' });
   }
 });
 

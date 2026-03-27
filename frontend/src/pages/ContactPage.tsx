@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Clock, ArrowRight, Building2, CheckCircle, Loader2, Linkedin } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Loader2, Linkedin } from 'lucide-react';
 import { contactApi } from '../lib/api';
 
 interface FormData {
@@ -12,35 +12,24 @@ interface FormData {
 }
 
 export function ContactPage() {
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    phone: '',
-    role: '',
-    message: '',
-  });
+  const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', role: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.name || !formData.email || !formData.role || !formData.message) {
-      setError('Please fill in all required fields');
+      setError('Please fill in all required fields.');
       return;
     }
-
     setIsSubmitting(true);
     setError(null);
-
     try {
       await contactApi.submit({
         name: formData.name,
@@ -52,7 +41,7 @@ export function ContactPage() {
       setIsSuccess(true);
       setFormData({ name: '', email: '', phone: '', role: '', message: '' });
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to submit form. Please try again.');
+      setError(err.response?.data?.error || 'Failed to send. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -60,296 +49,183 @@ export function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="bg-neutral-900 text-white py-20">
-        <div className="container-custom">
-          <Link to="/" className="inline-flex items-center text-neutral-400 hover:text-white mb-8">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-12">
+        <div className="max-w-3xl mx-auto">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 mb-8 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to home
           </Link>
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6">
-              Contact Us
-            </h1>
-            <p className="text-xl text-neutral-300 leading-relaxed">
-              Questions about Hub4Estate? Want to become a dealer? Just reach out.
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Contact Us</h1>
+          <p className="text-gray-500">Questions about Hub4Estate? Want to become a dealer? Just reach out.</p>
         </div>
-      </section>
+      </div>
 
-      {/* Contact Info */}
-      <section className="py-20">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Left - Contact Details */}
-            <div>
-              <h2 className="text-3xl font-black text-neutral-900 mb-8">Get in Touch</h2>
-
-              <div className="space-y-8">
-                {/* Email */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-6 h-6 text-white" />
+      <div className="px-6 py-14 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
+          {/* Left */}
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-8">Get in touch</h2>
+            <div className="space-y-6">
+              {[
+                {
+                  icon: Mail,
+                  label: 'Email',
+                  main: 'shreshth.agarwal@hub4estate.com',
+                  href: 'mailto:shreshth.agarwal@hub4estate.com',
+                  sub: 'General inquiries, partnerships, dealer registration',
+                },
+                {
+                  icon: Phone,
+                  label: 'Phone',
+                  main: '+91 76900 01999',
+                  href: 'tel:+917690001999',
+                  sub: 'Mon–Sat, 9AM–7PM IST',
+                },
+                {
+                  icon: Linkedin,
+                  label: 'LinkedIn',
+                  main: 'linkedin.com/in/sa-h4e',
+                  href: 'https://linkedin.com/in/sa-h4e',
+                  sub: 'Shreshth Agarwal — Founder',
+                  external: true,
+                },
+                {
+                  icon: MapPin,
+                  label: 'Registered Office',
+                  main: 'HUB4ESTATE LLP',
+                  sub: '8-D-12, Jawahar Nagar, Sriganganagar, Rajasthan — 335001',
+                },
+                {
+                  icon: Clock,
+                  label: 'Business Hours',
+                  sub: 'Monday – Saturday: 9:00 AM – 7:00 PM IST\nSunday: Closed',
+                },
+              ].map(({ icon: Icon, label, main, href, sub, external }, i) => (
+                <div key={i} className="flex items-start gap-4">
+                  <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-gray-500" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-neutral-900 mb-1">Email</h3>
-                    <a href="mailto:shreshth.agarwal@hub4estate.com" className="text-accent-600 hover:underline text-lg block">
-                      shreshth.agarwal@hub4estate.com
-                    </a>
-                    <p className="text-neutral-500 text-sm mt-1">General inquiries, partnerships, dealer registration</p>
-                  </div>
-                </div>
-
-                {/* Phone */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-neutral-900 mb-1">Phone</h3>
-                    <a href="tel:+917690001999" className="text-accent-600 hover:underline text-lg">
-                      +91 76900 01999
-                    </a>
-                    <p className="text-neutral-500 text-sm mt-1">Mon–Sat, 9AM–7PM IST</p>
-                  </div>
-                </div>
-
-                {/* LinkedIn */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                    <Linkedin className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-neutral-900 mb-1">LinkedIn</h3>
-                    <a
-                      href="https://linkedin.com/in/sa-h4e"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent-600 hover:underline text-lg"
-                    >
-                      linkedin.com/in/sa-h4e
-                    </a>
-                    <p className="text-neutral-500 text-sm mt-1">Shreshth Agarwal — Founder</p>
-                  </div>
-                </div>
-
-                {/* Address */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-neutral-900 mb-1">Registered Office</h3>
-                    <p className="text-neutral-600 leading-relaxed">
-                      HUB4ESTATE LLP<br />
-                      WeWork Arekere, No. 197/36, 2nd Floor<br />
-                      Bannerghatta Road, Bengaluru — 560076<br />
-                      Karnataka, India
-                    </p>
-                  </div>
-                </div>
-
-                {/* Business Hours */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-neutral-900 mb-1">Business Hours</h3>
-                    <p className="text-neutral-600">
-                      Monday – Saturday: 9:00 AM – 7:00 PM IST<br />
-                      Sunday: Closed
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Company Details */}
-              <div className="mt-12 p-6 bg-neutral-50 border-2 border-neutral-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <Building2 className="w-6 h-6 text-neutral-700" />
-                  <h3 className="font-bold text-neutral-900">Company Details</h3>
-                </div>
-                <div className="space-y-2 text-neutral-600 text-sm">
-                  <p><span className="font-semibold text-neutral-800">Legal Entity:</span> HUB4ESTATE LLP</p>
-                  <p><span className="font-semibold text-neutral-800">LLPIN:</span> ACW-4269</p>
-                  <p><span className="font-semibold text-neutral-800">PAN:</span> AATFH3466L</p>
-                  <p><span className="font-semibold text-neutral-800">Incorporated:</span> 17 March 2026</p>
-                  <p><span className="font-semibold text-neutral-800">Registered in:</span> Rajasthan, India</p>
-                  <p><span className="font-semibold text-neutral-800">Industry:</span> B2B/B2C Marketplace — Electrical Products</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right - Contact Form */}
-            <div>
-              <div className="bg-white border-2 border-neutral-900 p-8">
-                {isSuccess ? (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-green-100 flex items-center justify-center mx-auto mb-6">
-                      <CheckCircle className="w-8 h-8 text-green-600" />
-                    </div>
-                    <h3 className="text-2xl font-black text-neutral-900 mb-4">Message Sent!</h3>
-                    <p className="text-neutral-600 mb-6">
-                      We'll get back to you within 24 hours.
-                    </p>
-                    <button
-                      onClick={() => setIsSuccess(false)}
-                      className="text-accent-600 font-semibold hover:underline"
-                    >
-                      Send another message
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <h3 className="text-2xl font-black text-neutral-900 mb-6">Send us a Message</h3>
-
-                    {error && (
-                      <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 text-red-700">
-                        {error}
-                      </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-bold text-neutral-900 uppercase tracking-wider mb-2">
-                          Your Name *
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          className="w-full border-2 border-neutral-300 p-4 focus:border-neutral-900 focus:outline-none"
-                          placeholder="Enter your name"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-neutral-900 uppercase tracking-wider mb-2">
-                          Email Address *
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          className="w-full border-2 border-neutral-300 p-4 focus:border-neutral-900 focus:outline-none"
-                          placeholder="Enter your email"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-neutral-900 uppercase tracking-wider mb-2">
-                          Phone Number
-                        </label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          className="w-full border-2 border-neutral-300 p-4 focus:border-neutral-900 focus:outline-none"
-                          placeholder="Enter your phone number (optional)"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-neutral-900 uppercase tracking-wider mb-2">
-                          I am a *
-                        </label>
-                        <select
-                          name="role"
-                          value={formData.role}
-                          onChange={handleChange}
-                          className="w-full border-2 border-neutral-300 p-4 focus:border-neutral-900 focus:outline-none bg-white"
-                          disabled={isSubmitting}
-                        >
-                          <option value="">Select your role</option>
-                          <option value="homeowner">Homeowner / Individual Buyer</option>
-                          <option value="contractor">Contractor / Builder</option>
-                          <option value="interior-designer">Interior Designer / Architect</option>
-                          <option value="dealer">Electrical Dealer</option>
-                          <option value="brand">Brand / Manufacturer</option>
-                          <option value="investor">Investor</option>
-                          <option value="other">Other</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold text-neutral-900 uppercase tracking-wider mb-2">
-                          Message *
-                        </label>
-                        <textarea
-                          name="message"
-                          value={formData.message}
-                          onChange={handleChange}
-                          rows={5}
-                          className="w-full border-2 border-neutral-300 p-4 focus:border-neutral-900 focus:outline-none resize-none"
-                          placeholder="How can we help you?"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-400 text-white py-4 font-bold text-lg transition-colors flex items-center justify-center gap-2"
+                    <p className="text-xs text-gray-400 mb-0.5">{label}</p>
+                    {href && main ? (
+                      <a
+                        href={href}
+                        target={external ? '_blank' : undefined}
+                        rel={external ? 'noopener noreferrer' : undefined}
+                        className="text-sm font-medium text-gray-900 hover:text-orange-600 transition-colors"
                       >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            Sending...
-                          </>
-                        ) : (
-                          'Send Message'
-                        )}
-                      </button>
-                    </form>
-                  </>
-                )}
+                        {main}
+                      </a>
+                    ) : main && (
+                      <p className="text-sm font-medium text-gray-900">{main}</p>
+                    )}
+                    {sub && <p className="text-xs text-gray-400 mt-0.5 whitespace-pre-line">{sub}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-10 bg-gray-50 rounded-xl border border-gray-200 p-5">
+              <p className="text-xs font-medium text-gray-500 mb-3">Company Details</p>
+              <div className="space-y-1.5 text-sm text-gray-600">
+                <p><span className="font-medium text-gray-900">Legal Entity:</span> HUB4ESTATE LLP</p>
+                <p><span className="font-medium text-gray-900">LLPIN:</span> ACW-4269</p>
+                <p><span className="font-medium text-gray-900">PAN:</span> AATFH3466L</p>
+                <p><span className="font-medium text-gray-900">Incorporated:</span> 17 March 2026</p>
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Quick Links */}
-      <section className="py-16 bg-neutral-50 border-t-2 border-neutral-200">
-        <div className="container-custom">
-          <h2 className="text-2xl font-black text-neutral-900 mb-8 text-center">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Link
-              to="/rfq/create"
-              className="bg-white border-2 border-neutral-200 hover:border-neutral-900 p-6 text-center transition-all"
-            >
-              <h3 className="font-bold text-neutral-900 mb-2">Submit an Inquiry</h3>
-              <p className="text-sm text-neutral-500 mb-4">Get quotes from verified dealers</p>
-              <span className="text-accent-600 font-semibold inline-flex items-center">
-                Start Now <ArrowRight className="w-4 h-4 ml-1" />
-              </span>
-            </Link>
-            <Link
-              to="/dealer/onboarding"
-              className="bg-white border-2 border-neutral-200 hover:border-neutral-900 p-6 text-center transition-all"
-            >
-              <h3 className="font-bold text-neutral-900 mb-2">Become a Dealer</h3>
-              <p className="text-sm text-neutral-500 mb-4">Register and start receiving buyer inquiries</p>
-              <span className="text-accent-600 font-semibold inline-flex items-center">
-                Register Free <ArrowRight className="w-4 h-4 ml-1" />
-              </span>
-            </Link>
-            <Link
-              to="/about"
-              className="bg-white border-2 border-neutral-200 hover:border-neutral-900 p-6 text-center transition-all"
-            >
-              <h3 className="font-bold text-neutral-900 mb-2">Our Story</h3>
-              <p className="text-sm text-neutral-500 mb-4">Why we built Hub4Estate</p>
-              <span className="text-accent-600 font-semibold inline-flex items-center">
-                Read More <ArrowRight className="w-4 h-4 ml-1" />
-              </span>
-            </Link>
+          {/* Right — Form */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            {isSuccess ? (
+              <div className="text-center py-10">
+                <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Message sent!</h3>
+                <p className="text-sm text-gray-500 mb-5">We'll get back to you within 24 hours.</p>
+                <button onClick={() => setIsSuccess(false)} className="text-sm text-gray-500 hover:text-gray-900">
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-base font-semibold text-gray-900 mb-5">Send a message</h3>
+                {error && (
+                  <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3.5 py-3">
+                    {error}
+                  </div>
+                )}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Your name <span className="text-red-400">*</span></label>
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                      placeholder="Enter your name" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Email <span className="text-red-400">*</span></label>
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                      placeholder="your@email.com" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Phone (optional)</label>
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleChange} disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors"
+                      placeholder="+91 98765 43210" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">I am a <span className="text-red-400">*</span></label>
+                    <select name="role" value={formData.role} onChange={handleChange} disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 bg-white transition-colors">
+                      <option value="">Select your role</option>
+                      <option value="homeowner">Homeowner / Individual Buyer</option>
+                      <option value="contractor">Contractor / Builder</option>
+                      <option value="interior-designer">Interior Designer / Architect</option>
+                      <option value="dealer">Electrical Dealer</option>
+                      <option value="brand">Brand / Manufacturer</option>
+                      <option value="investor">Investor</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Message <span className="text-red-400">*</span></label>
+                    <textarea name="message" value={formData.message} onChange={handleChange} rows={4} disabled={isSubmitting}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400 transition-colors resize-none"
+                      placeholder="How can we help?" />
+                  </div>
+                  <button type="submit" disabled={isSubmitting}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors">
+                    {isSubmitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</> : 'Send message'}
+                  </button>
+                </form>
+              </>
+            )}
           </div>
         </div>
-      </section>
+
+        {/* Quick actions */}
+        <div className="mt-14">
+          <h2 className="text-base font-medium text-gray-500 mb-4">Quick links</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {[
+              { to: '/rfq/create', title: 'Post a requirement', desc: 'Get quotes from verified dealers' },
+              { to: '/dealer/onboarding', title: 'Become a dealer', desc: 'Register and start receiving inquiries' },
+              { to: '/about', title: 'Our story', desc: 'Why we built Hub4Estate' },
+            ].map(item => (
+              <Link key={item.to} to={item.to} className="flex items-center justify-between gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all group">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{item.title}</p>
+                  <p className="text-xs text-gray-400">{item.desc}</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 flex-shrink-0 transition-colors" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

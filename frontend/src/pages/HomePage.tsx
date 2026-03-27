@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Shield, CheckCircle, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3, Upload, Camera, X, Sparkles, Loader2, MapPin, Home, Wrench, Palette, Building2 } from 'lucide-react';
+import { ArrowRight, Shield, CheckCircle, TrendingUp, Users, Store, IndianRupee, FileText, Truck, Award, BarChart3, Upload, Camera, X, Sparkles, Loader2, MapPin, Home, Wrench, Palette, Building2, Mic, MicOff } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { productsApi, api } from '../lib/api';
@@ -35,6 +35,44 @@ export function HomePage() {
   const [submittedInquiryId, setSubmittedInquiryId] = useState(savedData?.inquiryNumber || '');
   const [formError, setFormError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Voice input for manual form
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
+  const voiceRecognitionRef = useRef<any>(null);
+
+  const startVoiceInput = () => {
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { setFormError('Voice input not supported in this browser.'); return; }
+    const recognition = new SR();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'hi-IN';
+    recognition.onresult = (e: any) => {
+      const text = Array.from(e.results).map((r: any) => r[0].transcript).join('');
+      // Simple extraction: fill model number, try to find quantity and city
+      let qty = '1';
+      const qtyMatch = text.match(/(\d+)\s*(pieces?|pcs?|units?|numbers?|nos?|नग)/i);
+      if (qtyMatch) qty = qtyMatch[1];
+      const cityMatch = text.match(/\b(Mumbai|Delhi|Bangalore|Hyderabad|Chennai|Kolkata|Pune|Ahmedabad|Jaipur|Lucknow|Surat|Kanpur|Nagpur|Indore|Thane|Bhopal|Visakhapatnam|Pimpri)\b/i);
+      setInquiryForm(f => ({
+        ...f,
+        modelNumber: text,
+        quantity: qty,
+        ...(cityMatch ? { deliveryCity: cityMatch[1] } : {}),
+      }));
+    };
+    recognition.onend = () => setIsVoiceListening(false);
+    recognition.onerror = () => { setIsVoiceListening(false); };
+    voiceRecognitionRef.current = recognition;
+    recognition.start();
+    setIsVoiceListening(true);
+    setFormError('');
+  };
+
+  const stopVoiceInput = () => {
+    voiceRecognitionRef.current?.stop();
+    setIsVoiceListening(false);
+  };
 
   // AI Scan mode
   const [useAIScan, setUseAIScan] = useState(false);
@@ -335,8 +373,13 @@ export function HomePage() {
                   </div>
                 ) : (
                   <>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-1">Get the Best Price</h3>
-                    <p className="text-sm text-gray-500 mb-6">Tell us what you need — we'll find you the best deal</p>
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-xl font-semibold text-gray-900">Get the Best Price</h3>
+                      <span className="flex items-center gap-1 text-[11px] font-medium text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">
+                        <Sparkles className="w-3 h-3" /> AI-powered
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-6">Tell us what you need — speak, type, or scan a slip</p>
 
                     {/* Toggle: Manual vs AI Scan */}
                     <div className="relative mb-6 bg-gray-100 border border-gray-200 p-1">
@@ -622,16 +665,33 @@ export function HomePage() {
 
                       {/* Model Number */}
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                          Product / Model Number
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
+                          <span>Product / Model Number</span>
+                          <button
+                            type="button"
+                            onClick={isVoiceListening ? stopVoiceInput : startVoiceInput}
+                            className={`flex items-center gap-1 text-xs font-normal normal-case px-2 py-0.5 rounded-full transition-colors ${
+                              isVoiceListening
+                                ? 'bg-red-100 text-red-600 animate-pulse'
+                                : 'bg-violet-50 text-violet-600 hover:bg-violet-100'
+                            }`}
+                          >
+                            {isVoiceListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
+                            {isVoiceListening ? 'Stop' : 'Speak'}
+                          </button>
                         </label>
                         <input
                           type="text"
-                          placeholder="e.g. Havells Crabtree 16A switch, Polycab 2.5mm wire..."
+                          placeholder={isVoiceListening ? 'Listening... speak your product name' : 'e.g. Havells Crabtree 16A switch, Polycab 2.5mm wire...'}
                           value={inquiryForm.modelNumber}
                           onChange={e => setInquiryForm(f => ({ ...f, modelNumber: e.target.value }))}
-                          className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
+                          className={`w-full px-4 py-2.5 border focus:border-gray-400 outline-none text-sm transition-colors ${
+                            isVoiceListening ? 'border-violet-300 bg-violet-50' : 'border-gray-200'
+                          }`}
                         />
+                        {isVoiceListening && (
+                          <p className="text-[11px] text-violet-500 mt-1">Say the product, quantity, and city — Spark AI will fill the form</p>
+                        )}
                       </div>
 
                       {/* Quantity & City */}
@@ -906,6 +966,53 @@ export function HomePage() {
               Submit Your Inquiry
               <ArrowRight className="w-5 h-5" />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Spark AI Features Strip */}
+      <section className="bg-white border-b border-gray-200 py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex items-center gap-2 mb-8 justify-center">
+            <Sparkles className="w-4 h-4 text-violet-600" />
+            <span className="text-xs font-semibold text-violet-700 uppercase tracking-wider">Powered by Spark AI</span>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Mic,
+                title: 'Voice Inquiry',
+                desc: 'Say what you need in Hindi or English. Spark extracts the product, quantity, and city — zero typing required.',
+                tag: 'Hinglish supported',
+                color: 'text-violet-600',
+                bg: 'bg-violet-50',
+              },
+              {
+                icon: Camera,
+                title: 'Slip Scanner',
+                desc: 'Photo your contractor\'s material list. Spark AI reads it, identifies every product, and auto-fills your inquiry form.',
+                tag: 'Claude Vision AI',
+                color: 'text-orange-600',
+                bg: 'bg-orange-50',
+              },
+              {
+                icon: TrendingUp,
+                title: 'Smart Quote Compare',
+                desc: 'When quotes arrive, Spark analyzes price, delivery speed, and dealer reliability — and tells you which one to pick.',
+                tag: 'Auto-comparison',
+                color: 'text-green-600',
+                bg: 'bg-green-50',
+              },
+            ].map(({ icon: Icon, title, desc, tag, color, bg }) => (
+              <div key={title} className={`${bg} rounded-xl p-6 border border-gray-100`}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Icon className={`w-5 h-5 ${color}`} />
+                  <span className="text-sm font-semibold text-gray-900">{title}</span>
+                  <span className={`ml-auto text-[10px] font-medium ${color} bg-white px-2 py-0.5 rounded-full border border-current/20`}>{tag}</span>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { chatApi } from '../../lib/api';
-import { CardSkeleton, Alert } from '../../components/ui';
 import {
   MessageSquare, User, Clock, Search, ChevronRight,
-  Shield, X, Bot
+  X, Bot, Loader2, Sparkles, TrendingUp, Zap,
 } from 'lucide-react';
 
 interface ChatSession {
@@ -87,253 +86,232 @@ export function AdminChatsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            {[...Array(4)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <section className="bg-neutral-900 text-white">
-        <div className="container-custom py-12">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-accent-500 flex items-center justify-center">
-              <Shield className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black tracking-tight">AI Chat Sessions</h1>
-              <p className="text-neutral-300 font-medium">View AI assistant conversations</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <h1 className="text-lg font-semibold text-gray-900">AI Chat Sessions</h1>
+        <p className="text-sm text-gray-500 mt-0.5">View AI assistant conversations</p>
+      </div>
 
-      <div className="container-custom py-8">
+      <div className="max-w-5xl mx-auto px-6 py-6">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-          <div className="bg-white border-2 border-neutral-200 p-6">
-            <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-              Total Sessions
-            </p>
-            <p className="text-3xl font-black text-neutral-900">{stats?.totalSessions || 0}</p>
-          </div>
-          <div className="bg-white border-2 border-neutral-200 p-6">
-            <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-              Total Messages
-            </p>
-            <p className="text-3xl font-black text-neutral-900">{stats?.totalMessages || 0}</p>
-          </div>
-          <div className="bg-green-50 border-2 border-green-200 p-6">
-            <p className="text-sm font-bold text-green-600 uppercase tracking-wider mb-1">Active</p>
-            <p className="text-3xl font-black text-green-900">{stats?.activeSessions || 0}</p>
-          </div>
-          <div className="bg-purple-50 border-2 border-purple-200 p-6">
-            <p className="text-sm font-bold text-purple-600 uppercase tracking-wider mb-1">
-              This Week
-            </p>
-            <p className="text-3xl font-black text-purple-900">{stats?.recentSessions || 0}</p>
-          </div>
-          <div className="bg-blue-50 border-2 border-blue-200 p-6">
-            <p className="text-sm font-bold text-blue-600 uppercase tracking-wider mb-1">
-              Avg. Messages
-            </p>
-            <p className="text-3xl font-black text-blue-900">{stats?.avgMessagesPerSession || 0}</p>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          {[
+            { label: 'Total Sessions',  value: stats?.totalSessions || 0 },
+            { label: 'Total Messages',  value: stats?.totalMessages || 0 },
+            { label: 'Active',          value: stats?.activeSessions || 0 },
+            { label: 'This Week',       value: stats?.recentSessions || 0 },
+            { label: 'Avg. Messages',   value: stats?.avgMessagesPerSession || 0 },
+          ].map(({ label, value }) => (
+            <div key={label} className="bg-white rounded-xl border border-gray-200 p-4">
+              <p className="text-xs text-gray-400 mb-1">{label}</p>
+              <p className="text-xl font-semibold text-gray-900">{value}</p>
+            </div>
+          ))}
         </div>
+
+        {/* Engagement Intelligence */}
+        {stats && stats.totalSessions > 0 && (() => {
+          const avg = stats.avgMessagesPerSession;
+          const activeRatio = stats.totalSessions > 0
+            ? Math.round((stats.activeSessions / stats.totalSessions) * 100)
+            : 0;
+          const recentRatio = stats.totalSessions > 0
+            ? Math.round((stats.recentSessions / stats.totalSessions) * 100)
+            : 0;
+          const engagementLabel = avg >= 10 ? 'High engagement' : avg >= 5 ? 'Good engagement' : 'Low engagement';
+          const engagementColor = avg >= 10 ? 'text-green-700' : avg >= 5 ? 'text-amber-700' : 'text-red-600';
+          return (
+            <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-100 rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-violet-600" />
+                <span className="text-xs font-semibold text-violet-700">Spark Engagement Intelligence</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="bg-white/70 rounded-lg px-3 py-2.5">
+                  <p className="text-[11px] text-gray-400 mb-0.5">Session quality</p>
+                  <p className={`text-sm font-semibold ${engagementColor}`}>{engagementLabel}</p>
+                  <p className="text-xs text-gray-500">{avg} msgs/session average</p>
+                </div>
+                <div className="bg-white/70 rounded-lg px-3 py-2.5">
+                  <p className="text-[11px] text-gray-400 mb-0.5">Active rate</p>
+                  <p className={`text-sm font-semibold ${activeRatio > 20 ? 'text-green-600' : 'text-gray-700'}`}>
+                    {activeRatio}%
+                  </p>
+                  <p className="text-xs text-gray-500">of sessions currently active</p>
+                </div>
+                <div className="bg-white/70 rounded-lg px-3 py-2.5">
+                  <p className="text-[11px] text-gray-400 mb-0.5">Weekly traction</p>
+                  <p className={`text-sm font-semibold ${recentRatio > 30 ? 'text-green-600' : 'text-amber-600'}`}>
+                    {recentRatio}% new this week
+                  </p>
+                  <p className="text-xs text-gray-500">{stats.recentSessions} sessions in 7 days</p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Search */}
-        <form onSubmit={handleSearch} className="flex items-center gap-4 mb-6">
+        <form onSubmit={handleSearch} className="flex items-center gap-3 mb-5">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by email, name, or topic..."
-              className="w-full pl-10 pr-4 py-3 border-2 border-neutral-200 focus:border-neutral-900 focus:outline-none"
+              className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:border-gray-400 focus:outline-none"
             />
           </div>
           <button
             type="submit"
-            className="px-6 py-3 bg-neutral-900 text-white font-bold hover:bg-neutral-800"
+            className="px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
           >
             Search
           </button>
         </form>
 
         {/* Sessions List */}
-        <div className="space-y-4">
-          {sessions.length === 0 ? (
-            <Alert>No chat sessions found.</Alert>
-          ) : (
-            sessions.map((session) => (
+        {sessions.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-6 py-12 text-center">
+            <p className="text-sm text-gray-500">No chat sessions found.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {sessions.map((session) => (
               <div
                 key={session.id}
-                className="bg-white border-2 border-neutral-200 p-6 cursor-pointer hover:shadow-brutal transition-all"
+                className="bg-white rounded-xl border border-gray-200 p-5 cursor-pointer hover:border-gray-300 hover:shadow-sm transition-all"
                 onClick={() => handleViewSession(session)}
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <MessageSquare className="w-5 h-5 text-accent-500" />
-                      <span className="font-bold text-neutral-900">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <MessageSquare className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-sm font-medium text-gray-900 truncate">
                         {session.title || 'Untitled Chat'}
                       </span>
-                      <span
-                        className={`px-2 py-1 text-xs font-bold uppercase ${
-                          session.status === 'active'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-neutral-100 text-neutral-800'
-                        }`}
-                      >
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full flex-shrink-0 ${
+                        session.status === 'active'
+                          ? 'bg-green-50 text-green-700'
+                          : 'bg-gray-100 text-gray-600'
+                      }`}>
                         {session.status}
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-neutral-600">
-                      {session.userEmail ? (
-                        <span className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          {session.userEmail}
-                        </span>
-                      ) : session.userName ? (
-                        <span className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
-                          {session.userName}
-                        </span>
-                      ) : (
-                        <span className="text-neutral-400">Anonymous user</span>
-                      )}
-                      <span className="bg-neutral-100 px-2 py-0.5 text-xs font-medium">
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <User className="w-3.5 h-3.5" />
+                        {session.userEmail || session.userName || 'Anonymous user'}
+                      </span>
+                      <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs">
                         {session._count?.messages || session.messageCount} messages
                       </span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-neutral-400 flex items-center gap-1">
+                  <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                    <p className="text-xs text-gray-400 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {session.lastMessageAt
-                        ? new Date(session.lastMessageAt).toLocaleDateString()
-                        : new Date(session.createdAt).toLocaleDateString()}
+                      {new Date(session.lastMessageAt || session.createdAt).toLocaleDateString()}
                     </p>
-                    <ChevronRight className="w-5 h-5 text-neutral-300 mt-2 ml-auto" />
+                    <ChevronRight className="w-4 h-4 text-gray-300" />
                   </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-4 mt-8">
+          <div className="flex items-center justify-center gap-4 mt-6">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-2 border-2 border-neutral-200 disabled:opacity-50"
+              className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors"
             >
               Previous
             </button>
-            <span className="font-medium">
-              Page {page} of {totalPages}
-            </span>
+            <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 border-2 border-neutral-200 disabled:opacity-50"
+              className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors"
             >
               Next
             </button>
           </div>
         )}
+      </div>
 
-        {/* Chat Detail Modal */}
-        {selectedSession && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white max-w-3xl w-full max-h-[90vh] flex flex-col">
-              <div className="border-b-2 border-neutral-200 p-6 flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-black">
-                    {selectedSession.title || 'Chat Session'}
-                  </h2>
-                  <p className="text-sm text-neutral-500">
-                    {selectedSession.userEmail ||
-                      selectedSession.userName ||
-                      'Anonymous User'}
-                  </p>
+      {/* Chat Detail Modal */}
+      {selectedSession && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">
+                  {selectedSession.title || 'Chat Session'}
+                </h2>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {selectedSession.userEmail || selectedSession.userName || 'Anonymous User'}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedSession(null)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {isLoadingMessages ? (
+                <div className="flex flex-col items-center py-8 gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                  <p className="text-sm text-gray-400">Loading messages...</p>
                 </div>
-                <button
-                  onClick={() => setSelectedSession(null)}
-                  className="text-neutral-400 hover:text-neutral-900"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {isLoadingMessages ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin w-8 h-8 border-4 border-accent-500 border-t-transparent rounded-full mx-auto"></div>
-                    <p className="mt-2 text-neutral-500">Loading messages...</p>
-                  </div>
-                ) : sessionMessages.length === 0 ? (
-                  <p className="text-center text-neutral-500 py-8">No messages in this session</p>
-                ) : (
-                  sessionMessages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex gap-3 ${
-                        message.role === 'user' ? 'flex-row-reverse' : ''
-                      }`}
-                    >
-                      <div
-                        className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${
-                          message.role === 'user' ? 'bg-neutral-900' : 'bg-accent-500'
-                        }`}
-                      >
-                        {message.role === 'user' ? (
-                          <User className="w-5 h-5 text-white" />
-                        ) : (
-                          <Bot className="w-5 h-5 text-white" />
-                        )}
-                      </div>
-                      <div
-                        className={`max-w-[75%] p-4 ${
-                          message.role === 'user'
-                            ? 'bg-neutral-900 text-white'
-                            : 'bg-neutral-100 text-neutral-900'
-                        }`}
-                      >
-                        <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                          {message.content}
-                        </p>
-                        <p
-                          className={`text-xs mt-2 ${
-                            message.role === 'user' ? 'text-neutral-400' : 'text-neutral-500'
-                          }`}
-                        >
-                          {new Date(message.createdAt).toLocaleString()}
-                        </p>
-                      </div>
+              ) : sessionMessages.length === 0 ? (
+                <p className="text-center text-sm text-gray-400 py-8">No messages in this session</p>
+              ) : (
+                sessionMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${
+                      message.role === 'user' ? 'bg-gray-900' : 'bg-gray-200'
+                    }`}>
+                      {message.role === 'user' ? (
+                        <User className="w-4 h-4 text-white" />
+                      ) : (
+                        <Bot className="w-4 h-4 text-gray-600" />
+                      )}
                     </div>
-                  ))
-                )}
-              </div>
+                    <div className={`max-w-[75%] px-4 py-3 rounded-2xl ${
+                      message.role === 'user'
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-gray-100 text-gray-900'
+                    }`}>
+                      <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                      <p className={`text-xs mt-1.5 ${message.role === 'user' ? 'text-gray-400' : 'text-gray-400'}`}>
+                        {new Date(message.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

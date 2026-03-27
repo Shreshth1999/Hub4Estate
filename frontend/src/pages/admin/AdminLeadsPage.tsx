@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { contactApi } from '../../lib/api';
-import { CardSkeleton, Alert } from '../../components/ui';
 import {
-  Mail, Phone, User, MessageSquare, Clock, Filter,
-  ChevronDown, ChevronRight, Shield, Check, X, Loader2
+  Mail, Phone, User, Clock, Filter,
+  ChevronRight, Check, X, Loader2,
 } from 'lucide-react';
 
 interface ContactSubmission {
@@ -26,20 +25,20 @@ interface Stats {
   recentWeek: number;
 }
 
-const statusColors: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-800',
-  contacted: 'bg-yellow-100 text-yellow-800',
-  qualified: 'bg-purple-100 text-purple-800',
-  converted: 'bg-green-100 text-green-800',
-  closed: 'bg-neutral-100 text-neutral-800',
+const STATUS_CONFIG: Record<string, { bg: string; color: string }> = {
+  new:       { bg: 'bg-blue-50',   color: 'text-blue-700' },
+  contacted: { bg: 'bg-amber-50',  color: 'text-amber-700' },
+  qualified: { bg: 'bg-violet-50', color: 'text-violet-700' },
+  converted: { bg: 'bg-green-50',  color: 'text-green-700' },
+  closed:    { bg: 'bg-gray-100',  color: 'text-gray-600' },
 };
 
 const roleLabels: Record<string, string> = {
-  homeowner: 'Homeowner / Individual',
+  homeowner:  'Homeowner / Individual',
   contractor: 'Contractor / Builder',
-  dealer: 'Electrical Dealer',
-  brand: 'Brand / Manufacturer',
-  other: 'Other',
+  dealer:     'Electrical Dealer',
+  brand:      'Brand / Manufacturer',
+  other:      'Other',
 };
 
 export function AdminLeadsPage() {
@@ -91,71 +90,47 @@ export function AdminLeadsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {[...Array(3)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <section className="bg-neutral-900 text-white">
-        <div className="container-custom py-12">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-accent-500 flex items-center justify-center">
-              <Shield className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black tracking-tight">Contact Leads</h1>
-              <p className="text-neutral-300 font-medium">Manage contact form submissions</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <h1 className="text-lg font-semibold text-gray-900">Contact Leads</h1>
+        <p className="text-sm text-gray-500 mt-0.5">Manage contact form submissions</p>
+      </div>
 
-      <div className="container-custom py-8">
+      <div className="max-w-5xl mx-auto px-6 py-6">
+
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white border-2 border-neutral-200 p-6">
-            <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">Total Leads</p>
-            <p className="text-3xl font-black text-neutral-900">{stats?.total || 0}</p>
-          </div>
-          <div className="bg-blue-50 border-2 border-blue-200 p-6">
-            <p className="text-sm font-bold text-blue-600 uppercase tracking-wider mb-1">New</p>
-            <p className="text-3xl font-black text-blue-900">{stats?.byStatus.new || 0}</p>
-          </div>
-          <div className="bg-green-50 border-2 border-green-200 p-6">
-            <p className="text-sm font-bold text-green-600 uppercase tracking-wider mb-1">Converted</p>
-            <p className="text-3xl font-black text-green-900">{stats?.byStatus.converted || 0}</p>
-          </div>
-          <div className="bg-purple-50 border-2 border-purple-200 p-6">
-            <p className="text-sm font-bold text-purple-600 uppercase tracking-wider mb-1">This Week</p>
-            <p className="text-3xl font-black text-purple-900">{stats?.recentWeek || 0}</p>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: 'Total Leads', value: stats?.total || 0, bg: 'bg-white' },
+            { label: 'New', value: stats?.byStatus.new || 0, bg: 'bg-blue-50' },
+            { label: 'Converted', value: stats?.byStatus.converted || 0, bg: 'bg-green-50' },
+            { label: 'This Week', value: stats?.recentWeek || 0, bg: 'bg-violet-50' },
+          ].map(({ label, value, bg }) => (
+            <div key={label} className={`${bg} rounded-xl border border-gray-200 p-4`}>
+              <p className="text-xs text-gray-500 mb-1">{label}</p>
+              <p className="text-2xl font-semibold text-gray-900">{value}</p>
+            </div>
+          ))}
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-4 mb-6">
-          <Filter className="w-5 h-5 text-neutral-400" />
+        <div className="flex items-center gap-3 mb-5">
+          <Filter className="w-4 h-4 text-gray-400" />
           <select
             value={selectedStatus}
             onChange={(e) => {
               setSelectedStatus(e.target.value);
               setPage(1);
             }}
-            className="border-2 border-neutral-200 p-2 focus:border-neutral-900 focus:outline-none"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-gray-400 focus:outline-none bg-white"
           >
             <option value="">All Status</option>
             <option value="new">New</option>
@@ -167,193 +142,173 @@ export function AdminLeadsPage() {
         </div>
 
         {/* Submissions List */}
-        <div className="space-y-4">
-          {submissions.length === 0 ? (
-            <Alert>No submissions found.</Alert>
-          ) : (
-            submissions.map((submission) => (
-              <div
-                key={submission.id}
-                className={`bg-white border-2 ${
-                  selectedSubmission?.id === submission.id
-                    ? 'border-neutral-900'
-                    : 'border-neutral-200'
-                } p-6 cursor-pointer hover:shadow-brutal transition-all`}
-                onClick={() => setSelectedSubmission(submission)}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <User className="w-5 h-5 text-neutral-400" />
-                      <span className="font-bold text-neutral-900">{submission.name}</span>
-                      <span
-                        className={`px-2 py-1 text-xs font-bold uppercase ${
-                          statusColors[submission.status]
-                        }`}
-                      >
-                        {submission.status}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-neutral-600 mb-3">
-                      <span className="flex items-center gap-1">
-                        <Mail className="w-4 h-4" />
-                        {submission.email}
-                      </span>
-                      {submission.phone && (
-                        <span className="flex items-center gap-1">
-                          <Phone className="w-4 h-4" />
-                          {submission.phone}
+        {submissions.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 px-6 py-12 text-center">
+            <p className="text-sm text-gray-500">No submissions found.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {submissions.map((submission) => {
+              const statusCfg = STATUS_CONFIG[submission.status] || STATUS_CONFIG.closed;
+              return (
+                <div
+                  key={submission.id}
+                  className={`bg-white rounded-xl border transition-all cursor-pointer hover:border-gray-300 hover:shadow-sm ${
+                    selectedSubmission?.id === submission.id ? 'border-gray-400' : 'border-gray-200'
+                  }`}
+                  onClick={() => setSelectedSubmission(submission)}
+                >
+                  <div className="flex items-start justify-between gap-4 p-5">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <span className="text-sm font-medium text-gray-900">{submission.name}</span>
+                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${statusCfg.bg} ${statusCfg.color}`}>
+                          {submission.status}
                         </span>
-                      )}
-                      <span className="bg-neutral-100 px-2 py-0.5 text-xs font-medium">
-                        {roleLabels[submission.role] || submission.role}
-                      </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-2.5">
+                        <span className="flex items-center gap-1">
+                          <Mail className="w-3.5 h-3.5" />
+                          {submission.email}
+                        </span>
+                        {submission.phone && (
+                          <span className="flex items-center gap-1">
+                            <Phone className="w-3.5 h-3.5" />
+                            {submission.phone}
+                          </span>
+                        )}
+                        <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs">
+                          {roleLabels[submission.role] || submission.role}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500 line-clamp-2">{submission.message}</p>
                     </div>
-                    <p className="text-sm text-neutral-600 line-clamp-2">{submission.message}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-neutral-400 flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {new Date(submission.createdAt).toLocaleDateString()}
-                    </p>
-                    {submission.emailSent && (
-                      <p className="text-xs text-green-600 mt-1 flex items-center gap-1 justify-end">
-                        <Check className="w-3 h-3" />
-                        Email sent
+                    <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                      <p className="text-xs text-gray-400 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(submission.createdAt).toLocaleDateString()}
                       </p>
-                    )}
-                    <ChevronRight className="w-5 h-5 text-neutral-300 mt-2 ml-auto" />
+                      {submission.emailSent && (
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                          <Check className="w-3 h-3" />
+                          Email sent
+                        </p>
+                      )}
+                      <ChevronRight className="w-4 h-4 text-gray-300 mt-1" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-4 mt-8">
+          <div className="flex items-center justify-center gap-4 mt-6">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-2 border-2 border-neutral-200 disabled:opacity-50"
+              className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors"
             >
               Previous
             </button>
-            <span className="font-medium">
-              Page {page} of {totalPages}
-            </span>
+            <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 border-2 border-neutral-200 disabled:opacity-50"
+              className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors"
             >
               Next
             </button>
           </div>
         )}
+      </div>
 
-        {/* Detail Modal */}
-        {selectedSubmission && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="border-b-2 border-neutral-200 p-6 flex items-center justify-between">
-                <h2 className="text-xl font-black">Lead Details</h2>
-                <button
-                  onClick={() => setSelectedSubmission(null)}
-                  className="text-neutral-400 hover:text-neutral-900"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-              <div className="p-6 space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                      Name
-                    </p>
-                    <p className="font-medium">{selectedSubmission.name}</p>
+      {/* Detail Modal */}
+      {selectedSubmission && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base font-semibold text-gray-900">Lead Details</h2>
+              <button
+                onClick={() => setSelectedSubmission(null)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { label: 'Name', value: selectedSubmission.name },
+                  { label: 'Role', value: roleLabels[selectedSubmission.role] || selectedSubmission.role },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <p className="text-xs font-medium text-gray-400 mb-1">{label}</p>
+                    <p className="text-sm font-medium text-gray-900">{value}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                      Role
-                    </p>
-                    <p className="font-medium">
-                      {roleLabels[selectedSubmission.role] || selectedSubmission.role}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                      Email
-                    </p>
-                    <a
-                      href={`mailto:${selectedSubmission.email}`}
-                      className="text-accent-600 hover:underline"
-                    >
-                      {selectedSubmission.email}
+                ))}
+                <div>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Email</p>
+                  <a href={`mailto:${selectedSubmission.email}`} className="text-sm text-blue-600 hover:underline">
+                    {selectedSubmission.email}
+                  </a>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Phone</p>
+                  {selectedSubmission.phone ? (
+                    <a href={`tel:${selectedSubmission.phone}`} className="text-sm text-blue-600 hover:underline">
+                      {selectedSubmission.phone}
                     </a>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                      Phone
-                    </p>
-                    {selectedSubmission.phone ? (
-                      <a
-                        href={`tel:${selectedSubmission.phone}`}
-                        className="text-accent-600 hover:underline"
-                      >
-                        {selectedSubmission.phone}
-                      </a>
-                    ) : (
-                      <p className="text-neutral-400">Not provided</p>
-                    )}
-                  </div>
+                  ) : (
+                    <p className="text-sm text-gray-400">Not provided</p>
+                  )}
                 </div>
+              </div>
 
-                <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                    Message
-                  </p>
-                  <div className="bg-neutral-50 border-2 border-neutral-200 p-4">
-                    <p className="whitespace-pre-wrap">{selectedSubmission.message}</p>
-                  </div>
+              <div>
+                <p className="text-xs font-medium text-gray-400 mb-2">Message</p>
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{selectedSubmission.message}</p>
                 </div>
+              </div>
 
-                <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                    Update Status
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {['new', 'contacted', 'qualified', 'converted', 'closed'].map((status) => (
+              <div>
+                <p className="text-xs font-medium text-gray-400 mb-2">Update Status</p>
+                <div className="flex flex-wrap gap-2">
+                  {['new', 'contacted', 'qualified', 'converted', 'closed'].map((status) => {
+                    const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.closed;
+                    const isActive = selectedSubmission.status === status;
+                    return (
                       <button
                         key={status}
                         onClick={() => handleStatusUpdate(selectedSubmission.id, status)}
-                        disabled={isUpdating || selectedSubmission.status === status}
-                        className={`px-4 py-2 font-bold uppercase text-sm transition-all ${
-                          selectedSubmission.status === status
-                            ? statusColors[status] + ' border-2 border-current'
-                            : 'border-2 border-neutral-200 hover:border-neutral-900'
-                        } disabled:opacity-50`}
+                        disabled={isUpdating || isActive}
+                        className={`px-3.5 py-1.5 text-sm font-medium rounded-lg border transition-all disabled:opacity-50 capitalize ${
+                          isActive
+                            ? `${cfg.bg} ${cfg.color} border-current`
+                            : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                        }`}
                       >
-                        {isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : status}
+                        {isUpdating && isActive ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : status}
                       </button>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
+              </div>
 
-                <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                    Submitted
-                  </p>
-                  <p className="text-neutral-600">
-                    {new Date(selectedSubmission.createdAt).toLocaleString()}
-                  </p>
-                </div>
+              <div>
+                <p className="text-xs font-medium text-gray-400 mb-1">Submitted</p>
+                <p className="text-sm text-gray-600">
+                  {new Date(selectedSubmission.createdAt).toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

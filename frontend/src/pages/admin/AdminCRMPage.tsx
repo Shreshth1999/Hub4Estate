@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { crmApi } from '../../lib/api';
-import { CardSkeleton, Alert } from '../../components/ui';
-import { Building2, Users, Mail, Phone, Globe, MapPin, Calendar, Plus, Search, Filter, ChevronDown, ChevronRight, Edit, Trash2, Send, Clock, MessageSquare, User, ExternalLink, CheckCircle, XCircle, AlertCircle, Loader2, X, Copy } from 'lucide-react';
+import {
+  Building2, Users, Mail, Phone, Globe, MapPin, Calendar, Plus, Search, Filter,
+  ChevronRight, Edit, Trash2, Send, Clock, MessageSquare, User, ExternalLink,
+  CheckCircle, Loader2, X, Copy, Sparkles, TrendingUp, AlertTriangle,
+} from 'lucide-react';
 
 interface Contact {
   id: string;
@@ -54,38 +57,29 @@ interface PipelineStats {
   inactive: number;
 }
 
-const statusColors: Record<string, string> = {
-  prospect: 'bg-blue-100 text-blue-800',
-  contacted: 'bg-yellow-100 text-yellow-800',
-  interested: 'bg-purple-100 text-purple-800',
-  negotiating: 'bg-orange-100 text-orange-800',
-  partner: 'bg-green-100 text-green-800',
-  inactive: 'bg-neutral-100 text-neutral-800',
+const STATUS_CONFIG: Record<string, { bg: string; color: string; label: string }> = {
+  prospect:    { bg: 'bg-blue-50',   color: 'text-blue-700',   label: 'Prospect' },
+  contacted:   { bg: 'bg-amber-50',  color: 'text-amber-700',  label: 'Contacted' },
+  interested:  { bg: 'bg-violet-50', color: 'text-violet-700', label: 'Interested' },
+  negotiating: { bg: 'bg-orange-50', color: 'text-orange-700', label: 'Negotiating' },
+  partner:     { bg: 'bg-green-50',  color: 'text-green-700',  label: 'Partner' },
+  inactive:    { bg: 'bg-gray-100',  color: 'text-gray-600',   label: 'Inactive' },
 };
 
-const statusLabels: Record<string, string> = {
-  prospect: 'Prospect',
-  contacted: 'Contacted',
-  interested: 'Interested',
-  negotiating: 'Negotiating',
-  partner: 'Partner',
-  inactive: 'Inactive',
+const OUTREACH_STATUS: Record<string, { bg: string; color: string }> = {
+  sent:    { bg: 'bg-green-50',  color: 'text-green-700' },
+  opened:  { bg: 'bg-blue-50',   color: 'text-blue-700' },
+  replied: { bg: 'bg-violet-50', color: 'text-violet-700' },
+  bounced: { bg: 'bg-red-50',    color: 'text-red-700' },
+  pending: { bg: 'bg-amber-50',  color: 'text-amber-700' },
 };
 
 const typeLabels: Record<string, string> = {
-  brand: 'Brand / Manufacturer',
-  dealer: 'Dealer / Distributor',
-  contractor: 'Contractor',
-  supplier: 'Supplier',
-  other: 'Other',
-};
-
-const outreachStatusColors: Record<string, string> = {
-  sent: 'bg-green-100 text-green-800',
-  opened: 'bg-blue-100 text-blue-800',
-  replied: 'bg-purple-100 text-purple-800',
-  bounced: 'bg-red-100 text-red-800',
-  pending: 'bg-yellow-100 text-yellow-800',
+  brand:       'Brand / Manufacturer',
+  dealer:      'Dealer / Distributor',
+  contractor:  'Contractor',
+  supplier:    'Supplier',
+  other:       'Other',
 };
 
 type TabType = 'pipeline' | 'companies' | 'outreach' | 'templates';
@@ -108,23 +102,15 @@ export function AdminCRMPage() {
   const [copiedTemplateId, setCopiedTemplateId] = useState<string | null>(null);
 
   const [newCompany, setNewCompany] = useState({
-    name: '',
-    type: 'brand',
-    location: '',
-    website: '',
-    description: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: '',
+    name: '', type: 'brand', location: '', website: '', description: '',
+    contactName: '', contactEmail: '', contactPhone: '',
   });
 
   const fetchPipeline = async () => {
     try {
       const res = await crmApi.getPipeline();
       setPipeline(res.data);
-    } catch (error) {
-      console.error('Failed to fetch pipeline:', error);
-    }
+    } catch (error) { console.error('Failed to fetch pipeline:', error); }
   };
 
   const fetchCompanies = async () => {
@@ -138,51 +124,36 @@ export function AdminCRMPage() {
       });
       setCompanies(res.data.companies);
       setTotalPages(res.data.pagination?.totalPages || 1);
-    } catch (error) {
-      console.error('Failed to fetch companies:', error);
-    }
+    } catch (error) { console.error('Failed to fetch companies:', error); }
   };
 
   const fetchOutreaches = async () => {
     try {
       const res = await crmApi.getOutreaches({ page, limit: 20 });
       setOutreaches(res.data.outreaches || res.data);
-    } catch (error) {
-      console.error('Failed to fetch outreaches:', error);
-    }
+    } catch (error) { console.error('Failed to fetch outreaches:', error); }
   };
 
   const fetchTemplates = async () => {
     try {
       const res = await crmApi.getEmailTemplates();
       setTemplates(res.data.templates || res.data);
-    } catch (error) {
-      console.error('Failed to fetch templates:', error);
-    }
+    } catch (error) { console.error('Failed to fetch templates:', error); }
   };
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      await Promise.all([
-        fetchPipeline(),
-        fetchCompanies(),
-        fetchOutreaches(),
-        fetchTemplates(),
-      ]);
+      await Promise.all([fetchPipeline(), fetchCompanies(), fetchOutreaches(), fetchTemplates()]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
   useEffect(() => {
-    if (!isLoading) {
-      fetchCompanies();
-    }
+    if (!isLoading) fetchCompanies();
   }, [searchQuery, selectedStatus, selectedType, page]);
 
   const handleStatusUpdate = async (companyId: string, newStatus: string) => {
@@ -192,15 +163,10 @@ export function AdminCRMPage() {
       await fetchCompanies();
       await fetchPipeline();
       if (selectedCompany?.id === companyId) {
-        setSelectedCompany((prev) =>
-          prev ? { ...prev, status: newStatus } : null
-        );
+        setSelectedCompany((prev) => prev ? { ...prev, status: newStatus } : null);
       }
-    } catch (error) {
-      console.error('Failed to update status:', error);
-    } finally {
-      setIsUpdating(false);
-    }
+    } catch (error) { console.error('Failed to update status:', error); }
+    finally { setIsUpdating(false); }
   };
 
   const handleAddCompany = async () => {
@@ -212,35 +178,19 @@ export function AdminCRMPage() {
         location: newCompany.location,
         website: newCompany.website,
         description: newCompany.description,
-        contacts: newCompany.contactName
-          ? [
-              {
-                name: newCompany.contactName,
-                email: newCompany.contactEmail,
-                phone: newCompany.contactPhone,
-                isPrimary: true,
-              },
-            ]
-          : [],
+        contacts: newCompany.contactName ? [{
+          name: newCompany.contactName,
+          email: newCompany.contactEmail,
+          phone: newCompany.contactPhone,
+          isPrimary: true,
+        }] : [],
       });
       setShowAddModal(false);
-      setNewCompany({
-        name: '',
-        type: 'brand',
-        location: '',
-        website: '',
-        description: '',
-        contactName: '',
-        contactEmail: '',
-        contactPhone: '',
-      });
+      setNewCompany({ name: '', type: 'brand', location: '', website: '', description: '', contactName: '', contactEmail: '', contactPhone: '' });
       await fetchCompanies();
       await fetchPipeline();
-    } catch (error) {
-      console.error('Failed to add company:', error);
-    } finally {
-      setIsUpdating(false);
-    }
+    } catch (error) { console.error('Failed to add company:', error); }
+    finally { setIsUpdating(false); }
   };
 
   const handlePipelineClick = (status: string) => {
@@ -254,157 +204,161 @@ export function AdminCRMPage() {
       await navigator.clipboard.writeText(template.content);
       setCopiedTemplateId(template.id);
       setTimeout(() => setCopiedTemplateId(null), 2000);
-    } catch (error) {
-      console.error('Failed to copy template:', error);
-    }
+    } catch (error) { console.error('Failed to copy template:', error); }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {[...Array(6)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <section className="bg-neutral-900 text-white">
-        <div className="container-custom py-12">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 bg-accent-500 flex items-center justify-center">
-                <Building2 className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-black tracking-tight">Brand CRM</h1>
-                <p className="text-neutral-300 font-medium">Manage brand partnerships and outreach</p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 bg-accent-500 text-white px-4 py-2 font-bold hover:bg-accent-600 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              Add Company
-            </button>
+      <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-lg font-semibold text-gray-900">Brand CRM</h1>
+            <p className="text-sm text-gray-500 mt-0.5">Manage brand partnerships and outreach</p>
           </div>
-        </div>
-      </section>
-
-      {/* Tabs */}
-      <div className="border-b-2 border-neutral-200">
-        <div className="container-custom">
-          <div className="flex gap-0">
-            {[
-              { id: 'pipeline' as TabType, label: 'Pipeline', icon: ChevronRight },
-              { id: 'companies' as TabType, label: 'Companies', icon: Building2 },
-              { id: 'outreach' as TabType, label: 'Outreach', icon: Send },
-              { id: 'templates' as TabType, label: 'Templates', icon: MessageSquare },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 font-bold text-sm uppercase tracking-wider border-b-4 transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-neutral-900 text-neutral-900'
-                    : 'border-transparent text-neutral-400 hover:text-neutral-600'
-                }`}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Company
+          </button>
         </div>
       </div>
 
-      <div className="container-custom py-8">
+      {/* Tabs */}
+      <div className="bg-white border-b border-gray-200 px-6">
+        <div className="flex items-center gap-1">
+          {([
+            { id: 'pipeline' as TabType, label: 'Pipeline', icon: ChevronRight },
+            { id: 'companies' as TabType, label: 'Companies', icon: Building2 },
+            { id: 'outreach' as TabType, label: 'Outreach', icon: Send },
+            { id: 'templates' as TabType, label: 'Templates', icon: MessageSquare },
+          ] as const).map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                activeTab === tab.id
+                  ? 'border-gray-900 text-gray-900'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <tab.icon className="w-3.5 h-3.5" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 py-6">
+
         {/* Pipeline Tab */}
         {activeTab === 'pipeline' && (
           <div>
-            <h2 className="text-xl font-black text-neutral-900 mb-6">Partnership Pipeline</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <button
-                onClick={() => handlePipelineClick('prospect')}
-                className="bg-blue-50 border-2 border-blue-200 p-6 text-left hover:shadow-brutal transition-all cursor-pointer"
-              >
-                <p className="text-sm font-bold text-blue-600 uppercase tracking-wider mb-1">Prospects</p>
-                <p className="text-3xl font-black text-blue-900">{pipeline?.prospects || 0}</p>
-              </button>
-              <button
-                onClick={() => handlePipelineClick('contacted')}
-                className="bg-yellow-50 border-2 border-yellow-200 p-6 text-left hover:shadow-brutal transition-all cursor-pointer"
-              >
-                <p className="text-sm font-bold text-yellow-600 uppercase tracking-wider mb-1">Contacted</p>
-                <p className="text-3xl font-black text-yellow-900">{pipeline?.contacted || 0}</p>
-              </button>
-              <button
-                onClick={() => handlePipelineClick('interested')}
-                className="bg-purple-50 border-2 border-purple-200 p-6 text-left hover:shadow-brutal transition-all cursor-pointer"
-              >
-                <p className="text-sm font-bold text-purple-600 uppercase tracking-wider mb-1">Interested</p>
-                <p className="text-3xl font-black text-purple-900">{pipeline?.interested || 0}</p>
-              </button>
-              <button
-                onClick={() => handlePipelineClick('negotiating')}
-                className="bg-orange-50 border-2 border-orange-200 p-6 text-left hover:shadow-brutal transition-all cursor-pointer"
-              >
-                <p className="text-sm font-bold text-orange-600 uppercase tracking-wider mb-1">Negotiating</p>
-                <p className="text-3xl font-black text-orange-900">{pipeline?.negotiating || 0}</p>
-              </button>
-              <button
-                onClick={() => handlePipelineClick('partner')}
-                className="bg-green-50 border-2 border-green-200 p-6 text-left hover:shadow-brutal transition-all cursor-pointer"
-              >
-                <p className="text-sm font-bold text-green-600 uppercase tracking-wider mb-1">Partners</p>
-                <p className="text-3xl font-black text-green-900">{pipeline?.partners || 0}</p>
-              </button>
-              <button
-                onClick={() => handlePipelineClick('inactive')}
-                className="bg-neutral-50 border-2 border-neutral-200 p-6 text-left hover:shadow-brutal transition-all cursor-pointer"
-              >
-                <p className="text-sm font-bold text-neutral-600 uppercase tracking-wider mb-1">Inactive</p>
-                <p className="text-3xl font-black text-neutral-900">{pipeline?.inactive || 0}</p>
-              </button>
-            </div>
+            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Partnership Pipeline</h2>
 
-            <div className="mt-8">
-              <h3 className="text-lg font-bold text-neutral-900 mb-4">Recent Activity</h3>
-              <div className="space-y-3">
-                {companies.slice(0, 5).map((company) => (
-                  <div
-                    key={company.id}
-                    className="flex items-center justify-between bg-white border-2 border-neutral-200 p-4 hover:shadow-brutal transition-all cursor-pointer"
-                    onClick={() => setSelectedCompany(company)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <Building2 className="w-5 h-5 text-neutral-400" />
-                      <div>
-                        <p className="font-bold text-neutral-900">{company.name}</p>
-                        <p className="text-sm text-neutral-500">{typeLabels[company.type] || company.type}</p>
-                      </div>
+            {/* Pipeline Intelligence */}
+            {pipeline && (() => {
+              const stages = [
+                { key: 'prospects', val: pipeline.prospects, label: 'Prospects' },
+                { key: 'contacted', val: pipeline.contacted, label: 'Contacted' },
+                { key: 'interested', val: pipeline.interested, label: 'Interested' },
+                { key: 'negotiating', val: pipeline.negotiating, label: 'Negotiating' },
+              ];
+              const bottleneck = stages.reduce((a, b) => b.val > a.val ? b : a, stages[0]);
+              const warmPipeline = (pipeline.interested + pipeline.negotiating);
+              const coldPipeline = pipeline.prospects + pipeline.contacted;
+              const momentum = warmPipeline > coldPipeline ? 'strong' : warmPipeline > 0 ? 'moderate' : 'weak';
+              return (
+                <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-100 rounded-xl p-4 mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="w-3.5 h-3.5 text-violet-600" />
+                    <span className="text-xs font-semibold text-violet-700">Pipeline Intelligence</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="bg-white/70 rounded-lg px-3 py-2.5">
+                      <p className="text-[11px] text-gray-400 mb-0.5">Bottleneck stage</p>
+                      <p className="text-sm font-semibold text-gray-900">{bottleneck.label}</p>
+                      <p className="text-xs text-gray-500">{bottleneck.val} companies stuck here</p>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className={`px-2 py-1 text-xs font-bold uppercase ${statusColors[company.status]}`}>
-                        {statusLabels[company.status] || company.status}
-                      </span>
-                      <ChevronRight className="w-5 h-5 text-neutral-300" />
+                    <div className="bg-white/70 rounded-lg px-3 py-2.5">
+                      <p className="text-[11px] text-gray-400 mb-0.5">Pipeline momentum</p>
+                      <p className={`text-sm font-semibold ${momentum === 'strong' ? 'text-green-600' : momentum === 'moderate' ? 'text-amber-600' : 'text-red-500'}`}>
+                        {momentum === 'strong' ? 'Strong' : momentum === 'moderate' ? 'Moderate' : 'Needs attention'}
+                      </p>
+                      <p className="text-xs text-gray-500">{warmPipeline} warm, {coldPipeline} cold</p>
+                    </div>
+                    <div className="bg-white/70 rounded-lg px-3 py-2.5">
+                      <p className="text-[11px] text-gray-400 mb-0.5">Active partners</p>
+                      <p className="text-sm font-semibold text-green-600">{pipeline.partners}</p>
+                      <p className="text-xs text-gray-500">
+                        {pipeline.inactive > 0 ? `${pipeline.inactive} inactive — re-engage` : 'All partners active'}
+                      </p>
                     </div>
                   </div>
-                ))}
+                </div>
+              );
+            })()}
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+              {[
+                { key: 'prospect',    value: pipeline?.prospects || 0 },
+                { key: 'contacted',   value: pipeline?.contacted || 0 },
+                { key: 'interested',  value: pipeline?.interested || 0 },
+                { key: 'negotiating', value: pipeline?.negotiating || 0 },
+                { key: 'partner',     value: pipeline?.partners || 0 },
+                { key: 'inactive',    value: pipeline?.inactive || 0 },
+              ].map(({ key, value }) => {
+                const cfg = STATUS_CONFIG[key];
+                return (
+                  <button
+                    key={key}
+                    onClick={() => handlePipelineClick(key)}
+                    className={`${cfg.bg} rounded-xl border border-gray-200 p-4 text-left hover:border-gray-300 hover:shadow-sm transition-all`}
+                  >
+                    <p className={`text-xs font-medium ${cfg.color} mb-1`}>{cfg.label}</p>
+                    <p className={`text-2xl font-semibold ${cfg.color}`}>{value}</p>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div>
+              <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">Recent Activity</h3>
+              <div className="space-y-2">
+                {companies.slice(0, 5).map((company) => {
+                  const cfg = STATUS_CONFIG[company.status] || STATUS_CONFIG.inactive;
+                  return (
+                    <div
+                      key={company.id}
+                      className="flex items-center justify-between bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+                      onClick={() => setSelectedCompany(company)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Building2 className="w-4 h-4 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{company.name}</p>
+                          <p className="text-xs text-gray-400">{typeLabels[company.type] || company.type}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${cfg.bg} ${cfg.color}`}>
+                          {cfg.label}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-gray-300" />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -414,146 +368,125 @@ export function AdminCRMPage() {
         {activeTab === 'companies' && (
           <div>
             {/* Filters */}
-            <div className="flex flex-wrap items-center gap-4 mb-6">
+            <div className="flex flex-wrap items-center gap-3 mb-5">
               <div className="flex-1 min-w-[200px] relative">
-                <Search className="w-5 h-5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search companies..."
                   value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setPage(1);
-                  }}
-                  className="w-full border-2 border-neutral-200 p-2 pl-10 focus:border-neutral-900 focus:outline-none"
+                  onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                  className="w-full border border-gray-200 rounded-lg py-2.5 pl-9 pr-4 text-sm focus:border-gray-400 focus:outline-none"
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-neutral-400" />
+                <Filter className="w-4 h-4 text-gray-400" />
                 <select
                   value={selectedStatus}
-                  onChange={(e) => {
-                    setSelectedStatus(e.target.value);
-                    setPage(1);
-                  }}
-                  className="border-2 border-neutral-200 p-2 focus:border-neutral-900 focus:outline-none"
+                  onChange={(e) => { setSelectedStatus(e.target.value); setPage(1); }}
+                  className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:border-gray-400 focus:outline-none bg-white"
                 >
                   <option value="">All Status</option>
-                  <option value="prospect">Prospect</option>
-                  <option value="contacted">Contacted</option>
-                  <option value="interested">Interested</option>
-                  <option value="negotiating">Negotiating</option>
-                  <option value="partner">Partner</option>
-                  <option value="inactive">Inactive</option>
+                  {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+                    <option key={key} value={key}>{cfg.label}</option>
+                  ))}
                 </select>
                 <select
                   value={selectedType}
-                  onChange={(e) => {
-                    setSelectedType(e.target.value);
-                    setPage(1);
-                  }}
-                  className="border-2 border-neutral-200 p-2 focus:border-neutral-900 focus:outline-none"
+                  onChange={(e) => { setSelectedType(e.target.value); setPage(1); }}
+                  className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:border-gray-400 focus:outline-none bg-white"
                 >
                   <option value="">All Types</option>
-                  <option value="brand">Brand / Manufacturer</option>
-                  <option value="dealer">Dealer / Distributor</option>
-                  <option value="contractor">Contractor</option>
-                  <option value="supplier">Supplier</option>
-                  <option value="other">Other</option>
+                  {Object.entries(typeLabels).map(([key, label]) => (
+                    <option key={key} value={key}>{label}</option>
+                  ))}
                 </select>
               </div>
             </div>
 
-            {/* Companies List */}
-            <div className="space-y-4">
-              {companies.length === 0 ? (
-                <Alert>No companies found.</Alert>
-              ) : (
-                companies.map((company) => (
-                  <div
-                    key={company.id}
-                    className={`bg-white border-2 ${
-                      selectedCompany?.id === company.id
-                        ? 'border-neutral-900'
-                        : 'border-neutral-200'
-                    } p-6 cursor-pointer hover:shadow-brutal transition-all`}
-                    onClick={() => setSelectedCompany(company)}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Building2 className="w-5 h-5 text-neutral-400" />
-                          <span className="font-bold text-neutral-900">{company.name}</span>
-                          <span className={`px-2 py-1 text-xs font-bold uppercase ${statusColors[company.status]}`}>
-                            {statusLabels[company.status] || company.status}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-neutral-600 mb-3">
-                          <span className="bg-neutral-100 px-2 py-0.5 text-xs font-medium">
-                            {typeLabels[company.type] || company.type}
-                          </span>
-                          {company.location && (
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {company.location}
+            {/* List */}
+            {companies.length === 0 ? (
+              <div className="bg-white rounded-xl border border-gray-200 px-6 py-12 text-center">
+                <p className="text-sm text-gray-500">No companies found.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {companies.map((company) => {
+                  const cfg = STATUS_CONFIG[company.status] || STATUS_CONFIG.inactive;
+                  return (
+                    <div
+                      key={company.id}
+                      className={`bg-white rounded-xl border transition-all cursor-pointer hover:border-gray-300 hover:shadow-sm ${
+                        selectedCompany?.id === company.id ? 'border-gray-400' : 'border-gray-200'
+                      }`}
+                      onClick={() => setSelectedCompany(company)}
+                    >
+                      <div className="flex items-start justify-between gap-4 p-5">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2.5 mb-2">
+                            <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                            <span className="text-sm font-medium text-gray-900">{company.name}</span>
+                            <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${cfg.bg} ${cfg.color}`}>
+                              {cfg.label}
                             </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-2">
+                            <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs">
+                              {typeLabels[company.type] || company.type}
+                            </span>
+                            {company.location && (
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-3.5 h-3.5" />
+                                {company.location}
+                              </span>
+                            )}
+                            <span className="flex items-center gap-1">
+                              <Users className="w-3.5 h-3.5" />
+                              {company.contacts?.length || 0} contacts
+                            </span>
+                          </div>
+                          {company.description && (
+                            <p className="text-xs text-gray-400 line-clamp-2">{company.description}</p>
                           )}
-                          <span className="flex items-center gap-1">
-                            <Users className="w-4 h-4" />
-                            {company.contacts?.length || 0} contacts
-                          </span>
                         </div>
-                        {company.description && (
-                          <p className="text-sm text-neutral-600 line-clamp-2">{company.description}</p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <select
-                          value={company.status}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            handleStatusUpdate(company.id, e.target.value);
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          disabled={isUpdating}
-                          className="border-2 border-neutral-200 p-1 text-sm focus:border-neutral-900 focus:outline-none"
-                        >
-                          <option value="prospect">Prospect</option>
-                          <option value="contacted">Contacted</option>
-                          <option value="interested">Interested</option>
-                          <option value="negotiating">Negotiating</option>
-                          <option value="partner">Partner</option>
-                          <option value="inactive">Inactive</option>
-                        </select>
-                        <p className="text-xs text-neutral-400 flex items-center gap-1 mt-2 justify-end">
-                          <Clock className="w-3 h-3" />
-                          {new Date(company.createdAt).toLocaleDateString()}
-                        </p>
-                        <ChevronRight className="w-5 h-5 text-neutral-300 mt-2 ml-auto" />
+                        <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                          <select
+                            value={company.status}
+                            onChange={(e) => { e.stopPropagation(); handleStatusUpdate(company.id, e.target.value); }}
+                            onClick={(e) => e.stopPropagation()}
+                            disabled={isUpdating}
+                            className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:border-gray-400 focus:outline-none bg-white"
+                          >
+                            {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+                              <option key={key} value={key}>{cfg.label}</option>
+                            ))}
+                          </select>
+                          <p className="text-xs text-gray-400 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(company.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            )}
 
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-4 mt-8">
+              <div className="flex items-center justify-center gap-4 mt-6">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-4 py-2 border-2 border-neutral-200 disabled:opacity-50"
+                  className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors"
                 >
                   Previous
                 </button>
-                <span className="font-medium">
-                  Page {page} of {totalPages}
-                </span>
+                <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-4 py-2 border-2 border-neutral-200 disabled:opacity-50"
+                  className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors"
                 >
                   Next
                 </button>
@@ -565,239 +498,204 @@ export function AdminCRMPage() {
         {/* Outreach Tab */}
         {activeTab === 'outreach' && (
           <div>
-            <h2 className="text-xl font-black text-neutral-900 mb-6">Outreach History</h2>
-            <div className="space-y-4">
-              {outreaches.length === 0 ? (
-                <Alert>No outreach records found.</Alert>
-              ) : (
-                outreaches.map((outreach) => (
-                  <div
-                    key={outreach.id}
-                    className="bg-white border-2 border-neutral-200 p-6 hover:shadow-brutal transition-all"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Mail className="w-5 h-5 text-neutral-400" />
-                          <span className="font-bold text-neutral-900">{outreach.subject}</span>
-                          <span className={`px-2 py-1 text-xs font-bold uppercase ${outreachStatusColors[outreach.status]}`}>
-                            {outreach.status}
-                          </span>
+            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Outreach History</h2>
+            {outreaches.length === 0 ? (
+              <div className="bg-white rounded-xl border border-gray-200 px-6 py-12 text-center">
+                <p className="text-sm text-gray-500">No outreach records found.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {outreaches.map((outreach) => {
+                  const statusCfg = OUTREACH_STATUS[outreach.status] || OUTREACH_STATUS.pending;
+                  return (
+                    <div key={outreach.id} className="bg-white rounded-xl border border-gray-200 p-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2.5 mb-2">
+                            <Mail className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm font-medium text-gray-900">{outreach.subject}</span>
+                            <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${statusCfg.bg} ${statusCfg.color}`}>
+                              {outreach.status}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-2">
+                            <span className="flex items-center gap-1">
+                              <Building2 className="w-3.5 h-3.5" />
+                              {outreach.companyName}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <User className="w-3.5 h-3.5" />
+                              {outreach.sentBy}
+                            </span>
+                            <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs">{outreach.type}</span>
+                          </div>
+                          <p className="text-xs text-gray-400 line-clamp-2">{outreach.content}</p>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-neutral-600 mb-3">
-                          <span className="flex items-center gap-1">
-                            <Building2 className="w-4 h-4" />
-                            {outreach.companyName}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            {outreach.sentBy}
-                          </span>
-                          <span className="bg-neutral-100 px-2 py-0.5 text-xs font-medium">
-                            {outreach.type}
-                          </span>
-                        </div>
-                        <p className="text-sm text-neutral-600 line-clamp-2">{outreach.content}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-neutral-400 flex items-center gap-1 justify-end">
+                        <p className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0">
                           <Clock className="w-3 h-3" />
                           {new Date(outreach.sentAt).toLocaleString()}
                         </p>
                       </div>
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
         {/* Templates Tab */}
         {activeTab === 'templates' && (
           <div>
-            <h2 className="text-xl font-black text-neutral-900 mb-6">Email Templates</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {templates.length === 0 ? (
-                <Alert>No templates found.</Alert>
-              ) : (
-                templates.map((template) => (
-                  <div
-                    key={template.id}
-                    className="bg-white border-2 border-neutral-200 p-6 hover:shadow-brutal transition-all"
-                  >
-                    <div className="flex items-start justify-between mb-4">
+            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Email Templates</h2>
+            {templates.length === 0 ? (
+              <div className="bg-white rounded-xl border border-gray-200 px-6 py-12 text-center">
+                <p className="text-sm text-gray-500">No templates found.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {templates.map((template) => (
+                  <div key={template.id} className="bg-white rounded-xl border border-gray-200 p-5">
+                    <div className="flex items-start justify-between mb-3">
                       <div>
-                        <h3 className="font-bold text-neutral-900">{template.name}</h3>
-                        <span className="bg-neutral-100 px-2 py-0.5 text-xs font-medium">
+                        <p className="text-sm font-medium text-gray-900">{template.name}</p>
+                        <span className="px-2 py-0.5 bg-gray-100 rounded-full text-xs text-gray-600">
                           {template.category}
                         </span>
                       </div>
                       <button
                         onClick={() => handleCopyTemplate(template)}
-                        className="flex items-center gap-1 px-3 py-1 border-2 border-neutral-200 text-sm font-medium hover:border-neutral-900 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-medium text-gray-600 hover:border-gray-300 transition-colors"
                       >
                         {copiedTemplateId === template.id ? (
-                          <>
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                            Copied!
-                          </>
+                          <><CheckCircle className="w-3.5 h-3.5 text-green-500" />Copied!</>
                         ) : (
-                          <>
-                            <Copy className="w-4 h-4" />
-                            Copy
-                          </>
+                          <><Copy className="w-3.5 h-3.5" />Copy</>
                         )}
                       </button>
                     </div>
-                    <div className="mb-3">
-                      <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">Subject</p>
-                      <p className="text-sm text-neutral-700">{template.subject}</p>
+                    <div className="mb-2">
+                      <p className="text-xs font-medium text-gray-400 mb-1">Subject</p>
+                      <p className="text-sm text-gray-700">{template.subject}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">Content</p>
-                      <p className="text-sm text-neutral-600 line-clamp-4 whitespace-pre-wrap">{template.content}</p>
+                      <p className="text-xs font-medium text-gray-400 mb-1">Content</p>
+                      <p className="text-xs text-gray-500 line-clamp-4 whitespace-pre-wrap">{template.content}</p>
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
 
       {/* Company Detail Modal */}
       {selectedCompany && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="border-b-2 border-neutral-200 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-black">Company Details</h2>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base font-semibold text-gray-900">Company Details</h2>
               <button
                 onClick={() => setSelectedCompany(null)}
-                className="text-neutral-400 hover:text-neutral-900"
+                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+            <div className="p-6 space-y-5">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                    Company Name
-                  </p>
-                  <p className="font-medium">{selectedCompany.name}</p>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Company Name</p>
+                  <p className="text-sm font-medium text-gray-900">{selectedCompany.name}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                    Type
-                  </p>
-                  <p className="font-medium">
-                    {typeLabels[selectedCompany.type] || selectedCompany.type}
-                  </p>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Type</p>
+                  <p className="text-sm font-medium text-gray-900">{typeLabels[selectedCompany.type] || selectedCompany.type}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                    Location
-                  </p>
-                  <p className="font-medium flex items-center gap-1">
-                    <MapPin className="w-4 h-4 text-neutral-400" />
+                  <p className="text-xs font-medium text-gray-400 mb-1">Location</p>
+                  <p className="text-sm text-gray-700 flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-gray-400" />
                     {selectedCompany.location || 'Not specified'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1">
-                    Website
-                  </p>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Website</p>
                   {selectedCompany.website ? (
                     <a
                       href={selectedCompany.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-accent-600 hover:underline flex items-center gap-1"
+                      className="text-sm text-blue-600 hover:underline flex items-center gap-1"
                     >
-                      <Globe className="w-4 h-4" />
-                      {selectedCompany.website}
+                      <Globe className="w-3.5 h-3.5" />
+                      {selectedCompany.website.replace('https://', '')}
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   ) : (
-                    <p className="text-neutral-400">Not provided</p>
+                    <p className="text-sm text-gray-400">Not provided</p>
                   )}
                 </div>
               </div>
 
               {selectedCompany.description && (
                 <div>
-                  <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                    Description
-                  </p>
-                  <div className="bg-neutral-50 border-2 border-neutral-200 p-4">
-                    <p className="whitespace-pre-wrap">{selectedCompany.description}</p>
+                  <p className="text-xs font-medium text-gray-400 mb-2">Description</p>
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{selectedCompany.description}</p>
                   </div>
                 </div>
               )}
 
               <div>
-                <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                  Update Status
-                </p>
+                <p className="text-xs font-medium text-gray-400 mb-2">Update Status</p>
                 <div className="flex flex-wrap gap-2">
-                  {['prospect', 'contacted', 'interested', 'negotiating', 'partner', 'inactive'].map((status) => (
-                    <button
-                      key={status}
-                      onClick={() => handleStatusUpdate(selectedCompany.id, status)}
-                      disabled={isUpdating || selectedCompany.status === status}
-                      className={`px-4 py-2 font-bold uppercase text-sm transition-all ${
-                        selectedCompany.status === status
-                          ? statusColors[status] + ' border-2 border-current'
-                          : 'border-2 border-neutral-200 hover:border-neutral-900'
-                      } disabled:opacity-50`}
-                    >
-                      {isUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : statusLabels[status]}
-                    </button>
-                  ))}
+                  {Object.entries(STATUS_CONFIG).map(([status, cfg]) => {
+                    const isActive = selectedCompany.status === status;
+                    return (
+                      <button
+                        key={status}
+                        onClick={() => handleStatusUpdate(selectedCompany.id, status)}
+                        disabled={isUpdating || isActive}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all disabled:opacity-50 ${
+                          isActive
+                            ? `${cfg.bg} ${cfg.color} border-current`
+                            : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                        }`}
+                      >
+                        {isUpdating && isActive ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : cfg.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               <div>
-                <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
+                <p className="text-xs font-medium text-gray-400 mb-2">
                   Contacts ({selectedCompany.contacts?.length || 0})
                 </p>
                 {selectedCompany.contacts && selectedCompany.contacts.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {selectedCompany.contacts.map((contact) => (
-                      <div
-                        key={contact.id}
-                        className="bg-neutral-50 border-2 border-neutral-200 p-4"
-                      >
+                      <div key={contact.id} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <User className="w-4 h-4 text-neutral-400" />
-                          <span className="font-medium">{contact.name}</span>
+                          <User className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="text-sm font-medium text-gray-900">{contact.name}</span>
                           {contact.isPrimary && (
-                            <span className="bg-green-100 text-green-800 px-2 py-0.5 text-xs font-bold">
-                              Primary
-                            </span>
+                            <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">Primary</span>
                           )}
                           {contact.role && (
-                            <span className="bg-neutral-100 text-neutral-600 px-2 py-0.5 text-xs">
-                              {contact.role}
-                            </span>
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">{contact.role}</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-neutral-600">
-                          <a
-                            href={`mailto:${contact.email}`}
-                            className="flex items-center gap-1 text-accent-600 hover:underline"
-                          >
-                            <Mail className="w-4 h-4" />
-                            {contact.email}
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                          <a href={`mailto:${contact.email}`} className="flex items-center gap-1 text-blue-600 hover:underline">
+                            <Mail className="w-3.5 h-3.5" />{contact.email}
                           </a>
                           {contact.phone && (
-                            <a
-                              href={`tel:${contact.phone}`}
-                              className="flex items-center gap-1 text-accent-600 hover:underline"
-                            >
-                              <Phone className="w-4 h-4" />
-                              {contact.phone}
+                            <a href={`tel:${contact.phone}`} className="flex items-center gap-1 text-blue-600 hover:underline">
+                              <Phone className="w-3.5 h-3.5" />{contact.phone}
                             </a>
                           )}
                         </div>
@@ -805,16 +703,14 @@ export function AdminCRMPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-neutral-400">No contacts added yet.</p>
+                  <p className="text-sm text-gray-400">No contacts added yet.</p>
                 )}
               </div>
 
               <div>
-                <p className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                  Added
-                </p>
-                <p className="text-neutral-600 flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
+                <p className="text-xs font-medium text-gray-400 mb-1">Added</p>
+                <p className="text-sm text-gray-600 flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5" />
                   {new Date(selectedCompany.createdAt).toLocaleString()}
                 </p>
               </div>
@@ -825,148 +721,124 @@ export function AdminCRMPage() {
 
       {/* Add Company Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="border-b-2 border-neutral-200 p-6 flex items-center justify-between">
-              <h2 className="text-xl font-black">Add New Company</h2>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base font-semibold text-gray-900">Add New Company</h2>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-neutral-400 hover:text-neutral-900"
+                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                    Company Name *
-                  </label>
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Company Name *</label>
                   <input
                     type="text"
                     value={newCompany.name}
                     onChange={(e) => setNewCompany({ ...newCompany, name: e.target.value })}
-                    className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none"
                     placeholder="Enter company name"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                    Type *
-                  </label>
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Type *</label>
                   <select
                     value={newCompany.type}
                     onChange={(e) => setNewCompany({ ...newCompany, type: e.target.value })}
-                    className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none bg-white"
                   >
-                    <option value="brand">Brand / Manufacturer</option>
-                    <option value="dealer">Dealer / Distributor</option>
-                    <option value="contractor">Contractor</option>
-                    <option value="supplier">Supplier</option>
-                    <option value="other">Other</option>
+                    {Object.entries(typeLabels).map(([key, label]) => (
+                      <option key={key} value={key}>{label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                    Location
-                  </label>
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Location</label>
                   <input
                     type="text"
                     value={newCompany.location}
                     onChange={(e) => setNewCompany({ ...newCompany, location: e.target.value })}
-                    className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none"
                     placeholder="City, Country"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                    Website
-                  </label>
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Website</label>
                   <input
                     type="url"
                     value={newCompany.website}
                     onChange={(e) => setNewCompany({ ...newCompany, website: e.target.value })}
-                    className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none"
                     placeholder="https://example.com"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                    Description
-                  </label>
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Description</label>
                   <textarea
                     value={newCompany.description}
                     onChange={(e) => setNewCompany({ ...newCompany, description: e.target.value })}
-                    className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none min-h-[100px]"
-                    placeholder="Brief description of the company"
+                    className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none min-h-[80px] resize-none"
+                    placeholder="Brief description"
                   />
                 </div>
               </div>
 
-              <div className="border-t-2 border-neutral-200 pt-6">
-                <h3 className="text-lg font-bold text-neutral-900 mb-4">Primary Contact (Optional)</h3>
-                <div className="grid grid-cols-2 gap-6">
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-sm font-medium text-gray-700 mb-3">Primary Contact (Optional)</p>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                      Contact Name
-                    </label>
+                    <label className="text-xs font-medium text-gray-500 mb-1.5 block">Contact Name</label>
                     <input
                       type="text"
                       value={newCompany.contactName}
                       onChange={(e) => setNewCompany({ ...newCompany, contactName: e.target.value })}
-                      className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none"
                       placeholder="Full name"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                      Email
-                    </label>
+                    <label className="text-xs font-medium text-gray-500 mb-1.5 block">Email</label>
                     <input
                       type="email"
                       value={newCompany.contactEmail}
                       onChange={(e) => setNewCompany({ ...newCompany, contactEmail: e.target.value })}
-                      className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none"
                       placeholder="email@example.com"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-1 block">
-                      Phone
-                    </label>
+                    <label className="text-xs font-medium text-gray-500 mb-1.5 block">Phone</label>
                     <input
                       type="tel"
                       value={newCompany.contactPhone}
                       onChange={(e) => setNewCompany({ ...newCompany, contactPhone: e.target.value })}
-                      className="w-full border-2 border-neutral-200 p-3 focus:border-neutral-900 focus:outline-none"
-                      placeholder="+1 234 567 8900"
+                      className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-gray-400 focus:outline-none"
+                      placeholder="+91 98765 43210"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-4 pt-4">
+              <div className="flex justify-end gap-3 pt-4">
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="px-6 py-3 border-2 border-neutral-200 font-bold hover:border-neutral-900 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddCompany}
                   disabled={!newCompany.name || isUpdating}
-                  className="px-6 py-3 bg-neutral-900 text-white font-bold hover:bg-neutral-800 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="flex items-center gap-2 px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors"
                 >
                   {isUpdating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Adding...
-                    </>
+                    <><Loader2 className="w-4 h-4 animate-spin" />Adding...</>
                   ) : (
-                    <>
-                      <Plus className="w-4 h-4" />
-                      Add Company
-                    </>
+                    <><Plus className="w-4 h-4" />Add Company</>
                   )}
                 </button>
               </div>
