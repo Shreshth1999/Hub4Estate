@@ -1,102 +1,203 @@
 import { SmartSlipScanner } from '../components/SmartSlipScanner';
-import { Sparkles, Zap, CheckCircle } from 'lucide-react';
+import { Sparkles, Zap, CheckCircle, Camera, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ElectricWireDivider } from '../components/ElectricWireDivider';
+import { useInView, revealStyle } from '../hooks/useInView';
+
+const STEPS = [
+  {
+    icon: Camera,
+    number: '01',
+    title: 'Upload or Capture',
+    desc: 'Take a photo of your contractor\'s slip or upload a PDF/image from your device.',
+    accent: 'bg-orange-500/20 text-orange-400',
+  },
+  {
+    icon: Sparkles,
+    number: '02',
+    title: 'AI Extraction',
+    desc: 'AI reads the slip and extracts products, quantities, and brands automatically.',
+    accent: 'bg-violet-500/20 text-violet-400',
+  },
+  {
+    icon: CheckCircle,
+    number: '03',
+    title: 'Get Quotes',
+    desc: 'Review extracted items, edit if needed, then get competitive quotes from verified dealers.',
+    accent: 'bg-green-500/20 text-green-400',
+  },
+];
+
+const FEATURES = [
+  { title: 'Auto-Brand Detection', desc: 'Recognises 20+ electrical brands from handwriting or print.' },
+  { title: 'Multi-Brand Quotes', desc: 'Get top 5 brands quoted if none specified.' },
+  { title: 'Confidence Scores', desc: 'See AI confidence for each extracted item.' },
+  { title: 'Edit Before Submit', desc: 'Review and correct any mistakes before sending.' },
+];
 
 export function SmartSlipScanPage() {
+  const { ref: heroRef, inView: heroIn } = useInView(0.05);
+  const { ref: stepsRef, inView: stepsIn } = useInView(0.05);
+  const { ref: scannerRef, inView: scannerIn } = useInView(0.05);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-12 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-orange-50 text-orange-700 text-xs font-medium rounded-full border border-orange-100 mb-4">
+    <div className="min-h-screen bg-white">
+
+      {/* Hero — dark */}
+      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+        </div>
+        <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 text-center relative">
+          <div
+            className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-500/20 text-orange-400 text-[11px] font-semibold rounded-full mb-6 border border-orange-500/30"
+            style={revealStyle(heroIn, 0)}
+          >
             <Sparkles className="w-3.5 h-3.5" />
-            AI-Powered
+            AI-Powered · Free to use
           </div>
-          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-3">
-            Smart Slip Scanner
+          <h1
+            className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight"
+            style={revealStyle(heroIn, 0.06)}
+          >
+            Smart Slip<br />
+            <span className="gradient-text-orange">Scanner</span>
           </h1>
-          <p className="text-base text-gray-500 max-w-2xl mx-auto">
-            Upload a photo, image, or PDF of your contractor's list — AI extracts all items,
-            quantities, and brands automatically, then gets you the best quotes from verified dealers.
+          <p
+            className="text-gray-400 mb-8 max-w-xl mx-auto leading-relaxed"
+            style={revealStyle(heroIn, 0.1)}
+          >
+            Upload a photo, image, or PDF of your contractor's material list — AI extracts every item,
+            quantity, and brand, then gets you competitive quotes from verified dealers. Instantly.
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-3" style={revealStyle(heroIn, 0.14)}>
+            <a
+              href="#scanner"
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-orange-500 text-white text-sm font-bold rounded-xl hover:bg-orange-600 transition-colors btn-glow"
+            >
+              <Sparkles className="w-4 h-4" />
+              Scan a Slip Now
+            </a>
+            <Link
+              to="/rfq/create"
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-white/10 text-white text-sm font-bold rounded-xl hover:bg-white/20 transition-colors"
+            >
+              Manual Entry <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
-        {/* How it works */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-gray-300 hover:shadow-sm transition-all">
-            <div className="w-10 h-10 bg-blue-500 text-white rounded-xl flex items-center justify-center mx-auto mb-3 font-semibold text-base">
-              1
-            </div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-1.5">Upload or Capture</h3>
-            <p className="text-xs text-gray-500">
-              Take a photo of contractor's slip or upload from your device
-            </p>
-          </div>
+      <ElectricWireDivider />
 
-          <div className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-gray-300 hover:shadow-sm transition-all">
-            <div className="w-10 h-10 bg-orange-500 text-white rounded-xl flex items-center justify-center mx-auto mb-3">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-1.5">AI Extraction</h3>
-            <p className="text-xs text-gray-500">
-              AI reads the slip and extracts products, quantities, brands automatically
-            </p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-gray-300 hover:shadow-sm transition-all">
-            <div className="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center mx-auto mb-3">
-              <CheckCircle className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-1.5">Get Quotes</h3>
-            <p className="text-xs text-gray-500">
-              Instantly receive competitive quotes from verified dealers
-            </p>
-          </div>
+      {/* How it works */}
+      <div ref={stepsRef as any} className="max-w-4xl mx-auto px-6 py-14">
+        <div className="text-center mb-10" style={revealStyle(stepsIn, 0)}>
+          <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-2">How it works</h2>
+          <p className="text-sm text-gray-500">Three steps from photo to quote.</p>
         </div>
-
-        {/* Scanner Component */}
-        <SmartSlipScanner />
-
-        {/* Features */}
-        <div className="bg-gray-900 rounded-2xl text-white p-6">
-          <h3 className="font-semibold text-base mb-4">Smart Features</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-            {[
-              { title: 'Auto-Brand Detection', desc: 'Recognizes 20+ electrical brands' },
-              { title: 'Multi-Brand Quotes', desc: 'Get top 5 brands if none specified' },
-              { title: 'Confidence Scores', desc: 'See AI confidence for each item' },
-              { title: 'Edit Before Submit', desc: 'Review and correct any mistakes' },
-            ].map((f) => (
-              <div key={f.title} className="flex items-start gap-2">
-                <Zap className="w-4 h-4 text-orange-400 flex-shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-white">{f.title}:</strong>{' '}
-                  <span className="text-gray-400">{f.desc}</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {STEPS.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={i}
+                className="bg-white rounded-2xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-md transition-all card-3d"
+                style={revealStyle(stepsIn, 0.06 + i * 0.06)}
+              >
+                <div className={`w-10 h-10 ${step.accent} rounded-xl flex items-center justify-center mb-4`}>
+                  <Icon className="w-5 h-5" />
                 </div>
+                <div className="text-xs font-bold text-gray-300 mb-1">{step.number}</div>
+                <h3 className="text-sm font-bold text-gray-900 mb-2">{step.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{step.desc}</p>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Tips */}
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
-          <h3 className="text-sm font-semibold text-blue-900 mb-3">Tips for Best Results</h3>
-          <ul className="space-y-2 text-sm text-blue-800">
-            {[
-              'Ensure good lighting - avoid shadows on the paper',
-              'Keep camera steady and focus clearly on the text',
-              'Capture the entire slip in frame - don\'t cut off edges',
-              'If handwriting is unclear, type items manually for better accuracy',
-            ].map((tip, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-blue-400 mt-0.5">•</span>
-                <span>{tip}</span>
-              </li>
-            ))}
-          </ul>
+            );
+          })}
         </div>
       </div>
+
+      <ElectricWireDivider dark />
+
+      {/* Scanner — dark background */}
+      <div className="bg-[#09090B] px-6 py-14">
+        <div ref={scannerRef as any} className="max-w-4xl mx-auto" style={revealStyle(scannerIn, 0)}>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-black text-white tracking-tight mb-2">Upload your slip</h2>
+            <p className="text-sm text-gray-400">Supports photos, screenshots, and PDF files.</p>
+          </div>
+          <div id="scanner">
+            <SmartSlipScanner />
+          </div>
+        </div>
+      </div>
+
+      <ElectricWireDivider />
+
+      {/* Features + Tips */}
+      <div className="max-w-4xl mx-auto px-6 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Smart Features */}
+          <div>
+            <h3 className="text-lg font-black text-gray-900 mb-5 tracking-tight">Smart Features</h3>
+            <div className="space-y-4">
+              {FEATURES.map((f, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-7 h-7 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Zap className="w-3.5 h-3.5 text-orange-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gray-900 mb-0.5">{f.title}</p>
+                    <p className="text-xs text-gray-500">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tips */}
+          <div>
+            <h3 className="text-lg font-black text-gray-900 mb-5 tracking-tight">Tips for Best Results</h3>
+            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 space-y-3">
+              {[
+                'Good lighting — avoid shadows on the paper.',
+                'Keep camera steady, text clearly in focus.',
+                'Capture the full slip — don\'t cut off edges.',
+                'Handwriting unclear? Type items manually for better accuracy.',
+              ].map((tip, i) => (
+                <div key={i} className="flex items-start gap-2.5">
+                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                  </div>
+                  <p className="text-sm text-gray-600">{tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ElectricWireDivider dark />
+
+      {/* CTA — dark */}
+      <div className="bg-[#09090B] px-6 py-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-black text-white mb-3 tracking-tight">
+            Need to type it manually?
+          </h2>
+          <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
+            If your slip is hard to read or you already know what you need,
+            just enter it directly — still completely free.
+          </p>
+          <Link
+            to="/rfq/create"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors"
+          >
+            Post a Requirement Manually <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+
     </div>
   );
 }
