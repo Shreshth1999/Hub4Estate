@@ -47,14 +47,17 @@ export class ErrorBoundary extends Component<Props, State> {
               We're sorry, but something unexpected happened. Please try refreshing the page.
             </p>
             {this.state.error && (
-              <details className="text-left mb-6 p-4 bg-gray-50 rounded-xl text-sm">
-                <summary className="cursor-pointer font-medium text-gray-700 mb-2">
-                  Error details
-                </summary>
-                <pre className="text-red-600 overflow-auto whitespace-pre-wrap text-xs">
+              <div className="text-left mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm">
+                <p className="font-semibold text-red-700 mb-2">Error:</p>
+                <pre className="text-red-600 overflow-auto whitespace-pre-wrap text-xs break-all">
                   {this.state.error.message}
                 </pre>
-              </details>
+                {this.state.error.stack && (
+                  <pre className="text-red-400 overflow-auto whitespace-pre-wrap text-xs break-all mt-2">
+                    {this.state.error.stack.split('\n').slice(0, 5).join('\n')}
+                  </pre>
+                )}
+              </div>
             )}
             <div className="flex gap-3 justify-center">
               <button
