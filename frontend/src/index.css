@@ -544,10 +544,64 @@ input:-webkit-autofill:focus {
 
 /* Marquee Animation Keyframes */
 @keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(1.5deg); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(-6px) rotate(-1deg); }
+  50% { transform: translateY(6px) rotate(1deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-delay {
+  animation: float 5s ease-in-out 1.5s infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* 3D card hover */
+.card-3d {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-3d:hover {
+  transform: perspective(900px) rotateX(-4deg) rotateY(4deg) translateY(-10px);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+/* Orange gradient text */
+.gradient-text-orange {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow button */
+.btn-glow {
+  box-shadow: 0 0 0 rgba(249, 115, 22, 0);
+  transition: box-shadow 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+.btn-glow:hover {
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.45), 0 8px 20px rgba(249, 115, 22, 0.2);
+  transform: translateY(-2px);
 }

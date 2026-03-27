@@ -302,52 +302,51 @@ export function HomePage() {
   const ctaIn = useInView(0.1);
 
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="min-h-screen relative">
 
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="relative bg-white overflow-hidden">
-        {/* Gradient orbs */}
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full -translate-y-1/3 translate-x-1/4 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(251,146,60,0.1) 0%, transparent 65%)' }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full translate-y-1/3 -translate-x-1/4 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 65%)' }} />
-        {/* Subtle grid */}
-        <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none" />
+      <section className="relative bg-[#09090B] overflow-hidden blueprint-bg-dark">
+        {/* Ambient glow orbs */}
+        <div className="absolute top-[-15%] right-[-5%] w-[900px] h-[900px] rounded-full pointer-events-none animate-glow-pulse"
+          style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.22) 0%, transparent 65%)' }} />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[700px] h-[700px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 65%)' }} />
 
-        <div ref={heroIn.ref as any} className="max-w-6xl mx-auto px-6 relative py-20 lg:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+        <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 relative py-20 lg:py-28">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left Content */}
             <div>
               {/* Live badge */}
               <div
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-orange-50 border border-orange-100 rounded-full mb-7"
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-500/10 border border-orange-500/30 rounded-full mb-8"
                 style={revealStyle(heroIn.inView, 0)}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                <span className="text-xs font-semibold text-orange-700">
-                  {isHi ? 'Live — 500+ verified dealers' : 'Live — 500+ verified dealers across India'}
+                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">
+                  {isHi ? 'Live — 500+ verified dealers' : 'Live — 500+ Verified Dealers Across India'}
                 </span>
               </div>
 
               {/* Main Headline */}
               <h1
-                className="text-5xl md:text-6xl lg:text-[4.25rem] font-semibold text-gray-900 mb-6 leading-[1.05] tracking-tight"
+                className="text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white mb-6 leading-[1.02] tracking-tight"
                 style={revealStyle(heroIn.inView, 0.06)}
               >
-                {isHi ? tx.hero.headline : (
-                  <>We Will Get You The{' '}
-                    <span className="relative">
-                      <span className="text-orange-600">Cheapest Price</span>
-                    </span>{' '}
-                    Of Any Electrical Across India.
+                {isHi ? (
+                  <span className="gradient-text-orange">{tx.hero.headline}</span>
+                ) : (
+                  <>
+                    Get The{' '}
+                    <span className="gradient-text-orange">Cheapest Price</span>
+                    {' '}On Any Electrical In India.
                   </>
                 )}
               </h1>
 
               {/* Subheadline */}
               <p
-                className="text-lg md:text-xl text-gray-500 mb-8 max-w-xl leading-relaxed"
+                className="text-lg text-white/55 mb-8 max-w-lg leading-relaxed"
                 style={revealStyle(heroIn.inView, 0.12)}
               >
                 {tx.hero.subheadline}
@@ -360,14 +359,14 @@ export function HomePage() {
               >
                 <button
                   onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-xl hover:shadow-gray-900/20 group"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold text-base rounded-xl btn-glow group"
                 >
                   {tx.hero.ctaPrimary}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <Link
                   to="/track"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/15 text-white/70 font-medium text-base rounded-xl hover:border-white/30 hover:text-white hover:bg-white/5 transition-all duration-200"
                 >
                   {tx.hero.ctaSecondary}
                 </Link>
@@ -375,23 +374,37 @@ export function HomePage() {
 
               {/* Trust Indicators */}
               <div
-                className="flex flex-col gap-2.5"
+                className="flex flex-col gap-3"
                 style={revealStyle(heroIn.inView, 0.24)}
               >
                 {[IndianRupee, Shield, FileText].map((Icon, index) => (
-                  <div key={index} className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <div className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-3.5 h-3.5 text-gray-700" />
+                  <div key={index} className="flex items-center gap-3 text-sm text-white/50">
+                    <div className="w-7 h-7 rounded-lg bg-orange-500/15 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-orange-400" />
                     </div>
                     <span>{tx.hero.trust[index]}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Real Deal Proof Pills */}
+              <div className="mt-10 flex flex-wrap gap-3" style={revealStyle(heroIn.inView, 0.30)}>
+                {[
+                  { label: 'Sony Speaker', saved: '₹37,000 saved', sub: 'vs Croma ₹1,05,000', delay: '' },
+                  { label: 'Philips LED ×200', saved: '₹24,000 saved', sub: 'vs local dealer', delay: '0.4s' },
+                ].map((d, i) => (
+                  <div key={i} className={`bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-sm ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
+                    <p className="text-[11px] text-white/40 mb-0.5 font-medium">{d.label}</p>
+                    <p className="text-sm font-bold text-green-400">{d.saved}</p>
+                    <p className="text-[11px] text-white/35">{d.sub}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Right Side - Product Inquiry Form */}
-            <div style={revealStyle(heroIn.inView, 0.1)}>
-              <div id="inquiry-form" className="bg-white border border-gray-100 rounded-2xl p-6 lg:p-8 shadow-xl shadow-gray-900/8 ring-1 ring-gray-100">
+            <div style={revealStyle(heroIn.inView, 0.08)}>
+              <div id="inquiry-form" className="bg-white rounded-2xl p-6 lg:p-8 shadow-2xl shadow-black/50 ring-1 ring-white/10">
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
@@ -841,19 +854,35 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* ─── Brand Marquee ─────────────────────────────────────────────────────── */}
+      <div className="bg-[#09090B] border-t border-white/5 overflow-hidden py-5">
+        <div className="ticker-content gap-0">
+          {[...Array(2)].map((_, pass) => (
+            <span key={pass} className="inline-flex items-center">
+              {['Havells', 'Polycab', 'Schneider', 'Legrand', 'Anchor', 'Philips', 'Finolex', 'Siemens', 'ABB', 'Crompton', 'Orient', 'Wipro Lighting'].map(b => (
+                <span key={b} className="inline-flex items-center gap-3 mr-12 text-white/25 text-sm font-semibold tracking-widest uppercase">
+                  <span className="w-1 h-1 rounded-full bg-orange-500/50" />
+                  {b}
+                </span>
+              ))}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* ─── Stats Strip ──────────────────────────────────────────────────────── */}
-      <div className="bg-gray-950 py-10">
+      <div className="bg-[#09090B] border-t border-white/5 py-14">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-3 divide-x divide-gray-800">
+          <div className="grid grid-cols-3 divide-x divide-white/8">
             {[
-              { value: '₹10L+', label: isHi ? 'Buyers ne bachaye' : 'Saved by buyers', sub: isHi ? '120+ orders mein' : 'across 120+ orders' },
-              { value: '500+', label: isHi ? 'Verified dealers' : 'Verified dealers', sub: isHi ? '50 cities mein' : 'across 50 cities' },
+              { value: '₹10L+', label: isHi ? 'Buyers ne bachaye' : 'Saved by buyers', sub: isHi ? '120+ verified orders' : '120+ verified orders' },
+              { value: '500+', label: isHi ? 'Verified dealers' : 'Verified Dealers', sub: isHi ? '50 cities mein' : 'across 50 cities' },
               { value: '100%', label: isHi ? 'GST Invoiced' : 'GST Invoiced', sub: isHi ? 'Har transaction mein' : 'every transaction' },
             ].map((s, i) => (
-              <div key={i} className="text-center px-6 sm:px-10">
-                <p className="text-2xl sm:text-3xl font-semibold text-white mb-1">{s.value}</p>
-                <p className="text-sm font-medium text-gray-300">{s.label}</p>
-                <p className="text-xs text-gray-600 mt-0.5 hidden sm:block">{s.sub}</p>
+              <div key={i} className="text-center px-4 sm:px-10">
+                <p className="text-4xl sm:text-5xl font-black text-white mb-1.5 tracking-tight gradient-text-orange">{s.value}</p>
+                <p className="text-sm font-semibold text-white/60">{s.label}</p>
+                <p className="text-xs text-white/30 mt-1 hidden sm:block">{s.sub}</p>
               </div>
             ))}
           </div>
@@ -864,8 +893,8 @@ export function HomePage() {
       <section className="py-20 sm:py-28 bg-white">
         <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16" style={revealStyle(howIn.inView, 0)}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{tx.howItWorks.label}</p>
-            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
+            <span className="inline-block text-[11px] font-bold text-orange-600 uppercase tracking-[0.2em] mb-4 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full">{tx.howItWorks.label}</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.howItWorks.title}
             </h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
@@ -874,25 +903,31 @@ export function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto relative">
-            {/* Connecting dashed line on desktop */}
-            <div className="hidden md:block absolute left-[calc(16.66%+1.75rem)] right-[calc(16.66%+1.75rem)] border-t-2 border-dashed border-gray-200 pointer-events-none" style={{ top: '28px' }} />
+            {/* Connecting line */}
+            <div className="hidden md:block absolute left-[calc(16.66%+2.5rem)] right-[calc(16.66%+2.5rem)] border-t-2 border-dashed border-orange-200 pointer-events-none" style={{ top: '32px' }} />
 
             {tx.howItWorks.steps.map((item, index) => (
               <div
                 key={index}
-                className="bg-gray-50 border border-gray-100 rounded-2xl p-7 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative"
+                className="bg-white border border-gray-100 rounded-2xl p-7 card-3d shadow-sm hover:shadow-xl hover:border-orange-100 relative"
                 style={revealStyle(howIn.inView, 0.1 + index * 0.1)}
               >
-                <div className="w-14 h-14 flex items-center justify-center bg-gray-900 text-white text-lg font-semibold rounded-xl mb-6 ring-4 ring-gray-50 relative z-10">{item.step}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-4">{item.desc}</p>
-                <span className="inline-flex items-center text-xs font-bold text-orange-600 uppercase tracking-widest">
+                {/* Step number with glow */}
+                <div className="relative mb-6">
+                  <div className="w-16 h-16 flex items-center justify-center bg-orange-500 text-white text-xl font-black rounded-2xl relative z-10 shadow-lg shadow-orange-500/30">
+                    {item.step}
+                  </div>
+                  <div className="absolute inset-0 w-16 h-16 bg-orange-400 rounded-2xl blur-lg opacity-30 -z-10" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed mb-5">{item.desc}</p>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-600 uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
                   {item.highlight}
                 </span>
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
@@ -900,11 +935,11 @@ export function HomePage() {
       <AISection />
 
       {/* Categories Grid */}
-      <section className="py-20 sm:py-28 bg-gray-50 border-y border-gray-100">
+      <section className="py-20 sm:py-28 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Browse by category</p>
-            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
+            <span className="inline-block text-[11px] font-bold text-orange-600 uppercase tracking-[0.2em] mb-4 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full">Browse by category</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.categories.title}
             </h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
@@ -917,7 +952,7 @@ export function HomePage() {
           <div className="text-center mt-12">
             <Link
               to="/categories"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-xl hover:shadow-gray-900/20"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold rounded-xl btn-glow"
             >
               {tx.categories.cta}
               <ArrowRight className="w-5 h-5" />
@@ -927,96 +962,104 @@ export function HomePage() {
       </section>
 
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-white border-y border-gray-100">
-        <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
+      <section className="py-20 sm:py-28 bg-[#09090B] relative overflow-hidden">
+        {/* Ambient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, transparent 70%)' }} />
+
+        <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-14" style={revealStyle(dealsIn.inView, 0)}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{tx.realDeals.label}</p>
-            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
+            <span className="inline-block text-[11px] font-bold text-orange-500 uppercase tracking-[0.2em] mb-4 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">{tx.realDeals.label}</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
               {tx.realDeals.title}
             </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
+            <p className="text-lg text-white/50 max-w-xl mx-auto">
               {tx.realDeals.subtitle}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-5">
             {tx.realDeals.deals.map((deal, di) => {
               const savedAmounts = ['₹37,000', '₹24,000', '₹8,800'];
               return (
                 <div
                   key={di}
-                  className="bg-white border border-gray-100 rounded-2xl p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                  className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 card-3d hover:border-orange-500/20 hover:bg-white/[0.07]"
                   style={revealStyle(dealsIn.inView, 0.1 + di * 0.08)}
                 >
-                  <div className="mb-5">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full">{deal.tag}</span>
+                  <div className="mb-4">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1 rounded-full">{deal.tag}</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-5">{deal.title}</h3>
+                  <h3 className="text-base font-bold text-white mb-5 leading-snug">{deal.title}</h3>
                   <div className="space-y-2 mb-5">
                     {deal.rows.map((row, ri) => (
                       row.strikethrough ? (
-                        <div key={ri} className="flex justify-between items-center py-2 border-b border-gray-100">
-                          <span className="text-sm text-gray-400">{row.label}</span>
-                          <span className="text-sm font-medium text-gray-300 line-through">{row.price}</span>
+                        <div key={ri} className="flex justify-between items-center py-2 border-b border-white/8">
+                          <span className="text-sm text-white/35">{row.label}</span>
+                          <span className="text-sm font-medium text-white/25 line-through">{row.price}</span>
                         </div>
                       ) : (
-                        <div key={ri} className="flex justify-between items-center py-2.5 bg-gray-950 px-3 rounded-xl">
-                          <span className="text-sm font-semibold text-white">{row.label}</span>
-                          <span className="text-lg font-semibold text-orange-400">{row.price}</span>
+                        <div key={ri} className="flex justify-between items-center py-3 bg-orange-500/10 border border-orange-500/20 px-3.5 rounded-xl">
+                          <span className="text-sm font-bold text-white/80">{row.label}</span>
+                          <span className="text-xl font-black text-orange-400">{row.price}</span>
                         </div>
                       )
                     ))}
                   </div>
-                  <div className="border-t border-gray-100 pt-4">
-                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-1.5">{deal.savedLabel}</p>
-                    <p className="text-2xl font-semibold text-green-600">{savedAmounts[di]}</p>
-                    <p className="text-xs text-gray-400 mt-1">{deal.savedNote}</p>
+                  <div className="border-t border-white/8 pt-4">
+                    <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold mb-1.5">{deal.savedLabel}</p>
+                    <p className="text-3xl font-black text-green-400">{savedAmounts[di]}</p>
+                    <p className="text-xs text-white/30 mt-1">{deal.savedNote}</p>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <p className="text-center text-xs text-gray-400 mt-10" style={revealStyle(dealsIn.inView, 0.35)}>
+          <p className="text-center text-xs text-white/25 mt-10" style={revealStyle(dealsIn.inView, 0.35)}>
             {tx.realDeals.footnote}
           </p>
         </div>
       </section>
 
       {/* Why We Exist */}
-      <section className="py-20 sm:py-28 bg-white border-b border-gray-100">
-        <div ref={whyIn.ref as any} className="max-w-5xl mx-auto px-6">
+      <section className="py-20 sm:py-28 bg-[#09090B] relative overflow-hidden blueprint-bg-dark">
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 80% 50%, rgba(124,58,237,0.1) 0%, transparent 60%)' }} />
+
+        <div ref={whyIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-14" style={revealStyle(whyIn.inView, 0)}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">{tx.whyWeExist.label}</p>
-            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight">
+            <span className="inline-block text-[11px] font-bold text-orange-500 uppercase tracking-[0.2em] mb-4 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">{tx.whyWeExist.label}</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
               {tx.whyWeExist.title}
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.subtitle}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-5 mb-8">
+          <div className="grid md:grid-cols-2 gap-4 mb-6">
             {tx.whyWeExist.cards.map((item, index) => (
               <div
                 key={index}
-                className="bg-gray-50 border border-gray-100 rounded-2xl p-7 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                className="bg-white/[0.04] border border-white/10 rounded-2xl p-7 card-3d hover:border-orange-500/20 group"
                 style={revealStyle(whyIn.inView, 0.1 + index * 0.08)}
               >
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                <div className="w-1 h-8 bg-orange-500 rounded-full mb-5 group-hover:h-10 transition-all duration-300" />
+                <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
+                <p className="text-white/45 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
           <div
-            className="bg-gray-950 text-white p-10 text-center rounded-2xl"
+            className="border border-orange-500/20 bg-orange-500/5 rounded-2xl p-10 text-center"
             style={revealStyle(whyIn.inView, 0.35)}
           >
-            <h3 className="text-2xl sm:text-3xl font-semibold mb-3">
+            <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">
               {tx.whyWeExist.summary.title}
             </h3>
-            <p className="text-base text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base text-white/50 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.summary.desc}
             </p>
           </div>
@@ -1027,28 +1070,30 @@ export function HomePage() {
       <PersonaSection />
 
       {/* Final CTA */}
-      <section className="relative py-24 sm:py-32 bg-gray-950 overflow-hidden">
-        {/* Gradient orbs */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(251,146,60,0.08) 0%, transparent 65%)' }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 65%)' }} />
+      <section className="relative py-24 sm:py-32 overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #EA580C 0%, #F97316 40%, #FB923C 70%, #EA580C 100%)' }}>
+        {/* Noise + pattern overlay */}
+        <div className="absolute inset-0 blueprint-bg-dark opacity-20 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 65%)' }} />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(0,0,0,0.2) 0%, transparent 65%)' }} />
 
         <div ref={ctaIn.ref as any} className="max-w-4xl mx-auto px-6 text-center relative">
           <div style={revealStyle(ctaIn.inView, 0)}>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-white/70 text-[11px] font-semibold rounded-full mb-6">
-              <span className="w-1 h-1 rounded-full bg-orange-400" />
-              Free · No account required
+            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/20 text-white text-[11px] font-bold rounded-full mb-8 uppercase tracking-widest backdrop-blur-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              Free · No Account Required
             </span>
           </div>
           <h2
-            className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white mb-5 tracking-tight leading-tight"
+            className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-5 tracking-tight leading-tight"
             style={revealStyle(ctaIn.inView, 0.07)}
           >
             {tx.finalCta.title}
           </h2>
           <p
-            className="text-base text-gray-400 mb-10 max-w-xl mx-auto leading-relaxed"
+            className="text-lg text-white/75 mb-10 max-w-xl mx-auto leading-relaxed"
             style={revealStyle(ctaIn.inView, 0.13)}
           >
             {tx.finalCta.subtitle}
@@ -1059,14 +1104,14 @@ export function HomePage() {
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition-all duration-200 hover:shadow-xl hover:shadow-white/10 group"
+              className="inline-flex items-center gap-2 px-10 py-4 bg-[#09090B] text-white font-black text-base rounded-xl hover:bg-gray-900 transition-all duration-200 hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 group"
             >
               {tx.finalCta.ctaPrimary}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <Link
               to="/track"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-white/20 text-white font-medium rounded-xl hover:border-white/40 hover:bg-white/5 transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 border-2 border-white/40 text-white font-bold text-base rounded-xl hover:border-white hover:bg-white/10 transition-all duration-200"
             >
               {tx.finalCta.ctaSecondary}
             </Link>
