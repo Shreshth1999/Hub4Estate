@@ -870,19 +870,19 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* ─── Stats Strip ──────────────────────────────────────────────────────── */}
-      <div className="bg-[#09090B] border-t border-white/5 py-14">
+      {/* ─── Trust Pillars ─────────────────────────────────────────────────────── */}
+      <div className="bg-[#09090B] border-t border-white/5 py-12">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-3 divide-x divide-white/8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/8">
             {[
-              { value: '₹10L+', label: isHi ? 'Buyers ne bachaye' : 'Saved by buyers', sub: isHi ? '120+ verified orders' : '120+ verified orders' },
-              { value: '500+', label: isHi ? 'Verified dealers' : 'Verified Dealers', sub: isHi ? '50 cities mein' : 'across 50 cities' },
-              { value: '100%', label: isHi ? 'GST Invoiced' : 'GST Invoiced', sub: isHi ? 'Har transaction mein' : 'every transaction' },
-            ].map((s, i) => (
-              <div key={i} className="text-center px-4 sm:px-10">
-                <p className="text-4xl sm:text-5xl font-black text-white mb-1.5 tracking-tight gradient-text-orange">{s.value}</p>
-                <p className="text-sm font-semibold text-white/60">{s.label}</p>
-                <p className="text-xs text-white/30 mt-1 hidden sm:block">{s.sub}</p>
+              { icon: '🔍', title: 'Verified Dealers Only', desc: 'Every dealer is vetted before they can quote. No random shops, no middlemen.' },
+              { icon: '⚡', title: 'Real Competition', desc: 'Multiple dealers quote simultaneously — prices drop when they compete for your order.' },
+              { icon: '🧾', title: 'GST on Every Order', desc: 'Full GST invoice, warranty in your name, proper documentation always.' },
+            ].map((p, i) => (
+              <div key={i} className="bg-[#09090B] px-8 py-8 hover:bg-white/[0.03] transition-colors duration-300">
+                <div className="text-3xl mb-4">{p.icon}</div>
+                <h3 className="text-base font-bold text-white mb-2">{p.title}</h3>
+                <p className="text-sm text-white/40 leading-relaxed">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -890,44 +890,176 @@ export function HomePage() {
       </div>
 
       {/* ─── How It Works ─────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="bg-white overflow-hidden">
         <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16" style={revealStyle(howIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-orange-600 uppercase tracking-[0.2em] mb-4 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full">{tx.howItWorks.label}</span>
+
+          {/* Header */}
+          <div className="pt-20 sm:pt-28 text-center mb-20" style={revealStyle(howIn.inView, 0)}>
+            <span className="inline-block text-[11px] font-bold text-orange-600 uppercase tracking-[0.2em] mb-5 bg-orange-50 border border-orange-100 px-4 py-1.5 rounded-full">
+              {tx.howItWorks.label}
+            </span>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.howItWorks.title}
             </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              {tx.howItWorks.subtitle}
-            </p>
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">{tx.howItWorks.subtitle}</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto relative">
-            {/* Connecting line */}
-            <div className="hidden md:block absolute left-[calc(16.66%+2.5rem)] right-[calc(16.66%+2.5rem)] border-t-2 border-dashed border-orange-200 pointer-events-none" style={{ top: '32px' }} />
-
-            {tx.howItWorks.steps.map((item, index) => (
-              <div
-                key={index}
-                className="bg-white border border-gray-100 rounded-2xl p-7 card-3d shadow-sm hover:shadow-xl hover:border-orange-100 relative"
-                style={revealStyle(howIn.inView, 0.1 + index * 0.1)}
-              >
-                {/* Step number with glow */}
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 flex items-center justify-center bg-orange-500 text-white text-xl font-black rounded-2xl relative z-10 shadow-lg shadow-orange-500/30">
-                    {item.step}
-                  </div>
-                  <div className="absolute inset-0 w-16 h-16 bg-orange-400 rounded-2xl blur-lg opacity-30 -z-10" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-5">{item.desc}</p>
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-600 uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                  {item.highlight}
-                </span>
+          {/* Step 1 — Submit */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center pb-24 border-b border-gray-100"
+            style={revealStyle(howIn.inView, 0.1)}>
+            <div>
+              <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-full px-4 py-1.5 mb-6">
+                <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-black flex items-center justify-center">1</span>
+                <span className="text-sm font-bold text-orange-700 uppercase tracking-wider">{tx.howItWorks.steps[0].highlight}</span>
               </div>
-            ))}
+              <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">{tx.howItWorks.steps[0].title}</h3>
+              <p className="text-gray-500 text-lg leading-relaxed mb-8">{tx.howItWorks.steps[0].desc}</p>
+              <div className="flex flex-col gap-3">
+                {['Tell us the product name, model, or brand', 'Add quantity and delivery city', 'Upload a photo or speak your requirement — optional'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                    <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-3 h-3 text-orange-500" />
+                    </div>
+                    {f}
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Illustrated form preview */}
+            <div className="bg-[#09090B] rounded-2xl p-6 border border-white/10 shadow-2xl shadow-black/20 animate-float-slow">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                <span className="text-[11px] text-white/30 ml-2 font-mono">hub4estate.com</span>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                  <div className="text-[10px] text-white/35 uppercase tracking-wider mb-1">Product / Model</div>
+                  <div className="text-white text-sm font-medium flex items-center gap-2">
+                    Polycab FRLS 2.5mm² Wire
+                    <span className="text-orange-400 text-[10px]">|</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                    <div className="text-[10px] text-white/35 uppercase tracking-wider mb-1">Quantity</div>
+                    <div className="text-white text-sm font-medium">200 metres</div>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                    <div className="text-[10px] text-white/35 uppercase tracking-wider mb-1">City</div>
+                    <div className="text-white text-sm font-medium">Jaipur</div>
+                  </div>
+                </div>
+                <div className="bg-orange-500 rounded-xl px-4 py-3 text-white text-sm font-bold text-center flex items-center justify-center gap-2">
+                  Get Best Price <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+              <p className="text-[10px] text-white/25 text-center mt-3">No account needed · Takes 2 minutes</p>
+            </div>
           </div>
+
+          {/* Step 2 — We Source */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24 border-b border-gray-100"
+            style={revealStyle(howIn.inView, 0.15)}>
+            {/* Illustrated dealer network — left side */}
+            <div className="bg-[#09090B] rounded-2xl p-6 border border-white/10 shadow-2xl shadow-black/20 order-2 lg:order-1 animate-float-slow">
+              <div className="text-[11px] text-violet-400 font-bold uppercase tracking-wider mb-5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+                Contacting dealers in Jaipur...
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { name: 'Delhi Electricals', status: 'Quote received', price: '₹83/m', done: true },
+                  { name: 'Jaipur Traders', status: 'Quote received', price: '₹97/m', done: true },
+                  { name: 'Raj Wire Stores', status: 'Preparing quote...', price: '', done: false },
+                  { name: 'Prime Suppliers', status: 'Notified', price: '', done: false },
+                ].map((d, i) => (
+                  <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-xl border ${d.done ? 'bg-violet-500/10 border-violet-500/20' : 'bg-white/[0.03] border-white/8'}`}>
+                    <div>
+                      <div className="text-sm font-medium text-white">{d.name}</div>
+                      <div className={`text-[11px] ${d.done ? 'text-violet-400' : 'text-white/30'}`}>{d.status}</div>
+                    </div>
+                    {d.price && <div className="text-base font-black text-violet-300">{d.price}</div>}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 text-center text-[11px] text-white/25">4–6 dealers contacted automatically</div>
+            </div>
+            <div className="order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-full px-4 py-1.5 mb-6">
+                <span className="w-6 h-6 rounded-full bg-violet-600 text-white text-xs font-black flex items-center justify-center">2</span>
+                <span className="text-sm font-bold text-violet-700 uppercase tracking-wider">{tx.howItWorks.steps[1].highlight}</span>
+              </div>
+              <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">{tx.howItWorks.steps[1].title}</h3>
+              <p className="text-gray-500 text-lg leading-relaxed mb-8">{tx.howItWorks.steps[1].desc}</p>
+              <div className="flex flex-col gap-3">
+                {['We reach out to 4–6 verified dealers in your area', 'Dealers compete — price pressure happens automatically', 'You never have to make a single call'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                    <div className="w-5 h-5 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-3 h-3 text-violet-500" />
+                    </div>
+                    {f}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Step 3 — Compare & Choose */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24 pb-28"
+            style={revealStyle(howIn.inView, 0.2)}>
+            <div>
+              <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-1.5 mb-6">
+                <span className="w-6 h-6 rounded-full bg-green-600 text-white text-xs font-black flex items-center justify-center">3</span>
+                <span className="text-sm font-bold text-green-700 uppercase tracking-wider">{tx.howItWorks.steps[2].highlight}</span>
+              </div>
+              <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">{tx.howItWorks.steps[2].title}</h3>
+              <p className="text-gray-500 text-lg leading-relaxed mb-8">{tx.howItWorks.steps[2].desc}</p>
+              <div className="flex flex-col gap-3">
+                {['All quotes in one place — price, delivery time, dealer rating', 'Pick the deal that works for you', 'GST invoice + delivery arranged after you confirm'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-3 h-3 text-green-600" />
+                    </div>
+                    {f}
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Illustrated quote comparison */}
+            <div className="bg-[#09090B] rounded-2xl p-6 border border-white/10 shadow-2xl shadow-black/20 animate-float-slow">
+              <div className="text-[11px] text-green-400 font-bold uppercase tracking-wider mb-5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500" />
+                4 quotes received — Polycab FRLS 2.5mm², 200m
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { name: 'Delhi Electricals', price: '₹83/m', total: '₹16,600', delivery: '2 days', best: true },
+                  { name: 'Jaipur Traders', price: '₹97/m', total: '₹19,400', delivery: '1 day', best: false },
+                  { name: 'Raj Wire Stores', price: '₹109/m', total: '₹21,800', delivery: '3 days', best: false },
+                  { name: 'Prime Suppliers', price: '₹127/m', total: '₹25,400', delivery: 'Same day', best: false },
+                ].map((q, i) => (
+                  <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-xl border ${q.best ? 'bg-green-500/12 border-green-500/30' : 'bg-white/[0.03] border-white/8'}`}>
+                    <div>
+                      {q.best && <div className="text-[10px] text-green-400 font-black mb-0.5">★ BEST PRICE</div>}
+                      <div className="text-sm font-medium text-white">{q.name}</div>
+                      <div className="text-[11px] text-white/30">{q.delivery} delivery</div>
+                    </div>
+                    <div className="text-right">
+                      <div className={`text-lg font-black ${q.best ? 'text-green-400' : 'text-white/50'}`}>{q.price}</div>
+                      <div className={`text-[11px] ${q.best ? 'text-green-400/70' : 'text-white/25'}`}>{q.total} total</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-2.5 text-center">
+                <span className="text-sm font-bold text-green-400">₹8,800 saved vs highest quote</span>
+                <span className="text-[11px] text-white/30 ml-2">· Real deal, verified</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
