@@ -334,6 +334,30 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 .slide.active .ai-s3{transition-delay:2.2s}
 .slide.active .ai-s4{transition-delay:3.15s}
 .slide.active .ai-s5{transition-delay:4.0s}
+
+/* ── Merged s01: horizontal funnel bars ── */
+.h-bar{height:0;transition:height 1.3s cubic-bezier(.22,.61,.36,1)}
+.slide.active .h-bar-1{height:var(--fh);transition-delay:.55s}
+.slide.active .h-bar-2{height:var(--fh);transition-delay:.85s}
+.slide.active .h-bar-3{height:var(--fh);transition-delay:1.15s}
+
+/* ── Merged s01: right-col slide-in (inline transition used directly) ── */
+.slide.active .slide-r-1{opacity:1!important;transform:translateX(0)!important}
+.slide.active .slide-r-2{opacity:1!important;transform:translateX(0)!important}
+.slide.active .slide-r-3{opacity:1!important;transform:translateX(0)!important}
+
+/* ── s03: phone ring ── */
+@keyframes phoneRing{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(-18deg) scale(1.1)}20%{transform:rotate(14deg) scale(1.1)}30%{transform:rotate(-12deg)}40%{transform:rotate(10deg)}50%{transform:rotate(-6deg)}}
+.phone-ring{display:inline-block;animation:phoneRing 1.8s ease-in-out 1.2s infinite;transform-origin:top center}
+
+/* ── s03: ripple rings ── */
+@keyframes ripple{0%{transform:translateX(-50%) scale(.8);opacity:.5}100%{transform:translateX(-50%) scale(2.2);opacity:0}}
+
+/* ── sAI: 3-phase columns ── */
+.ai-phase{opacity:0;transform:translateY(18px)}
+.slide.active .ai-phase-1{opacity:1;transform:translateY(0);transition:opacity .6s ease,transform .6s ease;transition-delay:.2s}
+.slide.active .ai-phase-2{opacity:1;transform:translateY(0);transition:opacity .6s ease,transform .6s ease;transition-delay:.65s}
+.slide.active .ai-phase-3{opacity:1;transform:translateY(0);transition:opacity .6s ease,transform .6s ease;transition-delay:1.2s}
 </style>
 </head>
 
@@ -355,111 +379,121 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 <!-- ════════════════════════════════
      01  HOOK
 ════════════════════════════════ -->
-<section class="slide active" id="s01">
+<section class="slide active" id="s01" style="padding:14px 44px 20px">
 
-  <!-- Warm ambient bloom — behind name -->
-  <div style="position:absolute;width:780px;height:380px;background:radial-gradient(ellipse at center,rgba(181,103,42,.09) 0%,transparent 68%);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-54%);border-radius:50%;z-index:1"></div>
+  <!-- Ambient glow -->
+  <div style="position:absolute;width:640px;height:280px;background:radial-gradient(ellipse at center,rgba(181,103,42,.08) 0%,transparent 68%);pointer-events:none;top:50%;left:28%;transform:translate(-50%,-50%);border-radius:50%;z-index:1"></div>
 
-  <!-- Subtle left arc, draws in -->
-  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="-2%" cy="50%" r="34%" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".06"
-      style="stroke-dasharray:900;stroke-dashoffset:900;animation:drawCircle 3.8s cubic-bezier(.4,0,.2,1) .9s forwards"/>
-    <circle cx="102%" cy="50%" r="24%" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".04"
-      style="stroke-dasharray:660;stroke-dashoffset:660;animation:drawCircle 3.8s cubic-bezier(.4,0,.2,1) 1.5s forwards"/>
+  <!-- Draw-in arcs -->
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1">
+    <circle cx="-2%" cy="50%" r="30%" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".055"
+      style="stroke-dasharray:900;stroke-dashoffset:900;animation:drawCircle 3.8s cubic-bezier(.4,0,.2,1) .8s forwards"/>
+    <circle cx="105%" cy="50%" r="22%" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".04"
+      style="stroke-dasharray:660;stroke-dashoffset:660;animation:drawCircle 3.8s cubic-bezier(.4,0,.2,1) 1.4s forwards"/>
   </svg>
 
-  <!-- 3 floating ambient stats — bottom, subtle -->
-  <div class="floater" style="bottom:14%;left:9%;--fd:5s;--fd-d:.5s;--dx:4px;--dy:-10px;z-index:3;font-size:12px;opacity:.85">&#9889; 10 Active Clients</div>
-  <div class="floater" style="bottom:14%;right:9%;--fd:4.6s;--fd-d:1.2s;--dx:-4px;--dy:-11px;z-index:3;font-size:12px;opacity:.85">&#128176; &#8377;1.25L+ Saved</div>
-  <div class="floater" style="bottom:8%;left:50%;transform:translateX(-50%);--fd:5.2s;--fd-d:.8s;--dx:0px;--dy:-9px;z-index:3;font-size:11.5px;opacity:.8">&#127963;&#65039; Rajasthan &rarr; All of India</div>
+  <!-- Main two-column layout -->
+  <div style="display:flex;gap:32px;align-items:center;width:100%;max-width:1060px;position:relative;z-index:2">
 
-  <!-- Main content -->
-  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px;position:relative;z-index:2">
+    <!-- ── LEFT: Brand Identity ── -->
+    <div style="flex:0 0 43%;display:flex;flex-direction:column;gap:13px">
 
-    <!-- Eyebrow -->
-    <div class="a1" style="font-size:10.5px;font-weight:700;letter-spacing:4.5px;text-transform:uppercase;color:var(--accent)">India &nbsp;·&nbsp; 2026</div>
+      <div class="a1" style="font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--accent)">India &nbsp;·&nbsp; 2026</div>
 
-    <!-- THE NAME -->
-    <div class="a2" style="position:relative;display:inline-block;padding:0 38px">
-      <h1 class="display" style="font-size:clamp(68px,12vw,130px);line-height:.92;letter-spacing:-5px;background:linear-gradient(135deg,#9a4e1a 0%,#c8702a 30%,#e8902a 55%,#c0641e 80%,#8a4018 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Hub4Estate</h1>
-      <!-- Left sparkle — filled solid star -->
-      <svg width="26" height="26" viewBox="0 0 24 24" style="position:absolute;left:4px;top:6px;animation:sparkle 2.8s ease-in-out 1.2s infinite">
-        <polygon points="12,2 14.4,9.2 22,9.2 16,13.9 18.5,21.1 12,16.4 5.5,21.1 8,13.9 2,9.2 9.6,9.2" fill="var(--accent)" opacity=".55"/>
-      </svg>
-      <!-- Right sparkle — smaller -->
-      <svg width="18" height="18" viewBox="0 0 24 24" style="position:absolute;right:8px;bottom:8px;animation:sparkle 2.8s ease-in-out 1.9s infinite">
-        <polygon points="12,2 14.4,9.2 22,9.2 16,13.9 18.5,21.1 12,16.4 5.5,21.1 8,13.9 2,9.2 9.6,9.2" fill="var(--accent)" opacity=".4"/>
-      </svg>
-    </div>
-
-    <!-- Animated separator line -->
-    <div class="a3" style="width:56px;height:2.5px;background:var(--accent);border-radius:2px;transform-origin:center;animation:scaleIn .5s cubic-bezier(.34,1.4,.64,1) .38s both"></div>
-
-    <!-- Tagline — single block fadeUp, no broken word spans -->
-    <p class="a4" style="font-family:'Playfair Display',serif;font-size:clamp(19px,2.5vw,28px);font-style:italic;color:var(--text2);max-width:580px;line-height:1.55;margin:0;font-weight:400">
-      "The real price has always existed.<br>
-      We just made it <span style="color:var(--accent);font-weight:900;font-style:normal">visible.</span>"
-    </p>
-
-    <!-- Descriptor -->
-    <div class="a5" style="font-size:11.5px;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;color:var(--text3)">
-      Verified Procurement &nbsp;·&nbsp; Electricals First &nbsp;·&nbsp; India
-    </div>
-
-    <!-- LLP pill -->
-    <div class="a6" style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.4px;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:5px 20px;box-shadow:var(--sh)">
-      HUB4ESTATE LLP &nbsp;·&nbsp; LLPIN ACW-4269 &nbsp;·&nbsp; March 2026, Rajasthan
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ════════════════════════════════
-     02  SUPPLIER FUNNEL
-════════════════════════════════ -->
-<section class="slide" id="s02">
-  <div class="s-wrap">
-    <div class="s-head">
-      <div class="label">The Problem — Supply Side</div>
-      <h2 class="display" style="font-size:clamp(26px,4vw,44px)">The Platform Dealers Are Abandoning</h2>
-      <div class="sep"></div>
-    </div>
-
-    <div style="display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
-      <div class="funnel a1">
-        <div class="f-tier" style="width:100%;background:#8a7a6a;font-size:16px">
-          <span>84 Lakh Registered</span><span style="font-size:12px;opacity:.8">100%</span>
-        </div>
-        <div class="f-arrow a2" style="border-top:16px solid #8a7a6a"></div>
-        <div class="f-tier a2" style="width:72%;background:var(--accent);font-size:14px">
-          <span>2.17 Lakh Actually Pay</span><span style="font-size:11px;opacity:.8">2.6%</span>
-        </div>
-        <div class="f-arrow a3" style="border-top:16px solid var(--accent)"></div>
-        <div class="f-tier a3" style="width:44%;background:var(--red);font-size:13px">
-          <span>~1.3 Lakh Stay</span><span style="font-size:10px;opacity:.8">~60%</span>
-        </div>
+      <div class="a2" style="position:relative;display:inline-block">
+        <h1 class="display" style="font-size:clamp(52px,9vw,100px);line-height:.9;letter-spacing:-4px;background:linear-gradient(135deg,#9a4e1a 0%,#c8702a 30%,#e8902a 55%,#c0641e 80%,#8a4018 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Hub4Estate</h1>
+        <svg width="24" height="24" viewBox="0 0 24 24" style="position:absolute;left:-10px;top:2px;animation:sparkle 2.8s ease-in-out 1.2s infinite">
+          <polygon points="12,2 14.4,9.2 22,9.2 16,13.9 18.5,21.1 12,16.4 5.5,21.1 8,13.9 2,9.2 9.6,9.2" fill="var(--accent)" opacity=".55"/>
+        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" style="position:absolute;right:0;bottom:4px;animation:sparkle 2.8s ease-in-out 2s infinite">
+          <polygon points="12,2 14.4,9.2 22,9.2 16,13.9 18.5,21.1 12,16.4 5.5,21.1 8,13.9 2,9.2 9.6,9.2" fill="var(--accent)" opacity=".4"/>
+        </svg>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:14px;min-width:220px">
-        <div class="card a4" style="text-align:center;padding:20px">
-          <div class="big-stat" style="font-size:46px;color:var(--red)" data-count="40" data-suffix="%">40%</div>
-          <div class="caption" style="margin-top:6px;font-size:12.5px;color:var(--text2)">of paying dealers<br>quit within one year</div>
-        </div>
-        <div class="card a5" style="text-align:center;padding:20px">
-          <div class="big-stat" style="font-size:26px">&#8377;70K</div>
-          <div class="caption" style="margin-top:6px;font-size:12.5px">avg annual spend<br>on <strong style="color:var(--red);font-weight:900">cold, unfiltered</strong> leads</div>
-        </div>
-        <div class="card a6" style="text-align:center;padding:20px">
-          <div class="big-stat" style="font-size:38px;color:var(--red)">1.8&#9733;</div>
-          <div class="caption" style="margin-top:6px;font-size:12.5px">Play Store rating —<br>from paying customers</div>
-        </div>
+      <div class="a3" style="width:48px;height:2.5px;background:var(--accent);border-radius:2px"></div>
+
+      <p class="a4" style="font-family:'Playfair Display',serif;font-size:clamp(15px,2vw,22px);font-style:italic;color:var(--text2);line-height:1.55;margin:0;font-weight:400;max-width:360px">
+        &#8220;The real price has always existed.<br>We just made it <span style="color:var(--accent);font-weight:900;font-style:normal">visible.</span>&#8221;
+      </p>
+
+      <div class="a5" style="font-size:10.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3)">
+        Verified Procurement &nbsp;·&nbsp; Electricals First
+      </div>
+
+      <div class="a6" style="display:flex;gap:7px;flex-wrap:wrap">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-size:10.5px;font-weight:700;color:var(--text2);box-shadow:var(--sh)">&#9889; 10 Active Clients</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-size:10.5px;font-weight:700;color:var(--text2);box-shadow:var(--sh)">&#128176; &#8377;1.25L+ Saved</div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-size:10.5px;font-weight:700;color:var(--text2);box-shadow:var(--sh)">&#127959;&#65039; Rajasthan &rarr; India</div>
+      </div>
+
+      <div class="a6" style="font-size:9.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:4px 16px;display:inline-block;box-shadow:var(--sh)">
+        HUB4ESTATE LLP &middot; LLPIN ACW-4269 &middot; March 2026
       </div>
     </div>
 
+    <!-- Vertical divider -->
+    <div style="width:1px;height:300px;background:linear-gradient(to bottom,transparent,var(--border) 20%,var(--border) 80%,transparent);flex-shrink:0"></div>
+
+    <!-- ── RIGHT: Market Reality ── -->
+    <div style="flex:1;display:flex;flex-direction:column;gap:11px">
+
+      <div style="opacity:0;transform:translateX(22px);transition:opacity .55s ease,transform .55s ease;transition-delay:.35s" class="slide-r-1">
+        <div class="label" style="margin-bottom:3px">Why The Market Is Broken</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--text2)">&#8377;2,200 Cr revenue. 84 lakh dealers. Still rated <span style="color:var(--red)">1.8&#9733;</span>.</div>
+      </div>
+
+      <!-- Horizontal funnel -->
+      <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;box-shadow:var(--sh);opacity:0;transform:translateX(22px);transition:opacity .55s ease,transform .55s ease;transition-delay:.7s" class="slide-r-2">
+        <div style="font-size:9.5px;font-weight:800;color:var(--text2);margin-bottom:10px;letter-spacing:.3px">INDIAMART DEALER FUNNEL</div>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:64px">
+          <div style="flex:3;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:11px;font-weight:900;color:var(--text2)">84L</div>
+            <div class="h-bar h-bar-1" style="width:100%;background:#9a8a78;border-radius:4px 4px 0 0;--fh:48px"></div>
+            <div style="font-size:8px;color:var(--text3);text-align:center;line-height:1.3">Registered</div>
+          </div>
+          <div style="color:var(--border);font-size:16px;font-weight:700;margin-bottom:22px">&rarr;</div>
+          <div style="flex:1.4;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:11px;font-weight:900;color:var(--accent)">2.17L</div>
+            <div class="h-bar h-bar-2" style="width:100%;background:var(--accent);border-radius:4px 4px 0 0;--fh:28px"></div>
+            <div style="font-size:8px;color:var(--text3);text-align:center;line-height:1.3">Actually Pay<br>(2.6%)</div>
+          </div>
+          <div style="color:var(--border);font-size:16px;font-weight:700;margin-bottom:22px">&rarr;</div>
+          <div style="flex:.8;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:11px;font-weight:900;color:var(--red)">1.3L</div>
+            <div class="h-bar h-bar-3" style="width:100%;background:var(--red);border-radius:4px 4px 0 0;--fh:16px"></div>
+            <div style="font-size:8px;color:var(--text3);text-align:center;line-height:1.3">Stay (~60%)</div>
+          </div>
+        </div>
+        <div style="margin-top:6px;font-size:9px;color:var(--red);font-weight:700">&#9888; 40% of paying dealers quit every year &mdash; unresolved since 2012</div>
+      </div>
+
+      <!-- 4-stat KPI grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;opacity:0;transform:translateX(22px);transition:opacity .6s ease,transform .6s ease;transition-delay:1.05s" class="slide-r-3">
+
+        <div style="background:var(--red-lt);border:1.5px solid #e8b8b8;border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh)">
+          <div style="font-size:28px;font-weight:900;color:var(--red);line-height:1;letter-spacing:-1px;flex-shrink:0">1.8&#9733;</div>
+          <div style="font-size:9.5px;color:var(--text2);line-height:1.45">IndiaMART Play Store rating &mdash; from paying dealers</div>
+        </div>
+
+        <div style="background:var(--red-lt);border:1.5px solid #e8b8b8;border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh)">
+          <div style="font-size:28px;font-weight:900;color:var(--red);line-height:1;letter-spacing:-1px;flex-shrink:0" data-count="40" data-suffix="%">40%</div>
+          <div style="font-size:9.5px;color:var(--text2);line-height:1.45">annual dealer churn &mdash; unresolved for 12 years</div>
+        </div>
+
+        <div style="background:var(--accent-lt);border:1.5px solid #e8d0b5;border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh)">
+          <div style="font-size:24px;font-weight:900;color:var(--accent);line-height:1;letter-spacing:-1px;flex-shrink:0">&#8377;70K</div>
+          <div style="font-size:9.5px;color:var(--text2);line-height:1.45">avg spend per dealer/yr on cold, unfiltered leads</div>
+        </div>
+
+        <div style="background:var(--green-lt);border:1.5px solid #b0d8b0;border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh)">
+          <div style="font-size:24px;font-weight:900;color:var(--green);line-height:1;letter-spacing:-1px;flex-shrink:0">34.7%</div>
+          <div style="font-size:9.5px;color:var(--text2);line-height:1.45">avg savings Hub4Estate delivers below retail</div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </section>
-
 
 <!-- ════════════════════════════════
      03  BUYER PAIN
@@ -467,40 +501,58 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 <section class="slide" id="s03">
   <div class="s-wrap">
     <div class="s-head">
-      <div class="label">The Problem — Demand Side</div>
+      <div class="label">The Problem &mdash; Demand Side</div>
       <h2 class="display" style="font-size:clamp(26px,4vw,44px)">Buyers Are Paying the Price</h2>
       <div class="sep"></div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:800px">
-      <div class="card a1" style="text-align:center;padding:30px 24px">
-        <div style="font-size:48px;margin-bottom:12px">&#128222;</div>
-        <div class="big-stat" style="font-size:clamp(32px,5.5vw,52px);color:var(--red)" data-count="4100" data-prefix="₹" data-suffix=" Cr">4,100 Cr</div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin:8px 0">spam calls / year in India</div>
-        <div class="caption" style="font-size:13px">Post one requirement online — your phone becomes unusable for days. Zero privacy, maximum noise.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:820px">
+
+      <!-- Spam card -->
+      <div class="card a1" style="text-align:center;padding:30px 24px;position:relative;overflow:hidden">
+        <!-- Background pulse rings -->
+        <div style="position:absolute;top:32px;left:50%;transform:translateX(-50%);width:70px;height:70px;border-radius:50%;border:2px solid rgba(155,53,53,.15);animation:ripple 2s ease-out 1.8s infinite"></div>
+        <div style="position:absolute;top:20px;left:50%;transform:translateX(-50%);width:94px;height:94px;border-radius:50%;border:1.5px solid rgba(155,53,53,.08);animation:ripple 2s ease-out 2.2s infinite"></div>
+        <div class="phone-ring" style="font-size:44px;margin-bottom:10px;display:block">&#128222;</div>
+        <div class="big-stat" style="font-size:clamp(30px,5vw,50px);color:var(--red);letter-spacing:-1.5px" data-count="490" data-prefix="$" data-suffix="M+">$490M+</div>
+        <div style="font-size:13px;font-weight:800;color:var(--text);margin:8px 0">spam calls / year in India</div>
+        <div class="caption" style="font-size:12.5px">Post one requirement online &mdash; your phone becomes unusable for days. Zero privacy, maximum noise.</div>
+        <div style="margin-top:10px;display:inline-block;background:var(--red-lt);border-radius:8px;padding:4px 10px;font-size:10px;color:var(--red);font-weight:700">&#8377;4,100 Cr &asymp; $490M annual damage</div>
       </div>
 
+      <!-- Savings card -->
       <div class="card a2" style="text-align:center;padding:30px 24px">
-        <div style="font-size:48px;margin-bottom:12px">&#128176;</div>
-        <div class="big-stat" style="font-size:clamp(32px,5.5vw,52px);color:var(--red)">34.7%</div>
-        <div style="font-size:14px;font-weight:800;color:var(--text);margin:8px 0">avg savings below retail</div>
-        <div class="caption" style="font-size:13px">Documented across all client deals. No benchmark, no comparison = buyers absorb the full markup silently.</div>
+        <div style="font-size:44px;margin-bottom:10px">&#128176;</div>
+        <div class="big-stat" style="font-size:clamp(30px,5vw,50px);color:var(--red)" data-count="34.7" data-suffix="%">34.7%</div>
+        <div style="font-size:13px;font-weight:800;color:var(--text);margin:8px 0">avg savings below retail</div>
+        <div class="caption" style="font-size:12.5px">Documented across all client deals. No benchmark, no comparison = buyers absorb the full markup silently.</div>
+        <!-- Mini deal proof -->
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:7px;padding:4px 10px">
+            <span style="font-size:9.5px;color:var(--text3)">Croma quote</span>
+            <span style="font-size:9.5px;font-weight:800;color:var(--red)">&#8377;1,05,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:var(--green-lt);border-radius:7px;padding:4px 10px;border:1px solid #b0d8b0">
+            <span style="font-size:9.5px;color:var(--green);font-weight:700">Hub4Estate</span>
+            <span style="font-size:9.5px;font-weight:900;color:var(--green)">&#8377;65,000 &#10003;</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="a3" style="background:var(--accent-lt);border:1px solid #e8d0b5;border-radius:14px;padding:22px 32px;max-width:680px;width:100%;position:relative">
+    <!-- Quote card — slides in -->
+    <div class="a3" style="background:var(--accent-lt);border:1px solid #e8d0b5;border-radius:14px;padding:20px 30px;max-width:680px;width:100%;position:relative">
       <p style="font-size:15px;line-height:1.8;color:var(--text);font-weight:500">
-        <span style="font-weight:900;color:var(--accent)">"Same product.</span> Quoted &#8377;1,05,000. We sourced it at &#8377;65,000.
+        <span style="font-weight:900;color:var(--accent)">&#8220;Same product.</span> Quoted &#8377;1,05,000. We sourced it at &#8377;65,000.
       </p>
-      <p style="font-size:15px;font-weight:900;color:var(--text);margin-top:4px">It's not a communication problem. <span class="squiggle">It's an access problem.</span>"</p>
-      <!-- Decorative sketch arrow -->
+      <p style="font-size:15px;font-weight:900;color:var(--text);margin-top:4px">It&#8217;s not a communication problem. <span class="squiggle">It&#8217;s an access problem.</span>&#8221;</p>
+      <div style="position:absolute;top:-10px;left:24px;background:var(--accent);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:100px;padding:3px 12px">Real Deal &mdash; Verified</div>
       <svg width="38" height="38" viewBox="0 0 38 38" style="position:absolute;right:-14px;top:-14px;pointer-events:none;opacity:.7">
         <path d="M8 28 Q16 10 26 8 M22 6 L26 8 L24 13" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
   </div>
 </section>
-
 
 <!-- ════════════════════════════════
      04  SOLUTION
@@ -709,127 +761,158 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 <!-- ════════════════════════════════
      AI  AI-FIRST PLATFORM
 ════════════════════════════════ -->
-<section class="slide" id="sAI" style="padding:14px 44px 22px">
-  <div style="width:100%;max-width:1060px;display:flex;flex-direction:column;gap:10px;align-items:center">
+<section class="slide" id="sAI" style="padding:12px 36px 18px">
+  <div style="width:100%;max-width:1080px;display:flex;flex-direction:column;gap:10px;align-items:center">
 
     <div style="text-align:center">
       <div class="label a1">The Intelligence Layer</div>
-      <h2 class="display a2" style="font-size:clamp(20px,3vw,36px)">Not a chatbot. <span style="color:var(--accent)">An AI that closes deals.</span></h2>
+      <h2 class="display a2" style="font-size:clamp(19px,2.8vw,34px)">AI that works <span style="color:var(--accent)">for the dealer</span> &mdash; not just answers questions.</h2>
     </div>
 
-    <div style="display:flex;gap:28px;align-items:flex-start;width:100%" class="a3">
+    <!-- 3-phase horizontal flow -->
+    <div style="display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:14px;width:100%" class="a3">
 
-      <!-- ── LEFT: Animated phone demo ── -->
-      <div style="flex:0 0 272px;background:var(--card);border-radius:22px;border:2px solid var(--border);box-shadow:var(--sh-xl);overflow:hidden">
-
-        <!-- Phone header bar -->
-        <div style="background:var(--accent);padding:9px 14px;display:flex;align-items:center;gap:9px">
-          <div style="width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px">&#129302;</div>
-          <div>
-            <div style="color:#fff;font-size:10.5px;font-weight:800;letter-spacing:-.3px">Hub4Estate AI</div>
-            <div style="color:rgba(255,255,255,.72);font-size:8.5px">&#9679; Live &mdash; Hinglish ready</div>
-          </div>
-          <div style="margin-left:auto;background:rgba(255,255,255,.18);border-radius:100px;padding:3px 9px;font-size:8px;color:#fff;font-weight:700">DEALER VIEW</div>
-        </div>
-
-        <!-- Chat messages — each .ai-step fades in staggered -->
-        <div style="padding:11px 11px;display:flex;flex-direction:column;gap:7px;background:#f9f5ef">
-
-          <!-- s1: Lead notification -->
-          <div class="ai-step ai-s1" style="background:var(--card);border-radius:11px;padding:9px 11px;border-left:3px solid var(--accent);box-shadow:0 1px 6px rgba(0,0,0,.06)">
-            <div style="font-size:8px;color:var(--accent);font-weight:800;letter-spacing:1px;margin-bottom:3px">&#128276; NEW LEAD &mdash; Jaipur</div>
-            <div style="font-size:9.5px;color:var(--text2);line-height:1.55;font-weight:600">Polycab 2.5mm&#178; FRLS wire &mdash; 500m</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:2px">Budget open &middot; Delivery urgent</div>
-          </div>
-
-          <!-- s2: AI analysis -->
-          <div class="ai-step ai-s2" style="display:flex;align-items:flex-start;gap:6px">
-            <div style="width:22px;height:22px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px">&#129302;</div>
-            <div style="background:#fff;border-radius:4px 12px 12px 12px;padding:8px 10px;font-size:9.5px;color:var(--text2);line-height:1.6;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05)">
-              Specs match kiye &#10003;<br>
-              <span style="color:var(--green);font-weight:800">Margin range: &#8377;82&ndash;88/m</span><br>
-              Competitor last bid &#8377;79/m &mdash; you can win at &#8377;85.
-              <div style="color:var(--accent);font-weight:700;font-size:8.5px;margin-top:4px">&#9889; Draft ready &rarr;</div>
+      <!-- ── PHASE 1: Buyer posted a lead ── -->
+      <div class="ai-phase ai-phase-1" style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--accent);color:#fff;border-radius:10px 10px 0 0;padding:7px 12px;font-size:9.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center">&#128203; Buyer Posted a Lead</div>
+        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:0 0 14px 14px;padding:14px;box-shadow:var(--sh);flex:1;display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:10.5px;font-weight:800;color:var(--text)">Anonymous Requirement</div>
+          <div style="background:var(--bg);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:9px;color:var(--text3);font-weight:700">PRODUCT</span>
+              <span style="font-size:10px;font-weight:800;color:var(--text)">Polycab 2.5mm&#178; FRLS</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:9px;color:var(--text3);font-weight:700">QUANTITY</span>
+              <span style="font-size:10px;font-weight:800;color:var(--text)">500 meters</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:9px;color:var(--text3);font-weight:700">LOCATION</span>
+              <span style="font-size:10px;font-weight:800;color:var(--text)">Jaipur, Rajasthan</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:9px;color:var(--text3);font-weight:700">URGENCY</span>
+              <span style="font-size:10px;font-weight:800;color:var(--red)">Within 7 days</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:9px;color:var(--text3);font-weight:700">BUDGET</span>
+              <span style="font-size:10px;font-weight:800;color:var(--green)">Open</span>
             </div>
           </div>
-
-          <!-- s3: AI draft quote -->
-          <div class="ai-step ai-s3" style="display:flex;align-items:flex-start;gap:6px">
-            <div style="width:22px;height:22px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px">&#129302;</div>
-            <div style="background:#fff3e8;border-radius:4px 12px 12px 12px;padding:8px 10px;border:1px solid #e8c89a;box-shadow:0 1px 4px rgba(0,0,0,.05)">
-              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;font-weight:700">&#128221; DRAFT QUOTE</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2);line-height:1.65">
-                &#8220;Namaste ji, 500m Polycab 2.5mm&#178; FRLS &mdash; &#8377;85/m + GST, delivery 5 din mein. Confirm?&#8221;
-              </div>
-              <div style="display:flex;gap:5px;margin-top:7px">
-                <div style="background:var(--green);color:#fff;border-radius:7px;padding:4px 10px;font-size:8.5px;font-weight:800">&#10003; Send</div>
-                <div style="background:var(--bg);color:var(--text2);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:8.5px;font-weight:700">Edit</div>
-              </div>
-            </div>
+          <div style="background:var(--accent-lt);border-radius:8px;padding:7px 10px;font-size:9px;color:var(--accent);font-weight:700;text-align:center">
+            &#128274; Buyer identity hidden until deal closes
           </div>
-
-          <!-- s4: Sent confirmation -->
-          <div class="ai-step ai-s4" style="text-align:right">
-            <div style="display:inline-block;background:var(--accent);border-radius:12px 3px 12px 12px;padding:7px 11px;font-size:9.5px;color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(181,103,42,.3)">
-              Quote sent &#10003;&#10003;
-              <div style="font-size:8px;font-weight:500;opacity:.8;margin-top:2px">Delivered &middot; Seen &middot; Replied</div>
-            </div>
-          </div>
-
-          <!-- s5: Win -->
-          <div class="ai-step ai-s5" style="background:linear-gradient(135deg,var(--green-lt),#d4f0dc);border-radius:12px;padding:9px 12px;text-align:center;border:1.5px solid #a8d8b0;box-shadow:0 2px 10px rgba(58,107,74,.15)">
-            <div style="font-size:18px;line-height:1">&#127942;</div>
-            <div style="font-size:12px;font-weight:900;color:var(--green);margin-top:3px">Deal Won &mdash; &#8377;42,500</div>
-            <div style="font-size:8.5px;color:var(--text3);margin-top:2px">Buyer selected you &middot; Contact unlocked</div>
-          </div>
-        </div>
-
-        <!-- Input bar -->
-        <div style="background:var(--card);border-top:1px solid var(--border);padding:8px 11px;display:flex;align-items:center;gap:6px">
-          <div style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:100px;padding:5px 10px;font-size:8.5px;color:var(--text3)">Reply in Hindi / English...</div>
-          <div style="width:26px;height:26px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px">&#127908;</div>
+          <div style="font-size:9px;color:var(--text3);line-height:1.5;text-align:center">Requirement auto-routed to all matching dealers in the area. No spam. No manual calls.</div>
         </div>
       </div>
 
-      <!-- ── RIGHT: Capabilities ── -->
-      <div style="flex:1;display:flex;flex-direction:column;gap:9px">
-
-        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;box-shadow:var(--sh);display:flex;gap:11px;align-items:flex-start">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,var(--accent-lt),#ffe8d0);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">&#127908;</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:var(--text);margin-bottom:3px">Voice &rarr; Quote &rarr; Deal</div>
-            <div style="font-size:10px;color:var(--text2);line-height:1.55">Dealer speaks in Hinglish. AI structures the quote, previews it, sends on one tap. Zero typing, zero friction.</div>
+      <!-- ── PHASE 2: Dealer's AI conversation ── -->
+      <div class="ai-phase ai-phase-2" style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:linear-gradient(135deg,var(--accent),#c8702a);color:#fff;border-radius:10px 10px 0 0;padding:7px 12px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:7px">
+            <div style="width:24px;height:24px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px">&#129302;</div>
+            <div style="font-size:10px;font-weight:800">Hub4Estate AI &mdash; Dealer Mode</div>
           </div>
+          <div style="font-size:8px;background:rgba(255,255,255,.2);border-radius:100px;padding:2px 8px">&#9679; Hinglish ready</div>
         </div>
+        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:0 0 14px 14px;padding:12px;box-shadow:var(--sh);flex:1;display:flex;flex-direction:column;gap:7px;background:#f9f5ef">
 
-        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;box-shadow:var(--sh);display:flex;gap:11px;align-items:flex-start">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#e8f4e8,#c8e8c8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">&#127919;</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:var(--text);margin-bottom:3px">Smart Lead Scoring</div>
-            <div style="font-size:10px;color:var(--text2);line-height:1.55">Ranks every lead by conversion probability. Alerts: <span style="color:var(--accent);font-weight:700">&#8220;This one is hot &mdash; respond in 2 hrs.&#8221;</span> No more cold chasing or guessing.</div>
+          <!-- Notification -->
+          <div class="ai-step ai-s1" style="background:var(--card);border-radius:10px;padding:8px 11px;border-left:3px solid var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.07);display:flex;align-items:center;gap:8px">
+            <div style="font-size:20px">&#128276;</div>
+            <div>
+              <div style="font-size:9px;font-weight:800;color:var(--accent)">NEW LEAD MATCHES YOUR PROFILE</div>
+              <div style="font-size:9.5px;color:var(--text2);margin-top:2px">Polycab 2.5mm&#178; FRLS &mdash; 500m &mdash; Jaipur</div>
+            </div>
           </div>
-        </div>
 
-        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;box-shadow:var(--sh);display:flex;gap:11px;align-items:flex-start">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#f0e8ff,#d8c8f0);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">&#128196;</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:var(--text);margin-bottom:3px">GST Card &rarr; Full Profile</div>
-            <div style="font-size:10px;color:var(--text2);line-height:1.55">Upload GST certificate or business card. AI extracts name, brands, categories, location. Dealer goes live in under 2 minutes.</div>
+          <!-- AI shows requirement -->
+          <div class="ai-step ai-s2" style="display:flex;gap:5px;align-items:flex-start">
+            <div style="width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px">&#129302;</div>
+            <div style="background:#fff;border-radius:3px 10px 10px 10px;padding:7px 10px;font-size:9.5px;color:var(--text2);line-height:1.6;border:1px solid var(--border)">
+              Yeh lead aapke Polycab stock ke saath match karti hai.<br>
+              <span style="color:var(--green);font-weight:700">Market rate: &#8377;79&ndash;88/m.</span> Competitor last bid: &#8377;79/m.<br>
+              <span style="color:var(--accent);font-weight:700">Aap &#8377;85/m pe win kar sakte hain. Quote bhejein?</span>
+            </div>
           </div>
-        </div>
 
-        <div style="background:linear-gradient(135deg,var(--accent-lt),#fff8f0);border:1.5px solid #e8c89a;border-radius:14px;padding:13px 15px;box-shadow:var(--sh);display:flex;gap:11px;align-items:flex-start">
-          <div style="width:36px;height:36px;background:linear-gradient(135deg,#fff0d8,var(--accent-lt));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">&#128200;</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:var(--text);margin-bottom:3px">Live Market Intelligence</div>
-            <div style="font-size:10px;color:var(--text2);line-height:1.55">Every bid is a data point. <span style="color:var(--accent);font-weight:700">&#8220;LED demand up 23% in Jaipur this week.&#8221;</span> Negotiation assist suggests the right price range based on live market bids. Moat that compounds.</div>
+          <!-- Dealer responds (voice) -->
+          <div class="ai-step ai-s3" style="text-align:right">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:var(--accent-lt);border-radius:10px 3px 10px 10px;padding:7px 10px;border:1px solid #e8d0b5">
+              <div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace;line-height:1.5;text-align:left">
+                &#127908; &#8220;Haan, 700 rupay per meter,<br>7 din mein delivery, 1 saal warranty&#8221;
+              </div>
+              <div style="font-size:9px;color:var(--accent);font-weight:700;white-space:nowrap">Dealer<br>Voice</div>
+            </div>
           </div>
-        </div>
 
-        <div style="background:var(--bg);border:1px dashed var(--border);border-radius:12px;padding:10px 14px;text-align:center">
-          <p style="font-family:'Playfair Display',serif;font-size:12px;font-style:italic;color:var(--text3);margin:0">Every interaction trains the model. Every deal sharpens the match. The moat builds itself.</p>
+          <!-- AI draft -->
+          <div class="ai-step ai-s4" style="display:flex;gap:5px;align-items:flex-start">
+            <div style="width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px">&#129302;</div>
+            <div style="background:#fff3e8;border-radius:3px 10px 10px 10px;padding:7px 10px;border:1px solid #e8c89a">
+              <div style="font-size:8.5px;color:var(--text3);font-weight:700;margin-bottom:4px">&#128221; STRUCTURED QUOTE &mdash; Preview</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--text2);line-height:1.7">
+                &#8220;Namaste ji,<br>
+                Polycab 2.5mm&#178; FRLS: <strong>&#8377;700/m + GST</strong><br>
+                Delivery: 7 din &middot; Warranty: 1 saal<br>
+                Ready to ship from Jaipur&#8221;
+              </div>
+              <div style="display:flex;gap:5px;margin-top:6px">
+                <div style="background:var(--green);color:#fff;border-radius:7px;padding:3px 10px;font-size:8.5px;font-weight:800">&#10003; Send Quote</div>
+                <div style="background:var(--bg);color:var(--text2);border:1px solid var(--border);border-radius:7px;padding:3px 8px;font-size:8.5px">Edit</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- ── PHASE 3: Two possible results ── -->
+      <div class="ai-phase ai-phase-3" style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--text);color:#fff;border-radius:10px 10px 0 0;padding:7px 12px;font-size:9.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center">&#128203; Result</div>
+        <div style="border:1.5px solid var(--border);border-radius:0 0 14px 14px;overflow:hidden;flex:1;display:flex;flex-direction:column;box-shadow:var(--sh)">
+
+          <!-- Win scenario -->
+          <div style="flex:1;background:linear-gradient(135deg,var(--green-lt),#d4f0dc);padding:14px;display:flex;flex-direction:column;gap:8px;border-bottom:1.5px dashed #b0d8b0">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="font-size:22px">&#127942;</div>
+              <div>
+                <div style="font-size:12px;font-weight:900;color:var(--green)">Deal Won!</div>
+                <div style="font-size:8.5px;color:var(--text3)">Buyer selected your quote</div>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:9px;padding:8px 10px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:9px;font-weight:700;color:var(--text2)">&#128274; Contact Revealed</div>
+              <div style="font-size:8.5px;color:var(--text3)">Ramesh Kumar &middot; +91 98XXX XXXXX</div>
+              <div style="font-size:8.5px;color:var(--text3)">Jaipur &middot; Order: &#8377;3,50,000</div>
+            </div>
+            <div style="font-size:9px;color:var(--green);font-weight:700">&#9733; Rating request sent to buyer</div>
+          </div>
+
+          <!-- Lose scenario — data insight -->
+          <div style="flex:1;background:linear-gradient(135deg,#f0f4ff,#e8efff);padding:14px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="font-size:22px">&#128202;</div>
+              <div>
+                <div style="font-size:12px;font-weight:900;color:#3a5a9a">Market Data</div>
+                <div style="font-size:8.5px;color:var(--text3)">Didn&apos;t win this one</div>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:9px;padding:8px 10px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:9px;font-weight:700;color:var(--text2)">&#128269; Intel</div>
+              <div style="font-size:8.5px;color:var(--text3)">Winning bid: <strong>&#8377;680/m</strong></div>
+              <div style="font-size:8.5px;color:var(--text3)">3 dealers competed &middot; Avg: &#8377;695/m</div>
+            </div>
+            <div style="font-size:9px;color:#3a5a9a;font-weight:700">&#128161; Adjust your next bid to &#8377;675&ndash;685/m</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom tagline -->
+    <div class="a4" style="text-align:center;font-family:'Playfair Display',serif;font-size:11.5px;font-style:italic;color:var(--text3)">
+      Every interaction trains the model. Every deal sharpens the match. The moat builds itself.
     </div>
   </div>
 </section>
@@ -1515,7 +1598,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Inter',s
 </div><!-- /deck -->
 
 <script>
-const TOTAL = 14;
+const TOTAL = 13;
 let cur = 1;
 let prevSlide = 1;
 
@@ -1525,7 +1608,7 @@ const ctr    = document.getElementById('ctr');
 const dotsEl = document.getElementById('dots');
 
 const slideTitles = [
-  'Hook — The Problem','Supply Side','Buyer Pain','The Solution','How It Works',
+  'Hook — The Problem','Buyer Pain','The Solution','How It Works',
   'AI-First Platform','Real Deals','Platform Live',
   'Market Size','Incumbents','Revenue Model','The Founder','The Vision','Sources'
 ];
