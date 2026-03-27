@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Shield, CheckCircle, TrendingUp, IndianRupee, FileText, Truck, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff } from 'lucide-react';
+import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Truck, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { ElectricalBackgroundSystem } from '../components/ElectricalBackgroundSystem';
 import { PersonaSection } from '../components/PersonaSection';
+import { AISection } from '../components/AISection';
 import { productsApi, api } from '../lib/api';
 import { Analytics } from '../lib/analytics';
 
@@ -856,52 +857,8 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Spark AI Features Strip */}
-      <section className="bg-white border-b border-gray-200 py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-center gap-2 mb-8 justify-center">
-            <Sparkles className="w-4 h-4 text-violet-600" />
-            <span className="text-xs font-semibold text-violet-700 uppercase tracking-wider">Powered by Volt AI</span>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Mic,
-                title: 'Voice Inquiry',
-                desc: 'Say what you need in Hindi or English. Volt extracts the product, quantity, and city — zero typing required.',
-                tag: 'Hinglish supported',
-                color: 'text-violet-600',
-                bg: 'bg-violet-50',
-              },
-              {
-                icon: Camera,
-                title: 'Slip Scanner',
-                desc: 'Photo your contractor\'s material list. Volt AI reads it, identifies every product, and auto-fills your inquiry form.',
-                tag: 'Claude Vision AI',
-                color: 'text-orange-600',
-                bg: 'bg-orange-50',
-              },
-              {
-                icon: TrendingUp,
-                title: 'Smart Quote Compare',
-                desc: 'When quotes arrive, Volt analyzes price, delivery speed, and dealer reliability — and tells you which one to pick.',
-                tag: 'Auto-comparison',
-                color: 'text-green-600',
-                bg: 'bg-green-50',
-              },
-            ].map(({ icon: Icon, title, desc, tag, color, bg }) => (
-              <div key={title} className={`${bg} rounded-xl p-6 border border-gray-100`}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Icon className={`w-5 h-5 ${color}`} />
-                  <span className="text-sm font-semibold text-gray-900">{title}</span>
-                  <span className={`ml-auto text-[10px] font-medium ${color} bg-white px-2 py-0.5 rounded-full border border-current/20`}>{tag}</span>
-                </div>
-                <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* AI Section — animated, mobile-first */}
+      <AISection />
 
       {/* Categories Grid */}
       <section className="section bg-gray-800 text-white">
