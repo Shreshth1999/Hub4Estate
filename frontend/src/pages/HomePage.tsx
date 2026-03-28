@@ -969,14 +969,16 @@ export function HomePage() {
       {/* Categories Grid */}
       <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <span className="inline-block text-[11px] font-bold text-amber-700 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">Browse by category</span>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
-              {tx.categories.title}
-            </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              {tx.categories.subtitle}
-            </p>
+          <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-3">Browse by category</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2 tracking-tight">
+                {tx.categories.title}
+              </h2>
+              <p className="text-base text-gray-500 max-w-lg">
+                {tx.categories.subtitle}
+              </p>
+            </div>
           </div>
 
           <InteractiveCategoryGrid categories={categories} loading={loading} />
@@ -997,12 +999,12 @@ export function HomePage() {
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
       <section className="py-20 sm:py-28 bg-gray-50 border-t border-gray-100">
         <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-14" style={revealStyle(dealsIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">{tx.realDeals.label}</span>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
+          <div className="mb-14" style={revealStyle(dealsIn.inView, 0)}>
+            <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-3">{tx.realDeals.label}</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2 tracking-tight">
               {tx.realDeals.title}
             </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
+            <p className="text-base text-gray-500 max-w-lg">
               {tx.realDeals.subtitle}
             </p>
           </div>
@@ -1055,7 +1057,9 @@ export function HomePage() {
       {/* Why We Exist */}
       <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
         <div ref={whyIn.ref as any} className="max-w-6xl mx-auto px-6">
-          <div className="mb-14 max-w-2xl" style={revealStyle(whyIn.inView, 0)}>
+
+          {/* Header */}
+          <div className="mb-16 max-w-2xl" style={revealStyle(whyIn.inView, 0)}>
             <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-4">{tx.whyWeExist.label}</p>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.whyWeExist.title}
@@ -1065,30 +1069,34 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4 mb-6">
-            {tx.whyWeExist.cards.map((item, index) => (
-              <div
-                key={index}
-                className="border border-gray-100 rounded-2xl p-7 hover:border-amber-200 hover:shadow-md transition-all duration-300 group"
-                style={revealStyle(whyIn.inView, 0.1 + index * 0.08)}
-              >
-                <div className="w-1 h-8 bg-amber-600 rounded-full mb-5 group-hover:h-10 transition-all duration-300" />
-                <h3 className="text-lg font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+          {/* 3 problems — numbered, no cards, editorial */}
+          <div className="grid md:grid-cols-3 gap-10 pb-14 border-b border-gray-100 mb-10">
+            {tx.whyWeExist.cards.slice(0, 3).map((item, index) => (
+              <div key={index} style={revealStyle(whyIn.inView, 0.08 + index * 0.07)}>
+                <p className="text-6xl font-black text-gray-100 mb-5 leading-none select-none">0{index + 1}</p>
+                <h3 className="text-base font-bold text-gray-900 mb-3">{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
+          {/* Solution — split layout navy block */}
           <div
-            className="bg-[#0B1628] rounded-2xl p-10 text-center"
-            style={revealStyle(whyIn.inView, 0.35)}
+            className="bg-[#0B1628] rounded-2xl p-8 sm:p-10 grid sm:grid-cols-2 gap-8 items-center"
+            style={revealStyle(whyIn.inView, 0.32)}
           >
-            <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">
-              {tx.whyWeExist.summary.title}
-            </h3>
-            <p className="text-base text-white/75 max-w-2xl mx-auto leading-relaxed">
-              {tx.whyWeExist.summary.desc}
-            </p>
+            <div>
+              <p className="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-4">
+                {tx.whyWeExist.cards[3]?.title}
+              </p>
+              <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+                {tx.whyWeExist.summary.title}
+              </h3>
+            </div>
+            <div>
+              <p className="text-sm text-white/65 leading-relaxed mb-4">{tx.whyWeExist.cards[3]?.desc}</p>
+              <p className="text-sm text-white/50 leading-relaxed">{tx.whyWeExist.summary.desc}</p>
+            </div>
           </div>
         </div>
       </section>
