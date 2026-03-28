@@ -324,6 +324,8 @@ export function HomePage() {
   };
   const heroIn = useInView(0.05);
   const howIn = useInView(0.06);
+  const whoIn = useInView(0.05);
+  const twoIn = useInView(0.05);
   const dealsIn = useInView(0.06);
   const whyIn = useInView(0.06);
   const ctaIn = useInView(0.1);
@@ -996,36 +998,53 @@ export function HomePage() {
       </section>
 
       {/* ─── Anyone Who Buys ──────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-gray-50 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-14" style={revealStyle(howIn.inView, 0)}>
-            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
-              Anyone Who Buys Electrical Products
-            </h2>
-            <p className="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              If you've ever wondered whether you're being charged a fair price,<br className="hidden sm:block" /> Hub4Estate is for you.
+      <section className="relative py-20 sm:py-28 bg-white border-t border-gray-100 overflow-hidden">
+        {/* Dot background pattern */}
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+
+        <div ref={whoIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
+          {/* Left-aligned split header */}
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-14" style={revealStyle(whoIn.inView, 0)}>
+            <div>
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">Who We Serve</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight">
+                Anyone Who Buys<br className="hidden sm:block" /> Electrical Products
+              </h2>
+            </div>
+            <p className="text-base text-gray-500 max-w-xs leading-relaxed sm:text-right flex-shrink-0">
+              If you've ever been overcharged without knowing it, Hub4Estate is built for you.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
             {[
-              { icon: Home, title: 'Homeowners', desc: 'Fitting, renovating, or upgrading your home' },
-              { icon: Wrench, title: 'Contractors', desc: 'Sourcing materials for construction projects' },
-              { icon: Palette, title: 'Interior Designers', desc: 'Specifying fixtures and fittings for clients' },
-              { icon: Building2, title: 'Builders', desc: 'Large-scale procurement for project sites' },
-              { icon: Users, title: 'Architects', desc: 'Sourcing to spec for client projects' },
-              { icon: Store, title: 'Small Businesses', desc: 'Office, retail, or facility fitouts' },
+              { icon: Home,      title: 'Homeowners',        desc: 'Fitting, renovating, or upgrading your home' },
+              { icon: Wrench,    title: 'Contractors',       desc: 'Sourcing materials for construction projects' },
+              { icon: Palette,   title: 'Interior Designers',desc: 'Specifying fixtures and fittings for clients' },
+              { icon: Building2, title: 'Builders',          desc: 'Large-scale procurement for project sites' },
+              { icon: Users,     title: 'Architects',        desc: 'Sourcing to spec for client projects' },
+              { icon: Store,     title: 'Small Businesses',  desc: 'Office, retail, or facility fitouts' },
             ].map((segment, i) => (
               <div
                 key={i}
-                className="border border-gray-200 rounded-2xl p-6 bg-white hover:border-gray-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group"
-                style={revealStyle(howIn.inView, 0.06 + i * 0.05)}
+                className="group relative bg-white border border-gray-100 rounded-2xl p-7 overflow-hidden hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-100/60 hover:-translate-y-2 transition-all duration-300 cursor-default"
+                style={revealStyle(whoIn.inView, 0.06 + i * 0.07)}
               >
-                <div className="w-10 h-10 bg-gray-100 group-hover:bg-amber-500 flex items-center justify-center mb-4 rounded-xl transition-colors duration-200">
-                  <segment.icon className="w-5 h-5 text-gray-700 group-hover:text-white transition-colors duration-200" />
+                {/* Faded card number */}
+                <span className="absolute right-5 top-4 text-6xl font-black text-gray-50 group-hover:text-amber-50/70 transition-colors select-none leading-none pointer-events-none">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+
+                {/* Icon — amber from start, fills on hover */}
+                <div className="w-14 h-14 bg-amber-50 border border-amber-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:shadow-lg group-hover:shadow-amber-200/60 transition-all duration-300">
+                  <segment.icon className="w-7 h-7 text-amber-600 group-hover:text-white transition-colors duration-300" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-1">{segment.title}</h3>
-                <p className="text-sm text-gray-500 leading-snug">{segment.desc}</p>
+
+                <h3 className="text-lg font-bold text-gray-900 mb-2 relative">{segment.title}</h3>
+                <p className="text-sm text-gray-500 leading-snug relative">{segment.desc}</p>
+
+                {/* Amber bottom line slides in */}
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
               </div>
             ))}
           </div>
@@ -1033,9 +1052,9 @@ export function HomePage() {
       </section>
 
       {/* ─── Two Sides. One Platform. ─────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16" style={revealStyle(whyIn.inView, 0)}>
+      <section className="py-20 sm:py-28 bg-gray-50 border-t border-gray-100">
+        <div ref={twoIn.ref as any} className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16" style={revealStyle(twoIn.inView, 0)}>
             <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
               Two Sides. One Platform.
             </h2>
@@ -1044,9 +1063,9 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6" style={revealStyle(whyIn.inView, 0.08)}>
+          <div className="grid md:grid-cols-2 gap-6" style={revealStyle(twoIn.inView, 0.08)}>
             {/* For Buyers */}
-            <div className="border border-gray-200 rounded-2xl p-8 bg-white hover:border-gray-300 hover:shadow-lg transition-all duration-300">
+            <div className="border border-gray-200 rounded-2xl p-8 bg-white hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/30 hover:-translate-y-1 transition-all duration-300">
               <div className="flex items-center gap-3 mb-7">
                 <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Users className="w-6 h-6 text-white" />
