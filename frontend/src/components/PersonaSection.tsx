@@ -39,20 +39,25 @@ export function PersonaSection() {
           {personas.items.map((item, i) => (
             <div
               key={item.role}
-              className="border border-gray-100 rounded-2xl overflow-hidden hover:border-amber-200 hover:shadow-lg transition-all duration-300 group"
+              className="border border-gray-100 rounded-2xl overflow-hidden hover:border-amber-200/80 hover:shadow-2xl hover:shadow-amber-100/50 hover:-translate-y-2 transition-all duration-300 group"
               style={revealStyle(inView, 0.1 + i * 0.07)}
             >
-              {/* Amber top accent bar */}
-              <div className="h-[3px] bg-amber-600" />
+              {/* Amber top accent bar — grows on hover */}
+              <div className="h-[3px] group-hover:h-[4px] bg-amber-500 transition-all duration-300" />
 
               <div className="p-7 sm:p-8 flex flex-col h-full">
                 {/* Role header */}
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-lg flex-shrink-0">
-                    {item.icon}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-lg flex-shrink-0 group-hover:bg-amber-100 transition-colors duration-200">
+                      {item.icon}
+                    </div>
+                    <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">
+                      {item.role}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">
-                    {item.role}
+                  <span className="text-2xl font-black text-gray-50 group-hover:text-amber-50 transition-colors duration-300 select-none leading-none">
+                    0{i + 1}
                   </span>
                 </div>
 
@@ -65,7 +70,7 @@ export function PersonaSection() {
                 <ul className="space-y-3 mb-7 flex-1">
                   {item.bullets.map((b, bi) => (
                     <li key={bi} className="flex items-start gap-3 text-sm text-gray-600">
-                      <span className="w-5 h-5 bg-amber-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="w-5 h-5 bg-amber-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-amber-100 transition-colors duration-200">
                         <Check className="w-3 h-3 text-amber-600" />
                       </span>
                       {b}
@@ -74,7 +79,7 @@ export function PersonaSection() {
                 </ul>
 
                 {/* Metric pill */}
-                <div className="inline-block px-4 py-2 bg-amber-50 border border-amber-100 rounded-xl mb-6">
+                <div className="px-4 py-2.5 bg-amber-50 border border-amber-100 rounded-xl mb-6 group-hover:bg-amber-100/80 group-hover:border-amber-200 transition-colors duration-200">
                   <p className="text-xs font-bold text-amber-700">{item.metric}</p>
                 </div>
 

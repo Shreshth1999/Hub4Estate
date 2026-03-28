@@ -317,6 +317,12 @@ export function HomePage() {
   };
 
   const [flowView, setFlowView] = useState<'buyer' | 'dealer'>('buyer');
+  const [tabAnimating, setTabAnimating] = useState(false);
+  const switchTab = (view: 'buyer' | 'dealer') => {
+    if (view === flowView) return;
+    setTabAnimating(true);
+    setTimeout(() => { setFlowView(view); setTabAnimating(false); }, 200);
+  };
   const heroIn = useInView(0.05);
   const howIn = useInView(0.06);
   const dealsIn = useInView(0.06);
@@ -902,35 +908,59 @@ export function HomePage() {
               </h2>
             </div>
             {/* Tab toggle */}
-            <div className="inline-flex bg-gray-100 rounded-xl p-1 gap-0.5 flex-shrink-0" style={revealStyle(howIn.inView, 0.06)}>
-              <button
-                onClick={() => setFlowView('buyer')}
-                className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${flowView === 'buyer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                For Buyers
-              </button>
-              <button
-                onClick={() => setFlowView('dealer')}
-                className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${flowView === 'dealer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                For Dealers
-              </button>
+            <div className="inline-flex bg-gray-50 border border-gray-100 rounded-xl p-1 gap-1 flex-shrink-0" style={revealStyle(howIn.inView, 0.06)}>
+              {([
+                { id: 'buyer' as const, label: 'For Buyers' },
+                { id: 'dealer' as const, label: 'For Dealers' },
+              ]).map(({ id, label }) => (
+                <button
+                  key={id}
+                  onClick={() => switchTab(id)}
+                  className={`relative px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                    flowView === id
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-400 hover:text-gray-700'
+                  }`}
+                >
+                  {label}
+                  {flowView === id && (
+                    <span className="absolute bottom-1.5 left-4 right-4 h-[2px] bg-amber-500 rounded-full" />
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Steps — numbered, no emojis */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-100 border border-gray-100 rounded-2xl overflow-hidden mb-6" style={revealStyle(howIn.inView, 0.1)}>
+          {/* Steps — animated individual cards */}
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6"
+            style={{
+              opacity: tabAnimating ? 0 : 1,
+              transform: tabAnimating ? 'translateY(10px)' : 'translateY(0)',
+              transition: 'opacity 0.2s ease, transform 0.2s ease',
+            }}
+          >
             {(flowView === 'buyer' ? BUYER_STEPS : DEALER_STEPS).map((step, i) => (
-              <div key={i} className="bg-white px-6 py-6 hover:bg-amber-50/30 transition-colors duration-200 group">
-                <div className="flex items-start gap-4">
-                  <span className="text-3xl font-black text-gray-100 group-hover:text-amber-200 transition-colors leading-none flex-shrink-0 select-none">
-                    {step.step}
-                  </span>
-                  <div className="pt-1">
-                    <p className="text-sm font-bold text-gray-900 mb-1">{step.title}</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{step.desc}</p>
-                  </div>
+              <div
+                key={step.step}
+                className="group relative bg-white border border-gray-100 rounded-2xl p-6 overflow-hidden hover:border-amber-200/80 hover:shadow-lg hover:shadow-amber-100/40 hover:-translate-y-0.5 transition-all duration-300 cursor-default"
+                style={revealStyle(howIn.inView, 0.08 + i * 0.06)}
+              >
+                {/* Large decorative step number */}
+                <span className="absolute -right-1 -top-3 text-[80px] font-black leading-none select-none pointer-events-none text-gray-50 group-hover:text-amber-50 transition-colors duration-300">
+                  {step.step}
+                </span>
+
+                {/* Amber dot indicator */}
+                <div className="w-7 h-7 bg-amber-50 border border-amber-100 rounded-lg flex items-center justify-center mb-5 group-hover:bg-amber-100 group-hover:border-amber-200 transition-colors duration-200">
+                  <div className="w-2 h-2 rounded-full bg-amber-500" />
                 </div>
+
+                <p className="text-sm font-bold text-gray-900 mb-1.5 relative">{step.title}</p>
+                <p className="text-xs text-gray-500 leading-relaxed relative">{step.desc}</p>
+
+                {/* Bottom accent line — slides in on hover */}
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
               </div>
             ))}
           </div>
@@ -1015,7 +1045,7 @@ export function HomePage() {
               return (
                 <div
                   key={di}
-                  className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-amber-200 hover:shadow-md transition-all duration-300"
+                  className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-amber-200/80 hover:shadow-xl hover:shadow-amber-100/30 hover:-translate-y-1 transition-all duration-300"
                   style={revealStyle(dealsIn.inView, 0.1 + di * 0.08)}
                 >
                   <div className="mb-4">
