@@ -421,7 +421,7 @@ export function HomePage() {
                 ].map((d, i) => (
                   <div key={i} className={`bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
                     <p className="text-[11px] text-gray-400 mb-0.5 font-medium">{d.label}</p>
-                    <p className="text-sm font-bold text-green-600">{d.saved}</p>
+                    <p className="text-sm font-bold text-amber-700">{d.saved}</p>
                     <p className="text-[11px] text-gray-400">{d.sub}</p>
                   </div>
                 ))}
@@ -433,7 +433,7 @@ export function HomePage() {
               <div id="inquiry-form" className="bg-white rounded-2xl p-6 lg:p-8 shadow-xl shadow-gray-200/80 ring-1 ring-gray-100">
                 {submitted ? (
                   <div className="text-center py-8">
-                    <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                    <CheckCircle className="w-16 h-16 text-amber-700 mx-auto mb-4" />
                     <h3 className="text-2xl font-semibold text-gray-900 mb-2">{tx.hero.submitted.title}</h3>
                     <p className="text-gray-600 mb-4">{tx.hero.submitted.subtitle}</p>
                     {submittedInquiryId && (
@@ -467,7 +467,7 @@ export function HomePage() {
                   <>
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="text-xl font-semibold text-gray-900">{tx.hero.formTitle}</h3>
-                      <span className="flex items-center gap-1 text-[11px] font-medium text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">
+                      <span className="flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                         <Sparkles className="w-3 h-3" /> AI-powered
                       </span>
                     </div>
@@ -603,18 +603,18 @@ export function HomePage() {
                                   <p className="text-xs text-gray-600">Extracting products, quantities, and brands</p>
                                 </div>
                               ) : aiParsedItems.length > 0 ? (
-                                <div className="bg-green-50 border border-green-300 p-5 space-y-3">
+                                <div className="bg-amber-50 border border-amber-300 p-5 space-y-3">
                                   <div className="flex items-center gap-2 mb-3">
-                                    <CheckCircle className="w-5 h-5 text-green-600" />
-                                    <p className="text-sm font-bold text-green-900">
+                                    <CheckCircle className="w-5 h-5 text-amber-700" />
+                                    <p className="text-sm font-bold text-amber-900">
                                       Found {aiParsedItems.length} product{aiParsedItems.length > 1 ? 's' : ''} — form auto-filled
                                     </p>
                                   </div>
 
-                                  <div className="space-y-3 bg-white border border-green-200 p-3">
+                                  <div className="space-y-3 bg-white border border-amber-200 p-3">
                                     {aiParsedItems.slice(0, 3).map((item: any, i: number) => (
                                       <div key={i} className="flex items-start gap-2 text-xs">
-                                        <span className="text-green-600 font-bold mt-0.5">{i + 1}.</span>
+                                        <span className="text-amber-700 font-bold mt-0.5">{i + 1}.</span>
                                         <div className="flex-1">
                                           <div className="font-bold text-gray-900">{item.productName}</div>
                                           <div className="text-gray-600 flex items-center gap-2 flex-wrap">
@@ -659,9 +659,9 @@ export function HomePage() {
                                   </div>
 
                                   {detectedLocation && (
-                                    <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-2">
-                                      <MapPin className="w-4 h-4 text-blue-600" />
-                                      <span className="text-xs font-medium text-blue-900">
+                                    <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-2">
+                                      <MapPin className="w-4 h-4 text-amber-700" />
+                                      <span className="text-xs font-medium text-amber-900">
                                         Location detected: <span className="font-bold">{detectedLocation}</span>
                                       </span>
                                     </div>
@@ -763,7 +763,7 @@ export function HomePage() {
                             className={`flex items-center gap-1 text-xs font-normal normal-case px-2 py-0.5 rounded-full transition-colors ${
                               isVoiceListening
                                 ? 'bg-red-100 text-red-600 animate-pulse'
-                                : 'bg-violet-50 text-violet-600 hover:bg-violet-100'
+                                : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
                             }`}
                           >
                             {isVoiceListening ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
@@ -776,11 +776,11 @@ export function HomePage() {
                           value={inquiryForm.modelNumber}
                           onChange={e => setInquiryForm(f => ({ ...f, modelNumber: e.target.value }))}
                           className={`w-full px-4 py-2.5 border focus:border-gray-400 outline-none text-sm transition-colors ${
-                            isVoiceListening ? 'border-violet-300 bg-violet-50' : 'border-gray-200'
+                            isVoiceListening ? 'border-amber-300 bg-amber-50' : 'border-gray-200'
                           }`}
                         />
                         {isVoiceListening && (
-                          <p className="text-[11px] text-violet-500 mt-1">Say the product, quantity, and city — Volt AI will fill the form</p>
+                          <p className="text-[11px] text-amber-700 mt-1">Say the product, quantity, and city — Volt AI will fill the form</p>
                         )}
                       </div>
 
@@ -972,7 +972,7 @@ export function HomePage() {
             </div>
             <div className="flex flex-wrap justify-center gap-2">
               {['No names shared', 'Instant routing', 'Every bid = market data', 'Sent blind to dealers', 'Quotes back to buyer'].map((tag, i) => (
-                <span key={i} className="text-xs text-gray-400 bg-white/8 px-3 py-1 rounded-full border border-white/10">{tag}</span>
+                <span key={i} className="text-xs text-gray-400 bg-white/8 px-3 py-1 rounded-full border border-white/[0.14]">{tag}</span>
               ))}
             </div>
           </div>
@@ -1035,7 +1035,7 @@ export function HomePage() {
             <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
               {tx.realDeals.title}
             </h2>
-            <p className="text-lg text-white/50 max-w-xl mx-auto">
+            <p className="text-lg text-white/72 max-w-xl mx-auto">
               {tx.realDeals.subtitle}
             </p>
           </div>
@@ -1046,7 +1046,7 @@ export function HomePage() {
               return (
                 <div
                   key={di}
-                  className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 card-3d hover:border-amber-600/20 hover:bg-white/[0.07]"
+                  className="bg-white/[0.07] border border-white/[0.14] rounded-2xl p-6 card-3d hover:border-amber-600/20 hover:bg-white/[0.07]"
                   style={revealStyle(dealsIn.inView, 0.1 + di * 0.08)}
                 >
                   <div className="mb-4">
@@ -1056,9 +1056,9 @@ export function HomePage() {
                   <div className="space-y-2 mb-5">
                     {deal.rows.map((row, ri) => (
                       row.strikethrough ? (
-                        <div key={ri} className="flex justify-between items-center py-2 border-b border-white/8">
-                          <span className="text-sm text-white/35">{row.label}</span>
-                          <span className="text-sm font-medium text-white/25 line-through">{row.price}</span>
+                        <div key={ri} className="flex justify-between items-center py-2 border-b border-white/[0.12]">
+                          <span className="text-sm text-white/60">{row.label}</span>
+                          <span className="text-sm font-medium text-white/50 line-through">{row.price}</span>
                         </div>
                       ) : (
                         <div key={ri} className="flex justify-between items-center py-3 bg-amber-600/10 border border-amber-600/20 px-3.5 rounded-xl">
@@ -1068,17 +1068,17 @@ export function HomePage() {
                       )
                     ))}
                   </div>
-                  <div className="border-t border-white/8 pt-4">
-                    <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold mb-1.5">{deal.savedLabel}</p>
-                    <p className="text-3xl font-black text-green-400">{savedAmounts[di]}</p>
-                    <p className="text-xs text-white/30 mt-1">{deal.savedNote}</p>
+                  <div className="border-t border-white/[0.12] pt-4">
+                    <p className="text-[10px] text-white/55 uppercase tracking-widest font-semibold mb-1.5">{deal.savedLabel}</p>
+                    <p className="text-3xl font-black text-amber-500">{savedAmounts[di]}</p>
+                    <p className="text-xs text-white/55 mt-1">{deal.savedNote}</p>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <p className="text-center text-xs text-white/25 mt-10" style={revealStyle(dealsIn.inView, 0.35)}>
+          <p className="text-center text-xs text-white/50 mt-10" style={revealStyle(dealsIn.inView, 0.35)}>
             {tx.realDeals.footnote}
           </p>
         </div>
@@ -1096,7 +1096,7 @@ export function HomePage() {
             <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
               {tx.whyWeExist.title}
             </h2>
-            <p className="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-white/72 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.subtitle}
             </p>
           </div>
@@ -1105,12 +1105,12 @@ export function HomePage() {
             {tx.whyWeExist.cards.map((item, index) => (
               <div
                 key={index}
-                className="bg-white/[0.04] border border-white/10 rounded-2xl p-7 card-3d hover:border-amber-600/20 group"
+                className="bg-white/[0.07] border border-white/[0.14] rounded-2xl p-7 card-3d hover:border-amber-600/20 group"
                 style={revealStyle(whyIn.inView, 0.1 + index * 0.08)}
               >
                 <div className="w-1 h-8 bg-amber-600 rounded-full mb-5 group-hover:h-10 transition-all duration-300" />
                 <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
-                <p className="text-white/45 text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-white/70 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -1122,7 +1122,7 @@ export function HomePage() {
             <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">
               {tx.whyWeExist.summary.title}
             </h3>
-            <p className="text-base text-white/50 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base text-white/72 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.summary.desc}
             </p>
           </div>

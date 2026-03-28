@@ -37,7 +37,7 @@ export function AISection() {
       Icon: Camera,
       iconColor: 'text-amber-600',
       iconBg: 'bg-amber-50',
-      accentLine: 'bg-amber-500',
+      accentLine: 'bg-amber-600',
       label: aiSection.features[0].label,
       tagline: aiSection.features[0].tagline,
       desc: aiSection.features[0].desc,
@@ -47,7 +47,7 @@ export function AISection() {
           {SCAN_ITEMS.map((item, i) => (
             <div key={i} className="flex items-center justify-between text-[11px]">
               <span className="text-gray-300">
-                <span className="text-green-400 mr-1.5">✓</span>{item.text}
+                <span className="text-amber-500 mr-1.5">✓</span>{item.text}
               </span>
               <span className="text-gray-500 text-[9px]">{item.brand}</span>
             </div>
@@ -61,9 +61,9 @@ export function AISection() {
     {
       id: 'voice',
       Icon: Mic,
-      iconColor: 'text-violet-500',
-      iconBg: 'bg-violet-50',
-      accentLine: 'bg-violet-500',
+      iconColor: 'text-amber-600',
+      iconBg: 'bg-amber-50',
+      accentLine: 'bg-[#0B1628]',
       label: aiSection.features[1].label,
       tagline: aiSection.features[1].tagline,
       desc: aiSection.features[1].desc,
@@ -75,7 +75,7 @@ export function AISection() {
               className={`text-[11px] rounded-lg px-2.5 py-1.5 leading-tight ${
                 m.role === 'user'
                   ? 'bg-gray-700 text-gray-300 max-w-[85%]'
-                  : 'bg-violet-600 text-white ml-auto max-w-[85%] text-right'
+                  : 'bg-[#0B1628] text-white ml-auto max-w-[85%] text-right'
               }`}
             >
               {m.text}
@@ -87,9 +87,9 @@ export function AISection() {
     {
       id: 'compare',
       Icon: BarChart2,
-      iconColor: 'text-green-500',
-      iconBg: 'bg-green-50',
-      accentLine: 'bg-green-500',
+      iconColor: 'text-amber-600',
+      iconBg: 'bg-amber-50',
+      accentLine: 'bg-amber-600',
       label: aiSection.features[2].label,
       tagline: aiSection.features[2].tagline,
       desc: aiSection.features[2].desc,
@@ -99,15 +99,15 @@ export function AISection() {
             <div
               key={i}
               className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 ${
-                q.best ? 'bg-green-900/30 border border-green-700/20' : 'bg-gray-800'
+                q.best ? 'bg-[#0B1628] border border-amber-600/25' : 'bg-gray-800'
               }`}
             >
               <div>
-                {q.best && <p className="text-[9px] text-green-400 font-semibold">★ Best</p>}
+                {q.best && <p className="text-[9px] text-amber-500 font-semibold">★ Best</p>}
                 <p className="text-[11px] text-white">{q.name}</p>
                 <p className="text-[9px] text-gray-500">{q.time}</p>
               </div>
-              <p className={`text-xs font-semibold ${q.best ? 'text-green-400' : 'text-gray-400'}`}>
+              <p className={`text-xs font-semibold ${q.best ? 'text-amber-400' : 'text-gray-400'}`}>
                 {q.price}
               </p>
             </div>
@@ -127,7 +127,7 @@ export function AISection() {
         {/* Header */}
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-4" style={revealStyle(inView, 0)}>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-900 text-white text-[11px] font-semibold rounded-full">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0B1628] text-white text-[11px] font-semibold rounded-full">
               <span className="w-1 h-1 rounded-full bg-amber-500" />
               {aiSection.badge}
             </span>
