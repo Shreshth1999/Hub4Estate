@@ -12,6 +12,25 @@ import { ElectricWireDivider } from '../components/ElectricWireDivider';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
+// ─── How It Works flow data ────────────────────────────────────────────────────
+const BUYER_STEPS = [
+  { step: '01', emoji: '📋', title: 'Browse or Upload Slip', desc: 'Select products or scan a purchase order' },
+  { step: '02', emoji: '🤖', title: 'AI Extracts Specs', desc: 'Brand, qty, specs auto-detected' },
+  { step: '03', emoji: '✅', title: 'Review & Submit', desc: 'Confirm details and send' },
+  { step: '04', emoji: '📊', title: 'Compare All Quotes', desc: 'Price · shipping · delivery time' },
+  { step: '05', emoji: '🎯', title: 'Select Best Deal', desc: 'Tap winner, get contact info' },
+  { step: '06', emoji: '🏆', title: 'Deal Closed!', desc: 'Best price, zero spam calls' },
+];
+
+const DEALER_STEPS = [
+  { step: '01', emoji: '📨', title: 'Requirement Arrives', desc: 'Blind — no buyer name or contact' },
+  { step: '02', emoji: '🔍', title: 'View Specs & Qty', desc: 'See exactly what is needed' },
+  { step: '03', emoji: '💰', title: 'Submit Quote', desc: 'Price + shipping + delivery + terms' },
+  { step: '04', emoji: '⏳', title: 'Await Decision', desc: 'Buyer compares all quotes' },
+  { step: '05', emoji: '🏆', title: 'Win = Contact', desc: 'Contact revealed on selection' },
+  { step: '06', emoji: '📈', title: 'Lose = Market Data', desc: 'Winning price benchmark shared' },
+];
+
 interface InquiryForm {
   name: string;
   phone: string;
@@ -297,6 +316,7 @@ export function HomePage() {
     }
   };
 
+  const [flowView, setFlowView] = useState<'buyer' | 'dealer'>('buyer');
   const heroIn = useInView(0.05);
   const howIn = useInView(0.06);
   const dealsIn = useInView(0.06);
@@ -307,12 +327,12 @@ export function HomePage() {
     <div className="min-h-screen relative">
 
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="relative bg-[#09090B] overflow-hidden blueprint-bg-dark">
-        {/* Ambient glow orbs */}
-        <div className="absolute top-[-15%] right-[-5%] w-[900px] h-[900px] rounded-full pointer-events-none animate-glow-pulse"
-          style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.22) 0%, transparent 65%)' }} />
-        <div className="absolute bottom-[-20%] left-[-10%] w-[700px] h-[700px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 65%)' }} />
+      <section className="relative bg-white overflow-hidden">
+        {/* Subtle warm glow */}
+        <div className="absolute top-[-10%] right-[-5%] w-[700px] h-[700px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.07) 0%, transparent 65%)' }} />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.05) 0%, transparent 65%)' }} />
 
         <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 relative py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -321,18 +341,18 @@ export function HomePage() {
             <div>
               {/* Live badge */}
               <div
-                className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-500/10 border border-orange-500/30 rounded-full mb-8"
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-50 border border-orange-200 rounded-full mb-8"
                 style={revealStyle(heroIn.inView, 0)}
               >
                 <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">
+                <span className="text-xs font-bold text-orange-600 uppercase tracking-widest">
                   {isHi ? 'Live — Verified Dealer Network' : 'Live — Verified Dealer Network Across India'}
                 </span>
               </div>
 
               {/* Main Headline */}
               <h1
-                className="text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white mb-6 leading-[1.02] tracking-tight"
+                className="text-5xl md:text-6xl lg:text-[4.5rem] font-black text-gray-900 mb-6 leading-[1.02] tracking-tight"
                 style={revealStyle(heroIn.inView, 0.06)}
               >
                 {isHi ? (
@@ -348,7 +368,7 @@ export function HomePage() {
 
               {/* Subheadline */}
               <p
-                className="text-lg text-white/55 mb-8 max-w-lg leading-relaxed"
+                className="text-lg text-gray-500 mb-8 max-w-lg leading-relaxed"
                 style={revealStyle(heroIn.inView, 0.12)}
               >
                 {tx.hero.subheadline}
@@ -368,7 +388,7 @@ export function HomePage() {
                 </button>
                 <Link
                   to="/track"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/15 text-white/70 font-medium text-base rounded-xl hover:border-white/30 hover:text-white hover:bg-white/5 transition-all duration-200"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-gray-200 text-gray-600 font-medium text-base rounded-xl hover:border-gray-300 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
                 >
                   {tx.hero.ctaSecondary}
                 </Link>
@@ -384,9 +404,9 @@ export function HomePage() {
                 { Icon: Shield, text: 'Every dealer verified before they can respond to your inquiry' },
                 { Icon: CheckCircle, text: 'Your inquiry stays private — you choose who you deal with' },
               ].map(({ Icon, text }, index) => (
-                  <div key={index} className="flex items-center gap-3 text-sm text-white/50">
-                    <div className="w-7 h-7 rounded-lg bg-orange-500/15 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-3.5 h-3.5 text-orange-400" />
+                  <div key={index} className="flex items-center gap-3 text-sm text-gray-500">
+                    <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-orange-500" />
                     </div>
                     <span>{text}</span>
                   </div>
@@ -399,10 +419,10 @@ export function HomePage() {
                   { label: 'Sony Speaker', saved: '₹37,000 saved', sub: 'vs Croma ₹1,05,000', delay: '' },
                   { label: 'Philips LED ×200', saved: '₹24,000 saved', sub: 'vs local dealer', delay: '0.4s' },
                 ].map((d, i) => (
-                  <div key={i} className={`bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-sm ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
-                    <p className="text-[11px] text-white/40 mb-0.5 font-medium">{d.label}</p>
-                    <p className="text-sm font-bold text-green-400">{d.saved}</p>
-                    <p className="text-[11px] text-white/35">{d.sub}</p>
+                  <div key={i} className={`bg-orange-50 border border-orange-100 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
+                    <p className="text-[11px] text-gray-400 mb-0.5 font-medium">{d.label}</p>
+                    <p className="text-sm font-bold text-green-600">{d.saved}</p>
+                    <p className="text-[11px] text-gray-400">{d.sub}</p>
                   </div>
                 ))}
               </div>
@@ -410,7 +430,7 @@ export function HomePage() {
 
             {/* Right Side - Product Inquiry Form */}
             <div style={revealStyle(heroIn.inView, 0.08)}>
-              <div id="inquiry-form" className="bg-white rounded-2xl p-6 lg:p-8 shadow-2xl shadow-black/50 ring-1 ring-white/10">
+              <div id="inquiry-form" className="bg-white rounded-2xl p-6 lg:p-8 shadow-xl shadow-gray-200/80 ring-1 ring-gray-100">
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
@@ -861,13 +881,13 @@ export function HomePage() {
       </section>
 
       {/* ─── Brand Marquee ─────────────────────────────────────────────────────── */}
-      <div className="bg-[#09090B] border-t border-white/5 overflow-hidden py-5">
+      <div className="bg-gray-50 border-y border-gray-100 overflow-hidden py-5">
         <div className="ticker-content gap-0">
           {[...Array(2)].map((_, pass) => (
             <span key={pass} className="inline-flex items-center">
               {['Havells', 'Polycab', 'Schneider', 'Legrand', 'Anchor', 'Philips', 'Finolex', 'Siemens', 'ABB', 'Crompton', 'Orient', 'Wipro Lighting'].map(b => (
-                <span key={b} className="inline-flex items-center gap-3 mr-12 text-white/25 text-sm font-semibold tracking-widest uppercase">
-                  <span className="w-1 h-1 rounded-full bg-orange-500/50" />
+                <span key={b} className="inline-flex items-center gap-3 mr-12 text-gray-400 text-sm font-semibold tracking-widest uppercase">
+                  <span className="w-1 h-1 rounded-full bg-orange-400" />
                   {b}
                 </span>
               ))}
@@ -876,20 +896,19 @@ export function HomePage() {
         </div>
       </div>
 
-      <ElectricWireDivider dark />
       {/* ─── Trust Pillars ─────────────────────────────────────────────────────── */}
-      <div className="bg-[#09090B] border-t border-white/5 py-12">
+      <div className="bg-white py-12">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-100 rounded-2xl overflow-hidden border border-gray-200">
             {[
               { icon: '🔍', title: 'Verified Dealers Only', desc: 'Every dealer is vetted before they can respond to an inquiry. No random shops, no unknown sources.' },
               { icon: '⚡', title: 'Dealers Compete For You', desc: 'Multiple dealers quote your inquiry simultaneously — prices drop when they compete for your business.' },
               { icon: '🤝', title: 'You Stay In Control', desc: 'All quotes in one place. Compare prices, delivery, and ratings. You decide — no pressure, no commitment.' },
             ].map((p, i) => (
-              <div key={i} className="bg-[#09090B] px-8 py-8 hover:bg-white/[0.03] transition-colors duration-300">
+              <div key={i} className="bg-white px-8 py-8 hover:bg-orange-50/40 transition-colors duration-300">
                 <div className="text-3xl mb-4">{p.icon}</div>
-                <h3 className="text-base font-bold text-white mb-2">{p.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{p.desc}</p>
+                <h3 className="text-base font-bold text-gray-900 mb-2">{p.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -899,173 +918,73 @@ export function HomePage() {
       <ElectricWireDivider />
       {/* ─── How It Works ─────────────────────────────────────────────────────── */}
       <section className="bg-white overflow-hidden">
-        <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6">
+        <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6 pt-20 sm:pt-28 pb-20 sm:pb-28">
 
           {/* Header */}
-          <div className="pt-20 sm:pt-28 text-center mb-20" style={revealStyle(howIn.inView, 0)}>
+          <div className="text-center mb-10" style={revealStyle(howIn.inView, 0)}>
             <span className="inline-block text-[11px] font-bold text-orange-600 uppercase tracking-[0.2em] mb-5 bg-orange-50 border border-orange-100 px-4 py-1.5 rounded-full">
               {tx.howItWorks.label}
             </span>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.howItWorks.title}
             </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">{tx.howItWorks.subtitle}</p>
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">One requirement. Zero spam. Competitive quotes. Both sides win.</p>
           </div>
 
-          {/* Step 1 — Submit */}
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center pb-24 border-b border-gray-100"
-            style={revealStyle(howIn.inView, 0.1)}>
-            <div>
-              <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-full px-4 py-1.5 mb-6">
-                <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-black flex items-center justify-center">1</span>
-                <span className="text-sm font-bold text-orange-700 uppercase tracking-wider">{tx.howItWorks.steps[0].highlight}</span>
-              </div>
-              <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">{tx.howItWorks.steps[0].title}</h3>
-              <p className="text-gray-500 text-lg leading-relaxed mb-8">{tx.howItWorks.steps[0].desc}</p>
-              <div className="flex flex-col gap-3">
-                {['Tell us the product name, model, or brand', 'Add quantity and delivery city', 'Upload a photo or speak your requirement — optional'].map((f, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
-                    <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="w-3 h-3 text-orange-500" />
-                    </div>
-                    {f}
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Illustrated form preview */}
-            <div className="bg-[#09090B] rounded-2xl p-6 border border-white/10 shadow-2xl shadow-black/20 animate-float-slow">
-              <div className="flex items-center gap-2 mb-5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                <span className="text-[11px] text-white/30 ml-2 font-mono">hub4estate.com</span>
-              </div>
-              <div className="space-y-3">
-                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
-                  <div className="text-[10px] text-white/35 uppercase tracking-wider mb-1">Product / Model</div>
-                  <div className="text-white text-sm font-medium flex items-center gap-2">
-                    Polycab FRLS 2.5mm² Wire
-                    <span className="text-orange-400 text-[10px]">|</span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
-                    <div className="text-[10px] text-white/35 uppercase tracking-wider mb-1">Quantity</div>
-                    <div className="text-white text-sm font-medium">200 metres</div>
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
-                    <div className="text-[10px] text-white/35 uppercase tracking-wider mb-1">City</div>
-                    <div className="text-white text-sm font-medium">Jaipur</div>
-                  </div>
-                </div>
-                <div className="bg-orange-500 rounded-xl px-4 py-3 text-white text-sm font-bold text-center flex items-center justify-center gap-2">
-                  Get Best Price <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-              <p className="text-[10px] text-white/25 text-center mt-3">No account needed · Takes 2 minutes</p>
+          {/* Tab toggle */}
+          <div className="flex items-center justify-center mb-10" style={revealStyle(howIn.inView, 0.06)}>
+            <div className="inline-flex bg-gray-100 rounded-2xl p-1.5 gap-1">
+              <button
+                onClick={() => setFlowView('buyer')}
+                className={`px-7 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 ${flowView === 'buyer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                For Buyers
+              </button>
+              <button
+                onClick={() => setFlowView('dealer')}
+                className={`px-7 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 ${flowView === 'dealer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                For Dealers
+              </button>
             </div>
           </div>
 
-          {/* Step 2 — We Source */}
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24 border-b border-gray-100"
-            style={revealStyle(howIn.inView, 0.15)}>
-            {/* Illustrated dealer network — left side */}
-            <div className="bg-[#09090B] rounded-2xl p-6 border border-white/10 shadow-2xl shadow-black/20 order-2 lg:order-1 animate-float-slow">
-              <div className="text-[11px] text-violet-400 font-bold uppercase tracking-wider mb-5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
-                Contacting dealers in Jaipur...
+          {/* Steps grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8" style={revealStyle(howIn.inView, 0.1)}>
+            {(flowView === 'buyer' ? BUYER_STEPS : DEALER_STEPS).map((step, i) => (
+              <div key={i} className="relative flex flex-col items-center text-center bg-white border border-gray-100 rounded-2xl p-4 hover:border-orange-200 hover:shadow-md transition-all duration-200 group">
+                <div className="text-[10px] font-bold text-gray-300 mb-2 tracking-widest">{step.step}</div>
+                <div className="text-3xl mb-3">{step.emoji}</div>
+                <p className="text-xs font-bold text-gray-900 mb-1 leading-tight">{step.title}</p>
+                <p className="text-[10px] text-gray-400 leading-relaxed">{step.desc}</p>
+                {i < 5 && (
+                  <div className="hidden lg:block absolute top-1/2 -right-1.5 w-3 h-px bg-gray-200 group-hover:bg-orange-300 transition-colors" />
+                )}
               </div>
-              <div className="space-y-2.5">
-                {[
-                  { name: 'Delhi Electricals', status: 'Quote received', price: '₹83/m', done: true },
-                  { name: 'Jaipur Traders', status: 'Quote received', price: '₹97/m', done: true },
-                  { name: 'Raj Wire Stores', status: 'Preparing quote...', price: '', done: false },
-                  { name: 'Prime Suppliers', status: 'Notified', price: '', done: false },
-                ].map((d, i) => (
-                  <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-xl border ${d.done ? 'bg-violet-500/10 border-violet-500/20' : 'bg-white/[0.03] border-white/8'}`}>
-                    <div>
-                      <div className="text-sm font-medium text-white">{d.name}</div>
-                      <div className={`text-[11px] ${d.done ? 'text-violet-400' : 'text-white/30'}`}>{d.status}</div>
-                    </div>
-                    {d.price && <div className="text-base font-black text-violet-300">{d.price}</div>}
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 text-center text-[11px] text-white/25">4–6 dealers contacted automatically</div>
+            ))}
+          </div>
+
+          {/* Hub4Estate Blind Matching Engine */}
+          <div className="bg-gray-900 rounded-2xl px-6 py-5 text-center mb-6" style={revealStyle(howIn.inView, 0.18)}>
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+              <p className="text-sm font-bold text-white">Hub4Estate Blind Matching Engine</p>
             </div>
-            <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-full px-4 py-1.5 mb-6">
-                <span className="w-6 h-6 rounded-full bg-violet-600 text-white text-xs font-black flex items-center justify-center">2</span>
-                <span className="text-sm font-bold text-violet-700 uppercase tracking-wider">{tx.howItWorks.steps[1].highlight}</span>
-              </div>
-              <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">{tx.howItWorks.steps[1].title}</h3>
-              <p className="text-gray-500 text-lg leading-relaxed mb-8">{tx.howItWorks.steps[1].desc}</p>
-              <div className="flex flex-col gap-3">
-                {['We reach out to 4–6 verified dealers in your area', 'Dealers compete — price pressure happens automatically', 'You never have to make a single call'].map((f, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
-                    <div className="w-5 h-5 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="w-3 h-3 text-violet-500" />
-                    </div>
-                    {f}
-                  </div>
-                ))}
-              </div>
+            <div className="flex flex-wrap justify-center gap-2">
+              {['No names shared', 'Instant routing', 'Every bid = market data', 'Sent blind to dealers', 'Quotes back to buyer'].map((tag, i) => (
+                <span key={i} className="text-xs text-gray-400 bg-white/8 px-3 py-1 rounded-full border border-white/10">{tag}</span>
+              ))}
             </div>
           </div>
 
-          {/* Step 3 — Compare & Choose */}
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-24 pb-28"
-            style={revealStyle(howIn.inView, 0.2)}>
-            <div>
-              <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-1.5 mb-6">
-                <span className="w-6 h-6 rounded-full bg-green-600 text-white text-xs font-black flex items-center justify-center">3</span>
-                <span className="text-sm font-bold text-green-700 uppercase tracking-wider">{tx.howItWorks.steps[2].highlight}</span>
-              </div>
-              <h3 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">{tx.howItWorks.steps[2].title}</h3>
-              <p className="text-gray-500 text-lg leading-relaxed mb-8">{tx.howItWorks.steps[2].desc}</p>
-              <div className="flex flex-col gap-3">
-                {['All quotes in one place — price, delivery time, dealer rating', 'Pick the deal that works for you', 'GST invoice + delivery arranged after you confirm'].map((f, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
-                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="w-3 h-3 text-green-600" />
-                    </div>
-                    {f}
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Illustrated quote comparison */}
-            <div className="bg-[#09090B] rounded-2xl p-6 border border-white/10 shadow-2xl shadow-black/20 animate-float-slow">
-              <div className="text-[11px] text-green-400 font-bold uppercase tracking-wider mb-5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500" />
-                4 quotes received — Polycab FRLS 2.5mm², 200m
-              </div>
-              <div className="space-y-2.5">
-                {[
-                  { name: 'Delhi Electricals', price: '₹83/m', total: '₹16,600', delivery: '2 days', best: true },
-                  { name: 'Jaipur Traders', price: '₹97/m', total: '₹19,400', delivery: '1 day', best: false },
-                  { name: 'Raj Wire Stores', price: '₹109/m', total: '₹21,800', delivery: '3 days', best: false },
-                  { name: 'Prime Suppliers', price: '₹127/m', total: '₹25,400', delivery: 'Same day', best: false },
-                ].map((q, i) => (
-                  <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-xl border ${q.best ? 'bg-green-500/12 border-green-500/30' : 'bg-white/[0.03] border-white/8'}`}>
-                    <div>
-                      {q.best && <div className="text-[10px] text-green-400 font-black mb-0.5">★ BEST PRICE</div>}
-                      <div className="text-sm font-medium text-white">{q.name}</div>
-                      <div className="text-[11px] text-white/30">{q.delivery} delivery</div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`text-lg font-black ${q.best ? 'text-green-400' : 'text-white/50'}`}>{q.price}</div>
-                      <div className={`text-[11px] ${q.best ? 'text-green-400/70' : 'text-white/25'}`}>{q.total} total</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-2.5 text-center">
-                <span className="text-sm font-bold text-green-400">₹8,800 saved vs highest quote</span>
-                <span className="text-[11px] text-white/30 ml-2">· Real deal, verified</span>
-              </div>
-            </div>
+          {/* Switch flow CTA */}
+          <div className="text-center" style={revealStyle(howIn.inView, 0.22)}>
+            <button
+              onClick={() => setFlowView(flowView === 'buyer' ? 'dealer' : 'buyer')}
+              className="text-sm text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-4"
+            >
+              {flowView === 'buyer' ? 'See how it works for dealers →' : 'See how it works for buyers →'}
+            </button>
           </div>
 
         </div>

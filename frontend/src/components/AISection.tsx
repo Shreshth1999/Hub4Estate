@@ -18,9 +18,9 @@ const voiceMessages = (isHi: boolean) => [
 ];
 
 const quotes = (isHi: boolean) => [
-  { name: 'Delhi Electricals', price: '₹425', time: isHi ? '2 din' : '2 days', best: true },
-  { name: 'Jaipur Traders',   price: '₹495', time: isHi ? '1 din'  : '1 day',  best: false },
-  { name: 'Local Shop',       price: '₹585', time: 'Same day',                  best: false },
+  { name: isHi ? 'सत्यापित डीलर A' : 'Verified Dealer A', price: '₹425', time: isHi ? '2 din' : '2 days', best: true },
+  { name: isHi ? 'सत्यापित डीलर B' : 'Verified Dealer B', price: '₹495', time: isHi ? '1 din'  : '1 day',  best: false },
+  { name: isHi ? 'सत्यापित डीलर C' : 'Verified Dealer C', price: '₹585', time: 'Same day',                  best: false },
 ];
 
 // ─── Main Section ─────────────────────────────────────────────────────────────
