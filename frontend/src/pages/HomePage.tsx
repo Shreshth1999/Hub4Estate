@@ -990,6 +990,10 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* Who Is Hub4Estate For */}
+      <ElectricWireDivider />
+      <PersonaSection />
+
       {/* AI Section */}
       <ElectricWireDivider dark />
       <AISection />
@@ -1022,20 +1026,16 @@ export function HomePage() {
         </div>
       </section>
 
-      <ElectricWireDivider dark />
+      <ElectricWireDivider />
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-[#0B1628] relative overflow-hidden">
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, transparent 70%)' }} />
-
-        <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
+      <section className="py-20 sm:py-28 bg-gray-50">
+        <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14" style={revealStyle(dealsIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-600/10 border border-amber-600/20 px-3 py-1 rounded-full">{tx.realDeals.label}</span>
-            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
+            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">{tx.realDeals.label}</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.realDeals.title}
             </h2>
-            <p className="text-lg text-white/72 max-w-xl mx-auto">
+            <p className="text-lg text-gray-500 max-w-xl mx-auto">
               {tx.realDeals.subtitle}
             </p>
           </div>
@@ -1046,57 +1046,54 @@ export function HomePage() {
               return (
                 <div
                   key={di}
-                  className="bg-white/[0.07] border border-white/[0.14] rounded-2xl p-6 card-3d hover:border-amber-600/20 hover:bg-white/[0.07]"
+                  className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-amber-200 hover:shadow-md transition-all duration-300"
                   style={revealStyle(dealsIn.inView, 0.1 + di * 0.08)}
                 >
                   <div className="mb-4">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-amber-500 bg-amber-600/10 border border-amber-600/20 px-2.5 py-1 rounded-full">{deal.tag}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full">{deal.tag}</span>
                   </div>
-                  <h3 className="text-base font-bold text-white mb-5 leading-snug">{deal.title}</h3>
+                  <h3 className="text-base font-bold text-gray-900 mb-5 leading-snug">{deal.title}</h3>
                   <div className="space-y-2 mb-5">
                     {deal.rows.map((row, ri) => (
                       row.strikethrough ? (
-                        <div key={ri} className="flex justify-between items-center py-2 border-b border-white/[0.12]">
-                          <span className="text-sm text-white/60">{row.label}</span>
-                          <span className="text-sm font-medium text-white/50 line-through">{row.price}</span>
+                        <div key={ri} className="flex justify-between items-center py-2 border-b border-gray-100">
+                          <span className="text-sm text-gray-400">{row.label}</span>
+                          <span className="text-sm font-medium text-gray-300 line-through">{row.price}</span>
                         </div>
                       ) : (
-                        <div key={ri} className="flex justify-between items-center py-3 bg-amber-600/10 border border-amber-600/20 px-3.5 rounded-xl">
-                          <span className="text-sm font-bold text-white/80">{row.label}</span>
-                          <span className="text-xl font-black text-amber-500">{row.price}</span>
+                        <div key={ri} className="flex justify-between items-center py-3 bg-[#0B1628] px-3.5 rounded-xl">
+                          <span className="text-sm font-bold text-white">{row.label}</span>
+                          <span className="text-xl font-black text-amber-400">{row.price}</span>
                         </div>
                       )
                     ))}
                   </div>
-                  <div className="border-t border-white/[0.12] pt-4">
-                    <p className="text-[10px] text-white/55 uppercase tracking-widest font-semibold mb-1.5">{deal.savedLabel}</p>
-                    <p className="text-3xl font-black text-amber-500">{savedAmounts[di]}</p>
-                    <p className="text-xs text-white/55 mt-1">{deal.savedNote}</p>
+                  <div className="border-t border-gray-100 pt-4">
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-1.5">{deal.savedLabel}</p>
+                    <p className="text-3xl font-black text-[#0B1628]">{savedAmounts[di]}</p>
+                    <p className="text-xs text-gray-400 mt-1">{deal.savedNote}</p>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <p className="text-center text-xs text-white/50 mt-10" style={revealStyle(dealsIn.inView, 0.35)}>
+          <p className="text-center text-xs text-gray-400 mt-10" style={revealStyle(dealsIn.inView, 0.35)}>
             {tx.realDeals.footnote}
           </p>
         </div>
       </section>
 
-      <ElectricWireDivider dark />
+      <ElectricWireDivider />
       {/* Why We Exist */}
-      <section className="py-20 sm:py-28 bg-[#0B1628] relative overflow-hidden blueprint-bg-dark">
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 80% 50%, rgba(124,58,237,0.1) 0%, transparent 60%)' }} />
-
-        <div ref={whyIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
+      <section className="py-20 sm:py-28 bg-white">
+        <div ref={whyIn.ref as any} className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14" style={revealStyle(whyIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-600/10 border border-amber-600/20 px-3 py-1 rounded-full">{tx.whyWeExist.label}</span>
-            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
+            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">{tx.whyWeExist.label}</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.whyWeExist.title}
             </h2>
-            <p className="text-lg text-white/72 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.subtitle}
             </p>
           </div>
@@ -1105,34 +1102,29 @@ export function HomePage() {
             {tx.whyWeExist.cards.map((item, index) => (
               <div
                 key={index}
-                className="bg-white/[0.07] border border-white/[0.14] rounded-2xl p-7 card-3d hover:border-amber-600/20 group"
+                className="border border-gray-100 rounded-2xl p-7 hover:border-amber-200 hover:shadow-md transition-all duration-300 group"
                 style={revealStyle(whyIn.inView, 0.1 + index * 0.08)}
               >
                 <div className="w-1 h-8 bg-amber-600 rounded-full mb-5 group-hover:h-10 transition-all duration-300" />
-                <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
-                <p className="text-white/70 text-sm leading-relaxed">{item.desc}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">{item.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
           <div
-            className="border border-amber-600/20 bg-amber-600/5 rounded-2xl p-10 text-center"
+            className="bg-[#0B1628] rounded-2xl p-10 text-center"
             style={revealStyle(whyIn.inView, 0.35)}
           >
             <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">
               {tx.whyWeExist.summary.title}
             </h3>
-            <p className="text-base text-white/72 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base text-white/75 max-w-2xl mx-auto leading-relaxed">
               {tx.whyWeExist.summary.desc}
             </p>
           </div>
         </div>
       </section>
-
-      {/* Persona Section */}
-      <ElectricWireDivider />
-      <PersonaSection />
-      <ElectricWireDivider dark />
 
       {/* Final CTA */}
       <section className="relative py-24 sm:py-32 overflow-hidden"
