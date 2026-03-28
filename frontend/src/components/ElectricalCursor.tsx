@@ -236,14 +236,6 @@ export function ElectricalCursor() {
         ctx.stroke();
       } else {
         // Trail particle
-        const gradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, particle.size
-        );
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
-        gradient.addColorStop(0.4, particle.color.replace(')', `, ${alpha * 0.8})`).replace('rgb', 'rgba').replace('#', 'rgba('));
-        gradient.addColorStop(1, 'rgba(255, 152, 0, 0)');
-
         ctx.fillStyle = particle.color;
         ctx.globalAlpha = alpha;
         ctx.beginPath();
