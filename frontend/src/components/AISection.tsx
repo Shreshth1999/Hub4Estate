@@ -1,8 +1,7 @@
-import { ArrowRight, Camera, Mic, BarChart2 } from 'lucide-react';
+import { ArrowRight, Camera, Mic, BarChart2, Zap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useInView, revealStyle } from '../hooks/useInView';
 
-// ─── Static demo data ─────────────────────────────────────────────────────────
 const SCAN_ITEMS = [
   { text: 'FRLS 2.5mm² Wire — 200m', brand: 'Polycab' },
   { text: 'MCB 32A Double Pole', brand: 'Schneider' },
@@ -19,169 +18,219 @@ const voiceMessages = (isHi: boolean) => [
 
 const quotes = (isHi: boolean) => [
   { name: isHi ? 'सत्यापित डीलर A' : 'Verified Dealer A', price: '₹425', time: isHi ? '2 din' : '2 days', best: true },
-  { name: isHi ? 'सत्यापित डीलर B' : 'Verified Dealer B', price: '₹495', time: isHi ? '1 din'  : '1 day',  best: false },
-  { name: isHi ? 'सत्यापित डीलर C' : 'Verified Dealer C', price: '₹585', time: 'Same day',                  best: false },
+  { name: isHi ? 'सत्यापित डीलर B' : 'Verified Dealer B', price: '₹495', time: isHi ? '1 din' : '1 day', best: false },
+  { name: isHi ? 'सत्यापित डीलर C' : 'Verified Dealer C', price: '₹585', time: 'Same day', best: false },
 ];
 
-// ─── Main Section ─────────────────────────────────────────────────────────────
 export function AISection() {
   const { lang, tx } = useLanguage();
   const { aiSection } = tx;
   const isHi = lang === 'hi';
-
   const { ref, inView } = useInView(0.06);
 
-  const features = [
-    {
-      id: 'scan',
-      Icon: Camera,
-      iconColor: 'text-amber-600',
-      iconBg: 'bg-amber-50',
-      accentLine: 'bg-amber-600',
-      label: aiSection.features[0].label,
-      tagline: aiSection.features[0].tagline,
-      desc: aiSection.features[0].desc,
-      demo: (
-        <div className="space-y-1.5">
-          <p className="text-[9px] text-gray-500 uppercase tracking-wider mb-2">Detected items:</p>
-          {SCAN_ITEMS.map((item, i) => (
-            <div key={i} className="flex items-center justify-between text-[11px]">
-              <span className="text-gray-300">
-                <span className="text-amber-500 mr-1.5">✓</span>{item.text}
-              </span>
-              <span className="text-gray-500 text-[9px]">{item.brand}</span>
-            </div>
-          ))}
-          <p className="text-[9px] text-gray-600 pt-1.5 border-t border-gray-700/50">
-            {isHi ? '+ 8 aur items detect hue' : '+ 8 more items detected'}
-          </p>
-        </div>
-      ),
-    },
-    {
-      id: 'voice',
-      Icon: Mic,
-      iconColor: 'text-amber-600',
-      iconBg: 'bg-amber-50',
-      accentLine: 'bg-[#0B1628]',
-      label: aiSection.features[1].label,
-      tagline: aiSection.features[1].tagline,
-      desc: aiSection.features[1].desc,
-      demo: (
-        <div className="space-y-1.5">
-          {voiceMessages(isHi).map((m, i) => (
-            <div
-              key={i}
-              className={`text-[11px] rounded-lg px-2.5 py-1.5 leading-tight ${
-                m.role === 'user'
-                  ? 'bg-gray-700 text-gray-300 max-w-[85%]'
-                  : 'bg-[#0B1628] text-white ml-auto max-w-[85%] text-right'
-              }`}
-            >
-              {m.text}
-            </div>
-          ))}
-        </div>
-      ),
-    },
-    {
-      id: 'compare',
-      Icon: BarChart2,
-      iconColor: 'text-amber-600',
-      iconBg: 'bg-amber-50',
-      accentLine: 'bg-amber-600',
-      label: aiSection.features[2].label,
-      tagline: aiSection.features[2].tagline,
-      desc: aiSection.features[2].desc,
-      demo: (
-        <div className="space-y-1.5">
-          {quotes(isHi).map((q, i) => (
-            <div
-              key={i}
-              className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 ${
-                q.best ? 'bg-[#0B1628] border border-amber-600/25' : 'bg-gray-800'
-              }`}
-            >
-              <div>
-                {q.best && <p className="text-[9px] text-amber-500 font-semibold">★ Best</p>}
-                <p className="text-[11px] text-white">{q.name}</p>
-                <p className="text-[9px] text-gray-500">{q.time}</p>
-              </div>
-              <p className={`text-xs font-semibold ${q.best ? 'text-amber-400' : 'text-gray-400'}`}>
-                {q.price}
-              </p>
-            </div>
-          ))}
-          <p className="text-[9px] text-amber-500 text-center pt-0.5">
-            {isHi ? '₹3,200 bachaye vs highest quote' : '₹3,200 saved vs highest quote'}
-          </p>
-        </div>
-      ),
-    },
-  ];
-
   return (
-    <section className="bg-gray-50 border-y border-gray-100">
-      <div ref={ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+    <section className="bg-white border-t border-gray-100 overflow-hidden">
+      <style>{`
+        @keyframes aiSlideUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes aiSlideRight {
+          from { opacity: 0; transform: translateX(-10px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes aiFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes barGrow {
+          from { width: 0%; }
+        }
+        .ai-item { animation: aiSlideUp 0.45s cubic-bezier(0.16,1,0.3,1) both; }
+        .ai-msg  { animation: aiSlideRight 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+        .ai-fade { animation: aiFadeIn 0.5s ease both; }
+        .ai-bar  { animation: barGrow 1.2s cubic-bezier(0.16,1,0.3,1) both; }
+      `}</style>
 
-        {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-2 mb-4" style={revealStyle(inView, 0)}>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0B1628] text-white text-[11px] font-semibold rounded-full">
-              <span className="w-1 h-1 rounded-full bg-amber-500" />
+      <div ref={ref as any} className="max-w-6xl mx-auto px-6 py-20 sm:py-28">
+
+        {/* ── Header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-14">
+          <div style={revealStyle(inView, 0)}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0B1628] text-white text-[11px] font-bold rounded-full mb-5 uppercase tracking-widest">
+              <Zap className="w-3 h-3 text-amber-400" />
               {aiSection.badge}
-            </span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-3">
+              {aiSection.title}
+            </h2>
+            <p className="text-lg text-gray-500 max-w-lg leading-relaxed">
+              {aiSection.subtitle}
+            </p>
           </div>
-          <h2
-            className="text-3xl sm:text-4xl font-semibold text-gray-900 mb-3 tracking-tight"
-            style={revealStyle(inView, 0.06)}
-          >
-            {aiSection.title}
-          </h2>
-          <p
-            className="text-base text-gray-500 max-w-lg leading-relaxed"
+
+          {/* Step flow indicator */}
+          <div className="flex items-center gap-2 flex-shrink-0" style={revealStyle(inView, 0.08)}>
+            {['Scan', 'Match', 'Save'].map((s, i) => (
+              <div key={s} className="flex items-center gap-2">
+                <div className="flex flex-col items-center">
+                  <span className="text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full">
+                    {s}
+                  </span>
+                </div>
+                {i < 2 && <div className="w-5 h-px bg-gray-200" />}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── 3 Cards ── */}
+        <div className="grid sm:grid-cols-3 gap-5">
+
+          {/* Card 1 — Slip Scanner */}
+          <div
+            className="group rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-100/40 hover:-translate-y-1.5 transition-all duration-300"
             style={revealStyle(inView, 0.12)}
           >
-            {aiSection.subtitle}
-          </p>
-        </div>
+            {/* Amber accent top */}
+            <div className="h-[3px] bg-gradient-to-r from-amber-500 to-amber-400" />
 
-        {/* 3-column cards with always-visible demos */}
-        <div className="grid sm:grid-cols-3 gap-4 sm:gap-5">
-          {features.map((f, i) => (
-            <div
-              key={f.id}
-              className="rounded-2xl border border-gray-100 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-              style={revealStyle(inView, 0.15 + i * 0.08)}
-            >
-              {/* Top accent line */}
-              <div className={`h-0.5 ${f.accentLine}`} />
-
-              {/* Info */}
-              <div className="p-5">
-                <div className={`w-9 h-9 ${f.iconBg} rounded-xl flex items-center justify-center mb-3`}>
-                  <f.Icon className={`w-4 h-4 ${f.iconColor}`} />
+            <div className="p-6 pb-5">
+              <div className="flex items-start justify-between mb-5">
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
+                  <Camera className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-sm font-semibold text-gray-900 mb-0.5">{f.label}</p>
-                <p className="text-xs text-gray-400 mb-2.5">{f.tagline}</p>
-                <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
+                <span className="text-4xl font-black text-gray-50 group-hover:text-amber-50 transition-colors duration-300 leading-none select-none">01</span>
               </div>
+              <p className="text-base font-bold text-gray-900 mb-1">{aiSection.features[0].label}</p>
+              <p className="text-xs font-semibold text-amber-600 mb-3">{aiSection.features[0].tagline}</p>
+              <p className="text-sm text-gray-500 leading-relaxed">{aiSection.features[0].desc}</p>
+            </div>
 
-              {/* Demo — always visible */}
-              <div className="border-t border-gray-50 bg-gray-900 p-4">
-                {f.demo}
+            <div className="bg-[#0B1628] p-4 border-t border-gray-100/5">
+              <p className="text-[9px] text-gray-500 uppercase tracking-widest mb-3 font-bold">Detected items:</p>
+              <div className="space-y-2">
+                {SCAN_ITEMS.map((item, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-between text-[11px] ${inView ? 'ai-item' : 'opacity-0'}`}
+                    style={{ animationDelay: `${0.15 + i * 0.1}s` }}
+                  >
+                    <span className="text-gray-300">
+                      <span className="text-amber-400 mr-1.5">✓</span>{item.text}
+                    </span>
+                    <span className="text-gray-600 text-[9px] font-medium">{item.brand}</span>
+                  </div>
+                ))}
+                <p
+                  className={`text-[9px] text-gray-600 pt-2.5 border-t border-white/5 ${inView ? 'ai-fade' : 'opacity-0'}`}
+                  style={{ animationDelay: '0.55s' }}
+                >
+                  {isHi ? '+ 8 aur items detect hue' : '+ 8 more items detected'}
+                </p>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Card 2 — Voice Input */}
+          <div
+            className="group rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-100/40 hover:-translate-y-1.5 transition-all duration-300"
+            style={revealStyle(inView, 0.2)}
+          >
+            <div className="h-[3px] bg-gradient-to-r from-[#0B1628] to-[#1a3060]" />
+
+            <div className="p-6 pb-5">
+              <div className="flex items-start justify-between mb-5">
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
+                  <Mic className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-4xl font-black text-gray-50 group-hover:text-amber-50 transition-colors duration-300 leading-none select-none">02</span>
+              </div>
+              <p className="text-base font-bold text-gray-900 mb-1">{aiSection.features[1].label}</p>
+              <p className="text-xs font-semibold text-amber-600 mb-3">{aiSection.features[1].tagline}</p>
+              <p className="text-sm text-gray-500 leading-relaxed">{aiSection.features[1].desc}</p>
+            </div>
+
+            <div className="bg-[#0B1628] p-4 border-t border-gray-100/5">
+              <div className="space-y-2">
+                {voiceMessages(isHi).map((m, i) => (
+                  <div
+                    key={i}
+                    className={`text-[11px] rounded-xl px-3 py-2 leading-snug ${
+                      m.role === 'user'
+                        ? 'bg-white/8 text-gray-300 max-w-[88%]'
+                        : 'bg-amber-500/15 border border-amber-500/20 text-amber-300 ml-auto max-w-[88%] text-right'
+                    } ${inView ? 'ai-msg' : 'opacity-0'}`}
+                    style={{ animationDelay: `${0.1 + i * 0.18}s` }}
+                  >
+                    {m.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3 — Smart Compare */}
+          <div
+            className="group rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-100/40 hover:-translate-y-1.5 transition-all duration-300"
+            style={revealStyle(inView, 0.28)}
+          >
+            <div className="h-[3px] bg-gradient-to-r from-amber-500 to-amber-400" />
+
+            <div className="p-6 pb-5">
+              <div className="flex items-start justify-between mb-5">
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
+                  <BarChart2 className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-4xl font-black text-gray-50 group-hover:text-amber-50 transition-colors duration-300 leading-none select-none">03</span>
+              </div>
+              <p className="text-base font-bold text-gray-900 mb-1">{aiSection.features[2].label}</p>
+              <p className="text-xs font-semibold text-amber-600 mb-3">{aiSection.features[2].tagline}</p>
+              <p className="text-sm text-gray-500 leading-relaxed">{aiSection.features[2].desc}</p>
+            </div>
+
+            <div className="bg-[#0B1628] p-4 border-t border-gray-100/5">
+              <div className="space-y-2">
+                {quotes(isHi).map((q, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-between rounded-xl px-3 py-2.5 ${
+                      q.best
+                        ? 'bg-amber-500/10 border border-amber-500/25'
+                        : 'bg-white/5'
+                    } ${inView ? 'ai-item' : 'opacity-0'}`}
+                    style={{ animationDelay: `${0.12 + i * 0.12}s` }}
+                  >
+                    <div>
+                      {q.best && (
+                        <p className="text-[9px] text-amber-400 font-bold uppercase tracking-wider mb-0.5">★ Best Price</p>
+                      )}
+                      <p className={`text-[11px] font-semibold ${q.best ? 'text-white' : 'text-gray-400'}`}>{q.name}</p>
+                      <p className="text-[9px] text-gray-600">{q.time}</p>
+                    </div>
+                    <p className={`text-sm font-black ${q.best ? 'text-amber-400' : 'text-gray-600'}`}>
+                      {q.price}
+                    </p>
+                  </div>
+                ))}
+                <p
+                  className={`text-[10px] text-amber-500 text-center pt-1.5 font-bold ${inView ? 'ai-fade' : 'opacity-0'}`}
+                  style={{ animationDelay: '0.48s' }}
+                >
+                  {isHi ? '₹3,200 bachaye vs highest quote' : '₹3,200 saved vs highest quote'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* CTA bar */}
+        {/* ── CTA bar ── */}
         <div
-          className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5"
-          style={revealStyle(inView, 0.4)}
+          className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 border border-gray-100 rounded-2xl px-7 py-5"
+          style={revealStyle(inView, 0.42)}
         >
           <div>
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm font-bold text-gray-900">
               {isHi ? 'Abhi try karo — free hai, account nahi chahiye' : "Try it now — it's free, no account needed"}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
@@ -190,7 +239,7 @@ export function AISection() {
           </div>
           <button
             onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-lg hover:shadow-gray-900/20"
+            className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-[#0B1628] text-white text-sm font-semibold rounded-xl hover:bg-[#0f2040] transition-all duration-200 hover:shadow-lg hover:shadow-[#0B1628]/30"
           >
             {aiSection.cta} <ArrowRight className="w-4 h-4" />
           </button>

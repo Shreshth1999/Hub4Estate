@@ -1246,7 +1246,7 @@ export function HomePage() {
                             <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full ${isWinner ? 'bg-amber-500' : 'bg-white/15'}`}
-                                style={{ width: `${bar?.w ?? 80}%`, transition: 'width 1s ease' }}
+                                style={{ width: dealsIn.inView ? `${bar?.w ?? 80}%` : '0%', transition: 'width 1.4s cubic-bezier(0.16,1,0.3,1)' }}
                               />
                             </div>
                           </div>
@@ -1257,7 +1257,14 @@ export function HomePage() {
                     {/* Savings — Hero number */}
                     <div className="border-t border-white/8 pt-5">
                       <p className="text-[10px] text-white/35 uppercase tracking-widest font-semibold mb-1">{deal.savedLabel}</p>
-                      <p className="text-4xl font-black text-amber-400 mb-1">{savedAmounts[di]}</p>
+                      <p
+                        className="text-4xl font-black text-amber-400 mb-1 transition-all duration-700"
+                        style={{
+                          opacity: dealsIn.inView ? 1 : 0,
+                          transform: dealsIn.inView ? 'translateY(0)' : 'translateY(12px)',
+                          transitionDelay: `${0.3 + di * 0.1}s`,
+                        }}
+                      >{savedAmounts[di]}</p>
                       <p className="text-xs text-white/30">{deal.savedNote}</p>
                     </div>
                   </div>
