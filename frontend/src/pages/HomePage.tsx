@@ -333,19 +333,28 @@ export function HomePage() {
     <div className="min-h-screen relative">
 
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="bg-white border-b border-gray-100">
-        <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
+      <section className="relative bg-white overflow-hidden border-b border-gray-100">
+        {/* Subtle warm glow orbs */}
+        <div className="absolute top-[-10%] right-[-5%] w-[700px] h-[700px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(217,119,6,0.07) 0%, transparent 65%)' }} />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.05) 0%, transparent 65%)' }} />
+
+        <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 py-20 lg:py-28 relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left Content */}
             <div>
-              {/* Live badge */}
-              <p
-                className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-6"
+              {/* Live badge — animated pill */}
+              <div
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 border border-amber-200 rounded-full mb-8"
                 style={revealStyle(heroIn.inView, 0)}
               >
-                {isHi ? 'Verified Dealer Network' : 'Verified Dealer Network Across India'}
-              </p>
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">
+                  {isHi ? 'Verified Dealer Network' : 'Verified Dealer Network Across India'}
+                </span>
+              </div>
 
               {/* Main Headline */}
               <h1
@@ -402,23 +411,25 @@ export function HomePage() {
                 { Icon: CheckCircle, text: 'Your inquiry stays private — you choose who you deal with' },
               ].map(({ Icon, text }, index) => (
                   <div key={index} className="flex items-center gap-3 text-sm text-gray-500">
-                    <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-3.5 h-3.5 text-amber-600" />
+                    <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-4 h-4 text-amber-600" />
                     </div>
                     <span>{text}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Verified deal proof */}
-              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2" style={revealStyle(heroIn.inView, 0.30)}>
+              {/* Verified deal proof — floating pill cards */}
+              <div className="mt-10 flex flex-wrap gap-3" style={revealStyle(heroIn.inView, 0.30)}>
                 {[
-                  'Sony Speaker — ₹37,000 saved vs Croma',
-                  'Philips LED ×200 — ₹24,000 saved vs dealer',
+                  { label: 'Sony Speaker', saved: '₹37,000 saved', sub: 'vs Croma ₹1,05,000' },
+                  { label: 'Philips LED ×200', saved: '₹24,000 saved', sub: 'vs local dealer' },
                 ].map((d, i) => (
-                  <p key={i} className="text-xs text-gray-400">
-                    <span className="text-amber-600 font-semibold mr-1">✓</span>{d}
-                  </p>
+                  <div key={i} className={`bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
+                    <p className="text-[11px] text-gray-400 mb-0.5 font-medium">{d.label}</p>
+                    <p className="text-sm font-bold text-amber-700">{d.saved}</p>
+                    <p className="text-[11px] text-gray-400">{d.sub}</p>
+                  </div>
                 ))}
               </div>
             </div>
