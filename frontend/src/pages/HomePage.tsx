@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff, Home, Wrench, Palette, Building2, Users, Store, Truck, TrendingUp, Award, BarChart3 } from 'lucide-react';
+import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff, Home, Wrench, Palette, Building2, Users, Store, Truck, TrendingUp, Award, BarChart3, Search, Clock, UserCheck, Inbox, SlidersHorizontal, Star } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
 import { AISection } from '../components/AISection';
 import { productsApi, api } from '../lib/api';
@@ -13,21 +13,21 @@ const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:
 
 // ─── How It Works flow data ────────────────────────────────────────────────────
 const BUYER_STEPS = [
-  { step: '01', emoji: '📋', title: 'Browse or Upload Slip', desc: 'Select products or scan a purchase order' },
-  { step: '02', emoji: '🤖', title: 'AI Extracts Specs', desc: 'Brand, qty, specs auto-detected' },
-  { step: '03', emoji: '✅', title: 'Review & Submit', desc: 'Confirm details and send' },
-  { step: '04', emoji: '📊', title: 'Compare All Quotes', desc: 'Price · shipping · delivery time' },
-  { step: '05', emoji: '🎯', title: 'Select Best Deal', desc: 'Tap winner, get contact info' },
-  { step: '06', emoji: '🏆', title: 'Deal Closed!', desc: 'Best price, zero spam calls' },
+  { step: '01', Icon: Upload,           title: 'Browse or Upload Slip', desc: 'Select products or scan a purchase order' },
+  { step: '02', Icon: Sparkles,         title: 'AI Extracts Specs',     desc: 'Brand, qty, specs auto-detected in seconds' },
+  { step: '03', Icon: CheckCircle,      title: 'Review & Submit',       desc: 'Confirm details and send to the network' },
+  { step: '04', Icon: SlidersHorizontal,title: 'Compare All Quotes',    desc: 'Price · shipping · delivery time side by side' },
+  { step: '05', Icon: Star,             title: 'Select Best Deal',      desc: 'Tap the winner, contact is revealed instantly' },
+  { step: '06', Icon: TrendingUp,       title: 'Deal Closed!',          desc: 'Best price secured, zero spam calls' },
 ];
 
 const DEALER_STEPS = [
-  { step: '01', emoji: '📨', title: 'Requirement Arrives', desc: 'Blind — no buyer name or contact' },
-  { step: '02', emoji: '🔍', title: 'View Specs & Qty', desc: 'See exactly what is needed' },
-  { step: '03', emoji: '💰', title: 'Submit Quote', desc: 'Price + shipping + delivery + terms' },
-  { step: '04', emoji: '⏳', title: 'Await Decision', desc: 'Buyer compares all quotes' },
-  { step: '05', emoji: '🏆', title: 'Win = Contact', desc: 'Contact revealed on selection' },
-  { step: '06', emoji: '📈', title: 'Lose = Market Data', desc: 'Winning price benchmark shared' },
+  { step: '01', Icon: Inbox,       title: 'Requirement Arrives',  desc: 'Blind — no buyer name or contact shared' },
+  { step: '02', Icon: Search,      title: 'View Specs & Qty',     desc: 'See exactly what is needed before quoting' },
+  { step: '03', Icon: IndianRupee, title: 'Submit Quote',         desc: 'Price + shipping + delivery + terms' },
+  { step: '04', Icon: Clock,       title: 'Await Decision',       desc: 'Buyer compares all quotes objectively' },
+  { step: '05', Icon: UserCheck,   title: 'Win = Contact',        desc: 'Contact revealed the moment buyer selects you' },
+  { step: '06', Icon: BarChart3,   title: 'Lose = Market Data',   desc: 'Winning price benchmark shared — learn and adapt' },
 ];
 
 interface InquiryForm {
@@ -956,15 +956,12 @@ export function HomePage() {
                 className="group relative bg-white border border-gray-100 rounded-2xl p-6 overflow-hidden hover:border-amber-200 hover:shadow-lg hover:shadow-amber-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
                 style={revealStyle(howIn.inView, 0.08 + i * 0.06)}
               >
-                {/* Large decorative step number */}
-                <span className="absolute -right-1 -top-3 text-[80px] font-black leading-none select-none pointer-events-none text-gray-50 group-hover:text-amber-50 transition-colors duration-300">
-                  {step.step}
-                </span>
+                {/* Icon — soft amber, fills on hover */}
+                <div className="w-10 h-10 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-amber-500 group-hover:border-amber-500 transition-all duration-300">
+                  <step.Icon className="w-5 h-5 text-amber-600 group-hover:text-white transition-colors duration-300" />
+                </div>
 
-                {/* Emoji */}
-                <div className="text-2xl mb-4">{step.emoji}</div>
-
-                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.15em] mb-2">Step {step.step}</p>
+                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.15em] mb-1.5">Step {step.step}</p>
                 <p className="text-sm font-bold text-gray-900 mb-1.5 relative">{step.title}</p>
                 <p className="text-xs text-gray-500 leading-relaxed relative">{step.desc}</p>
 
