@@ -327,28 +327,19 @@ export function HomePage() {
     <div className="min-h-screen relative">
 
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="relative bg-white overflow-hidden">
-        {/* Subtle warm glow */}
-        <div className="absolute top-[-10%] right-[-5%] w-[700px] h-[700px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(249,115,22,0.07) 0%, transparent 65%)' }} />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.05) 0%, transparent 65%)' }} />
-
-        <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 relative py-20 lg:py-28">
+      <section className="bg-white border-b border-gray-100">
+        <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left Content */}
             <div>
               {/* Live badge */}
-              <div
-                className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 border border-amber-200 rounded-full mb-8"
+              <p
+                className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-6"
                 style={revealStyle(heroIn.inView, 0)}
               >
-                <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
-                <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">
-                  {isHi ? 'Live — Verified Dealer Network' : 'Live — Verified Dealer Network Across India'}
-                </span>
-              </div>
+                {isHi ? 'Verified Dealer Network' : 'Verified Dealer Network Across India'}
+              </p>
 
               {/* Main Headline */}
               <h1
@@ -413,17 +404,15 @@ export function HomePage() {
                 ))}
               </div>
 
-              {/* Real Deal Proof Pills */}
-              <div className="mt-10 flex flex-wrap gap-3" style={revealStyle(heroIn.inView, 0.30)}>
+              {/* Verified deal proof */}
+              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2" style={revealStyle(heroIn.inView, 0.30)}>
                 {[
-                  { label: 'Sony Speaker', saved: '₹37,000 saved', sub: 'vs Croma ₹1,05,000', delay: '' },
-                  { label: 'Philips LED ×200', saved: '₹24,000 saved', sub: 'vs local dealer', delay: '0.4s' },
+                  'Sony Speaker — ₹37,000 saved vs Croma',
+                  'Philips LED ×200 — ₹24,000 saved vs dealer',
                 ].map((d, i) => (
-                  <div key={i} className={`bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
-                    <p className="text-[11px] text-gray-400 mb-0.5 font-medium">{d.label}</p>
-                    <p className="text-sm font-bold text-amber-700">{d.saved}</p>
-                    <p className="text-[11px] text-gray-400">{d.sub}</p>
-                  </div>
+                  <p key={i} className="text-xs text-gray-400">
+                    <span className="text-amber-600 font-semibold mr-1">✓</span>{d}
+                  </p>
                 ))}
               </div>
             </div>
@@ -880,110 +869,88 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ─── Brand Marquee ─────────────────────────────────────────────────────── */}
-      <div className="bg-gray-50 border-y border-gray-100 overflow-hidden py-5">
-        <div className="ticker-content gap-0">
-          {[...Array(2)].map((_, pass) => (
-            <span key={pass} className="inline-flex items-center">
-              {['Havells', 'Polycab', 'Schneider', 'Legrand', 'Anchor', 'Philips', 'Finolex', 'Siemens', 'ABB', 'Crompton', 'Orient', 'Wipro Lighting'].map(b => (
-                <span key={b} className="inline-flex items-center gap-3 mr-12 text-gray-400 text-sm font-semibold tracking-widest uppercase">
-                  <span className="w-1 h-1 rounded-full bg-amber-500" />
-                  {b}
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ─── Trust Pillars ─────────────────────────────────────────────────────── */}
-      <div className="bg-white py-12">
+      {/* ─── Key Facts Bar ─────────────────────────────────────────────────────── */}
+      <div className="border-t border-b border-gray-100 bg-white">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-100 rounded-2xl overflow-hidden border border-gray-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
             {[
-              { icon: '🔍', title: 'Verified Dealers Only', desc: 'Every dealer is vetted before they can respond to an inquiry. No random shops, no unknown sources.' },
-              { icon: '⚡', title: 'Dealers Compete For You', desc: 'Multiple dealers quote your inquiry simultaneously — prices drop when they compete for your business.' },
-              { icon: '🤝', title: 'You Stay In Control', desc: 'All quotes in one place. Compare prices, delivery, and ratings. You decide — no pressure, no commitment.' },
-            ].map((p, i) => (
-              <div key={i} className="bg-white px-8 py-8 hover:bg-amber-50/40 transition-colors duration-300">
-                <div className="text-3xl mb-4">{p.icon}</div>
-                <h3 className="text-base font-bold text-gray-900 mb-2">{p.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{p.desc}</p>
+              { stat: '₹37,000', label: 'Average saved per order' },
+              { stat: '100%', label: 'Free for buyers, always' },
+              { stat: 'Verified', label: 'Every dealer, vetted manually' },
+              { stat: 'Zero', label: 'Spam calls to your number' },
+            ].map((f, i) => (
+              <div key={i} className="px-6 py-6 text-center">
+                <p className="text-2xl font-black text-[#0B1628] mb-1">{f.stat}</p>
+                <p className="text-xs text-gray-400 leading-snug">{f.label}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <ElectricWireDivider />
+
       {/* ─── How It Works ─────────────────────────────────────────────────────── */}
-      <section className="bg-white overflow-hidden">
+      <section className="bg-white border-t border-gray-100 overflow-hidden">
         <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6 pt-20 sm:pt-28 pb-20 sm:pb-28">
 
           {/* Header */}
-          <div className="text-center mb-10" style={revealStyle(howIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-amber-700 uppercase tracking-[0.2em] mb-5 bg-amber-50 border border-amber-100 px-4 py-1.5 rounded-full">
-              {tx.howItWorks.label}
-            </span>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
-              {tx.howItWorks.title}
-            </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">One requirement. Zero spam. Competitive quotes. Both sides win.</p>
-          </div>
-
-          {/* Tab toggle */}
-          <div className="flex items-center justify-center mb-10" style={revealStyle(howIn.inView, 0.06)}>
-            <div className="inline-flex bg-gray-100 rounded-2xl p-1.5 gap-1">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12" style={revealStyle(howIn.inView, 0)}>
+            <div>
+              <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-3">{tx.howItWorks.label}</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">
+                {tx.howItWorks.title}
+              </h2>
+            </div>
+            {/* Tab toggle */}
+            <div className="inline-flex bg-gray-100 rounded-xl p-1 gap-0.5 flex-shrink-0" style={revealStyle(howIn.inView, 0.06)}>
               <button
                 onClick={() => setFlowView('buyer')}
-                className={`px-7 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 ${flowView === 'buyer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${flowView === 'buyer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 For Buyers
               </button>
               <button
                 onClick={() => setFlowView('dealer')}
-                className={`px-7 py-2.5 text-sm font-bold rounded-xl transition-all duration-200 ${flowView === 'dealer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${flowView === 'dealer' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 For Dealers
               </button>
             </div>
           </div>
 
-          {/* Steps grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8" style={revealStyle(howIn.inView, 0.1)}>
+          {/* Steps — numbered, no emojis */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-100 border border-gray-100 rounded-2xl overflow-hidden mb-6" style={revealStyle(howIn.inView, 0.1)}>
             {(flowView === 'buyer' ? BUYER_STEPS : DEALER_STEPS).map((step, i) => (
-              <div key={i} className="relative flex flex-col items-center text-center bg-white border border-gray-100 rounded-2xl p-4 hover:border-amber-200 hover:shadow-md transition-all duration-200 group">
-                <div className="text-[10px] font-bold text-gray-300 mb-2 tracking-widest">{step.step}</div>
-                <div className="text-3xl mb-3">{step.emoji}</div>
-                <p className="text-xs font-bold text-gray-900 mb-1 leading-tight">{step.title}</p>
-                <p className="text-[10px] text-gray-400 leading-relaxed">{step.desc}</p>
-                {i < 5 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-1.5 w-3 h-px bg-gray-200 group-hover:bg-amber-400 transition-colors" />
-                )}
+              <div key={i} className="bg-white px-6 py-6 hover:bg-amber-50/30 transition-colors duration-200 group">
+                <div className="flex items-start gap-4">
+                  <span className="text-3xl font-black text-gray-100 group-hover:text-amber-200 transition-colors leading-none flex-shrink-0 select-none">
+                    {step.step}
+                  </span>
+                  <div className="pt-1">
+                    <p className="text-sm font-bold text-gray-900 mb-1">{step.title}</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">{step.desc}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Hub4Estate Blind Matching Engine */}
-          <div className="bg-gray-900 rounded-2xl px-6 py-5 text-center mb-6" style={revealStyle(howIn.inView, 0.18)}>
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
-              <p className="text-sm font-bold text-white">Hub4Estate Blind Matching Engine</p>
+          {/* Blind Matching Engine */}
+          <div className="bg-[#0B1628] rounded-xl px-6 py-4 flex flex-wrap items-center gap-4" style={revealStyle(howIn.inView, 0.18)}>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <p className="text-sm font-semibold text-white">Blind Matching Engine</p>
             </div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {['No names shared', 'Instant routing', 'Every bid = market data', 'Sent blind to dealers', 'Quotes back to buyer'].map((tag, i) => (
-                <span key={i} className="text-xs text-gray-400 bg-white/8 px-3 py-1 rounded-full border border-white/[0.14]">{tag}</span>
+            <div className="flex flex-wrap gap-2">
+              {['No names shared', 'Quotes sent blind', 'Instant routing', 'Market data on every bid'].map((tag, i) => (
+                <span key={i} className="text-xs text-gray-400 bg-white/[0.07] px-3 py-1 rounded-full border border-white/10">{tag}</span>
               ))}
             </div>
-          </div>
-
-          {/* Switch flow CTA */}
-          <div className="text-center" style={revealStyle(howIn.inView, 0.22)}>
             <button
               onClick={() => setFlowView(flowView === 'buyer' ? 'dealer' : 'buyer')}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-4"
+              className="ml-auto text-xs text-amber-500 hover:text-amber-400 transition-colors flex-shrink-0"
             >
-              {flowView === 'buyer' ? 'See how it works for dealers →' : 'See how it works for buyers →'}
+              {flowView === 'buyer' ? 'View dealer flow →' : 'View buyer flow →'}
             </button>
           </div>
 
@@ -991,16 +958,16 @@ export function HomePage() {
       </section>
 
       {/* Who Is Hub4Estate For */}
-      <ElectricWireDivider />
+
       <PersonaSection />
 
       {/* AI Section */}
-      <ElectricWireDivider dark />
+
       <AISection />
-      <ElectricWireDivider />
+
 
       {/* Categories Grid */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <span className="inline-block text-[11px] font-bold text-amber-700 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">Browse by category</span>
@@ -1026,9 +993,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <ElectricWireDivider />
+
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-gray-50">
+      <section className="py-20 sm:py-28 bg-gray-50 border-t border-gray-100">
         <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14" style={revealStyle(dealsIn.inView, 0)}>
             <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">{tx.realDeals.label}</span>
@@ -1084,16 +1051,16 @@ export function HomePage() {
         </div>
       </section>
 
-      <ElectricWireDivider />
+
       {/* Why We Exist */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
         <div ref={whyIn.ref as any} className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-14" style={revealStyle(whyIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">{tx.whyWeExist.label}</span>
+          <div className="mb-14 max-w-2xl" style={revealStyle(whyIn.inView, 0)}>
+            <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-4">{tx.whyWeExist.label}</p>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.whyWeExist.title}
             </h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-500 leading-relaxed">
               {tx.whyWeExist.subtitle}
             </p>
           </div>
@@ -1127,22 +1094,14 @@ export function HomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="relative py-24 sm:py-32 overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #B45309 0%, #D97706 40%, #F59E0B 70%, #B45309 100%)' }}>
-        {/* Noise + pattern overlay */}
-        <div className="absolute inset-0 blueprint-bg-dark opacity-20 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 65%)' }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(0,0,0,0.2) 0%, transparent 65%)' }} />
-
-        <div ref={ctaIn.ref as any} className="max-w-4xl mx-auto px-6 text-center relative">
-          <div style={revealStyle(ctaIn.inView, 0)}>
-            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/20 text-white text-[11px] font-bold rounded-full mb-8 uppercase tracking-widest backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              Free · No Account Required
-            </span>
-          </div>
+      <section className="bg-[#0B1628] py-24 sm:py-32">
+        <div ref={ctaIn.ref as any} className="max-w-4xl mx-auto px-6 text-center">
+          <p
+            className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-6"
+            style={revealStyle(ctaIn.inView, 0)}
+          >
+            Free · No Account Required
+          </p>
           <h2
             className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-5 tracking-tight leading-tight"
             style={revealStyle(ctaIn.inView, 0.07)}
@@ -1150,7 +1109,7 @@ export function HomePage() {
             {tx.finalCta.title}
           </h2>
           <p
-            className="text-lg text-white/75 mb-10 max-w-xl mx-auto leading-relaxed"
+            className="text-lg text-white/60 mb-10 max-w-xl mx-auto leading-relaxed"
             style={revealStyle(ctaIn.inView, 0.13)}
           >
             {tx.finalCta.subtitle}
@@ -1161,14 +1120,14 @@ export function HomePage() {
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-10 py-4 bg-[#0B1628] text-white font-black text-base rounded-xl hover:bg-gray-900 transition-all duration-200 hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 group"
+              className="inline-flex items-center gap-2 px-10 py-4 bg-amber-600 text-white font-bold text-base rounded-xl btn-glow group"
             >
               {tx.finalCta.ctaPrimary}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <Link
               to="/track"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 border-2 border-white/40 text-white font-bold text-base rounded-xl hover:border-white hover:bg-white/10 transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 border border-white/20 text-white/75 font-medium text-base rounded-xl hover:border-white/40 hover:text-white transition-all duration-200"
             >
               {tx.finalCta.ctaSecondary}
             </Link>
