@@ -998,53 +998,63 @@ export function HomePage() {
       </section>
 
       {/* ─── Anyone Who Buys ──────────────────────────────────────────────────── */}
-      <section className="relative py-20 sm:py-28 bg-white border-t border-gray-100 overflow-hidden">
-        {/* Dot background pattern */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+      <section className="relative py-20 sm:py-28 overflow-hidden" style={{ background: 'linear-gradient(135deg, #fffbf0 0%, #fff7e6 50%, #fef3c7 100%)' }}>
+        {/* Decorative amber blob */}
+        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)' }} />
+        <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(217,119,6,0.08) 0%, transparent 70%)' }} />
 
         <div ref={whoIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
-          {/* Left-aligned split header */}
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-14" style={revealStyle(whoIn.inView, 0)}>
-            <div>
-              <p className="text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">Who We Serve</p>
-              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight leading-tight">
-                Anyone Who Buys<br className="hidden sm:block" /> Electrical Products
-              </h2>
+
+          {/* Header */}
+          <div className="max-w-3xl mb-16" style={revealStyle(whoIn.inView, 0)}>
+            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-300/40 rounded-full px-4 py-1.5 mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">Who We Serve</span>
             </div>
-            <p className="text-base text-gray-500 max-w-xs leading-relaxed sm:text-right flex-shrink-0">
-              If you've ever been overcharged without knowing it, Hub4Estate is built for you.
+            <h2 className="text-4xl sm:text-6xl font-black text-gray-900 tracking-tight leading-[0.95] mb-5">
+              Anyone Who Buys<br /><span className="text-amber-600">Electrical Products</span>
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
+              If you've ever paid more than you should have — without knowing it — Hub4Estate was built for you.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+          {/* Cards — rich content, staggered */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: Home,      title: 'Homeowners',        desc: 'Fitting, renovating, or upgrading your home' },
-              { icon: Wrench,    title: 'Contractors',       desc: 'Sourcing materials for construction projects' },
-              { icon: Palette,   title: 'Interior Designers',desc: 'Specifying fixtures and fittings for clients' },
-              { icon: Building2, title: 'Builders',          desc: 'Large-scale procurement for project sites' },
-              { icon: Users,     title: 'Architects',        desc: 'Sourcing to spec for client projects' },
-              { icon: Store,     title: 'Small Businesses',  desc: 'Office, retail, or facility fitouts' },
+              { icon: Home,      title: 'Homeowners',         useCase: 'Renovating or fitting a new home', benefit: 'Compare prices on lights, fans & wiring — before spending a rupee' },
+              { icon: Wrench,    title: 'Contractors',        useCase: 'Running construction projects',      benefit: 'Bulk pricing from 4+ dealers, delivered directly to site' },
+              { icon: Palette,   title: 'Interior Designers', useCase: 'Specifying fixtures for clients',   benefit: 'Source exact-spec products without calling 10 vendors' },
+              { icon: Building2, title: 'Builders',           useCase: 'Large-scale project procurement',   benefit: 'One inquiry → multiple verified dealer quotes, instantly' },
+              { icon: Users,     title: 'Architects',         useCase: 'Sourcing to your exact specs',      benefit: 'Find products that match specifications, not just nearby stock' },
+              { icon: Store,     title: 'Small Businesses',   useCase: 'Office or facility fitouts',        benefit: 'Get dealer pricing on fitout materials — not retail markup' },
             ].map((segment, i) => (
               <div
                 key={i}
-                className="group relative bg-white border border-gray-100 rounded-2xl p-7 overflow-hidden hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-100/60 hover:-translate-y-2 transition-all duration-300 cursor-default"
-                style={revealStyle(whoIn.inView, 0.06 + i * 0.07)}
+                className="group relative bg-white rounded-2xl p-7 border border-amber-100/80 hover:border-amber-300 hover:shadow-2xl hover:shadow-amber-200/50 hover:-translate-y-2 transition-all duration-300 flex flex-col"
+                style={revealStyle(whoIn.inView, 0.05 + i * 0.08)}
               >
-                {/* Faded card number */}
-                <span className="absolute right-5 top-4 text-6xl font-black text-gray-50 group-hover:text-amber-50/70 transition-colors select-none leading-none pointer-events-none">
+                {/* Card number */}
+                <span className="absolute top-5 right-6 text-5xl font-black leading-none select-none pointer-events-none" style={{ color: 'rgba(245,158,11,0.12)' }}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
 
-                {/* Icon — amber from start, fills on hover */}
-                <div className="w-14 h-14 bg-amber-50 border border-amber-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:shadow-lg group-hover:shadow-amber-200/60 transition-all duration-300">
-                  <segment.icon className="w-7 h-7 text-amber-600 group-hover:text-white transition-colors duration-300" />
+                {/* Icon */}
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center mb-5 shadow-lg shadow-amber-200/60 group-hover:scale-110 group-hover:shadow-amber-300/60 transition-all duration-300">
+                  <segment.icon className="w-6 h-6 text-white" />
                 </div>
 
-                <h3 className="text-lg font-bold text-gray-900 mb-2 relative">{segment.title}</h3>
-                <p className="text-sm text-gray-500 leading-snug relative">{segment.desc}</p>
+                {/* Content */}
+                <h3 className="text-xl font-black text-gray-900 mb-1">{segment.title}</h3>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-4">{segment.useCase}</p>
 
-                {/* Amber bottom line slides in */}
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                {/* Benefit — the real value prop */}
+                <div className="mt-auto flex items-start gap-2.5 pt-4 border-t border-amber-100/60">
+                  <div className="w-5 h-5 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <ArrowRight className="w-3 h-3 text-amber-600" />
+                  </div>
+                  <p className="text-sm text-gray-700 leading-snug font-medium">{segment.benefit}</p>
+                </div>
               </div>
             ))}
           </div>
