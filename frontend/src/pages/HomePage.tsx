@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff } from 'lucide-react';
+import { ArrowRight, Shield, CheckCircle, IndianRupee, FileText, Upload, Camera, X, Sparkles, Loader2, MapPin, Mic, MicOff, Home, Wrench, Palette, Building2, Users, Store, Truck, TrendingUp, Award, BarChart3 } from 'lucide-react';
 import { InteractiveCategoryGrid } from '../components/InteractiveCategoryGrid';
-import { PersonaSection } from '../components/PersonaSection';
 import { AISection } from '../components/AISection';
 import { productsApi, api } from '../lib/api';
 import { Analytics } from '../lib/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useInView, revealStyle } from '../hooks/useInView';
-import { ElectricWireDivider } from '../components/ElectricWireDivider';
+
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
@@ -358,16 +357,16 @@ export function HomePage() {
 
               {/* Main Headline */}
               <h1
-                className="text-5xl md:text-6xl lg:text-[4.5rem] font-black text-gray-900 mb-6 leading-[1.02] tracking-tight"
+                className="text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-900 mb-6 leading-[0.93] tracking-tight"
                 style={revealStyle(heroIn.inView, 0.06)}
               >
                 {isHi ? (
                   <span className="gradient-text-orange">{tx.hero.headline}</span>
                 ) : (
                   <>
-                    Get The{' '}
-                    <span className="gradient-text-orange">Cheapest Price</span>
-                    {' '}On Any Electrical In India.
+                    We Will Get You The{' '}
+                    <span className="text-amber-600">Cheapest Price</span>
+                    {' '}Of Any Electrical Across India.
                   </>
                 )}
               </h1>
@@ -402,18 +401,16 @@ export function HomePage() {
 
               {/* Trust Indicators */}
               <div
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-2.5"
                 style={revealStyle(heroIn.inView, 0.24)}
               >
                 {[
-                { Icon: IndianRupee, text: 'Always free for buyers — zero commission, zero fee' },
-                { Icon: Shield, text: 'Every dealer verified before they can respond to your inquiry' },
-                { Icon: CheckCircle, text: 'Your inquiry stays private — you choose who you deal with' },
-              ].map(({ Icon, text }, index) => (
-                  <div key={index} className="flex items-center gap-3 text-sm text-gray-500">
-                    <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-4 h-4 text-amber-600" />
-                    </div>
+                  { Icon: IndianRupee, text: 'Multiple quotes from real dealers — compare side by side' },
+                  { Icon: Shield, text: 'We verify dealers before connecting you' },
+                  { Icon: FileText, text: 'Full transparency — you see every quote, no hidden fees' },
+                ].map(({ Icon, text }, index) => (
+                  <div key={index} className="flex items-center gap-2.5 text-sm font-semibold text-gray-700">
+                    <Icon className="w-4 h-4 text-gray-900 flex-shrink-0" />
                     <span>{text}</span>
                   </div>
                 ))}
@@ -998,9 +995,131 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Who Is Hub4Estate For */}
+      {/* ─── Anyone Who Buys ──────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 bg-gray-50 border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-14" style={revealStyle(howIn.inView, 0)}>
+            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
+              Anyone Who Buys Electrical Products
+            </h2>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
+              If you've ever wondered whether you're being charged a fair price,<br className="hidden sm:block" /> Hub4Estate is for you.
+            </p>
+          </div>
 
-      <PersonaSection />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { icon: Home, title: 'Homeowners', desc: 'Fitting, renovating, or upgrading your home' },
+              { icon: Wrench, title: 'Contractors', desc: 'Sourcing materials for construction projects' },
+              { icon: Palette, title: 'Interior Designers', desc: 'Specifying fixtures and fittings for clients' },
+              { icon: Building2, title: 'Builders', desc: 'Large-scale procurement for project sites' },
+              { icon: Users, title: 'Architects', desc: 'Sourcing to spec for client projects' },
+              { icon: Store, title: 'Small Businesses', desc: 'Office, retail, or facility fitouts' },
+            ].map((segment, i) => (
+              <div
+                key={i}
+                className="border border-gray-200 rounded-2xl p-6 bg-white hover:border-gray-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group"
+                style={revealStyle(howIn.inView, 0.06 + i * 0.05)}
+              >
+                <div className="w-10 h-10 bg-gray-100 group-hover:bg-amber-500 flex items-center justify-center mb-4 rounded-xl transition-colors duration-200">
+                  <segment.icon className="w-5 h-5 text-gray-700 group-hover:text-white transition-colors duration-200" />
+                </div>
+                <h3 className="text-base font-bold text-gray-900 mb-1">{segment.title}</h3>
+                <p className="text-sm text-gray-500 leading-snug">{segment.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Two Sides. One Platform. ─────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16" style={revealStyle(whyIn.inView, 0)}>
+            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
+              Two Sides. One Platform.
+            </h2>
+            <p className="text-xl text-gray-500 max-w-xl mx-auto">
+              Hub4Estate works for both buyers and electrical dealers
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6" style={revealStyle(whyIn.inView, 0.08)}>
+            {/* For Buyers */}
+            <div className="border border-gray-200 rounded-2xl p-8 bg-white hover:border-gray-300 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-3 mb-7">
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-600">For Buyers</span>
+                  <h3 className="text-xl font-semibold text-gray-900">Anyone Buying Electrical Products</h3>
+                </div>
+              </div>
+              <div className="space-y-4 mb-8">
+                {[
+                  { icon: IndianRupee, title: 'Compare Real Dealer Prices', desc: 'See what multiple verified dealers are actually charging — side by side' },
+                  { icon: Shield, title: 'Verified Dealers Only', desc: 'We check dealers before connecting you. No unknown vendors' },
+                  { icon: FileText, title: 'Full Documentation', desc: 'GST bills, warranty cards, delivery proof — proper paperwork every time' },
+                  { icon: Truck, title: 'Doorstep Delivery', desc: 'Products delivered to your site, home, or office where available' },
+                  { icon: TrendingUp, title: 'Zero Middlemen', desc: 'You deal directly with the dealer. We just facilitate the connection' },
+                ].map(({ icon: Icon, title, desc }, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-900">{title}</p>
+                      <p className="text-sm text-gray-500 leading-snug">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0B1628] text-white font-semibold rounded-xl hover:bg-[#0F2040] transition-colors"
+              >
+                Submit Your First Inquiry <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* For Dealers */}
+            <div className="border border-gray-700 rounded-2xl p-8 bg-[#0B1628] text-white hover:border-gray-600 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center gap-3 mb-7">
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Store className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-400">For Dealers</span>
+                  <h3 className="text-xl font-semibold text-white">Electrical Shops &amp; Distributors</h3>
+                </div>
+              </div>
+              <div className="space-y-4 mb-8">
+                {[
+                  { icon: Users, title: 'Qualified Buyer Inquiries', desc: 'Receive real inquiries from buyers who know what they want' },
+                  { icon: IndianRupee, title: 'Free to Join', desc: 'No listing fees, no upfront charges to get started' },
+                  { icon: Award, title: 'Build Your Reputation', desc: 'Get rated by real customers. Better ratings, more inquiries' },
+                  { icon: BarChart3, title: 'Track Your Performance', desc: 'See your quotes, conversions, and earnings in one dashboard' },
+                  { icon: TrendingUp, title: 'Expand Your Reach', desc: 'Reach buyers across your city who would never have found you otherwise' },
+                ].map(({ icon: Icon, title, desc }, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white">{title}</p>
+                      <p className="text-sm text-white/50 leading-snug">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link to="/dealer/onboarding" className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-colors">
+                Register as a Dealer — Free <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* AI Section */}
 
