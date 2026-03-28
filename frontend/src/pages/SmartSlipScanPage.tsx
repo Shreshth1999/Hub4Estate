@@ -10,7 +10,7 @@ const STEPS = [
     number: '01',
     title: 'Upload or Capture',
     desc: 'Take a photo of your contractor\'s slip or upload a PDF/image from your device.',
-    accent: 'bg-orange-500/20 text-orange-400',
+    accent: 'bg-amber-600/20 text-amber-500',
   },
   {
     icon: Sparkles,
@@ -44,13 +44,13 @@ export function SmartSlipScanPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
         <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 text-center relative">
           <div
-            className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-500/20 text-orange-400 text-[11px] font-semibold rounded-full mb-6 border border-orange-500/30"
+            className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-600/20 text-amber-500 text-[11px] font-semibold rounded-full mb-6 border border-amber-600/30"
             style={revealStyle(heroIn, 0)}
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -73,7 +73,7 @@ export function SmartSlipScanPage() {
           <div className="flex flex-wrap items-center justify-center gap-3" style={revealStyle(heroIn, 0.14)}>
             <a
               href="#scanner"
-              className="flex items-center gap-1.5 px-5 py-2.5 bg-orange-500 text-white text-sm font-bold rounded-xl hover:bg-orange-600 transition-colors btn-glow"
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-700 transition-colors btn-glow"
             >
               <Sparkles className="w-4 h-4" />
               Scan a Slip Now
@@ -120,7 +120,7 @@ export function SmartSlipScanPage() {
       <ElectricWireDivider dark />
 
       {/* Scanner — dark background */}
-      <div className="bg-[#09090B] px-6 py-14">
+      <div className="bg-[#0B1628] px-6 py-14">
         <div ref={scannerRef as any} className="max-w-4xl mx-auto" style={revealStyle(scannerIn, 0)}>
           <div className="text-center mb-8">
             <h2 className="text-2xl font-black text-white tracking-tight mb-2">Upload your slip</h2>
@@ -143,8 +143,8 @@ export function SmartSlipScanPage() {
             <div className="space-y-4">
               {FEATURES.map((f, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="w-7 h-7 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Zap className="w-3.5 h-3.5 text-orange-500" />
+                  <div className="w-7 h-7 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Zap className="w-3.5 h-3.5 text-amber-600" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 mb-0.5">{f.title}</p>
@@ -180,7 +180,7 @@ export function SmartSlipScanPage() {
       <ElectricWireDivider dark />
 
       {/* CTA — dark */}
-      <div className="bg-[#09090B] px-6 py-16">
+      <div className="bg-[#0B1628] px-6 py-16">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">
             Need to type it manually?

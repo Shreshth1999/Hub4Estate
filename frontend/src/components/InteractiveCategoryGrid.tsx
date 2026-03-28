@@ -1074,7 +1074,7 @@ export function CategoryTile({ category, index }: { category: Category; index: n
       {/* Active border on hover */}
       <div
         className={`absolute inset-0 border-2 transition-all duration-300 ${
-          isHovered ? 'border-orange-500/50' : 'border-transparent'
+          isHovered ? 'border-amber-600/50' : 'border-transparent'
         }`}
       />
 
@@ -1092,7 +1092,7 @@ export function CategoryTile({ category, index }: { category: Category; index: n
         {/* Category info */}
         <div className="flex-1">
           <h3 className={`text-base font-semibold transition-colors duration-300 ${
-            isHovered ? 'text-orange-400' : 'text-white'
+            isHovered ? 'text-amber-500' : 'text-white'
           }`}>
             {category.name}
           </h3>
@@ -1102,7 +1102,7 @@ export function CategoryTile({ category, index }: { category: Category; index: n
         {/* Arrow indicator */}
         <ArrowRight
           className={`absolute bottom-5 right-5 w-5 h-5 transition-all duration-300 ${
-            isHovered ? 'text-orange-500 translate-x-1' : 'text-gray-600'
+            isHovered ? 'text-amber-600 translate-x-1' : 'text-gray-600'
           }`}
         />
 

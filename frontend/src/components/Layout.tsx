@@ -39,7 +39,7 @@ export function Layout() {
       <ElectricalCursor />
 
       {/* Announcement Bar */}
-      <div className="bg-gray-950 text-center py-2.5 px-4">
+      <div className="bg-[#0B1628] text-center py-2.5 px-4">
         <p className="text-xs font-medium text-white/70 flex items-center justify-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
           Real quotes from verified dealers across India. No middlemen. Always free for buyers.
@@ -49,7 +49,7 @@ export function Layout() {
               const el = document.getElementById('inquiry-form');
               if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
             }}
-            className="text-orange-400 hover:text-orange-300 font-semibold transition-colors underline underline-offset-2 ml-1"
+            className="text-amber-500 hover:text-amber-400 font-semibold transition-colors underline underline-offset-2 ml-1"
           >
             Get quotes →
           </Link>
@@ -86,7 +86,7 @@ export function Layout() {
               ))}
               <Link
                 to="/track"
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-150"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-amber-700 hover:text-amber-800 hover:bg-amber-50 rounded-lg transition-all duration-150"
               >
                 <Search className="w-3.5 h-3.5" />
                 {tx.nav.track}
@@ -250,7 +250,7 @@ export function Layout() {
       <main><Outlet /></main>
 
       {/* Footer */}
-      <footer className="bg-gray-950 text-white">
+      <footer className="bg-[#0B1628] text-white">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div>
@@ -274,7 +274,7 @@ export function Layout() {
                   { to: '/categories/lighting', label: 'Lighting' },
                   { to: '/categories', label: tx.footer.links.viewAll, highlight: true },
                 ].map(({ to, label, highlight }) => (
-                  <li key={to}><Link to={to} className={`transition-colors ${highlight ? 'text-orange-400 hover:text-orange-300' : 'text-gray-400 hover:text-white'}`}>{label}</Link></li>
+                  <li key={to}><Link to={to} className={`transition-colors ${highlight ? 'text-amber-500 hover:text-amber-400' : 'text-gray-400 hover:text-white'}`}>{label}</Link></li>
                 ))}
               </ul>
             </div>
@@ -288,7 +288,7 @@ export function Layout() {
                   { to: '/ai-assistant', label: tx.footer.links.aiAssistant },
                   { to: '/track', label: tx.footer.links.trackRequest, highlight: true },
                 ].map(({ to, label, highlight }) => (
-                  <li key={to}><Link to={to} className={`transition-colors ${highlight ? 'text-orange-400 hover:text-orange-300' : 'text-gray-400 hover:text-white'}`}>{label}</Link></li>
+                  <li key={to}><Link to={to} className={`transition-colors ${highlight ? 'text-amber-500 hover:text-amber-400' : 'text-gray-400 hover:text-white'}`}>{label}</Link></li>
                 ))}
               </ul>
             </div>

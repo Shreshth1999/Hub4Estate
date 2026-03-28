@@ -341,11 +341,11 @@ export function HomePage() {
             <div>
               {/* Live badge */}
               <div
-                className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-50 border border-orange-200 rounded-full mb-8"
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-50 border border-amber-200 rounded-full mb-8"
                 style={revealStyle(heroIn.inView, 0)}
               >
-                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                <span className="text-xs font-bold text-orange-600 uppercase tracking-widest">
+                <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
+                <span className="text-xs font-bold text-amber-700 uppercase tracking-widest">
                   {isHi ? 'Live — Verified Dealer Network' : 'Live — Verified Dealer Network Across India'}
                 </span>
               </div>
@@ -381,7 +381,7 @@ export function HomePage() {
               >
                 <button
                   onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold text-base rounded-xl btn-glow group"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 text-white font-bold text-base rounded-xl btn-glow group"
                 >
                   {tx.hero.ctaPrimary}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -405,8 +405,8 @@ export function HomePage() {
                 { Icon: CheckCircle, text: 'Your inquiry stays private — you choose who you deal with' },
               ].map(({ Icon, text }, index) => (
                   <div key={index} className="flex items-center gap-3 text-sm text-gray-500">
-                    <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-3.5 h-3.5 text-orange-500" />
+                    <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-3.5 h-3.5 text-amber-600" />
                     </div>
                     <span>{text}</span>
                   </div>
@@ -419,7 +419,7 @@ export function HomePage() {
                   { label: 'Sony Speaker', saved: '₹37,000 saved', sub: 'vs Croma ₹1,05,000', delay: '' },
                   { label: 'Philips LED ×200', saved: '₹24,000 saved', sub: 'vs local dealer', delay: '0.4s' },
                 ].map((d, i) => (
-                  <div key={i} className={`bg-orange-50 border border-orange-100 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
+                  <div key={i} className={`bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
                     <p className="text-[11px] text-gray-400 mb-0.5 font-medium">{d.label}</p>
                     <p className="text-sm font-bold text-green-600">{d.saved}</p>
                     <p className="text-[11px] text-gray-400">{d.sub}</p>
@@ -458,7 +458,7 @@ export function HomePage() {
                         removePhoto();
                         sessionStorage.removeItem('hub4estate_inquiry');
                       }}
-                      className="mt-4 block mx-auto text-orange-600 font-bold underline text-sm"
+                      className="mt-4 block mx-auto text-amber-700 font-bold underline text-sm"
                     >
                       {tx.hero.submitted.submitAnother}
                     </button>
@@ -495,7 +495,7 @@ export function HomePage() {
                           onClick={() => setUseAIScan(true)}
                           className={`relative px-4 py-3 text-sm font-bold transition-all duration-200 ${
                             useAIScan
-                              ? 'bg-orange-500 text-white'
+                              ? 'bg-amber-600 text-white'
                               : 'text-gray-600 hover:text-gray-900'
                           }`}
                         >
@@ -522,7 +522,7 @@ export function HomePage() {
                         <div className="grid grid-cols-3 gap-2 text-center">
                           {tx.hero.aiScan.steps.map((step, i) => (
                             <div key={i} className="bg-white border border-gray-200 p-2">
-                              <div className="text-lg font-semibold text-orange-600 mb-0.5">{i + 1}</div>
+                              <div className="text-lg font-semibold text-amber-700 mb-0.5">{i + 1}</div>
                               <div className="text-xs font-medium text-gray-700">{step}</div>
                             </div>
                           ))}
@@ -802,7 +802,7 @@ export function HomePage() {
                             <button
                               type="button"
                               onClick={detectLocation}
-                              className="text-xs text-orange-600 hover:text-orange-700 font-normal normal-case flex items-center gap-1"
+                              className="text-xs text-amber-700 hover:text-amber-800 font-normal normal-case flex items-center gap-1"
                             >
                               <MapPin className="w-3 h-3" />
                               {tx.hero.formLabels.autoDetect}
@@ -887,7 +887,7 @@ export function HomePage() {
             <span key={pass} className="inline-flex items-center">
               {['Havells', 'Polycab', 'Schneider', 'Legrand', 'Anchor', 'Philips', 'Finolex', 'Siemens', 'ABB', 'Crompton', 'Orient', 'Wipro Lighting'].map(b => (
                 <span key={b} className="inline-flex items-center gap-3 mr-12 text-gray-400 text-sm font-semibold tracking-widest uppercase">
-                  <span className="w-1 h-1 rounded-full bg-orange-400" />
+                  <span className="w-1 h-1 rounded-full bg-amber-500" />
                   {b}
                 </span>
               ))}
@@ -905,7 +905,7 @@ export function HomePage() {
               { icon: '⚡', title: 'Dealers Compete For You', desc: 'Multiple dealers quote your inquiry simultaneously — prices drop when they compete for your business.' },
               { icon: '🤝', title: 'You Stay In Control', desc: 'All quotes in one place. Compare prices, delivery, and ratings. You decide — no pressure, no commitment.' },
             ].map((p, i) => (
-              <div key={i} className="bg-white px-8 py-8 hover:bg-orange-50/40 transition-colors duration-300">
+              <div key={i} className="bg-white px-8 py-8 hover:bg-amber-50/40 transition-colors duration-300">
                 <div className="text-3xl mb-4">{p.icon}</div>
                 <h3 className="text-base font-bold text-gray-900 mb-2">{p.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">{p.desc}</p>
@@ -922,7 +922,7 @@ export function HomePage() {
 
           {/* Header */}
           <div className="text-center mb-10" style={revealStyle(howIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-orange-600 uppercase tracking-[0.2em] mb-5 bg-orange-50 border border-orange-100 px-4 py-1.5 rounded-full">
+            <span className="inline-block text-[11px] font-bold text-amber-700 uppercase tracking-[0.2em] mb-5 bg-amber-50 border border-amber-100 px-4 py-1.5 rounded-full">
               {tx.howItWorks.label}
             </span>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
@@ -952,13 +952,13 @@ export function HomePage() {
           {/* Steps grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8" style={revealStyle(howIn.inView, 0.1)}>
             {(flowView === 'buyer' ? BUYER_STEPS : DEALER_STEPS).map((step, i) => (
-              <div key={i} className="relative flex flex-col items-center text-center bg-white border border-gray-100 rounded-2xl p-4 hover:border-orange-200 hover:shadow-md transition-all duration-200 group">
+              <div key={i} className="relative flex flex-col items-center text-center bg-white border border-gray-100 rounded-2xl p-4 hover:border-amber-200 hover:shadow-md transition-all duration-200 group">
                 <div className="text-[10px] font-bold text-gray-300 mb-2 tracking-widest">{step.step}</div>
                 <div className="text-3xl mb-3">{step.emoji}</div>
                 <p className="text-xs font-bold text-gray-900 mb-1 leading-tight">{step.title}</p>
                 <p className="text-[10px] text-gray-400 leading-relaxed">{step.desc}</p>
                 {i < 5 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-1.5 w-3 h-px bg-gray-200 group-hover:bg-orange-300 transition-colors" />
+                  <div className="hidden lg:block absolute top-1/2 -right-1.5 w-3 h-px bg-gray-200 group-hover:bg-amber-400 transition-colors" />
                 )}
               </div>
             ))}
@@ -967,7 +967,7 @@ export function HomePage() {
           {/* Hub4Estate Blind Matching Engine */}
           <div className="bg-gray-900 rounded-2xl px-6 py-5 text-center mb-6" style={revealStyle(howIn.inView, 0.18)}>
             <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
               <p className="text-sm font-bold text-white">Hub4Estate Blind Matching Engine</p>
             </div>
             <div className="flex flex-wrap justify-center gap-2">
@@ -999,7 +999,7 @@ export function HomePage() {
       <section className="py-20 sm:py-28 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
-            <span className="inline-block text-[11px] font-bold text-orange-600 uppercase tracking-[0.2em] mb-4 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full">Browse by category</span>
+            <span className="inline-block text-[11px] font-bold text-amber-700 uppercase tracking-[0.2em] mb-4 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">Browse by category</span>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight">
               {tx.categories.title}
             </h2>
@@ -1013,7 +1013,7 @@ export function HomePage() {
           <div className="text-center mt-12">
             <Link
               to="/categories"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold rounded-xl btn-glow"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 text-white font-bold rounded-xl btn-glow"
             >
               {tx.categories.cta}
               <ArrowRight className="w-5 h-5" />
@@ -1024,14 +1024,14 @@ export function HomePage() {
 
       <ElectricWireDivider dark />
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-[#09090B] relative overflow-hidden">
+      <section className="py-20 sm:py-28 bg-[#0B1628] relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, transparent 70%)' }} />
 
         <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-14" style={revealStyle(dealsIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-orange-500 uppercase tracking-[0.2em] mb-4 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">{tx.realDeals.label}</span>
+            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-600/10 border border-amber-600/20 px-3 py-1 rounded-full">{tx.realDeals.label}</span>
             <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
               {tx.realDeals.title}
             </h2>
@@ -1046,11 +1046,11 @@ export function HomePage() {
               return (
                 <div
                   key={di}
-                  className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 card-3d hover:border-orange-500/20 hover:bg-white/[0.07]"
+                  className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 card-3d hover:border-amber-600/20 hover:bg-white/[0.07]"
                   style={revealStyle(dealsIn.inView, 0.1 + di * 0.08)}
                 >
                   <div className="mb-4">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1 rounded-full">{deal.tag}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-amber-500 bg-amber-600/10 border border-amber-600/20 px-2.5 py-1 rounded-full">{deal.tag}</span>
                   </div>
                   <h3 className="text-base font-bold text-white mb-5 leading-snug">{deal.title}</h3>
                   <div className="space-y-2 mb-5">
@@ -1061,9 +1061,9 @@ export function HomePage() {
                           <span className="text-sm font-medium text-white/25 line-through">{row.price}</span>
                         </div>
                       ) : (
-                        <div key={ri} className="flex justify-between items-center py-3 bg-orange-500/10 border border-orange-500/20 px-3.5 rounded-xl">
+                        <div key={ri} className="flex justify-between items-center py-3 bg-amber-600/10 border border-amber-600/20 px-3.5 rounded-xl">
                           <span className="text-sm font-bold text-white/80">{row.label}</span>
-                          <span className="text-xl font-black text-orange-400">{row.price}</span>
+                          <span className="text-xl font-black text-amber-500">{row.price}</span>
                         </div>
                       )
                     ))}
@@ -1086,13 +1086,13 @@ export function HomePage() {
 
       <ElectricWireDivider dark />
       {/* Why We Exist */}
-      <section className="py-20 sm:py-28 bg-[#09090B] relative overflow-hidden blueprint-bg-dark">
+      <section className="py-20 sm:py-28 bg-[#0B1628] relative overflow-hidden blueprint-bg-dark">
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 80% 50%, rgba(124,58,237,0.1) 0%, transparent 60%)' }} />
 
         <div ref={whyIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-14" style={revealStyle(whyIn.inView, 0)}>
-            <span className="inline-block text-[11px] font-bold text-orange-500 uppercase tracking-[0.2em] mb-4 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">{tx.whyWeExist.label}</span>
+            <span className="inline-block text-[11px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-4 bg-amber-600/10 border border-amber-600/20 px-3 py-1 rounded-full">{tx.whyWeExist.label}</span>
             <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
               {tx.whyWeExist.title}
             </h2>
@@ -1105,10 +1105,10 @@ export function HomePage() {
             {tx.whyWeExist.cards.map((item, index) => (
               <div
                 key={index}
-                className="bg-white/[0.04] border border-white/10 rounded-2xl p-7 card-3d hover:border-orange-500/20 group"
+                className="bg-white/[0.04] border border-white/10 rounded-2xl p-7 card-3d hover:border-amber-600/20 group"
                 style={revealStyle(whyIn.inView, 0.1 + index * 0.08)}
               >
-                <div className="w-1 h-8 bg-orange-500 rounded-full mb-5 group-hover:h-10 transition-all duration-300" />
+                <div className="w-1 h-8 bg-amber-600 rounded-full mb-5 group-hover:h-10 transition-all duration-300" />
                 <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
                 <p className="text-white/45 text-sm leading-relaxed">{item.desc}</p>
               </div>
@@ -1116,7 +1116,7 @@ export function HomePage() {
           </div>
 
           <div
-            className="border border-orange-500/20 bg-orange-500/5 rounded-2xl p-10 text-center"
+            className="border border-amber-600/20 bg-amber-600/5 rounded-2xl p-10 text-center"
             style={revealStyle(whyIn.inView, 0.35)}
           >
             <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">
@@ -1136,7 +1136,7 @@ export function HomePage() {
 
       {/* Final CTA */}
       <section className="relative py-24 sm:py-32 overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #EA580C 0%, #F97316 40%, #FB923C 70%, #EA580C 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #B45309 0%, #D97706 40%, #F59E0B 70%, #B45309 100%)' }}>
         {/* Noise + pattern overlay */}
         <div className="absolute inset-0 blueprint-bg-dark opacity-20 pointer-events-none" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full pointer-events-none"
@@ -1169,7 +1169,7 @@ export function HomePage() {
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-10 py-4 bg-[#09090B] text-white font-black text-base rounded-xl hover:bg-gray-900 transition-all duration-200 hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 group"
+              className="inline-flex items-center gap-2 px-10 py-4 bg-[#0B1628] text-white font-black text-base rounded-xl hover:bg-gray-900 transition-all duration-200 hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1 group"
             >
               {tx.finalCta.ctaPrimary}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

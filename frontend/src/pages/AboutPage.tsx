@@ -53,9 +53,9 @@ export function AboutPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-amber-400/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '1.5s' }} />
         </div>
         <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 relative">
@@ -129,7 +129,7 @@ export function AboutPage() {
       <ElectricWireDivider dark />
 
       {/* Founder — dark */}
-      <div ref={founderRef as any} className="bg-[#09090B] px-6 py-20">
+      <div ref={founderRef as any} className="bg-[#0B1628] px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-black text-white mb-10 text-center tracking-tight" style={revealStyle(founderIn, 0)}>Meet the Founder</h2>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10" style={revealStyle(founderIn, 0.1)}>
@@ -147,7 +147,7 @@ export function AboutPage() {
               </div>
               <div className="md:col-span-2">
                 <h3 className="text-xl font-bold text-white mb-1">Shreshth Agarwal</h3>
-                <p className="text-sm text-orange-400 font-semibold mb-5">Founder & CEO, HUB4ESTATE LLP</p>
+                <p className="text-sm text-amber-500 font-semibold mb-5">Founder & CEO, HUB4ESTATE LLP</p>
                 <p className="text-gray-400 mb-4 leading-relaxed text-sm">
                   Shreshth started ideating Hub4Estate at 16, watching his father — a real estate professional
                   in Sri Ganganagar — navigate endless broker calls, irrelevant leads, and opaque supplier pricing.
@@ -159,7 +159,7 @@ export function AboutPage() {
                   (₹87 lakh in returns), and ran Treva Iconic Jewels for a full year.
                   Hub4Estate is not a first venture — it's the most deliberate one.
                 </p>
-                <blockquote className="border-l-2 border-orange-500/40 pl-4 italic text-gray-500 text-sm mb-5">
+                <blockquote className="border-l-2 border-amber-600/40 pl-4 italic text-gray-500 text-sm mb-5">
                   "Unclear is dangerous. Difficult is workable. The problem is clear —
                   I know exactly what we're building and why. Everything else is just execution."
                 </blockquote>
@@ -211,7 +211,7 @@ export function AboutPage() {
       <ElectricWireDivider dark />
 
       {/* Journey — dark */}
-      <div ref={journeyRef as any} className="bg-[#09090B] px-6 py-20">
+      <div ref={journeyRef as any} className="bg-[#0B1628] px-6 py-20">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12" style={revealStyle(journeyIn, 0)}>
             <h2 className="text-3xl font-black text-white mb-3 tracking-tight">The Journey</h2>
@@ -221,10 +221,10 @@ export function AboutPage() {
             {milestones.map((m, i) => (
               <div key={i} className="flex gap-6" style={revealStyle(journeyIn, 0.1 + i * 0.08)}>
                 <div className="w-20 flex-shrink-0 text-right pt-1">
-                  <span className="text-xs font-bold text-orange-400">{m.year}</span>
+                  <span className="text-xs font-bold text-amber-500">{m.year}</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0 mt-1" />
+                  <div className="w-3 h-3 bg-amber-600 rounded-full flex-shrink-0 mt-1" />
                   {i < milestones.length - 1 && <div className="w-px flex-1 bg-gray-800 min-h-10" />}
                 </div>
                 <div className="flex-1 pb-8">
@@ -260,13 +260,13 @@ export function AboutPage() {
       <ElectricWireDivider dark />
 
       {/* CTA */}
-      <div className="bg-[#09090B] px-6 py-20 text-center relative overflow-hidden">
+      <div className="bg-[#0B1628] px-6 py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-500/6 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-600/6 rounded-full blur-3xl" />
         </div>
         <div className="relative">
           <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <Zap className="w-6 h-6 text-orange-400" />
+            <Zap className="w-6 h-6 text-amber-500" />
           </div>
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Ready to find the best price?</h2>
           <p className="text-gray-400 mb-8 max-w-md mx-auto text-sm">

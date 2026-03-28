@@ -95,13 +95,13 @@ export function TrackInquiryPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
         <div ref={heroRef as any} className="max-w-2xl mx-auto px-6 py-20 text-center relative">
           <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6" style={revealStyle(heroIn, 0)}>
-            <Zap className="w-6 h-6 text-orange-400" />
+            <Zap className="w-6 h-6 text-amber-500" />
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-3 tracking-tight" style={revealStyle(heroIn, 0.06)}>
             Track Your Inquiry

@@ -35,9 +35,9 @@ export function AISection() {
     {
       id: 'scan',
       Icon: Camera,
-      iconColor: 'text-orange-500',
-      iconBg: 'bg-orange-50',
-      accentLine: 'bg-orange-500',
+      iconColor: 'text-amber-600',
+      iconBg: 'bg-amber-50',
+      accentLine: 'bg-amber-500',
       label: aiSection.features[0].label,
       tagline: aiSection.features[0].tagline,
       desc: aiSection.features[0].desc,
@@ -112,7 +112,7 @@ export function AISection() {
               </p>
             </div>
           ))}
-          <p className="text-[9px] text-orange-400 text-center pt-0.5">
+          <p className="text-[9px] text-amber-500 text-center pt-0.5">
             {isHi ? '₹3,200 bachaye vs highest quote' : '₹3,200 saved vs highest quote'}
           </p>
         </div>
@@ -128,7 +128,7 @@ export function AISection() {
         <div className="mb-12">
           <div className="flex items-center gap-2 mb-4" style={revealStyle(inView, 0)}>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-900 text-white text-[11px] font-semibold rounded-full">
-              <span className="w-1 h-1 rounded-full bg-orange-400" />
+              <span className="w-1 h-1 rounded-full bg-amber-500" />
               {aiSection.badge}
             </span>
           </div>

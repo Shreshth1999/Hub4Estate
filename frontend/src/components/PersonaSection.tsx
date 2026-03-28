@@ -6,12 +6,12 @@ import { useInView, revealStyle } from '../hooks/useInView';
 
 const ROLE_COLORS = [
   {
-    cardBg: 'bg-orange-50',
-    border: 'border-orange-100 hover:border-orange-200',
-    check: 'text-orange-400',
-    metricBg: 'bg-orange-100 text-orange-700',
-    cta: 'bg-orange-600 hover:bg-orange-700',
-    label: 'bg-orange-500',
+    cardBg: 'bg-amber-50',
+    border: 'border-amber-100 hover:border-amber-200',
+    check: 'text-amber-500',
+    metricBg: 'bg-amber-100 text-amber-800',
+    cta: 'bg-amber-700 hover:bg-amber-800',
+    label: 'bg-amber-500',
   },
   {
     cardBg: 'bg-violet-50',

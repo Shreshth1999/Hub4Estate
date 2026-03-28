@@ -56,16 +56,16 @@ export function ContactPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
         <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 relative">
           <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 mb-10 transition-colors" style={revealStyle(heroIn, 0)}>
             <ArrowLeft className="w-4 h-4" /> Back to home
           </Link>
           <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center mb-6" style={revealStyle(heroIn, 0.06)}>
-            <Zap className="w-6 h-6 text-orange-400" />
+            <Zap className="w-6 h-6 text-amber-500" />
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4 tracking-tight" style={revealStyle(heroIn, 0.1)}>
             Get in Touch
@@ -131,7 +131,7 @@ export function ContactPage() {
                         href={href}
                         target={external ? '_blank' : undefined}
                         rel={external ? 'noopener noreferrer' : undefined}
-                        className="text-sm font-semibold text-gray-900 hover:text-orange-600 transition-colors"
+                        className="text-sm font-semibold text-gray-900 hover:text-amber-700 transition-colors"
                       >
                         {main}
                       </a>
