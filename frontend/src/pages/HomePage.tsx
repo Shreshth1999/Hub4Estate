@@ -326,6 +326,7 @@ export function HomePage() {
   const howIn = useInView(0.06);
   const whoIn = useInView(0.05);
   const twoIn = useInView(0.05);
+  const catIn = useInView(0.06);
   const dealsIn = useInView(0.06);
   const whyIn = useInView(0.06);
   const ctaIn = useInView(0.1);
@@ -1146,9 +1147,9 @@ export function HomePage() {
 
 
       {/* Categories Grid */}
-      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <section className="py-20 sm:py-28 bg-gray-50 border-t border-gray-100">
+        <div ref={catIn.ref as any} className="max-w-6xl mx-auto px-6">
+          <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4" style={revealStyle(catIn.inView, 0)}>
             <div>
               <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-3">Browse by category</p>
               <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2 tracking-tight">
@@ -1160,9 +1161,11 @@ export function HomePage() {
             </div>
           </div>
 
-          <InteractiveCategoryGrid categories={categories} loading={loading} />
+          <div style={revealStyle(catIn.inView, 0.1)}>
+            <InteractiveCategoryGrid categories={categories} loading={loading} />
+          </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-12" style={revealStyle(catIn.inView, 0.2)}>
             <Link
               to="/categories"
               className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 text-white font-bold rounded-xl btn-glow"

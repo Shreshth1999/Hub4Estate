@@ -153,7 +153,7 @@ export function Layout() {
                     const el = document.getElementById('inquiry-form');
                     if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
                   }}
-                  className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-lg hover:shadow-gray-900/20"
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 transition-all duration-200 hover:shadow-lg hover:shadow-amber-600/30 btn-glow"
                 >
                   {tx.nav.getQuotes}
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -251,17 +251,19 @@ export function Layout() {
 
       {/* Footer */}
       <footer className="bg-[#0B1628] text-white">
+        {/* Amber accent top line */}
+        <div className="h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div>
               <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
                   <Zap className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-base font-semibold">Hub4Estate</span>
+                <span className="text-base font-bold">Hub4Estate</span>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">{tx.footer.tagline}</p>
-              <p className="text-gray-500 text-xs">{tx.footer.registered}</p>
+              <p className="text-gray-600 text-xs">{tx.footer.registered}</p>
             </div>
 
             <div>
