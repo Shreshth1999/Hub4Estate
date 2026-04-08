@@ -35,6 +35,12 @@ backend/uploads/
 .cache/
 .turbo/
 
+# Vite dev server cache
+frontend/.vite/
+
+# PRD generated PDFs (regenerate with: node docs/prd/generate-pdfs.js)
+docs/prd/pdf/
+
 # Replit
 .replit
 replit.nix

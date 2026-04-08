@@ -96,7 +96,6 @@ export function UserAuthPage() {
       if (response.data.requiresProfile) {
         setStep('profile');
       } else if (response.data.token && response.data.user) {
-        localStorage.setItem('token', response.data.token);
         setAuth(response.data.user, response.data.token);
         setStep('success');
         setTimeout(() => navigate('/dashboard'), 1200);
@@ -124,7 +123,6 @@ export function UserAuthPage() {
       };
       const response = await authApi.userSignup(payload);
       if (response.data.token && response.data.user) {
-        localStorage.setItem('token', response.data.token);
         setAuth(response.data.user, response.data.token);
         setStep('success');
         setTimeout(() => navigate('/dashboard'), 1200);

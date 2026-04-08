@@ -38,7 +38,7 @@ passport.use(
               isEmailVerified: true, // Google OAuth verifies the email
             },
           });
-          console.log(`[Google OAuth] Created new user: ${email}`);
+          process.stdout.write(JSON.stringify({ level: 'info', event: 'google_oauth_user_created', email }) + '\n');
         } else if (!user.googleId) {
           user = await prisma.user.update({
             where: { id: user.id },
@@ -48,7 +48,7 @@ passport.use(
               isEmailVerified: true, // Google OAuth verifies the email
             },
           });
-          console.log(`[Google OAuth] Linked Google to existing user: ${email}`);
+          process.stdout.write(JSON.stringify({ level: 'info', event: 'google_oauth_user_linked', email }) + '\n');
         }
 
         return done(null, user);

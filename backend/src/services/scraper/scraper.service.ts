@@ -86,7 +86,7 @@ export class ProductScraper {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] ${message}`;
     this.logs.push(logEntry);
-    console.log(`[Scraper:${this.config.slug}] ${message}`);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'scraper_log', brand: this.config.slug, message }) + '\n');
   }
 
   private logError(message: string, error?: any) {
@@ -464,9 +464,7 @@ export async function scrapeAllBrands(): Promise<{ brand: string; result: Scrape
   const results: { brand: string; result: ScrapeResult }[] = [];
 
   for (const config of ALL_BRAND_CONFIGS) {
-    console.log(`\n${'='.repeat(50)}`);
-    console.log(`Starting scrape for: ${config.name}`);
-    console.log(`${'='.repeat(50)}\n`);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'scraper_brand_start', brand: config.name }) + '\n');
 
     const scraper = new ProductScraper(config);
     const result = await scraper.scrapeAll();

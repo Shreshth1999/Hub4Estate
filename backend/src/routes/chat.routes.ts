@@ -137,11 +137,12 @@ router.post(
 router.post(
   '/message/stream',
   optionalAuth,
-  async (req: AuthRequest, res: Response) => {
+  async (req: AuthRequest, res: Response): Promise<void> => {
     const { sessionId, message } = req.body;
 
     if (!sessionId || !message || typeof message !== 'string' || message.length < 1 || message.length > 2000) {
-      return res.status(400).json({ error: 'Invalid request' });
+      res.status(400).json({ error: 'Invalid request' });
+      return;
     }
 
     // Set SSE headers

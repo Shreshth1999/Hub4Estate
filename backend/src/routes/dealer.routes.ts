@@ -377,7 +377,7 @@ router.post(
         },
       });
 
-      console.log(`Document uploaded for dealer ${dealerId}: ${documentType} -> ${relativePath}`);
+      process.stdout.write(JSON.stringify({ level: 'info', event: 'dealer_document_uploaded', dealerId, documentType, path: relativePath }) + '\n');
 
       logActivity({
         actorType: 'dealer',

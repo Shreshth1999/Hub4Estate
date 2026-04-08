@@ -79,18 +79,18 @@ router.post('/send-otp', otpLimiter, validateBody(sendOTPSchema), async (req, re
       sent = await sendOTPEmail(email, otpCode, type);
       method = 'email';
       if (sent) {
-        console.log(`[OTP] Email sent to ${email}`);
+        process.stdout.write(JSON.stringify({ level: 'info', event: 'otp_email_sent', email }) + '\n');
       } else {
-        console.log(`[OTP] Email failed, OTP for ${email}: ${otpCode}`);
+        process.stdout.write(JSON.stringify({ level: 'warn', event: 'otp_email_failed', email }) + '\n');
       }
     } else if (phone) {
       const smsResult = await sendOTPSMS(phone, otpCode);
       sent = smsResult.success;
       method = 'phone';
       if (sent) {
-        console.log(`[OTP] SMS sent to ${phone}`);
+        process.stdout.write(JSON.stringify({ level: 'info', event: 'otp_sms_sent', phone }) + '\n');
       } else {
-        console.log(`[OTP] SMS failed (${smsResult.error}), OTP for ${phone}: ${otpCode}`);
+        process.stdout.write(JSON.stringify({ level: 'warn', event: 'otp_sms_failed', phone, error: smsResult.error }) + '\n');
       }
     }
 
@@ -447,7 +447,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get(
   '/google/callback',
   (req, res, next) => {
-    console.log('[Google OAuth] Callback received');
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'google_oauth_callback_received' }) + '\n');
     passport.authenticate('google', { session: false }, (err: any, user: any, info: any) => {
       if (err) {
         console.error('[Google OAuth] Authentication error:', err.message || err);
@@ -458,7 +458,7 @@ router.get(
         console.error('[Google OAuth] No user returned. Info:', info);
         return res.redirect(`${env.FRONTEND_URL}/auth/callback?error=no_user`);
       }
-      console.log(`[Google OAuth] User authenticated: ${user.email}`);
+      process.stdout.write(JSON.stringify({ level: 'info', event: 'google_oauth_authenticated', email: user.email }) + '\n');
       req.user = user;
       next();
     })(req, res, next);
@@ -500,7 +500,7 @@ router.get(
         req,
       });
 
-      console.log(`[Google OAuth] Token generated successfully for ${user.email}, profileComplete: ${profileComplete}`);
+      process.stdout.write(JSON.stringify({ level: 'info', event: 'google_oauth_token_generated', email: user.email, profileComplete }) + '\n');
       res.redirect(`${env.FRONTEND_URL}/auth/callback?token=${token}`);
     } catch (error: any) {
       console.error('[Google OAuth] Token generation error:', error.message || error);
@@ -623,7 +623,7 @@ const dealerRegistrationSchema = z.object({
 
 router.post('/dealer/register', validateBody(dealerRegistrationSchema), async (req, res) => {
   try {
-    console.log('[Dealer Registration] Attempting registration for:', req.body.email);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'dealer_registration_attempt', email: req.body.email }) + '\n');
 
     // Check existing email
     const existingDealer = await prisma.dealer.findUnique({
@@ -631,7 +631,7 @@ router.post('/dealer/register', validateBody(dealerRegistrationSchema), async (r
     });
 
     if (existingDealer) {
-      console.log('[Dealer Registration] Email already exists:', req.body.email);
+      process.stdout.write(JSON.stringify({ level: 'warn', event: 'dealer_registration_email_exists', email: req.body.email }) + '\n');
       return res.status(400).json({ error: 'Dealer already exists with this email' });
     }
 
@@ -641,7 +641,7 @@ router.post('/dealer/register', validateBody(dealerRegistrationSchema), async (r
     });
 
     if (existingGST) {
-      console.log('[Dealer Registration] GST already exists:', req.body.gstNumber);
+      process.stdout.write(JSON.stringify({ level: 'warn', event: 'dealer_registration_gst_exists', gstNumber: req.body.gstNumber }) + '\n');
       return res.status(400).json({ error: 'GST number already registered' });
     }
 
@@ -674,7 +674,7 @@ router.post('/dealer/register', validateBody(dealerRegistrationSchema), async (r
       },
     });
 
-    console.log('[Dealer Registration] Success:', dealer.id);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'dealer_registration_success', dealerId: dealer.id }) + '\n');
 
     // Generate token so dealer can immediately access pending dashboard
     const token = jwt.sign(
@@ -986,7 +986,7 @@ router.post('/forgot-password', passwordResetLimiter, validateBody(forgotPasswor
     const resetUrl = `${env.FRONTEND_URL}/dealer/reset-password?token=${token}`;
     await sendOTPEmail(normalizedEmail, resetUrl, 'signup');
 
-    console.log(`[Auth] Password reset token for ${normalizedEmail}: ${token}`);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'password_reset_token_created', email: normalizedEmail }) + '\n');
 
     return res.json({ message: 'If that email is registered, you will receive a reset link.' });
   } catch (error) {

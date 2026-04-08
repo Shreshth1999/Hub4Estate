@@ -35,7 +35,7 @@ async function sendViaMSG91(phone: string, otp: string): Promise<SMSResult> {
     );
 
     if (response.data.type === 'success') {
-      console.log(`[SMS] MSG91 sent to ${phone}`);
+      process.stdout.write(JSON.stringify({ level: 'info', event: 'sms_msg91_sent', phone }) + '\n');
       return { success: true, messageId: response.data.request_id };
     } else {
       console.error('[SMS] MSG91 error:', response.data);
@@ -69,7 +69,7 @@ async function sendViaTwilio(phone: string, otp: string): Promise<SMSResult> {
       }
     );
 
-    console.log(`[SMS] Twilio sent to ${phone}, SID: ${response.data.sid}`);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'sms_twilio_sent', phone, sid: response.data.sid }) + '\n');
     return { success: true, messageId: response.data.sid };
   } catch (error: any) {
     console.error('[SMS] Twilio request failed:', error.response?.data || error.message);
@@ -83,7 +83,7 @@ export async function sendOTPSMS(phone: string, otp: string): Promise<SMSResult>
   const normalizedPhone = phone.startsWith('+') ? phone : `+${phone}`;
 
   // Log in development mode
-  console.log(`[SMS] Sending OTP to ${normalizedPhone}: ${otp}`);
+  process.stdout.write(JSON.stringify({ level: 'info', event: 'sms_otp_send_attempt', phone: normalizedPhone }) + '\n');
 
   // Check if it's an Indian number (+91)
   const isIndianNumber = normalizedPhone.startsWith('+91');
@@ -92,7 +92,7 @@ export async function sendOTPSMS(phone: string, otp: string): Promise<SMSResult>
   if (isIndianNumber && env.MSG91_AUTH_KEY) {
     const result = await sendViaMSG91(normalizedPhone, otp);
     if (result.success) return result;
-    console.log('[SMS] MSG91 failed, trying fallback...');
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'sms_msg91_fallback', phone: normalizedPhone }) + '\n');
   }
 
   // Try Twilio as fallback or for international numbers
@@ -103,7 +103,7 @@ export async function sendOTPSMS(phone: string, otp: string): Promise<SMSResult>
 
   // In development without SMS providers configured
   if (env.NODE_ENV === 'development') {
-    console.log(`[SMS] Development mode - OTP for ${normalizedPhone}: ${otp}`);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'sms_dev_mode_otp', phone: normalizedPhone, otp }) + '\n');
     return { success: true, messageId: 'dev-mode' };
   }
 

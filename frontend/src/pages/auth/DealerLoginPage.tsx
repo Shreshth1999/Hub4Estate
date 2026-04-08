@@ -29,7 +29,6 @@ export function DealerLoginPage() {
     try {
       const response = await authApi.dealerLogin({ email, password });
       const { token, dealer } = response.data;
-      localStorage.setItem('token', token);
       setAuth({
         id: dealer.id,
         email: dealer.email,

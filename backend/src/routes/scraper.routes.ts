@@ -195,7 +195,7 @@ router.post('/scrape/:brandSlug', async (req: Request, res: Response) => {
     // Run scrape asynchronously (don't await)
     scraperService.scrapeBrand(brandSlug)
       .then(result => {
-        console.log(`Scrape completed for ${brandSlug}:`, result);
+        process.stdout.write(JSON.stringify({ level: 'info', event: 'scrape_completed', brand: brandSlug, result }) + '\n');
       })
       .catch(error => {
         console.error(`Scrape failed for ${brandSlug}:`, error);
@@ -222,7 +222,7 @@ router.post('/scrape-all', async (_req: Request, res: Response) => {
     // Run in background
     scraperService.scrapeAllBrands()
       .then(results => {
-        console.log('All brands scraping completed:', results);
+        process.stdout.write(JSON.stringify({ level: 'info', event: 'scrape_all_completed', results }) + '\n');
       })
       .catch(error => {
         console.error('Scrape all failed:', error);

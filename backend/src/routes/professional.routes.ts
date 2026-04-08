@@ -69,7 +69,7 @@ router.post(
     { name: 'document', maxCount: 1 },
     { name: 'additionalDoc', maxCount: 1 },
   ]),
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res): Promise<void> => {
     try {
       const userId = req.user!.id;
       const files = req.files as Record<string, Express.Multer.File[]>;
@@ -81,7 +81,8 @@ router.post(
       // Validate role
       const validRoles = ['ARCHITECT', 'INTERIOR_DESIGNER', 'CONTRACTOR', 'ELECTRICIAN', 'SMALL_BUILDER', 'DEVELOPER', 'INDIVIDUAL_HOME_BUILDER', 'RENOVATION_HOMEOWNER'];
       if (!role || !validRoles.includes(role)) {
-        return res.status(400).json({ error: 'Invalid or missing role' });
+        res.status(400).json({ error: 'Invalid or missing role' });
+        return;
       }
 
       // Upsert professional profile
@@ -109,7 +110,7 @@ router.post(
       });
 
       // Save uploaded documents
-      const baseUrl = `${env.BACKEND_URL || ''}/uploads/professional-docs`;
+      const baseUrl = `${process.env.BACKEND_URL || ''}/uploads/professional-docs`;
 
       if (files.document?.[0]) {
         const f = files.document[0];
@@ -161,15 +162,15 @@ router.post(
 router.post(
   '/portfolio',
   upload.single('image'),
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res): Promise<void> => {
     try {
       const userId = req.user!.id;
-      if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+      if (!req.file) { res.status(400).json({ error: 'No file uploaded' }); return; }
 
       const profile = await prisma.professionalProfile.findUnique({ where: { userId } });
-      if (!profile) return res.status(404).json({ error: 'Profile not found. Complete onboarding first.' });
+      if (!profile) { res.status(404).json({ error: 'Profile not found. Complete onboarding first.' }); return; }
 
-      const baseUrl = `${env.BACKEND_URL || ''}/uploads/professional-docs`;
+      const baseUrl = `${process.env.BACKEND_URL || ''}/uploads/professional-docs`;
       const doc = await prisma.professionalDocument.create({
         data: {
           profileId: profile.id,
@@ -190,17 +191,17 @@ router.post(
 );
 
 // ── DELETE /api/professional/documents/:id ────────────────────────────────────
-router.delete('/documents/:id', async (req: AuthRequest, res) => {
+router.delete('/documents/:id', async (req: AuthRequest, res): Promise<void> => {
   try {
     const userId = req.user!.id;
 
     const profile = await prisma.professionalProfile.findUnique({ where: { userId } });
-    if (!profile) return res.status(404).json({ error: 'Profile not found' });
+    if (!profile) { res.status(404).json({ error: 'Profile not found' }); return; }
 
     const doc = await prisma.professionalDocument.findFirst({
       where: { id: req.params.id, profileId: profile.id },
     });
-    if (!doc) return res.status(404).json({ error: 'Document not found' });
+    if (!doc) { res.status(404).json({ error: 'Document not found' }); return; }
 
     // Delete file from disk
     const filename = path.basename(doc.fileUrl);

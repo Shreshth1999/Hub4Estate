@@ -9,9 +9,7 @@ export interface User {
   city?: string;
   phone?: string;
   type: 'user' | 'dealer' | 'admin';
-  // Professional verification
   profVerificationStatus?: string;
-  // Dealer-specific fields
   status?: string;
   onboardingStep?: number;
   profileComplete?: boolean;
@@ -21,8 +19,8 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  isVerifying: boolean; // True while verifying token with backend
-  isVerified: boolean;  // True after successful backend verification
+  isVerifying: boolean;
+  isVerified: boolean;
   setAuth: (user: User, token: string) => void;
   setToken: (token: string) => void;
   setUser: (user: User) => void;
@@ -30,22 +28,28 @@ interface AuthState {
   setVerified: (verified: boolean) => void;
   updateUser: (user: User) => void;
   logout: () => void;
+  getToken: () => string | null;
 }
+
+// CRIT-03: Token stored in-memory only — never in localStorage.
+// On page refresh, token is lost and user must re-authenticate.
+// This prevents XSS attacks from stealing the JWT.
+let _inMemoryToken: string | null = null;
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
       isVerifying: false,
       isVerified: false,
       setAuth: (user: User, token: string) => {
-        localStorage.setItem('token', token);
+        _inMemoryToken = token;
         set({ user, token, isAuthenticated: true, isVerified: true, isVerifying: false });
       },
       setToken: (token: string) => {
-        localStorage.setItem('token', token);
+        _inMemoryToken = token;
         set({ token, isAuthenticated: true });
       },
       setUser: (user: User) => {
@@ -55,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
       setVerified: (verified) => set({ isVerified: verified, isVerifying: false }),
       updateUser: (user) => set({ user }),
       logout: () => {
-        localStorage.removeItem('token');
+        _inMemoryToken = null;
         set({
           user: null,
           token: null,
@@ -64,18 +68,23 @@ export const useAuthStore = create<AuthState>()(
           isVerifying: false
         });
       },
+      getToken: () => _inMemoryToken,
     }),
     {
       name: 'auth-storage',
-      // Only persist these fields - isVerified must be re-verified on mount
+      // Persist user profile only — token is NEVER persisted (CRIT-03)
       partialize: (state) => ({
         user: state.user,
-        token: state.token,
         isAuthenticated: state.isAuthenticated,
       }),
     }
   )
 );
+
+/** Get the in-memory token (for use outside React components) */
+export function getAuthToken(): string | null {
+  return _inMemoryToken;
+}
 
 // RFQ Item for the cart
 interface RFQItem {

@@ -1,5 +1,5 @@
 import { useEffect, useState, ReactNode } from 'react';
-import { useAuthStore } from '@/lib/store';
+import { useAuthStore, getAuthToken } from '@/lib/store';
 import { authApi } from '@/lib/api';
 import { identifyUser, resetUser } from '@/lib/analytics';
 import { Loader2 } from 'lucide-react';
@@ -8,15 +8,8 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-/**
- * AuthProvider wraps the app and handles:
- * 1. Verifying persisted auth state against the backend on mount
- * 2. Ensuring user type is always validated server-side
- * 3. Logging out users with invalid/tampered tokens
- */
 export function AuthProvider({ children }: AuthProviderProps) {
   const {
-    token,
     isAuthenticated,
     setVerifying,
     setVerified,
@@ -28,12 +21,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const verifyAuth = async () => {
-      // Check for token in localStorage as well (for OAuth callback scenario)
-      const storedToken = localStorage.getItem('token');
-      const hasToken = token || storedToken;
+      // CRIT-03: Token is in-memory only. If no token, nothing to verify.
+      const hasToken = !!getAuthToken();
 
-      // If no token at all, nothing to verify - just render the app
       if (!hasToken) {
+        // If persisted state says authenticated but no in-memory token,
+        // user refreshed the page — clear stale state
+        if (isAuthenticated) logout();
         setIsInitializing(false);
         return;
       }

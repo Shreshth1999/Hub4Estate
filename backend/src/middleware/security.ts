@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 
 // Attach a unique request ID to every request for tracing + incident response
 export function requestId(req: Request, res: Response, next: NextFunction) {
@@ -36,36 +37,23 @@ export function sanitizeInputs(req: Request, _res: Response, next: NextFunction)
 }
 
 // Patterns indicating an active attack attempt
-const ATTACK_PATTERNS: RegExp[] = [
+// CRIT-20 FIX: applied to ALL routes including auth and chat
+const ATTACK_PATTERNS: Array<{ pattern: RegExp; name: string }> = [
   // SQL Injection
-  /(\bSELECT\b.*\bFROM\b|\bINSERT\b.*\bINTO\b|\bDROP\b.*\bTABLE\b|\bUNION\b.*\bSELECT\b|\bDELETE\b.*\bFROM\b)/i,
+  { pattern: /(\bSELECT\b.*\bFROM\b|\bINSERT\b.*\bINTO\b|\bDROP\b.*\bTABLE\b|\bUNION\b.*\bSELECT\b|\bDELETE\b.*\bFROM\b)/i, name: 'sql_injection' },
   // XSS
-  /<script[\s\S]*?>[\s\S]*?<\/script>/i,
-  /javascript:/i,
-  /on\w+\s*=/i,
+  { pattern: /<script[\s\S]*?>[\s\S]*?<\/script>/i, name: 'xss_script' },
+  { pattern: /javascript:/i, name: 'xss_javascript_proto' },
   // Path traversal
-  /\.\.[/\\]/,
+  { pattern: /\.\.[/\\]/, name: 'path_traversal' },
   // Null byte injection
-  /\x00/,
-  // LDAP injection (= and & are valid URL chars, excluded to prevent false positives)
-  /[()*|!\\]/,
+  { pattern: /\x00/, name: 'null_byte' },
   // Template injection
-  /\$\{.*\}/,
-  /\{\{.*\}\}/,
+  { pattern: /\$\{[^}]*\}/, name: 'template_injection' },
 ];
 
 export function detectAttacks(req: Request, res: Response, next: NextFunction) {
-  // Skip attack detection for OAuth/auth routes — callbacks contain legitimate = and & chars
-  // Skip chat routes — user messages contain natural language with (), !, *, | etc.
-  if (
-    req.path.startsWith('/api/auth/') ||
-    req.path === '/api/auth' ||
-    req.path.startsWith('/api/chat/')
-  ) {
-    return next();
-  }
-
-  // Skip attack detection for file upload endpoints — checked separately
+  // Skip attack detection for file upload endpoints — binary data checked separately
   const contentType = req.headers['content-type'] || '';
   if (contentType.includes('multipart/form-data')) {
     return next();
@@ -78,13 +66,20 @@ export function detectAttacks(req: Request, res: Response, next: NextFunction) {
     params: req.params,
   });
 
-  for (const pattern of ATTACK_PATTERNS) {
+  for (const { pattern, name } of ATTACK_PATTERNS) {
     if (pattern.test(suspect)) {
-      const requestId = req.headers['x-request-id'];
-      console.warn(
-        `[SECURITY] Attack pattern detected. RequestID: ${requestId}, IP: ${req.ip}, ` +
-        `Method: ${req.method}, URL: ${req.url}, Pattern: ${pattern.toString()}`
-      );
+      const rid = req.headers['x-request-id'];
+      // Structured log — no PII in log output
+      const logEntry = {
+        level: 'warn',
+        event: 'attack_detected',
+        requestId: rid,
+        ipHash: crypto.createHash('sha256').update(req.ip || '').digest('hex').slice(0, 12),
+        method: req.method,
+        path: req.path,
+        pattern: name,
+      };
+      process.stdout.write(JSON.stringify(logEntry) + '\n');
       return res.status(400).json({ error: 'Invalid request' });
     }
   }
@@ -92,12 +87,17 @@ export function detectAttacks(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-// Enhanced security headers beyond helmet defaults
-export function securityHeaders(_req: Request, res: Response, next: NextFunction) {
+// Enhanced security headers — CSP with per-request nonce
+export function securityHeaders(req: Request, res: Response, next: NextFunction) {
+  // Generate per-request nonce for CSP
+  const nonce = crypto.randomBytes(16).toString('base64');
+  (req as unknown as Record<string, unknown>).cspNonce = nonce;
+
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('X-XSS-Protection', '0'); // Disabled in favor of CSP
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   res.setHeader(
     'Permissions-Policy',
     'camera=(), microphone=(), geolocation=(), payment=()'
@@ -106,16 +106,17 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://accounts.google.com",
-      "style-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'nonce-${nonce}' https://accounts.google.com`,
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://api.anthropic.com https://accounts.google.com https://exp.host",
+      "connect-src 'self' https://api.anthropic.com https://accounts.google.com https://exp.host https://*.posthog.com",
       "frame-src https://accounts.google.com",
-      "font-src 'self' data:",
+      "font-src 'self' https://fonts.gstatic.com data:",
       "media-src 'self' blob:",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
+      "frame-ancestors 'none'",
     ].join('; ')
   );
   next();
@@ -139,15 +140,15 @@ const BLOCKED_AGENTS = [
   'openvas',
   'masscan',
   'zgrab',
-  'python-requests/2.', // mass scrapers — narrow pattern
-  'go-http-client/1.1', // generic scanners
-  'curl/7.', // CLI scanners — remove if your legitimate users use curl
+  'dirbuster',
+  'gobuster',
+  'wpscan',
+  'nuclei',
 ];
 
 export function blockMaliciousAgents(req: Request, res: Response, next: NextFunction) {
   const ua = (req.headers['user-agent'] || '').toLowerCase();
   if (BLOCKED_AGENTS.some(blocked => ua.includes(blocked))) {
-    console.warn(`[SECURITY] Blocked agent: ${ua}, IP: ${req.ip}`);
     return res.status(403).json({ error: 'Forbidden' });
   }
   return next();

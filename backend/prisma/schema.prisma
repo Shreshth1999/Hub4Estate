@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector"), pg_trgm, uuid_ossp(map: "uuid-ossp")]
 }
 
 // ============================================
@@ -228,6 +230,9 @@ model Dealer {
   quotes            Quote[]
   reviews           DealerReview[]
   inquiryResponses  InquiryDealerResponse[]
+  score             DealerScore?
+  subscription      DealerSubscription?
+  creditTransactions LeadCreditTransaction[]
 
   @@index([email])
   @@index([gstNumber])
@@ -602,6 +607,7 @@ model CommunityPost {
 
   // Relations
   comments    CommunityComment[]
+  votes       CommunityVote[]
 
   @@index([userId])
   @@index([city])
@@ -622,6 +628,7 @@ model CommunityComment {
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   parent      CommunityComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies     CommunityComment[] @relation("CommentReplies")
+  votes       CommunityVote[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -707,6 +714,83 @@ enum AuditAction {
   USER_SUSPENDED
   RFQ_FLAGGED
   QUOTE_FLAGGED
+  PAYMENT_PROCESSED
+  SUBSCRIPTION_CHANGED
+  CONVERSATION_FLAGGED
+  ADMIN_SETTING_CHANGED
+  FEATURE_FLAG_TOGGLED
+}
+
+// ============================================
+// NEW ENUMS (PRD §6)
+// ============================================
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+  GRACE_PERIOD
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  SYSTEM
+  TOOL_RESULT
+}
+
+enum DealerTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum NegotiationStatus {
+  INIT
+  ANALYZING
+  COUNTER_OFFER_BUYER
+  WAITING_DEALER
+  COUNTER_OFFER_DEALER
+  WAITING_BUYER
+  AGREEMENT
+  HUMAN_APPROVAL
+  CONFIRMED
+  REJECTED
+  ABORTED
+  TIMED_OUT
+}
+
+enum NegotiationStrategy {
+  AGGRESSIVE
+  BALANCED
+  RELATIONSHIP_PRESERVING
+}
+
+enum AgentType {
+  PROCUREMENT_COPILOT
+  NEGOTIATION
+  CHAT
+  BOQ_GENERATOR
+  PRICE_PREDICTOR
+  CONVERSATION_INTEL
+}
+
+enum AgentSessionStatus {
+  ACTIVE
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 model AuditLog {
@@ -1637,4 +1721,576 @@ model UserActivity {
   @@index([entityType, entityId])
   @@index([createdAt])
   @@index([actorEmail])
+}
+
+// ============================================
+// USER PREFERENCES
+// ============================================
+
+model UserPreference {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  language              String   @default("en") // en, hi, ta, te, kn, bn
+  notifyEmail           Boolean  @default(true)
+  notifySms             Boolean  @default(true)
+  notifyWhatsapp        Boolean  @default(true)
+  notifyPush            Boolean  @default(true)
+  marketingEmails       Boolean  @default(false)
+  analyticsConsent      Boolean  @default(false)
+  thirdPartyConsent     Boolean  @default(false)
+  digestFrequency       String   @default("daily") // realtime, daily, weekly, none
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// ============================================
+// DEALER SCORING & SUBSCRIPTIONS
+// ============================================
+
+model DealerScore {
+  id                  String     @id @default(uuid())
+  dealerId            String     @unique
+  responseSpeed       Float      @default(0) // 0-100
+  priceCompetitiveness Float     @default(0) // 0-100
+  reliability         Float      @default(0) // 0-100
+  volume              Float      @default(0) // 0-100
+  compositeScore      Float      @default(0) // 0-100
+  tier                DealerTier @default(BRONZE)
+  totalQuotes         Int        @default(0)
+  totalWins           Int        @default(0)
+  avgResponseMinutes  Float?
+  lastCalculatedAt    DateTime   @default(now())
+
+  dealer              Dealer     @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@index([compositeScore])
+  @@index([tier])
+}
+
+model SubscriptionPlan {
+  id                String   @id @default(uuid())
+  name              String   @unique // starter, growth, premium, enterprise
+  displayName       String
+  priceMonthlyPaise Int      // Price in paise (e.g. 99900 = ₹999)
+  priceYearlyPaise  Int?
+  leadsPerMonth     Int
+  quotesPerMonth    Int
+  features          String[] // Feature list for display
+  isActive          Boolean  @default(true)
+  sortOrder         Int      @default(0)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  subscriptions     DealerSubscription[]
+
+  @@index([isActive])
+}
+
+model DealerSubscription {
+  id                  String             @id @default(uuid())
+  dealerId            String             @unique
+  planId              String
+  status              SubscriptionStatus @default(ACTIVE)
+  razorpaySubId       String?            @unique
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  cancelledAt         DateTime?
+  cancelReason        String?
+  leadsUsed           Int                @default(0)
+  quotesUsed          Int                @default(0)
+
+  dealer              Dealer             @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  plan                SubscriptionPlan   @relation(fields: [planId], references: [id])
+
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@index([dealerId])
+  @@index([status])
+  @@index([currentPeriodEnd])
+}
+
+model LeadCreditTransaction {
+  id            String   @id @default(uuid())
+  dealerId      String
+  amount        Int      // positive = credit, negative = debit
+  type          String   // purchase, deduction, refund, bonus
+  balanceAfter  Int
+  description   String?
+  referenceId   String?  // payment ID or inquiry ID
+  referenceType String?  // payment, inquiry
+
+  dealer        Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+
+  @@index([dealerId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ============================================
+// PRICE DATA & INTELLIGENCE
+// ============================================
+
+model PriceDataPoint {
+  id            String   @id @default(uuid())
+  productId     String?
+  brandId       String?
+  categoryId    String?
+  city          String?
+  source        String   // dealer_quote, scrape_amazon, scrape_flipkart, manual
+  pricePaise    Int      // Price in paise
+  mrpPaise      Int?
+  unit          String   @default("piece")
+  dealerId      String?
+  sourceUrl     String?
+
+  createdAt     DateTime @default(now())
+
+  @@index([productId, createdAt])
+  @@index([brandId, categoryId])
+  @@index([city, createdAt])
+  @@index([source])
+}
+
+model PriceTrend {
+  id                String   @id @default(uuid())
+  productId         String?
+  categoryId        String?
+  city              String?
+  period            String   // weekly, monthly
+  avgPricePaise     Int
+  minPricePaise     Int
+  maxPricePaise     Int
+  medianPricePaise  Int
+  p25PricePaise     Int
+  p75PricePaise     Int
+  quoteCount        Int
+  trendDirection    String?  // up, down, stable
+  changePercent     Float?
+  periodStart       DateTime
+  periodEnd         DateTime
+
+  createdAt         DateTime @default(now())
+
+  @@unique([productId, city, period, periodStart])
+  @@index([categoryId, period])
+  @@index([periodStart])
+}
+
+model PredictedPrice {
+  id              String   @id @default(uuid())
+  productId       String
+  city            String
+  predictedPaise  Int
+  confidenceLow   Int
+  confidenceHigh  Int
+  confidenceScore Float    // 0-1
+  model           String   // xgboost_v1, etc.
+  features        String?  @db.Text // JSON: input features used
+  recommendation  String?  // buy_now, wait, neutral
+  validUntil      DateTime
+
+  createdAt       DateTime @default(now())
+
+  @@index([productId, city])
+  @@index([validUntil])
+}
+
+// ============================================
+// MESSAGING SYSTEM
+// ============================================
+
+model Conversation {
+  id            String    @id @default(uuid())
+  title         String?
+  type          String    @default("direct") // direct, inquiry, negotiation
+  referenceId   String?   // inquiry ID, negotiation ID, etc.
+  referenceType String?   // inquiry, negotiation, rfq
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  participants  ConversationParticipant[]
+  messages      Message[]
+
+  @@index([referenceId, referenceType])
+}
+
+model ConversationParticipant {
+  id              String       @id @default(uuid())
+  conversationId  String
+  accountId       String       // user or dealer ID
+  accountType     String       // user, dealer, admin
+  lastReadAt      DateTime?
+  isMuted         Boolean      @default(false)
+
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime     @default(now())
+
+  @@unique([conversationId, accountId])
+  @@index([accountId, accountType])
+}
+
+model Message {
+  id              String       @id @default(uuid())
+  conversationId  String
+  senderId        String
+  senderType      String       // user, dealer, admin, system
+  type            MessageType  @default(TEXT)
+  content         String       @db.Text
+  metadata        String?      @db.Text // JSON: image URL, tool result, etc.
+  isEdited        Boolean      @default(false)
+
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+}
+
+// ============================================
+// COMMUNITY VOTES
+// ============================================
+
+model CommunityVote {
+  id          String         @id @default(uuid())
+  userId      String
+  postId      String?
+  commentId   String?
+  value       Int            // +1 or -1
+
+  post        CommunityPost?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment     CommunityComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime       @default(now())
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@index([postId])
+  @@index([commentId])
+}
+
+// ============================================
+// PAYMENT & INVOICES
+// ============================================
+
+model Payment {
+  id                  String        @id @default(uuid())
+  orderId             String?       // Internal order reference
+  razorpayOrderId     String?       @unique
+  razorpayPaymentId   String?       @unique
+  razorpaySignature   String?
+  amount              Int           // In paise
+  currency            String        @default("INR")
+  status              PaymentStatus @default(PENDING)
+  method              String?       // upi, card, netbanking, wallet
+  payerAccountId      String        // user or dealer ID
+  payerAccountType    String        // user, dealer
+  description         String?
+  metadata            String?       @db.Text // JSON
+  failureReason       String?
+  refundedAmount      Int?
+  refundedAt          DateTime?
+
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  invoice             Invoice?
+
+  @@index([payerAccountId, payerAccountType])
+  @@index([status])
+  @@index([razorpayOrderId])
+  @@index([createdAt])
+}
+
+model Invoice {
+  id              String   @id @default(uuid())
+  paymentId       String   @unique
+  invoiceNumber   String   @unique // H4E-INV-2026-0001
+  buyerName       String
+  buyerGstin      String?
+  buyerAddress    String?
+  sellerName      String   @default("HUB4ESTATE LLP")
+  sellerGstin     String   @default("PENDING") // To be updated after GST registration
+  items           String   @db.Text // JSON array of line items
+  subtotalPaise   Int
+  cgstPaise       Int
+  sgstPaise       Int
+  igstPaise       Int      @default(0)
+  totalPaise      Int
+  sacCode         String   @default("998314")
+  isInterState    Boolean  @default(false)
+  pdfUrl          String?  // S3 key
+
+  payment         Payment  @relation(fields: [paymentId], references: [id])
+
+  createdAt       DateTime @default(now())
+
+  @@index([invoiceNumber])
+  @@index([paymentId])
+  @@index([createdAt])
+}
+
+// ============================================
+// PLATFORM SETTINGS & FEATURE FLAGS
+// ============================================
+
+model PlatformSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String   @db.Text
+  type        String   @default("string") // string, number, boolean, json
+  description String?
+  updatedBy   String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+}
+
+model FeatureFlag {
+  id            String   @id @default(uuid())
+  key           String   @unique
+  name          String
+  description   String?
+  isEnabled     Boolean  @default(false)
+  rolloutPercent Int     @default(0) // 0-100 for gradual rollout
+  targetRoles   String[] // empty = all roles
+  updatedBy     String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([key])
+  @@index([isEnabled])
+}
+
+// ============================================
+// SEARCH & ANALYTICS
+// ============================================
+
+model SearchHistory {
+  id          String   @id @default(uuid())
+  userId      String?
+  query       String
+  filters     String?  @db.Text // JSON
+  resultCount Int      @default(0)
+  clickedId   String?  // product/dealer ID clicked
+  sessionId   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([query])
+  @@index([createdAt])
+}
+
+// ============================================
+// AI / AGENTIC SYSTEMS
+// ============================================
+
+model AgentSession {
+  id                 String             @id @default(uuid())
+  userId             String?
+  dealerId           String?
+  agentType          AgentType
+  status             AgentSessionStatus @default(ACTIVE)
+  context            String?            @db.Text // JSON: conversation context
+  totalInputTokens   Int                @default(0)
+  totalOutputTokens  Int                @default(0)
+  totalCostUsd       Float              @default(0)
+  messageCount       Int                @default(0)
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  messages           AgentMessage[]
+  negotiation        NegotiationSession?
+
+  @@index([userId, status])
+  @@index([dealerId, status])
+  @@index([agentType, status])
+  @@index([status])
+}
+
+model AgentMessage {
+  id            String       @id @default(uuid())
+  sessionId     String
+  role          String       // user, assistant, system, tool
+  content       String       @db.Text
+  toolName      String?
+  toolInput     String?      @db.Text // JSON
+  toolOutput    String?      @db.Text // JSON
+  model         String?      // claude-sonnet-4-20250514, claude-haiku-4-5-20251001, etc.
+  inputTokens   Int?
+  outputTokens  Int?
+  latencyMs     Int?
+
+  session       AgentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime     @default(now())
+
+  @@index([sessionId, createdAt])
+}
+
+model AITokenUsage {
+  id            String   @id @default(uuid())
+  userId        String?
+  dealerId      String?
+  agentType     String
+  model         String
+  inputTokens   Int
+  outputTokens  Int
+  cacheHit      Boolean  @default(false)
+  latencyMs     Int?
+  costUsd       Float?
+  sessionId     String?
+
+  createdAt     DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([dealerId, createdAt])
+  @@index([agentType, createdAt])
+  @@index([model, createdAt])
+}
+
+model AICache {
+  id          String   @id @default(uuid())
+  promptHash  String   @unique // SHA-256
+  agentType   String
+  model       String
+  response    String   @db.Text
+  expiresAt   DateTime
+
+  createdAt   DateTime @default(now())
+
+  @@index([promptHash])
+  @@index([expiresAt])
+}
+
+// ============================================
+// NEGOTIATION SYSTEM
+// ============================================
+
+model NegotiationSession {
+  id                  String              @id @default(uuid())
+  inquiryId           String?
+  quoteId             String?
+  buyerId             String?
+  dealerId            String?
+  agentSessionId      String?             @unique
+  status              NegotiationStatus   @default(INIT)
+  strategy            NegotiationStrategy @default(BALANCED)
+
+  // BATNA / ZOPA / Nash
+  buyerBatna          Int?                // Paise
+  dealerBatna         Int?                // Paise
+  zopaMin             Int?                // Paise
+  zopaMax             Int?                // Paise
+  nashPrice           Int?                // Paise
+  targetPrice         Int?                // Paise
+  walkawayPrice       Int?                // Paise
+
+  // Round tracking
+  maxRounds           Int                 @default(4)
+  currentRound        Int                 @default(0)
+  initialQuotePrice   Int?                // Paise
+  finalAgreedPrice    Int?                // Paise
+  savingsAmount       Int?                // Paise
+  savingsPercent      Float?
+
+  timeoutAt           DateTime?
+  completedAt         DateTime?
+
+  agentSession        AgentSession?       @relation(fields: [agentSessionId], references: [id])
+  rounds              NegotiationRound[]
+
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  @@index([inquiryId])
+  @@index([buyerId, status])
+  @@index([dealerId, status])
+  @@index([status])
+}
+
+model NegotiationRound {
+  id                String             @id @default(uuid())
+  negotiationId     String
+  roundNumber       Int
+  offeredBy         String             // buyer, dealer, agent
+  offeredPrice      Int                // Paise
+  offeredDeliveryDays Int?
+  justification     String?            @db.Text
+  strategyUsed      String?
+  response          String?            // accept, counter, reject
+  responseAt        DateTime?
+  responseMessage   String?            @db.Text
+  agentReasoning    String?            @db.Text // JSON
+
+  negotiation       NegotiationSession @relation(fields: [negotiationId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime           @default(now())
+
+  @@index([negotiationId, roundNumber])
+}
+
+// ============================================
+// SCRAPED PRICE POINTS & COMMODITIES
+// ============================================
+
+model ScrapedPricePoint {
+  id              String   @id @default(uuid())
+  source          String   // amazon, flipkart, indiamart, brand_website
+  sourceUrl       String?  @db.Text
+  sourceProductId String?
+  contentHash     String?
+  productName     String
+  brandName       String?
+  modelNumber     String?
+  categorySlug    String?
+  pricePaise      Int
+  mrpPaise        Int?
+  unit            String   @default("piece")
+  currency        String   @default("INR")
+  city            String?
+  sellerName      String?
+  inStock         Boolean? @default(true)
+  rawData         String?  @db.Text // JSON
+  scrapedAt       DateTime @default(now())
+  lastSeenAt      DateTime @default(now())
+  isUpdate        Boolean  @default(false)
+
+  @@index([source, scrapedAt])
+  @@index([brandName, modelNumber])
+  @@index([categorySlug])
+  @@index([contentHash])
+}
+
+model CommodityPrice {
+  id          String   @id @default(uuid())
+  commodity   String   // copper, aluminum, steel, pvc
+  source      String   // mcx, lme, government_portal
+  pricePaise  Int
+  unit        String   // kg, ton, meter
+  currency    String   @default("INR")
+  date        DateTime @db.Date
+
+  createdAt   DateTime @default(now())
+
+  @@unique([commodity, source, date])
+  @@index([commodity, date])
 }

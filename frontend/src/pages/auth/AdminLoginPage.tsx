@@ -27,7 +27,6 @@ export function AdminLoginPage() {
     try {
       const response = await authApi.adminLogin({ email, password });
       const { token, admin } = response.data;
-      localStorage.setItem('token', token);
       setAuth({
         id: admin.id,
         email: admin.email,

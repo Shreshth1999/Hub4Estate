@@ -1,44 +1,38 @@
 import axios from 'axios';
+import { getAuthToken, useAuthStore } from './store';
 
-// Use relative URL to go through Vite proxy in development
-// This avoids CORS issues entirely
 const API_URL = import.meta.env.VITE_BACKEND_API_URL || '/api';
 
 export const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 10000, // 10 second timeout to prevent hanging
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor to add auth token
+// CRIT-03: Read token from in-memory store, never localStorage
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling
+// Response interceptor — logout on 401 if user was authenticated
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const isAuthCallbackPage = window.location.pathname === '/auth/callback';
     const isLoginPage = window.location.pathname === '/login';
     const isCompleteProfilePage = window.location.pathname === '/complete-profile';
-    const hadToken = !!localStorage.getItem('token');
+    const hadToken = !!getAuthToken();
 
-    // Only redirect if the user HAD a valid token that's now expired/invalid.
-    // Anonymous users getting 401 on public endpoints (chat, track, etc.) should
-    // NOT be redirected — the component's catch block will handle it gracefully.
     if (
       error.response?.status === 401 &&
       hadToken &&
@@ -46,8 +40,8 @@ api.interceptors.response.use(
       !isLoginPage &&
       !isCompleteProfilePage
     ) {
-      localStorage.removeItem('token');
-      window.location.href = '/'; // Go home, not to /login
+      useAuthStore.getState().logout();
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }
@@ -57,7 +51,7 @@ api.interceptors.response.use(
 export const authApi = {
   // Verify current token and get user data - call this on app mount
   getMe: () => api.get('/auth/me'),
-  consoleLogMe: () => api.get('/auth/me').then(res => console.log(res.data)),
+  getMyProfile: () => api.get('/auth/me'),
 
   // User Auth - OTP based
   sendOTP: (data: { phone?: string; email?: string; type: 'login' | 'signup' }) =>
@@ -257,7 +251,7 @@ export async function* streamChatMessage(
   message: string
 ): AsyncGenerator<StreamEvent> {
   const base = import.meta.env.VITE_BACKEND_API_URL || '/api';
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

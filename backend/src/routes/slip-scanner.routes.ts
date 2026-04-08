@@ -57,7 +57,7 @@ router.post('/parse', upload.single('image'), async (req: AuthRequest, res) => {
 
     if (isPDF) {
       // Extract text from PDF then parse with Claude
-      console.log('Processing PDF with text extraction + Claude AI');
+      process.stdout.write(JSON.stringify({ level: 'info', event: 'slip_scanner_pdf_processing' }) + '\n');
       try {
         // Dynamic import to avoid startup cost
         const pdfParse = require('pdf-parse');
@@ -78,7 +78,7 @@ router.post('/parse', upload.single('image'), async (req: AuthRequest, res) => {
       }
     } else {
       // Use Claude Vision directly on the image — much more accurate than OCR
-      console.log('Processing image with Claude Vision AI');
+      process.stdout.write(JSON.stringify({ level: 'info', event: 'slip_scanner_image_processing' }) + '\n');
       parsedData = await analyzeImageWithClaudeVision(filePath);
     }
 

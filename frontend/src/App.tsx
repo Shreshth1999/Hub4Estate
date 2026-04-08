@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/Layout';
-import { HomePage } from '@/pages/HomePage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 // Separate Layouts for each user type
@@ -15,11 +14,12 @@ import { ProfileCompletionPage } from '@/pages/auth/ProfileCompletionPage';
 import { DealerLoginPage } from '@/pages/auth/DealerLoginPage';
 import { AdminLoginPage } from '@/pages/auth/AdminLoginPage';
 
-// Product Pages (eager - core browsing flow)
-import { CategoriesPage } from '@/pages/products/CategoriesPage';
-import { CategoryDetailPage } from '@/pages/products/CategoryDetailPage';
-import { ProductTypePage } from '@/pages/products/ProductTypePage';
-import { ProductDetailPage } from '@/pages/products/ProductDetailPage';
+// Heavy pages - lazy loaded for code splitting
+const HomePage = lazy(() => import('@/pages/HomePage').then(m => ({ default: m.HomePage })));
+const CategoriesPage = lazy(() => import('@/pages/products/CategoriesPage').then(m => ({ default: m.CategoriesPage })));
+const CategoryDetailPage = lazy(() => import('@/pages/products/CategoryDetailPage').then(m => ({ default: m.CategoryDetailPage })));
+const ProductTypePage = lazy(() => import('@/pages/products/ProductTypePage').then(m => ({ default: m.ProductTypePage })));
+const ProductDetailPage = lazy(() => import('@/pages/products/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
 
 // Lazy-loaded pages (code-split for faster initial load)
 const CreateRFQPage = lazy(() => import('@/pages/rfq/CreateRFQPage').then(m => ({ default: m.CreateRFQPage })));

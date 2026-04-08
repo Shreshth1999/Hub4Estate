@@ -587,10 +587,10 @@ router.post('/professionals/:id/verify', authenticateAdmin, async (req: AuthRequ
       });
     }
 
-    res.json({ success: true, status: newStatus });
+    return res.json({ success: true, status: newStatus });
   } catch (err) {
     console.error('POST /admin/professionals/:id/verify error:', err);
-    res.status(500).json({ error: 'Failed to update verification status' });
+    return res.status(500).json({ error: 'Failed to update verification status' });
   }
 });
 

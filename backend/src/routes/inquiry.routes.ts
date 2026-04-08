@@ -103,7 +103,7 @@ router.post('/submit', upload.single('productPhoto'), async (req, res) => {
       },
     });
 
-    console.log(`New inquiry ${inquiryNumber} from ${data.name} (${data.phone})`);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'inquiry_created', inquiryNumber, name: data.name, phone: data.phone }) + '\n');
 
     logActivity({
       actorType: 'anonymous',

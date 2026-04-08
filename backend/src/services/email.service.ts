@@ -35,7 +35,7 @@ export async function sendEmail({ to, subject, html, replyTo }: SendEmailParams)
       replyTo,
     });
 
-    console.log('[Email] Sent successfully:', result);
+    process.stdout.write(JSON.stringify({ level: 'info', event: 'email_sent', result }) + '\n');
     return true;
   } catch (error: any) {
     console.error('[Email] Send error:', error?.message || error);

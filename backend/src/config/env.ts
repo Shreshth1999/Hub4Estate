@@ -27,6 +27,25 @@ const envSchema = z.object({
   TWILIO_ACCOUNT_SID: z.string().optional(),
   TWILIO_AUTH_TOKEN: z.string().optional(),
   TWILIO_PHONE_NUMBER: z.string().optional(),
+  // OpenAI (embeddings)
+  OPENAI_API_KEY: z.string().optional(),
+  // Encryption
+  ENCRYPTION_KEY: z.string().optional(), // 64 hex chars = 32 bytes for AES-256
+  // AWS S3
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_REGION: z.string().default('ap-south-1'),
+  AWS_S3_BUCKET: z.string().optional(),
+  // Redis
+  REDIS_URL: z.string().optional(),
+  // Razorpay
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+  // Sentry
+  SENTRY_DSN: z.string().optional(),
+  // PostHog
+  POSTHOG_API_KEY: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

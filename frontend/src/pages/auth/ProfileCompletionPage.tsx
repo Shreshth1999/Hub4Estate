@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '../../lib/store';
-import { authApi } from '../../lib/api';
+import { useAuthStore, getAuthToken } from '@/lib/store';
+import { authApi } from '@/lib/api';
 import { Zap, CheckCircle, Phone, MapPin, Loader2 } from 'lucide-react';
 
 const POPULAR_CITIES = [
@@ -24,7 +24,7 @@ export function ProfileCompletionPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = getAuthToken();
 
       if (!token) {
         navigate('/login', { replace: true });
@@ -62,7 +62,7 @@ export function ProfileCompletionPage() {
         }
       } catch (err) {
         console.error('Failed to verify auth:', err);
-        localStorage.removeItem('token');
+        useAuthStore.getState().logout();
         navigate('/login', { replace: true });
         return;
       }
@@ -99,7 +99,6 @@ export function ProfileCompletionPage() {
 
       const newToken = response.data.token;
       if (newToken && response.data.user) {
-        localStorage.setItem('token', newToken);
         setAuth(response.data.user, newToken);
       }
 

@@ -15,7 +15,7 @@ export async function parseSlipImage(imagePath: string): Promise<string> {
     const result = await Tesseract.recognize(preprocessedPath, 'eng', {
       logger: (m) => {
         if (m.status === 'recognizing text') {
-          console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+          process.stdout.write(JSON.stringify({ level: 'info', event: 'ocr_progress', progress: Math.round(m.progress * 100) }) + '\n');
         }
       },
     });
