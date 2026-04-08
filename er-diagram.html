@@ -21,16 +21,8 @@
       top: 0;
       z-index: 100;
     }
-    header h1 {
-      font-size: 28px;
-      font-weight: 800;
-      color: #1a1a1a;
-    }
-    header p {
-      font-size: 14px;
-      color: #666;
-      margin-top: 4px;
-    }
+    header h1 { font-size: 28px; font-weight: 800; color: #1a1a1a; }
+    header p { font-size: 14px; color: #666; margin-top: 4px; }
     nav {
       background: #fff;
       border-bottom: 1px solid #e5e5e5;
@@ -54,15 +46,8 @@
       border: 1px solid #e5e5e5;
       transition: all 0.2s;
     }
-    nav a:hover, nav a.active {
-      background: #d97706;
-      color: #fff;
-      border-color: #d97706;
-    }
-    .container {
-      max-width: 100%;
-      padding: 32px 40px;
-    }
+    nav a:hover { background: #d97706; color: #fff; border-color: #d97706; }
+    .container { max-width: 100%; padding: 32px 40px; }
     .section {
       margin-bottom: 48px;
       background: #fff;
@@ -75,11 +60,7 @@
       background: linear-gradient(135deg, #fffbeb, #fef3c7);
       border-bottom: 2px solid #d97706;
     }
-    .section-header h2 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #92400e;
-    }
+    .section-header h2 { font-size: 22px; font-weight: 700; color: #92400e; }
     .section-header .badge {
       display: inline-block;
       background: #d97706;
@@ -90,20 +71,9 @@
       border-radius: 99px;
       margin-left: 10px;
     }
-    .section-header p {
-      font-size: 13px;
-      color: #78716c;
-      margin-top: 4px;
-    }
-    .diagram-container {
-      padding: 24px;
-      overflow-x: auto;
-      min-height: 300px;
-    }
-    .mermaid {
-      display: flex;
-      justify-content: center;
-    }
+    .section-header p { font-size: 13px; color: #78716c; margin-top: 4px; }
+    .diagram-container { padding: 24px; overflow-x: auto; min-height: 200px; }
+    .mermaid { display: flex; justify-content: center; }
     .legend {
       padding: 16px 28px;
       background: #faf9f7;
@@ -129,16 +99,8 @@
       padding: 16px;
       border: 1px solid #e5e5e5;
     }
-    .stat-card .number {
-      font-size: 32px;
-      font-weight: 800;
-      color: #d97706;
-    }
-    .stat-card .label {
-      font-size: 13px;
-      color: #666;
-      margin-top: 4px;
-    }
+    .stat-card .number { font-size: 32px; font-weight: 800; color: #d97706; }
+    .stat-card .label { font-size: 13px; color: #666; margin-top: 4px; }
     .enum-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -151,31 +113,11 @@
       border-radius: 8px;
       padding: 12px 16px;
     }
-    .enum-card h4 {
-      font-size: 14px;
-      font-weight: 700;
-      color: #92400e;
-      margin-bottom: 6px;
-    }
-    .enum-card ul {
-      list-style: none;
-      font-size: 12px;
-      color: #555;
-    }
-    .enum-card ul li {
-      padding: 1px 0;
-    }
-    .enum-card ul li::before {
-      content: "| ";
-      color: #d97706;
-      font-weight: 700;
-    }
-    footer {
-      text-align: center;
-      padding: 32px;
-      color: #999;
-      font-size: 13px;
-    }
+    .enum-card h4 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 6px; }
+    .enum-card ul { list-style: none; font-size: 12px; color: #555; }
+    .enum-card ul li { padding: 1px 0; }
+    .enum-card ul li::before { content: "| "; color: #d97706; font-weight: 700; }
+    footer { text-align: center; padding: 32px; color: #999; font-size: 13px; }
   </style>
 </head>
 <body>
@@ -187,30 +129,29 @@
 
 <nav>
   <a href="#stats">Overview</a>
-  <a href="#enums">Enums (22)</a>
-  <a href="#master">Master Relationships</a>
-  <a href="#g1">1. User & Auth</a>
+  <a href="#enums">Enums</a>
+  <a href="#master">Master</a>
+  <a href="#g1">1. User</a>
   <a href="#g2">2. Dealer</a>
   <a href="#g3">3. Catalog</a>
   <a href="#g4">4. Inquiry</a>
-  <a href="#g5">5. RFQ & Quotes</a>
+  <a href="#g5">5. RFQ</a>
   <a href="#g6">6. Messaging</a>
   <a href="#g7">7. Community</a>
-  <a href="#g8">8. Chat & AI</a>
+  <a href="#g8">8. Chat</a>
   <a href="#g9">9. CRM</a>
   <a href="#g10">10. Payment</a>
   <a href="#g11">11. Scraping</a>
   <a href="#g12">12. System</a>
   <a href="#g13">13. Brand-Dealer</a>
-  <a href="#g14">14. Search & Intel</a>
-  <a href="#g15">15. Infrastructure</a>
+  <a href="#g14">14. Search</a>
+  <a href="#g15">15. Infra</a>
+  <a href="#xref">FK Reference</a>
 </nav>
 
 <div class="container">
 
-  <!-- ============================================================ -->
-  <!-- STATS OVERVIEW -->
-  <!-- ============================================================ -->
+  <!-- STATS -->
   <div id="stats" class="section">
     <div class="section-header">
       <h2>Database Architecture Overview</h2>
@@ -220,261 +161,125 @@
       <div class="stat-card"><div class="number">68</div><div class="label">Prisma Models</div></div>
       <div class="stat-card"><div class="number">22</div><div class="label">Enums</div></div>
       <div class="stat-card"><div class="number">15</div><div class="label">Domain Groups</div></div>
-      <div class="stat-card"><div class="number">17</div><div class="label">New Models (v2)</div></div>
-      <div class="stat-card"><div class="number">3</div><div class="label">New Enums (v2)</div></div>
-      <div class="stat-card"><div class="number">~450+</div><div class="label">Total Fields</div></div>
+      <div class="stat-card"><div class="number">17</div><div class="label">New Models v2</div></div>
+      <div class="stat-card"><div class="number">3</div><div class="label">New Enums v2</div></div>
+      <div class="stat-card"><div class="number">450+</div><div class="label">Total Fields</div></div>
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- ENUMS -->
-  <!-- ============================================================ -->
   <div id="enums" class="section">
     <div class="section-header">
       <h2>All Enums <span class="badge">22</span></h2>
-      <p>19 existing + 3 new (PaymentStatus, SubscriptionStatus, MessageType)</p>
+      <p>19 existing + 3 new: PaymentStatus, SubscriptionStatus, MessageType</p>
     </div>
     <div class="enum-grid">
-      <div class="enum-card">
-        <h4>UserRole</h4>
-        <ul>
-          <li>INDIVIDUAL_HOME_BUILDER</li>
-          <li>RENOVATION_HOMEOWNER</li>
-          <li>ARCHITECT</li>
-          <li>INTERIOR_DESIGNER</li>
-          <li>CONTRACTOR</li>
-          <li>ELECTRICIAN</li>
-          <li>SMALL_BUILDER</li>
-          <li>DEVELOPER</li>
-        </ul>
-      </div>
-      <div class="enum-card">
-        <h4>UserStatus</h4>
-        <ul><li>ACTIVE</li><li>SUSPENDED</li><li>DELETED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>ProfVerificationStatus</h4>
-        <ul><li>NOT_APPLIED</li><li>PENDING_DOCUMENTS</li><li>UNDER_REVIEW</li><li>VERIFIED</li><li>REJECTED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>DealerStatus</h4>
-        <ul><li>PENDING_VERIFICATION</li><li>DOCUMENTS_PENDING</li><li>UNDER_REVIEW</li><li>VERIFIED</li><li>REJECTED</li><li>SUSPENDED</li><li>DELETED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>DealerType</h4>
-        <ul><li>RETAILER</li><li>DISTRIBUTOR</li><li>SYSTEM_INTEGRATOR</li><li>CONTRACTOR</li><li>OEM_PARTNER</li><li>WHOLESALER</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>RFQStatus</h4>
-        <ul><li>DRAFT</li><li>PUBLISHED</li><li>QUOTES_RECEIVED</li><li>DEALER_SELECTED</li><li>COMPLETED</li><li>CANCELLED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>QuoteStatus</h4>
-        <ul><li>SUBMITTED</li><li>SELECTED</li><li>REJECTED</li><li>EXPIRED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>PostStatus</h4>
-        <ul><li>PUBLISHED</li><li>HIDDEN</li><li>DELETED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>AuditAction</h4>
-        <ul><li>DEALER_VERIFIED</li><li>DEALER_REJECTED</li><li>DEALER_SUSPENDED</li><li>PRODUCT_CREATED</li><li>PRODUCT_UPDATED</li><li>CATEGORY_CREATED</li><li>USER_SUSPENDED</li><li>RFQ_FLAGGED</li><li>QUOTE_FLAGGED</li><li>PAYMENT_PROCESSED</li><li>SUBSCRIPTION_CHANGED</li><li>CONVERSATION_FLAGGED</li><li>ADMIN_SETTING_CHANGED</li><li>FEATURE_FLAG_TOGGLED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>CompanyType</h4>
-        <ul><li>MANUFACTURER</li><li>DISTRIBUTOR</li><li>DEALER</li><li>BRAND</li><li>OTHER</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>CompanySegment</h4>
-        <ul><li>PREMIUM</li><li>MID_RANGE</li><li>BUDGET</li><li>ALL_SEGMENTS</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>OutreachType</h4>
-        <ul><li>EMAIL</li><li>LINKEDIN</li><li>PHONE_CALL</li><li>MEETING</li><li>WHATSAPP</li><li>OTHER</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>OutreachStatus</h4>
-        <ul><li>SCHEDULED</li><li>SENT</li><li>DELIVERED</li><li>OPENED</li><li>REPLIED</li><li>MEETING_SCHEDULED</li><li>NOT_INTERESTED</li><li>BOUNCED</li><li>FAILED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>PipelineStatus</h4>
-        <ul><li>BRAND_IDENTIFIED</li><li>DEALERS_FOUND</li><li>QUOTES_REQUESTED</li><li>QUOTES_RECEIVED</li><li>SENT_TO_CUSTOMER</li><li>CLOSED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>QuoteResponseStatus</h4>
-        <ul><li>PENDING</li><li>CONTACTED</li><li>QUOTED</li><li>NO_RESPONSE</li><li>DECLINED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>ContactMethod</h4>
-        <ul><li>WHATSAPP</li><li>CALL</li><li>EMAIL</li><li>SMS</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>BrandDealerSource</h4>
-        <ul><li>MANUAL</li><li>SCRAPED</li><li>BRAND_WEBSITE</li><li>PLATFORM_DEALER</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>ScrapeStatus</h4>
-        <ul><li>PENDING</li><li>IN_PROGRESS</li><li>COMPLETED</li><li>FAILED</li><li>PARTIAL</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>ActivityType</h4>
-        <ul><li>USER_SIGNUP</li><li>USER_LOGIN</li><li>DEALER_REGISTERED</li><li>RFQ_CREATED</li><li>QUOTE_SUBMITTED</li><li>PAYMENT_INITIATED</li><li>PAYMENT_COMPLETED</li><li>MESSAGE_SENT</li><li>...+30 more</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>PaymentStatus <span style="color:#d97706;font-size:11px;">NEW</span></h4>
-        <ul><li>PENDING</li><li>PROCESSING</li><li>COMPLETED</li><li>FAILED</li><li>REFUNDED</li><li>PARTIALLY_REFUNDED</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>SubscriptionStatus <span style="color:#d97706;font-size:11px;">NEW</span></h4>
-        <ul><li>ACTIVE</li><li>PAUSED</li><li>CANCELLED</li><li>EXPIRED</li><li>GRACE_PERIOD</li></ul>
-      </div>
-      <div class="enum-card">
-        <h4>MessageType <span style="color:#d97706;font-size:11px;">NEW</span></h4>
-        <ul><li>TEXT</li><li>IMAGE</li><li>SYSTEM</li><li>TOOL_RESULT</li></ul>
-      </div>
+      <div class="enum-card"><h4>UserRole</h4><ul><li>INDIVIDUAL_HOME_BUILDER</li><li>RENOVATION_HOMEOWNER</li><li>ARCHITECT</li><li>INTERIOR_DESIGNER</li><li>CONTRACTOR</li><li>ELECTRICIAN</li><li>SMALL_BUILDER</li><li>DEVELOPER</li></ul></div>
+      <div class="enum-card"><h4>UserStatus</h4><ul><li>ACTIVE</li><li>SUSPENDED</li><li>DELETED</li></ul></div>
+      <div class="enum-card"><h4>ProfVerificationStatus</h4><ul><li>NOT_APPLIED</li><li>PENDING_DOCUMENTS</li><li>UNDER_REVIEW</li><li>VERIFIED</li><li>REJECTED</li></ul></div>
+      <div class="enum-card"><h4>DealerStatus</h4><ul><li>PENDING_VERIFICATION</li><li>DOCUMENTS_PENDING</li><li>UNDER_REVIEW</li><li>VERIFIED</li><li>REJECTED</li><li>SUSPENDED</li><li>DELETED</li></ul></div>
+      <div class="enum-card"><h4>DealerType</h4><ul><li>RETAILER</li><li>DISTRIBUTOR</li><li>SYSTEM_INTEGRATOR</li><li>CONTRACTOR</li><li>OEM_PARTNER</li><li>WHOLESALER</li></ul></div>
+      <div class="enum-card"><h4>RFQStatus</h4><ul><li>DRAFT</li><li>PUBLISHED</li><li>QUOTES_RECEIVED</li><li>DEALER_SELECTED</li><li>COMPLETED</li><li>CANCELLED</li></ul></div>
+      <div class="enum-card"><h4>QuoteStatus</h4><ul><li>SUBMITTED</li><li>SELECTED</li><li>REJECTED</li><li>EXPIRED</li></ul></div>
+      <div class="enum-card"><h4>PostStatus</h4><ul><li>PUBLISHED</li><li>HIDDEN</li><li>DELETED</li></ul></div>
+      <div class="enum-card"><h4>AuditAction</h4><ul><li>DEALER_VERIFIED</li><li>DEALER_REJECTED</li><li>DEALER_SUSPENDED</li><li>PRODUCT_CREATED</li><li>PRODUCT_UPDATED</li><li>CATEGORY_CREATED</li><li>USER_SUSPENDED</li><li>RFQ_FLAGGED</li><li>PAYMENT_PROCESSED</li><li>FEATURE_FLAG_TOGGLED</li></ul></div>
+      <div class="enum-card"><h4>CompanyType</h4><ul><li>MANUFACTURER</li><li>DISTRIBUTOR</li><li>DEALER</li><li>BRAND</li><li>OTHER</li></ul></div>
+      <div class="enum-card"><h4>CompanySegment</h4><ul><li>PREMIUM</li><li>MID_RANGE</li><li>BUDGET</li><li>ALL_SEGMENTS</li></ul></div>
+      <div class="enum-card"><h4>OutreachType</h4><ul><li>EMAIL</li><li>LINKEDIN</li><li>PHONE_CALL</li><li>MEETING</li><li>WHATSAPP</li><li>OTHER</li></ul></div>
+      <div class="enum-card"><h4>OutreachStatus</h4><ul><li>SCHEDULED</li><li>SENT</li><li>DELIVERED</li><li>OPENED</li><li>REPLIED</li><li>MEETING_SCHEDULED</li><li>NOT_INTERESTED</li><li>BOUNCED</li><li>FAILED</li></ul></div>
+      <div class="enum-card"><h4>PipelineStatus</h4><ul><li>BRAND_IDENTIFIED</li><li>DEALERS_FOUND</li><li>QUOTES_REQUESTED</li><li>QUOTES_RECEIVED</li><li>SENT_TO_CUSTOMER</li><li>CLOSED</li></ul></div>
+      <div class="enum-card"><h4>QuoteResponseStatus</h4><ul><li>PENDING</li><li>CONTACTED</li><li>QUOTED</li><li>NO_RESPONSE</li><li>DECLINED</li></ul></div>
+      <div class="enum-card"><h4>ContactMethod</h4><ul><li>WHATSAPP</li><li>CALL</li><li>EMAIL</li><li>SMS</li></ul></div>
+      <div class="enum-card"><h4>BrandDealerSource</h4><ul><li>MANUAL</li><li>SCRAPED</li><li>BRAND_WEBSITE</li><li>PLATFORM_DEALER</li></ul></div>
+      <div class="enum-card"><h4>ScrapeStatus</h4><ul><li>PENDING</li><li>IN_PROGRESS</li><li>COMPLETED</li><li>FAILED</li><li>PARTIAL</li></ul></div>
+      <div class="enum-card"><h4>ActivityType</h4><ul><li>USER_SIGNUP</li><li>USER_LOGIN</li><li>DEALER_REGISTERED</li><li>RFQ_CREATED</li><li>QUOTE_SUBMITTED</li><li>PAYMENT_INITIATED</li><li>PAYMENT_COMPLETED</li><li>MESSAGE_SENT</li><li>+30 more</li></ul></div>
+      <div class="enum-card"><h4>PaymentStatus <span style="color:#d97706;font-size:11px;">NEW</span></h4><ul><li>PENDING</li><li>PROCESSING</li><li>COMPLETED</li><li>FAILED</li><li>REFUNDED</li><li>PARTIALLY_REFUNDED</li></ul></div>
+      <div class="enum-card"><h4>SubscriptionStatus <span style="color:#d97706;font-size:11px;">NEW</span></h4><ul><li>ACTIVE</li><li>PAUSED</li><li>CANCELLED</li><li>EXPIRED</li><li>GRACE_PERIOD</li></ul></div>
+      <div class="enum-card"><h4>MessageType <span style="color:#d97706;font-size:11px;">NEW</span></h4><ul><li>TEXT</li><li>IMAGE</li><li>SYSTEM</li><li>TOOL_RESULT</li></ul></div>
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- MASTER RELATIONSHIP OVERVIEW -->
-  <!-- ============================================================ -->
+  <!-- MASTER RELATIONSHIPS -->
   <div id="master" class="section">
     <div class="section-header">
       <h2>Master Relationship Overview <span class="badge">68 entities</span></h2>
-      <p>All cross-domain relationships at a glance. Scroll horizontally for the full diagram.</p>
+      <p>All cross-domain relationships. Scroll horizontally for full diagram.</p>
     </div>
     <div class="diagram-container">
       <pre class="mermaid">
 erDiagram
-    %% ═══════════════════════════════════════════════
-    %% GROUP 1: USER & AUTHENTICATION
-    %% ═══════════════════════════════════════════════
-    User ||--o| ProfessionalProfile : "has profile"
-    User ||--o| UserPreference : "has prefs"
-    User ||--o{ RFQ : "creates"
-    User ||--o{ CommunityPost : "publishes"
-    User ||--o{ CommunityComment : "writes"
-    User ||--o{ CommunityVote : "casts"
-    User ||--o{ SavedProduct : "saves"
-    User ||--o{ UserActivity : "generates"
-    User ||--o{ ConversationParticipant : "participates"
-    User ||--o{ Message : "sends"
-    User ||--o{ Notification : "receives"
-    User ||--o{ DevicePushToken : "registers"
-    User ||--o{ Payment : "makes"
-    User ||--o{ SearchHistory : "searches"
-
-    ProfessionalProfile ||--o{ ProfessionalDocument : "uploads"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 2: DEALER
-    %% ═══════════════════════════════════════════════
-    Dealer ||--o{ DealerBrandMapping : "maps brands"
-    Dealer ||--o{ DealerCategoryMapping : "maps categories"
-    Dealer ||--o{ DealerServiceArea : "serves"
-    Dealer ||--o{ Quote : "submits"
-    Dealer ||--o{ DealerReview : "receives"
-    Dealer ||--o{ InquiryDealerResponse : "responds"
-    Dealer ||--o{ ConversationParticipant : "participates"
-    Dealer ||--o{ Message : "sends"
-    Dealer ||--o{ DealerSubscription : "subscribes"
-    Dealer ||--o{ Payment : "makes"
-    Dealer ||--o| DealerScore : "scored by"
-
-    SubscriptionPlan ||--o{ DealerSubscription : "defines"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 3: PRODUCT CATALOG
-    %% ═══════════════════════════════════════════════
-    Category ||--o{ SubCategory : "contains"
-    Category ||--o{ DealerCategoryMapping : "mapped by"
-    Category ||--o{ ProductInquiry : "classifies"
-
-    SubCategory ||--o{ ProductType : "contains"
-    ProductType ||--o{ Product : "contains"
-
-    Brand ||--o{ Product : "manufactures"
-    Brand ||--o{ DealerBrandMapping : "mapped by"
-    Brand ||--o{ BrandDealer : "has dealers"
-    Brand ||--o{ ProductInquiry : "identified in"
-
-    Product ||--o{ RFQItem : "listed in"
-    Product ||--o{ SavedProduct : "saved as"
-    Product ||--o{ PriceDataPoint : "priced at"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 4: INQUIRY SYSTEM
-    %% ═══════════════════════════════════════════════
-    ProductInquiry ||--o| InquiryPipeline : "enters"
-    ProductInquiry ||--o{ InquiryDealerResponse : "receives"
-
-    InquiryPipeline ||--o{ InquiryDealerQuote : "collects"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 5: RFQ & QUOTES
-    %% ═══════════════════════════════════════════════
-    RFQ ||--o{ RFQItem : "contains"
-    RFQ ||--o{ Quote : "receives"
-    Quote ||--o{ QuoteItem : "itemizes"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 6: MESSAGING
-    %% ═══════════════════════════════════════════════
-    Conversation ||--o{ ConversationParticipant : "includes"
-    Conversation ||--o{ Message : "contains"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 7: COMMUNITY
-    %% ═══════════════════════════════════════════════
-    CommunityPost ||--o{ CommunityComment : "receives"
-    CommunityPost ||--o{ CommunityVote : "voted on"
-    CommunityComment ||--o{ CommunityComment : "replies to"
-    CommunityComment ||--o{ CommunityVote : "voted on"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 8: CHAT & AI
-    %% ═══════════════════════════════════════════════
-    ChatSession ||--o{ ChatMessage : "contains"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 9: CRM
-    %% ═══════════════════════════════════════════════
-    CRMCompany ||--o{ CRMContact : "employs"
-    CRMCompany ||--o{ CRMOutreach : "targeted by"
-    CRMContact ||--o{ CRMOutreach : "contacted via"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 10: PAYMENT
-    %% ═══════════════════════════════════════════════
-    Payment ||--o| Invoice : "generates"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 11: SCRAPING
-    %% ═══════════════════════════════════════════════
-    ScrapeBrand ||--o{ ScrapeJob : "triggers"
-    ScrapeBrand ||--o{ ScrapedProduct : "produces"
-
-    %% ═══════════════════════════════════════════════
-    %% GROUP 13: BRAND-DEALER NETWORK
-    %% ═══════════════════════════════════════════════
-    BrandDealer ||--o{ InquiryDealerQuote : "provides"
+    User ||--o| ProfessionalProfile : has
+    User ||--o| UserPreference : preferences
+    User ||--o{ RFQ : creates
+    User ||--o{ CommunityPost : publishes
+    User ||--o{ CommunityComment : writes
+    User ||--o{ CommunityVote : casts
+    User ||--o{ SavedProduct : saves
+    User ||--o{ UserActivity : generates
+    User ||--o{ ConversationParticipant : joins
+    User ||--o{ Message : sends
+    User ||--o{ Notification : receives
+    User ||--o{ DevicePushToken : registers
+    User ||--o{ Payment : makes
+    User ||--o{ SearchHistory : searches
+    ProfessionalProfile ||--o{ ProfessionalDocument : uploads
+    Dealer ||--o{ DealerBrandMapping : maps
+    Dealer ||--o{ DealerCategoryMapping : maps
+    Dealer ||--o{ DealerServiceArea : serves
+    Dealer ||--o{ Quote : submits
+    Dealer ||--o{ DealerReview : receives
+    Dealer ||--o{ InquiryDealerResponse : responds
+    Dealer ||--o{ ConversationParticipant : joins
+    Dealer ||--o{ Message : sends
+    Dealer ||--o{ DealerSubscription : subscribes
+    Dealer ||--o{ Payment : makes
+    Dealer ||--o| DealerScore : scored
+    SubscriptionPlan ||--o{ DealerSubscription : defines
+    Category ||--o{ SubCategory : contains
+    Category ||--o{ DealerCategoryMapping : mapped
+    Category ||--o{ ProductInquiry : classifies
+    SubCategory ||--o{ ProductType : contains
+    ProductType ||--o{ Product : contains
+    Brand ||--o{ Product : manufactures
+    Brand ||--o{ DealerBrandMapping : mapped
+    Brand ||--o{ BrandDealer : dealers
+    Brand ||--o{ ProductInquiry : identified
+    Product ||--o{ RFQItem : listed
+    Product ||--o{ SavedProduct : saved
+    Product ||--o{ PriceDataPoint : priced
+    ProductInquiry ||--o| InquiryPipeline : enters
+    ProductInquiry ||--o{ InquiryDealerResponse : receives
+    InquiryPipeline ||--o{ InquiryDealerQuote : collects
+    RFQ ||--o{ RFQItem : contains
+    RFQ ||--o{ Quote : receives
+    Quote ||--o{ QuoteItem : itemizes
+    Conversation ||--o{ ConversationParticipant : includes
+    Conversation ||--o{ Message : contains
+    CommunityPost ||--o{ CommunityComment : receives
+    CommunityPost ||--o{ CommunityVote : voted
+    CommunityComment ||--o{ CommunityVote : voted
+    ChatSession ||--o{ ChatMessage : contains
+    CRMCompany ||--o{ CRMContact : employs
+    CRMCompany ||--o{ CRMOutreach : targeted
+    CRMContact ||--o{ CRMOutreach : contacted
+    Payment ||--o| Invoice : generates
+    ScrapeBrand ||--o{ ScrapeJob : triggers
+    ScrapeBrand ||--o{ ScrapedProduct : produces
+    BrandDealer ||--o{ InquiryDealerQuote : provides
       </pre>
     </div>
     <div class="legend">
       <strong>Legend:</strong>
-      <code>||--o|</code> One-to-one (optional) &nbsp;
-      <code>||--||</code> One-to-one (required) &nbsp;
-      <code>||--o{</code> One-to-many &nbsp;
-      Standalone models (OTP, RefreshToken, PasswordResetToken, Admin, KnowledgeArticle, CRMMeeting, CRMPipelineStage, EmailTemplate, PriceTrend, PredictedPrice, ScrapeMapping, ScrapeTemplate, AuditLog, FraudFlag, PlatformSetting, FeatureFlag, ContactSubmission, SearchIndex, JobQueue, ApiKey) are not shown -- see detailed group diagrams below.
+      <code>||--o|</code> one-to-one optional |
+      <code>||--o{</code> one-to-many |
+      Standalone models not shown here -- see group diagrams below.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 1: USER & AUTHENTICATION -->
-  <!-- ============================================================ -->
+  <!-- GROUP 1: USER -->
   <div id="g1" class="section">
     <div class="section-header">
-      <h2>Group 1: User & Authentication <span class="badge">8 models</span></h2>
+      <h2>Group 1: User and Authentication <span class="badge">8 models</span></h2>
       <p>User, ProfessionalProfile, ProfessionalDocument, OTP, RefreshToken, PasswordResetToken, Admin, UserPreference</p>
     </div>
     <div class="diagram-container">
@@ -482,129 +287,119 @@ erDiagram
 erDiagram
     User {
         uuid id PK
-        string email UK "nullable"
-        string googleId UK "nullable"
-        string phone UK "nullable"
+        string email UK
+        string googleId UK
+        string phone UK
         string name
-        UserRole role "nullable"
-        string city "nullable"
-        string purpose "nullable"
-        UserStatus status "ACTIVE"
-        string profileImage "S3 key"
-        boolean isPhoneVerified "false"
-        boolean isEmailVerified "false"
-        ProfVerificationStatus profVerificationStatus "NOT_APPLIED"
+        string role
+        string city
+        string purpose
+        string status
+        string profileImage
+        boolean isPhoneVerified
+        boolean isEmailVerified
+        string profVerificationStatus
         datetime createdAt
         datetime updatedAt
     }
-
     ProfessionalProfile {
         uuid id PK
-        uuid userId FK-UK "unique"
-        string businessName "nullable"
-        string registrationNo "nullable"
-        string websiteUrl "nullable"
-        string portfolioUrl "nullable"
-        text bio "nullable"
-        string officeAddress "nullable"
-        string city "nullable"
-        string state "nullable"
-        string pincode "nullable"
-        int yearsExperience "nullable"
-        datetime verifiedAt "nullable"
-        string verifiedBy "admin ID"
-        text rejectionReason "nullable"
-        text adminNotes "nullable"
+        uuid userId FK
+        string businessName
+        string registrationNo
+        string websiteUrl
+        string portfolioUrl
+        text bio
+        string officeAddress
+        string city
+        string state
+        string pincode
+        int yearsExperience
+        datetime verifiedAt
+        string verifiedBy
+        text rejectionReason
+        text adminNotes
         datetime createdAt
         datetime updatedAt
     }
-
     ProfessionalDocument {
         uuid id PK
         uuid profileId FK
-        string docType "coa|trade_license|gst|id|portfolio"
-        string fileUrl "S3 key"
-        string fileName "nullable"
-        int fileSize "bytes"
-        string mimeType "nullable"
-        boolean isVerified "false"
-        datetime verifiedAt "nullable"
+        string docType
+        string fileUrl
+        string fileName
+        int fileSize
+        string mimeType
+        boolean isVerified
+        datetime verifiedAt
         datetime createdAt
     }
-
     OTP {
         uuid id PK
-        string identifier "phone or email"
-        string code "bcrypt hashed"
-        string type "login|signup|reset|verify"
+        string identifier
+        string code
+        string type
         datetime expiresAt
-        boolean verified "false"
-        int attempts "max 5"
+        boolean verified
+        int attempts
         datetime createdAt
     }
-
     RefreshToken {
         uuid id PK
-        string token UK "SHA-256 hash"
-        uuid userId
-        string userType "user|dealer|admin"
-        boolean revoked "false"
-        datetime revokedAt "nullable"
+        string token UK
+        string userId
+        string userType
+        boolean revoked
+        datetime revokedAt
         datetime expiresAt
-        string deviceName "nullable"
-        string ipAddress "nullable"
+        string deviceName
+        string ipAddress
         datetime createdAt
     }
-
     PasswordResetToken {
         uuid id PK
-        string token UK "SHA-256 hash"
+        string token UK
         string email
-        string userType "user|dealer"
-        boolean used "false"
-        datetime expiresAt "1 hour"
+        string userType
+        boolean used
+        datetime expiresAt
         datetime createdAt
     }
-
     Admin {
         uuid id PK
         string email UK
-        string password "bcrypt cost 12"
+        string password
         string name
-        string role "admin|super_admin"
-        boolean isActive "true"
+        string role
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
     UserPreference {
         uuid id PK
-        uuid userId FK-UK "unique"
-        boolean emailNotifications "true"
-        boolean smsNotifications "true"
-        boolean pushNotifications "true"
-        boolean whatsappNotifications "true"
-        boolean dailyDigest "false"
-        boolean weeklyDigest "true"
-        string language "en|hi"
-        string currency "INR"
+        uuid userId FK
+        boolean emailNotifications
+        boolean smsNotifications
+        boolean pushNotifications
+        boolean whatsappNotifications
+        boolean dailyDigest
+        boolean weeklyDigest
+        string language
+        string currency
         datetime createdAt
         datetime updatedAt
     }
-
-    User ||--o| ProfessionalProfile : "has"
-    User ||--o| UserPreference : "preferences"
-    ProfessionalProfile ||--o{ ProfessionalDocument : "uploads"
+    User ||--o| ProfessionalProfile : has
+    User ||--o| UserPreference : preferences
+    ProfessionalProfile ||--o{ ProfessionalDocument : uploads
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> OTP, RefreshToken, PasswordResetToken, Admin are standalone (no FK to User). RefreshToken.userId is polymorphic (user/dealer/admin). All tokens have TTL-based cleanup.
+      <strong>Notes:</strong> OTP, RefreshToken, PasswordResetToken, Admin are standalone. RefreshToken.userId is polymorphic. All tokens have TTL-based cleanup. Password fields are bcrypt hashed.
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- GROUP 2: DEALER -->
-  <!-- ============================================================ -->
   <div id="g2" class="section">
     <div class="section-header">
       <h2>Group 2: Dealer <span class="badge">8 models</span></h2>
@@ -616,7 +411,7 @@ erDiagram
     Dealer {
         uuid id PK
         string email UK
-        string password "bcrypt, nullable"
+        string password
         string businessName
         string ownerName
         string phone
@@ -626,141 +421,131 @@ erDiagram
         string city
         string state
         string pincode
-        DealerType dealerType "RETAILER"
-        int yearsInOperation "nullable"
-        string gstDocument "S3 key"
-        string panDocument "S3 key"
-        string shopLicense "S3 key"
-        string cancelledCheque "S3 key"
-        string shopPhoto "S3 key"
-        string_arr shopImages "S3 keys"
-        string_arr brandAuthProofs "S3 keys"
-        text description "nullable"
-        int establishedYear "nullable"
-        string_arr certifications
-        string website "nullable"
-        int onboardingStep "1-7"
-        boolean profileComplete "false"
-        DealerStatus status "PENDING_VERIFICATION"
-        text verificationNotes "nullable"
-        datetime verifiedAt "nullable"
-        string verifiedBy "admin ID"
-        text rejectionReason "nullable"
-        int totalRFQsReceived "0"
-        int totalQuotesSubmitted "0"
-        int totalConversions "0"
-        float conversionRate "0.0-1.0"
-        int avgResponseTime "minutes"
+        string dealerType
+        int yearsInOperation
+        string gstDocument
+        string panDocument
+        string shopLicense
+        string cancelledCheque
+        string shopPhoto
+        json shopImages
+        json brandAuthProofs
+        text description
+        int establishedYear
+        json certifications
+        string website
+        int onboardingStep
+        boolean profileComplete
+        string status
+        text verificationNotes
+        datetime verifiedAt
+        string verifiedBy
+        text rejectionReason
+        int totalRFQsReceived
+        int totalQuotesSubmitted
+        int totalConversions
+        float conversionRate
+        int avgResponseTime
         datetime createdAt
         datetime updatedAt
     }
-
     DealerBrandMapping {
         uuid id PK
         uuid dealerId FK
         uuid brandId FK
-        string authProofUrl "S3 key"
-        boolean isVerified "false"
+        string authProofUrl
+        boolean isVerified
         datetime createdAt
     }
-
     DealerCategoryMapping {
         uuid id PK
         uuid dealerId FK
         uuid categoryId FK
         datetime createdAt
     }
-
     DealerServiceArea {
         uuid id PK
         uuid dealerId FK
         string pincode
         datetime createdAt
     }
-
     DealerReview {
         uuid id PK
         uuid dealerId FK
         uuid userId FK
-        uuid rfqId FK "verified purchase"
-        int rating "1-5"
-        text comment "nullable"
+        uuid rfqId FK
+        int rating
+        text comment
         datetime createdAt
     }
-
     DealerScore {
         uuid id PK
-        uuid dealerId FK-UK "unique"
-        float priceCompetitiveness "0.0-5.0"
-        float responseSpeed "0.0-5.0"
-        float deliveryReliability "0.0-5.0"
-        float communicationQuality "0.0-5.0"
-        float disputeResolution "0.0-5.0"
-        float priceWeight "0.30"
-        float responseWeight "0.25"
-        float deliveryWeight "0.20"
-        float communicationWeight "0.15"
-        float disputeWeight "0.10"
-        float compositeScore "weighted avg"
-        string tier "BRONZE|SILVER|GOLD|PLATINUM"
-        int totalTransactions "0"
-        int totalReviews "0"
-        datetime lastCalculatedAt "nullable"
+        uuid dealerId FK
+        float priceCompetitiveness
+        float responseSpeed
+        float deliveryReliability
+        float communicationQuality
+        float disputeResolution
+        float priceWeight
+        float responseWeight
+        float deliveryWeight
+        float communicationWeight
+        float disputeWeight
+        float compositeScore
+        string tier
+        int totalTransactions
+        int totalReviews
+        datetime lastCalculatedAt
         datetime createdAt
         datetime updatedAt
     }
-
     DealerSubscription {
         uuid id PK
         uuid dealerId FK
         uuid planId FK
-        SubscriptionStatus status "ACTIVE"
+        string status
         datetime currentPeriodStart
         datetime currentPeriodEnd
-        string razorpaySubscriptionId UK "nullable"
-        string razorpayPlanId "nullable"
-        int leadsUsedThisPeriod "0"
+        string razorpaySubscriptionId UK
+        string razorpayPlanId
+        int leadsUsedThisPeriod
         int leadsLimit
-        datetime cancelledAt "nullable"
-        string cancelReason "nullable"
+        datetime cancelledAt
+        string cancelReason
         datetime createdAt
         datetime updatedAt
     }
-
     SubscriptionPlan {
         uuid id PK
-        string name UK "starter|growth|premium|enterprise"
+        string name UK
         string displayName
-        int monthlyPricePaisa "99900 = Rs999"
+        int monthlyPricePaisa
         int annualPricePaisa
-        int leadsPerMonth "-1 = unlimited"
-        int quotesPerMonth "-1 = unlimited"
-        string_arr features "feature keys"
-        string razorpayMonthlyPlanId "nullable"
-        string razorpayAnnualPlanId "nullable"
-        boolean isActive "true"
-        int sortOrder "0"
+        int leadsPerMonth
+        int quotesPerMonth
+        json features
+        string razorpayMonthlyPlanId
+        string razorpayAnnualPlanId
+        boolean isActive
+        int sortOrder
         datetime createdAt
         datetime updatedAt
     }
-
-    Dealer ||--o{ DealerBrandMapping : "maps"
-    Dealer ||--o{ DealerCategoryMapping : "maps"
-    Dealer ||--o{ DealerServiceArea : "serves"
-    Dealer ||--o{ DealerReview : "reviewed"
-    Dealer ||--o| DealerScore : "scored"
-    Dealer ||--o{ DealerSubscription : "subscribes"
-    SubscriptionPlan ||--o{ DealerSubscription : "defines"
+    Dealer ||--o{ DealerBrandMapping : maps
+    Dealer ||--o{ DealerCategoryMapping : maps
+    Dealer ||--o{ DealerServiceArea : serves
+    Dealer ||--o{ DealerReview : reviewed
+    Dealer ||--o| DealerScore : scored
+    Dealer ||--o{ DealerSubscription : subscribes
+    SubscriptionPlan ||--o{ DealerSubscription : defines
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> DealerBrandMapping and DealerCategoryMapping are junction tables connecting to Brand/Category (Group 3). DealerScore is denormalized for fast dashboard reads, recalculated by cron. Composite unique on <code>[dealerId, brandId]</code>, <code>[dealerId, categoryId]</code>, <code>[dealerId, pincode]</code>.
+      <strong>Notes:</strong> DealerBrandMapping and DealerCategoryMapping are junction tables to Brand/Category. DealerScore is denormalized, recalculated by cron. Tier: BRONZE, SILVER, GOLD, PLATINUM. Amounts in paisa for Razorpay.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 3: PRODUCT CATALOG -->
-  <!-- ============================================================ -->
+  <!-- GROUP 3: CATALOG -->
   <div id="g3" class="section">
     <div class="section-header">
       <h2>Group 3: Product Catalog <span class="badge">8 models</span></h2>
@@ -773,136 +558,126 @@ erDiagram
         uuid id PK
         string name UK
         string slug UK
-        string description "nullable"
-        string icon "Lucide icon name"
-        int sortOrder "0"
-        boolean isActive "true"
-        string seoTitle "nullable"
-        string seoDescription "nullable"
-        text whatIsIt "nullable"
-        text whereUsed "nullable"
-        text whyQualityMatters "nullable"
-        text commonMistakes "nullable"
+        string description
+        string icon
+        int sortOrder
+        boolean isActive
+        string seoTitle
+        string seoDescription
+        text whatIsIt
+        text whereUsed
+        text whyQualityMatters
+        text commonMistakes
         datetime createdAt
         datetime updatedAt
     }
-
     SubCategory {
         uuid id PK
         uuid categoryId FK
         string name
-        string slug "unique within category"
-        string description "nullable"
-        int sortOrder "0"
-        boolean isActive "true"
+        string slug
+        string description
+        int sortOrder
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
     ProductType {
         uuid id PK
         uuid subCategoryId FK
         string name
-        string slug "unique within subcategory"
-        string description "nullable"
-        text technicalInfo "JSON"
-        text useCases "JSON array"
-        int sortOrder "0"
-        boolean isActive "true"
+        string slug
+        string description
+        text technicalInfo
+        text useCases
+        int sortOrder
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
     Brand {
         uuid id PK
         string name UK
         string slug UK
-        string logo "S3 key, NOT logoUrl"
-        text description "nullable"
-        string website "nullable"
-        boolean isActive "true"
-        boolean isPremium "false"
-        string priceSegment "Budget|Mid-range|Premium"
-        float qualityRating "1.0-5.0"
+        string logo
+        text description
+        string website
+        boolean isActive
+        boolean isPremium
+        string priceSegment
+        float qualityRating
         datetime createdAt
         datetime updatedAt
     }
-
     Product {
         uuid id PK
         uuid productTypeId FK
         uuid brandId FK
         string name
-        string modelNumber "nullable"
-        string sku UK "nullable"
-        text description "nullable"
-        text specifications "JSON"
-        string_arr images "S3 keys"
-        string datasheetUrl "S3 key"
-        string manualUrl "S3 key"
-        string_arr certifications "ISI|IEC|BIS"
-        int warrantyYears "nullable"
-        float mrp "nullable"
-        float typicalDealerPrice "nullable"
-        float_arr embedding "1536-dim pgvector"
-        boolean isActive "true"
+        string modelNumber
+        string sku UK
+        text description
+        text specifications
+        json images
+        string datasheetUrl
+        string manualUrl
+        json certifications
+        int warrantyYears
+        float mrp
+        float typicalDealerPrice
+        json embedding
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
     PriceDataPoint {
         uuid id PK
         uuid productId FK
-        uuid dealerId "nullable"
-        float price "INR per unit"
-        int quantity "1"
+        string dealerId
+        float price
+        int quantity
         string city
-        string source "rfq_quote|scraped|manual"
-        boolean isVerified "false"
+        string source
+        boolean isVerified
         datetime recordedAt
     }
-
     PriceTrend {
         uuid id PK
-        uuid productId
+        string productId
         string city
         float avgPrice
         float minPrice
         float maxPrice
         float medianPrice
         int dataPoints
-        string trendDirection "up|down|stable"
+        string trendDirection
         float trendPercent
         datetime periodStart
         datetime periodEnd
-        string periodType "daily|weekly|monthly"
+        string periodType
         datetime createdAt
     }
-
     SavedProduct {
         uuid id PK
         uuid userId FK
         uuid productId FK
-        text notes "nullable"
+        text notes
         datetime createdAt
     }
-
-    Category ||--o{ SubCategory : "contains"
-    SubCategory ||--o{ ProductType : "contains"
-    ProductType ||--o{ Product : "contains"
-    Brand ||--o{ Product : "manufactures"
-    Product ||--o{ PriceDataPoint : "priced"
-    Product ||--o{ SavedProduct : "saved by users"
+    Category ||--o{ SubCategory : contains
+    SubCategory ||--o{ ProductType : contains
+    ProductType ||--o{ Product : contains
+    Brand ||--o{ Product : manufactures
+    Product ||--o{ PriceDataPoint : priced
+    Product ||--o{ SavedProduct : saved
       </pre>
     </div>
     <div class="legend">
-      <strong>Hierarchy:</strong> Category -> SubCategory -> ProductType -> Product (4-level taxonomy). <strong>PriceTrend</strong> is aggregated daily from PriceDataPoint by cron. <strong>Product.embedding</strong> uses pgvector for semantic search. Composite unique: <code>[productId, city, periodStart, periodType]</code> on PriceTrend.
+      <strong>Hierarchy:</strong> Category &rarr; SubCategory &rarr; ProductType &rarr; Product. PriceTrend is aggregated daily from PriceDataPoint by cron. Product.embedding uses pgvector 1536-dim for semantic search. Brand.logo is S3 key, NOT logoUrl.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 4: INQUIRY SYSTEM -->
-  <!-- ============================================================ -->
+  <!-- GROUP 4: INQUIRY -->
   <div id="g4" class="section">
     <div class="section-header">
       <h2>Group 4: Inquiry System <span class="badge">3 models</span></h2>
@@ -913,79 +688,74 @@ erDiagram
 erDiagram
     ProductInquiry {
         uuid id PK
-        string inquiryNumber UK "HUB-HAVELLS-MCB-0001"
+        string inquiryNumber UK
         string name
         string phone
-        string email "nullable"
-        string productPhoto "S3 key"
-        string modelNumber "nullable"
-        int quantity "1"
+        string email
+        string productPhoto
+        string modelNumber
+        int quantity
         string deliveryCity
-        text notes "nullable"
-        string status "new|contacted|quoted|closed"
-        string assignedTo "admin ID"
-        text internalNotes "nullable"
-        float quotedPrice "nullable"
-        float shippingCost "nullable"
-        float totalPrice "nullable"
-        string estimatedDelivery "nullable"
-        text responseNotes "nullable"
-        datetime respondedAt "nullable"
-        string respondedBy "admin ID"
-        uuid categoryId FK "nullable"
-        uuid identifiedBrandId FK "nullable"
+        text notes
+        string status
+        string assignedTo
+        text internalNotes
+        float quotedPrice
+        float shippingCost
+        float totalPrice
+        string estimatedDelivery
+        text responseNotes
+        datetime respondedAt
+        string respondedBy
+        uuid categoryId FK
+        uuid identifiedBrandId FK
         datetime createdAt
         datetime updatedAt
     }
-
     InquiryPipeline {
         uuid id PK
-        uuid inquiryId FK-UK "unique"
-        string identifiedBrandId "nullable"
-        string identifiedBrand "nullable"
-        string identifiedProduct "nullable"
-        string identifiedCategory "nullable"
-        PipelineStatus status "BRAND_IDENTIFIED"
-        text aiAnalysis "JSON"
-        datetime sentToCustomerAt "nullable"
-        string sentVia "nullable"
-        text customerMessage "nullable"
-        string createdBy "nullable"
+        uuid inquiryId FK
+        string identifiedBrandId
+        string identifiedBrand
+        string identifiedProduct
+        string identifiedCategory
+        string status
+        text aiAnalysis
+        datetime sentToCustomerAt
+        string sentVia
+        text customerMessage
+        string createdBy
         datetime createdAt
         datetime updatedAt
     }
-
     InquiryDealerResponse {
         uuid id PK
         uuid inquiryId FK
         uuid dealerId FK
-        string status "pending|viewed|quoted|declined"
-        float quotedPrice "nullable"
-        float shippingCost "0"
-        float totalPrice "nullable"
-        string estimatedDelivery "nullable"
-        text notes "nullable"
-        datetime viewedAt "nullable"
-        datetime respondedAt "nullable"
+        string status
+        float quotedPrice
+        float shippingCost
+        float totalPrice
+        string estimatedDelivery
+        text notes
+        datetime viewedAt
+        datetime respondedAt
         datetime createdAt
         datetime updatedAt
     }
-
-    ProductInquiry ||--o| InquiryPipeline : "enters pipeline"
-    ProductInquiry ||--o{ InquiryDealerResponse : "receives dealer responses"
+    ProductInquiry ||--o| InquiryPipeline : pipeline
+    ProductInquiry ||--o{ InquiryDealerResponse : responses
       </pre>
     </div>
     <div class="legend">
-      <strong>Blind Matching:</strong> InquiryDealerResponse follows the blind matching philosophy -- dealers see product requirements only, no buyer identity. Composite unique: <code>[inquiryId, dealerId]</code>. ProductInquiry links to Category and Brand (Group 3) via optional FKs.
+      <strong>Blind Matching:</strong> Dealers see product requirements only, no buyer identity. Unique: [inquiryId, dealerId]. InquiryNumber format: HUB-HAVELLS-MCB-0001. Links to Category and Brand via optional FKs.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 5: RFQ & QUOTES -->
-  <!-- ============================================================ -->
+  <!-- GROUP 5: RFQ -->
   <div id="g5" class="section">
     <div class="section-header">
-      <h2>Group 5: RFQ & Quotes <span class="badge">4 models</span></h2>
+      <h2>Group 5: RFQ and Quotes <span class="badge">4 models</span></h2>
       <p>RFQ, RFQItem, Quote, QuoteItem -- The Blind Bidding Engine</p>
     </div>
     <div class="diagram-container">
@@ -995,135 +765,124 @@ erDiagram
         uuid id PK
         uuid userId FK
         string title
-        text description "nullable"
+        text description
         string deliveryCity
         string deliveryPincode
-        text deliveryAddress "nullable"
-        datetime estimatedDate "nullable"
-        string deliveryPreference "delivery|pickup|both"
-        string urgency "normal|urgent"
-        RFQStatus status "DRAFT"
-        datetime publishedAt "nullable"
-        uuid selectedDealerId "nullable"
-        uuid selectedQuoteId "nullable"
-        datetime completedAt "nullable"
-        text aiSuggestions "JSON"
-        text aiFlags "JSON warnings"
+        text deliveryAddress
+        datetime estimatedDate
+        string deliveryPreference
+        string urgency
+        string status
+        datetime publishedAt
+        uuid selectedDealerId
+        uuid selectedQuoteId
+        datetime completedAt
+        text aiSuggestions
+        text aiFlags
         datetime createdAt
         datetime updatedAt
     }
-
     RFQItem {
         uuid id PK
         uuid rfqId FK
         uuid productId FK
         int quantity
-        text notes "nullable"
+        text notes
         datetime createdAt
     }
-
     Quote {
         uuid id PK
         uuid rfqId FK
         uuid dealerId FK
         float totalAmount
-        float shippingCost "0"
-        text notes "nullable"
-        datetime deliveryDate "nullable"
-        datetime pickupDate "nullable"
+        float shippingCost
+        text notes
+        datetime deliveryDate
+        datetime pickupDate
         datetime validUntil
-        QuoteStatus status "SUBMITTED"
+        string status
         datetime submittedAt
-        datetime viewedAt "nullable"
-        datetime selectedAt "nullable"
-        string lossReason "price|timing|distance|trust"
-        int rankPosition "nullable"
+        datetime viewedAt
+        datetime selectedAt
+        string lossReason
+        int rankPosition
         datetime createdAt
         datetime updatedAt
     }
-
     QuoteItem {
         uuid id PK
         uuid quoteId FK
-        uuid productId
+        string productId
         int quantity
         float unitPrice
         float totalPrice
         datetime createdAt
     }
-
-    RFQ ||--o{ RFQItem : "contains items"
-    RFQ ||--o{ Quote : "receives quotes"
-    Quote ||--o{ QuoteItem : "line items"
+    RFQ ||--o{ RFQItem : contains
+    RFQ ||--o{ Quote : receives
+    Quote ||--o{ QuoteItem : itemizes
       </pre>
     </div>
     <div class="legend">
-      <strong>Lifecycle:</strong> DRAFT -> PUBLISHED -> QUOTES_RECEIVED -> DEALER_SELECTED -> COMPLETED | CANCELLED. Composite unique: <code>[rfqId, dealerId]</code> on Quote (one quote per dealer per RFQ). RFQ.userId -> User, Quote.dealerId -> Dealer, RFQItem.productId -> Product.
+      <strong>Lifecycle:</strong> DRAFT &rarr; PUBLISHED &rarr; QUOTES_RECEIVED &rarr; DEALER_SELECTED &rarr; COMPLETED. Unique: [rfqId, dealerId] on Quote. RFQ.userId &rarr; User, Quote.dealerId &rarr; Dealer.
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- GROUP 6: MESSAGING -->
-  <!-- ============================================================ -->
   <div id="g6" class="section">
     <div class="section-header">
       <h2>Group 6: Messaging <span class="badge">3 models</span> <span class="badge" style="background:#059669;">NEW</span></h2>
-      <p>Conversation, ConversationParticipant, Message -- Real-time buyer-dealer communication</p>
+      <p>Conversation, ConversationParticipant, Message</p>
     </div>
     <div class="diagram-container">
       <pre class="mermaid">
 erDiagram
     Conversation {
         uuid id PK
-        string contextType "rfq|inquiry|general|support"
-        string contextId "RFQ or Inquiry ID"
-        string title "auto-generated"
-        boolean isArchived "false"
-        datetime lastMessageAt "nullable"
+        string contextType
+        string contextId
+        string title
+        boolean isArchived
+        datetime lastMessageAt
         datetime createdAt
         datetime updatedAt
     }
-
     ConversationParticipant {
         uuid id PK
         uuid conversationId FK
-        uuid userId FK "nullable (if dealer)"
-        uuid dealerId FK "nullable (if user)"
-        datetime lastReadAt "nullable"
-        int unreadCount "0"
-        boolean isMuted "false"
+        uuid userId FK
+        uuid dealerId FK
+        datetime lastReadAt
+        int unreadCount
+        boolean isMuted
         datetime createdAt
         datetime updatedAt
     }
-
     Message {
         uuid id PK
         uuid conversationId FK
-        uuid senderUserId FK "nullable"
-        uuid senderDealerId FK "nullable"
-        boolean isSystem "false"
-        MessageType type "TEXT"
+        uuid senderUserId FK
+        uuid senderDealerId FK
+        boolean isSystem
+        string type
         text content
-        text metadata "JSON"
-        boolean isEdited "false"
-        datetime editedAt "nullable"
-        boolean isDeleted "false"
-        datetime deletedAt "nullable"
+        text metadata
+        boolean isEdited
+        datetime editedAt
+        boolean isDeleted
+        datetime deletedAt
         datetime createdAt
     }
-
-    Conversation ||--o{ ConversationParticipant : "includes"
-    Conversation ||--o{ Message : "contains"
+    Conversation ||--o{ ConversationParticipant : includes
+    Conversation ||--o{ Message : contains
       </pre>
     </div>
     <div class="legend">
-      <strong>Design:</strong> Polymorphic participants (User OR Dealer). Identity revealed only after quote selection (blind matching). Composite unique: <code>[conversationId, userId]</code> and <code>[conversationId, dealerId]</code>. Messages are soft-deleted via isDeleted flag.
+      <strong>Design:</strong> Polymorphic participants -- User OR Dealer. Identity revealed only after quote selection. contextType: rfq, inquiry, general, support. MessageType: TEXT, IMAGE, SYSTEM, TOOL_RESULT.
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- GROUP 7: COMMUNITY -->
-  <!-- ============================================================ -->
   <div id="g7" class="section">
     <div class="section-header">
       <h2>Group 7: Community <span class="badge">4 models</span></h2>
@@ -1137,70 +896,63 @@ erDiagram
         uuid userId FK
         string title
         text content
-        string city "nullable"
-        string category "discussion|question|showcase|tip"
-        string_arr tags
-        int upvotes "0"
-        PostStatus status "PUBLISHED"
+        string city
+        string category
+        json tags
+        int upvotes
+        string status
         datetime createdAt
         datetime updatedAt
     }
-
     CommunityComment {
         uuid id PK
         uuid postId FK
         uuid userId FK
         text content
-        uuid parentId FK "self-ref, nullable"
-        int upvotes "0"
+        uuid parentId
+        int upvotes
         datetime createdAt
         datetime updatedAt
     }
-
     CommunityVote {
         uuid id PK
         uuid userId FK
-        uuid postId FK "nullable"
-        uuid commentId FK "nullable"
-        int value "+1 or -1"
+        uuid postId FK
+        uuid commentId FK
+        int value
         datetime createdAt
     }
-
     KnowledgeArticle {
         uuid id PK
         string title
         string slug UK
         text content
         string category
-        string_arr tags
-        string metaTitle "nullable"
-        string metaDescription "nullable"
-        string coverImage "S3 key"
-        int views "0"
-        boolean isPublished "false"
-        string authorId "admin ID"
+        json tags
+        string metaTitle
+        string metaDescription
+        string coverImage
+        int views
+        boolean isPublished
+        string authorId
         datetime createdAt
         datetime updatedAt
-        datetime publishedAt "nullable"
+        datetime publishedAt
     }
-
-    CommunityPost ||--o{ CommunityComment : "receives"
-    CommunityPost ||--o{ CommunityVote : "voted on"
-    CommunityComment ||--o{ CommunityComment : "nested replies"
-    CommunityComment ||--o{ CommunityVote : "voted on"
+    CommunityPost ||--o{ CommunityComment : receives
+    CommunityPost ||--o{ CommunityVote : voted
+    CommunityComment ||--o{ CommunityVote : voted
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> CommunityComment is self-referencing (nested replies via parentId). CommunityVote is polymorphic: targets either a post OR comment. Composite unique: <code>[userId, postId]</code> and <code>[userId, commentId]</code> to prevent double voting. KnowledgeArticle is standalone (admin-authored content).
+      <strong>Notes:</strong> CommunityComment is self-referencing via parentId for nested replies. CommunityVote targets either post OR comment. Unique: [userId, postId] and [userId, commentId]. KnowledgeArticle is standalone admin content.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 8: CHAT & AI -->
-  <!-- ============================================================ -->
+  <!-- GROUP 8: CHAT -->
   <div id="g8" class="section">
     <div class="section-header">
-      <h2>Group 8: Chat & AI <span class="badge">2 models</span></h2>
+      <h2>Group 8: Chat and AI <span class="badge">2 models</span></h2>
       <p>ChatSession, ChatMessage -- Claude-powered procurement assistant</p>
     </div>
     <div class="diagram-container">
@@ -1208,43 +960,39 @@ erDiagram
 erDiagram
     ChatSession {
         uuid id PK
-        uuid userId "nullable"
-        string userEmail "nullable"
-        string userName "nullable"
-        string title "auto from first msg"
-        string status "active|closed"
-        int totalInputTokens "0"
-        int totalOutputTokens "0"
-        int messageCount "0"
-        datetime lastMessageAt "nullable"
+        string userId
+        string userEmail
+        string userName
+        string title
+        string status
+        int totalInputTokens
+        int totalOutputTokens
+        int messageCount
+        datetime lastMessageAt
         datetime createdAt
         datetime updatedAt
     }
-
     ChatMessage {
         uuid id PK
         uuid sessionId FK
-        string role "user|assistant|system|tool"
+        string role
         text content
-        string model "claude-sonnet-4-20250514"
-        int inputTokens "nullable"
-        int outputTokens "nullable"
-        text toolCalls "JSON array"
-        text toolResults "JSON array"
+        string model
+        int inputTokens
+        int outputTokens
+        text toolCalls
+        text toolResults
         datetime createdAt
     }
-
-    ChatSession ||--o{ ChatMessage : "contains"
+    ChatSession ||--o{ ChatMessage : contains
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> Token budget tracking per session. ChatSession.userId is a loose reference (not FK) to support anonymous users. Tool calls and results stored as JSON for full audit trail.
+      <strong>Notes:</strong> Token budget tracking per session. userId is a loose reference to support anonymous users. role: user, assistant, system, tool. Model: claude-sonnet-4 or claude-haiku-4.5.
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- GROUP 9: CRM -->
-  <!-- ============================================================ -->
   <div id="g9" class="section">
     <div class="section-header">
       <h2>Group 9: CRM <span class="badge">6 models</span></h2>
@@ -1257,130 +1005,122 @@ erDiagram
         uuid id PK
         string name
         string slug UK
-        CompanyType type "MANUFACTURER"
-        CompanySegment segment "ALL_SEGMENTS"
-        string website "nullable"
-        string email "nullable"
-        string phone "nullable"
-        string linkedIn "nullable"
-        string address "nullable"
-        string city "nullable"
-        string state "nullable"
-        string country "India"
-        text description "nullable"
-        string_arr productCategories
-        int yearEstablished "nullable"
-        string employeeCount "nullable"
-        string annualRevenue "nullable"
-        boolean hasApi "false"
-        string digitalMaturity "nullable"
-        string dealerNetworkSize "nullable"
-        string status "prospect"
-        string priority "medium"
-        string_arr tags
-        text notes "nullable"
+        string type
+        string segment
+        string website
+        string email
+        string phone
+        string linkedIn
+        string address
+        string city
+        string state
+        string country
+        text description
+        json productCategories
+        int yearEstablished
+        string employeeCount
+        string annualRevenue
+        boolean hasApi
+        string digitalMaturity
+        string dealerNetworkSize
+        string status
+        string priority
+        json tags
+        text notes
         datetime createdAt
         datetime updatedAt
     }
-
     CRMContact {
         uuid id PK
         uuid companyId FK
         string name
-        string email "nullable"
-        string phone "nullable"
-        string linkedIn "nullable"
-        string designation "nullable"
-        string department "nullable"
-        boolean decisionMaker "false"
-        boolean isPrimary "false"
-        string status "active|left|do_not_contact"
-        text notes "nullable"
+        string email
+        string phone
+        string linkedIn
+        string designation
+        string department
+        boolean decisionMaker
+        boolean isPrimary
+        string status
+        text notes
         datetime createdAt
         datetime updatedAt
     }
-
     CRMOutreach {
         uuid id PK
         uuid companyId FK
-        uuid contactId FK "nullable"
-        OutreachType type "EMAIL"
-        string subject "nullable"
+        uuid contactId FK
+        string type
+        string subject
         text content
-        string templateUsed "nullable"
-        datetime scheduledAt "nullable"
-        datetime sentAt "nullable"
-        OutreachStatus status "SCHEDULED"
-        datetime openedAt "nullable"
-        datetime repliedAt "nullable"
-        text responseContent "nullable"
-        string responseSentiment "nullable"
-        datetime followUpDate "nullable"
-        int followUpNumber "1"
-        text notes "nullable"
+        string templateUsed
+        datetime scheduledAt
+        datetime sentAt
+        string status
+        datetime openedAt
+        datetime repliedAt
+        text responseContent
+        string responseSentiment
+        datetime followUpDate
+        int followUpNumber
+        text notes
         datetime createdAt
         datetime updatedAt
     }
-
     CRMMeeting {
         uuid id PK
-        uuid companyId
+        string companyId
         string title
-        text description "nullable"
+        text description
         datetime scheduledAt
-        int duration "30 mins"
-        string meetingLink "nullable"
-        string location "nullable"
-        text attendees "JSON array"
-        string status "scheduled|completed|cancelled"
-        text agenda "nullable"
-        text notes "nullable"
-        string outcome "positive|follow_up|not_interested"
-        text nextSteps "nullable"
-        string reminders "JSON array"
+        int duration
+        string meetingLink
+        string location
+        text attendees
+        string status
+        text agenda
+        text notes
+        string outcome
+        text nextSteps
+        string reminders
         datetime createdAt
         datetime updatedAt
     }
-
     CRMPipelineStage {
         uuid id PK
         string name UK
         string displayName
-        string color "hex"
-        int sortOrder "0"
-        boolean isActive "true"
+        string color
+        int sortOrder
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
     EmailTemplate {
         uuid id PK
         string name UK
         string subject
         text body
-        string category "outreach|follow_up|partnership"
-        string_arr placeholders
-        boolean isActive "true"
+        string category
+        json placeholders
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
-    CRMCompany ||--o{ CRMContact : "employs"
-    CRMCompany ||--o{ CRMOutreach : "targeted by"
-    CRMContact ||--o{ CRMOutreach : "contacted via"
+    CRMCompany ||--o{ CRMContact : employs
+    CRMCompany ||--o{ CRMOutreach : targeted
+    CRMContact ||--o{ CRMOutreach : contacted
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> CRMMeeting.companyId is a loose reference (not FK). CRMPipelineStage and EmailTemplate are standalone lookup/config tables. This CRM is for Shreshth's B2B outreach to brands/manufacturers, separate from the dealer-facing platform.
+      <strong>Notes:</strong> CRMMeeting.companyId is a loose reference. CRMPipelineStage and EmailTemplate are standalone config tables. This CRM is for B2B outreach to brands and manufacturers.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 10: PAYMENT & INVOICING -->
-  <!-- ============================================================ -->
+  <!-- GROUP 10: PAYMENT -->
   <div id="g10" class="section">
     <div class="section-header">
-      <h2>Group 10: Payment & Invoicing <span class="badge">2 models</span> <span class="badge" style="background:#059669;">NEW</span></h2>
+      <h2>Group 10: Payment and Invoicing <span class="badge">2 models</span> <span class="badge" style="background:#059669;">NEW</span></h2>
       <p>Payment, Invoice -- Razorpay integration, GST-compliant invoicing</p>
     </div>
     <div class="diagram-container">
@@ -1388,62 +1128,58 @@ erDiagram
 erDiagram
     Payment {
         uuid id PK
-        uuid userId FK "nullable"
-        uuid dealerId FK "nullable"
-        int amountPaisa "99900 = Rs999"
-        string currency "INR"
+        uuid userId FK
+        uuid dealerId FK
+        int amountPaisa
+        string currency
         string description
-        string paymentFor "subscription|lead_pack|transaction_fee"
-        string referenceId "nullable"
-        string referenceType "nullable"
-        string razorpayOrderId UK "nullable"
-        string razorpayPaymentId UK "nullable"
-        string razorpaySignature "nullable"
-        PaymentStatus status "PENDING"
-        string failureReason "nullable"
-        string method "upi|card|netbanking|wallet"
-        string bank "nullable"
-        string vpa "UPI VPA"
-        datetime paidAt "nullable"
-        datetime refundedAt "nullable"
-        int refundAmountPaisa "nullable"
+        string paymentFor
+        string referenceId
+        string referenceType
+        string razorpayOrderId UK
+        string razorpayPaymentId UK
+        string razorpaySignature
+        string status
+        string failureReason
+        string method
+        string bank
+        string vpa
+        datetime paidAt
+        datetime refundedAt
+        int refundAmountPaisa
         datetime createdAt
         datetime updatedAt
     }
-
     Invoice {
         uuid id PK
-        uuid paymentId FK-UK "unique"
-        string invoiceNumber UK "H4E-INV-2026-0001"
-        string supplierGst "Hub4Estate GST"
-        string buyerGst "nullable"
+        uuid paymentId FK
+        string invoiceNumber UK
+        string supplierGst
+        string buyerGst
         string buyerName
-        text buyerAddress "nullable"
+        text buyerAddress
         string buyerState
-        string buyerPincode "nullable"
-        text lineItems "JSON array"
+        string buyerPincode
+        text lineItems
         int subtotalPaisa
-        int cgstPaisa "0"
-        int sgstPaisa "0"
-        int igstPaisa "0"
+        int cgstPaisa
+        int sgstPaisa
+        int igstPaisa
         int totalPaisa
-        string pdfUrl "S3 key"
-        string status "generated|sent|void"
+        string pdfUrl
+        string status
         datetime createdAt
         datetime updatedAt
     }
-
-    Payment ||--o| Invoice : "generates"
+    Payment ||--o| Invoice : generates
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> All amounts in paisa (100 paisa = 1 INR) for Razorpay compatibility. Payment is polymorphic -- payer is either User or Dealer. GST split: CGST+SGST for intra-state, IGST for inter-state. 7-year retention for GST compliance.
+      <strong>Notes:</strong> All amounts in paisa (100 paisa = 1 INR) for Razorpay. Payment is polymorphic -- payer is User or Dealer. GST: CGST+SGST intra-state, IGST inter-state. 7-year retention. Invoice format: H4E-INV-2026-0001.
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- GROUP 11: SCRAPING -->
-  <!-- ============================================================ -->
   <div id="g11" class="section">
     <div class="section-header">
       <h2>Group 11: Scraping <span class="badge">5 models</span></h2>
@@ -1457,99 +1193,92 @@ erDiagram
         string name UK
         string slug UK
         string website
-        string logoUrl "nullable"
-        boolean isActive "true"
-        string scrapeFrequency "weekly"
-        datetime lastScrapedAt "nullable"
-        datetime nextScrapeAt "nullable"
-        text catalogUrls "nullable"
-        text selectors "CSS selectors JSON"
-        int totalProducts "0"
-        int lastScrapeCount "0"
+        string logoUrl
+        boolean isActive
+        string scrapeFrequency
+        datetime lastScrapedAt
+        datetime nextScrapeAt
+        text catalogUrls
+        text selectors
+        int totalProducts
+        int lastScrapeCount
         datetime createdAt
         datetime updatedAt
     }
-
     ScrapeJob {
         uuid id PK
         uuid brandId FK
-        ScrapeStatus status "PENDING"
-        datetime startedAt "nullable"
-        datetime completedAt "nullable"
-        int productsFound "0"
-        int productsCreated "0"
-        int productsUpdated "0"
-        int errors "0"
-        text logs "nullable"
-        text errorDetails "nullable"
-        text configSnapshot "nullable"
+        string status
+        datetime startedAt
+        datetime completedAt
+        int productsFound
+        int productsCreated
+        int productsUpdated
+        int errors
+        text logs
+        text errorDetails
+        text configSnapshot
         datetime createdAt
         datetime updatedAt
     }
-
     ScrapedProduct {
         uuid id PK
         uuid brandId FK
         text sourceUrl
         datetime scrapedAt
         string rawName
-        string rawCategory "nullable"
-        string rawSubCategory "nullable"
-        string rawModelNumber "nullable"
-        string rawSku "nullable"
-        text rawDescription "nullable"
-        text rawSpecifications "nullable"
-        string_arr rawImages
-        string rawDatasheetUrl "nullable"
-        string rawPrice "nullable"
-        string_arr rawCertifications
-        string rawWarranty "nullable"
-        boolean isProcessed "false"
-        datetime processedAt "nullable"
-        uuid productId "nullable"
-        boolean isValid "true"
-        text validationErrors "nullable"
-        string contentHash "dedup"
+        string rawCategory
+        string rawSubCategory
+        string rawModelNumber
+        string rawSku
+        text rawDescription
+        text rawSpecifications
+        json rawImages
+        string rawDatasheetUrl
+        string rawPrice
+        json rawCertifications
+        string rawWarranty
+        boolean isProcessed
+        datetime processedAt
+        string productId
+        boolean isValid
+        text validationErrors
+        string contentHash
         datetime createdAt
         datetime updatedAt
     }
-
     ScrapeMapping {
         uuid id PK
-        string brandPattern "nullable"
-        string categoryPattern "nullable"
-        string namePattern "nullable"
-        uuid targetCategoryId "nullable"
-        uuid targetSubCategoryId "nullable"
-        uuid targetProductTypeId "nullable"
-        int priority "0"
-        boolean isActive "true"
+        string brandPattern
+        string categoryPattern
+        string namePattern
+        string targetCategoryId
+        string targetSubCategoryId
+        string targetProductTypeId
+        int priority
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
     ScrapeTemplate {
         uuid id PK
         string name UK
-        string description "nullable"
-        text selectors "CSS selectors JSON"
-        string_arr brandIds
+        string description
+        text selectors
+        json brandIds
         datetime createdAt
         datetime updatedAt
     }
-
-    ScrapeBrand ||--o{ ScrapeJob : "triggers"
-    ScrapeBrand ||--o{ ScrapedProduct : "produces"
+    ScrapeBrand ||--o{ ScrapeJob : triggers
+    ScrapeBrand ||--o{ ScrapedProduct : produces
       </pre>
     </div>
     <div class="legend">
-      <strong>Pipeline:</strong> ScrapeBrand defines targets -> ScrapeJob executes -> ScrapedProduct stores raw data -> ScrapeMapping normalizes into Product (Group 3). ScrapeTemplate provides reusable CSS selector configs. ScrapedProduct.contentHash prevents duplicate processing.
+      <strong>Pipeline:</strong> ScrapeBrand &rarr; ScrapeJob &rarr; ScrapedProduct &rarr; ScrapeMapping normalizes into Product. ScrapeTemplate provides reusable CSS selector configs. contentHash prevents duplicate processing.
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- GROUP 12: SYSTEM -->
-  <!-- ============================================================ -->
   <div id="g12" class="section">
     <div class="section-header">
       <h2>Group 12: System <span class="badge">8 models</span></h2>
@@ -1560,125 +1289,116 @@ erDiagram
 erDiagram
     AuditLog {
         uuid id PK
-        AuditAction action
-        string entityType "dealer|product|rfq|quote|payment"
+        string action
+        string entityType
         string entityId
-        string performedBy "admin ID or system"
-        text details "JSON change details"
+        string performedBy
+        text details
         datetime createdAt
     }
-
     FraudFlag {
         uuid id PK
-        string entityType "user|dealer|rfq|quote|inquiry"
+        string entityType
         string entityId
-        string flagType "duplicate_gst|fake_quote|spam_rfq|shill_bid"
-        string severity "LOW|MEDIUM|HIGH|CRITICAL"
+        string flagType
+        string severity
         text description
-        string status "OPEN|INVESTIGATING|RESOLVED|FALSE_POSITIVE"
-        string flaggedBy "system or admin ID"
-        string resolvedBy "nullable"
-        datetime resolvedAt "nullable"
-        text resolution "nullable"
+        string status
+        string flaggedBy
+        string resolvedBy
+        datetime resolvedAt
+        text resolution
         datetime createdAt
         datetime updatedAt
     }
-
     PlatformSetting {
         uuid id PK
-        string key UK "commission_rate|max_rfq_items|etc"
-        text value "JSON-encoded"
-        string dataType "string|number|boolean|json"
-        string label "human-readable"
-        string group "general|payment|notification|ai"
-        string updatedBy "admin ID"
+        string key UK
+        text value
+        string dataType
+        string label
+        string settingGroup
+        string updatedBy
         datetime createdAt
         datetime updatedAt
     }
-
     FeatureFlag {
         uuid id PK
-        string key UK "enable_ai_chat|enable_payments"
-        boolean enabled "false"
-        string description "nullable"
-        string_arr targetRoles "ARCHITECT|CONTRACTOR"
-        string_arr targetCities "Sri Ganganagar|Jaipur"
-        int rolloutPercentage "0-100"
-        string updatedBy "admin ID"
+        string key UK
+        boolean enabled
+        string description
+        json targetRoles
+        json targetCities
+        int rolloutPercentage
+        string updatedBy
         datetime createdAt
         datetime updatedAt
     }
-
     ContactSubmission {
         uuid id PK
         string name
         string email
-        string phone "nullable"
-        string role "homeowner|contractor|dealer|brand"
+        string phone
+        string role
         text message
-        string source "contact_form"
-        string status "new|contacted|qualified|converted"
-        string assignedTo "nullable"
-        text notes "nullable"
-        boolean emailSent "false"
-        datetime emailSentAt "nullable"
+        string source
+        string status
+        string assignedTo
+        text notes
+        boolean emailSent
+        datetime emailSentAt
         datetime createdAt
         datetime updatedAt
     }
-
     Notification {
         uuid id PK
         uuid userId FK
-        string userType "user|dealer"
+        string userType
         string title
         text body
-        text data "JSON deep link"
-        string channel "in_app|push|email|sms|whatsapp"
-        boolean read "false"
-        datetime readAt "nullable"
+        text data
+        string channel
+        boolean isRead
+        datetime readAt
         datetime createdAt
     }
-
     DevicePushToken {
         uuid id PK
-        string token UK "Expo push token"
-        uuid userId
-        string userType "user|dealer"
-        string platform "ios|android"
-        boolean isActive "true"
+        string token UK
+        string userId
+        string userType
+        string platform
+        boolean isActive
         datetime createdAt
         datetime updatedAt
     }
-
     UserActivity {
         uuid id PK
-        string actorType "user|dealer|admin|anonymous"
-        uuid actorId "nullable"
-        string actorEmail "nullable"
-        string actorName "nullable"
-        ActivityType activityType
+        string actorType
+        string actorId
+        string actorEmail
+        string actorName
+        string activityType
         string description
-        text metadata "JSON"
-        string entityType "nullable"
-        string entityId "nullable"
-        string ipAddress "nullable"
-        string userAgent "nullable"
+        text metadata
+        string entityType
+        string entityId
+        string ipAddress
+        string userAgent
         datetime createdAt
     }
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> All models in this group are standalone or loosely-referenced (no strict FKs to avoid cascading issues). AuditLog and UserActivity are append-only. FraudFlag uses uppercase severity/status. Notification.userId -> User (FK). DevicePushToken.userId is polymorphic (user/dealer). 90-day retention for Notifications, 6-month for UserActivity.
+      <strong>Notes:</strong> All standalone or loosely-referenced. AuditLog and UserActivity are append-only. FraudFlag severity: LOW, MEDIUM, HIGH, CRITICAL. Notification 90-day retention. UserActivity 6-month retention.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 13: BRAND-DEALER NETWORK -->
-  <!-- ============================================================ -->
+  <!-- GROUP 13: BRAND-DEALER -->
   <div id="g13" class="section">
     <div class="section-header">
       <h2>Group 13: Brand-Dealer Network <span class="badge">2 models</span></h2>
-      <p>BrandDealer, InquiryDealerQuote -- External dealer discovery for inquiry pipeline</p>
+      <p>BrandDealer, InquiryDealerQuote -- External dealer discovery</p>
     </div>
     <div class="diagram-container">
       <pre class="mermaid">
@@ -1687,87 +1407,82 @@ erDiagram
         uuid id PK
         uuid brandId FK
         string name
-        string shopName "nullable"
+        string shopName
         string phone
-        string whatsappNumber "nullable"
-        string email "nullable"
+        string whatsappNumber
+        string email
         string city
-        string state "nullable"
-        string pincode "nullable"
-        string address "nullable"
-        BrandDealerSource source "MANUAL|SCRAPED|BRAND_WEBSITE"
-        string sourceUrl "nullable"
-        boolean isVerified "false"
-        boolean isActive "true"
-        text notes "nullable"
+        string state
+        string pincode
+        string address
+        string source
+        string sourceUrl
+        boolean isVerified
+        boolean isActive
+        text notes
         datetime createdAt
         datetime updatedAt
     }
-
     InquiryDealerQuote {
         uuid id PK
         uuid pipelineId FK
-        uuid brandDealerId FK "nullable"
-        uuid dealerId "nullable"
-        string dealerName "denormalized"
-        string dealerPhone "denormalized"
-        string dealerShopName "nullable"
-        string dealerCity "nullable"
-        ContactMethod contactMethod "WHATSAPP"
-        datetime contactedAt "nullable"
-        text whatsappMessage "nullable"
-        float quotedPrice "nullable"
-        float shippingCost "nullable"
-        float totalQuotedPrice "nullable"
-        int deliveryDays "nullable"
-        string warrantyInfo "nullable"
-        text quoteNotes "nullable"
-        QuoteResponseStatus responseStatus "PENDING"
+        uuid brandDealerId FK
+        string dealerId
+        string dealerName
+        string dealerPhone
+        string dealerShopName
+        string dealerCity
+        string contactMethod
+        datetime contactedAt
+        text whatsappMessage
+        float quotedPrice
+        float shippingCost
+        float totalQuotedPrice
+        int deliveryDays
+        string warrantyInfo
+        text quoteNotes
+        string responseStatus
         datetime createdAt
         datetime updatedAt
     }
-
-    BrandDealer ||--o{ InquiryDealerQuote : "provides quotes"
+    BrandDealer ||--o{ InquiryDealerQuote : provides
       </pre>
     </div>
     <div class="legend">
-      <strong>Context:</strong> BrandDealer is an external dealer sourced from brand websites or manual entry -- separate from the platform's registered Dealer model. InquiryDealerQuote sits in the inquiry pipeline (Group 4), connecting InquiryPipeline to BrandDealer or registered Dealer. Composite unique: <code>[brandId, phone]</code> on BrandDealer.
+      <strong>Context:</strong> BrandDealer is an external dealer sourced from brand websites or manual entry -- separate from registered Dealer. Source: MANUAL, SCRAPED, BRAND_WEBSITE, PLATFORM_DEALER. Unique: [brandId, phone].
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- GROUP 14: SEARCH & INTELLIGENCE -->
-  <!-- ============================================================ -->
+  <!-- GROUP 14: SEARCH -->
   <div id="g14" class="section">
     <div class="section-header">
-      <h2>Group 14: Search & Intelligence <span class="badge">2 models</span> <span class="badge" style="background:#059669;">NEW</span></h2>
-      <p>SearchHistory, PredictedPrice -- User behavior tracking and price prediction</p>
+      <h2>Group 14: Search and Intelligence <span class="badge">2 models</span> <span class="badge" style="background:#059669;">NEW</span></h2>
+      <p>SearchHistory, PredictedPrice -- User behavior and price prediction</p>
     </div>
     <div class="diagram-container">
       <pre class="mermaid">
 erDiagram
     SearchHistory {
         uuid id PK
-        uuid userId FK "nullable (anonymous)"
+        uuid userId FK
         string query
-        text filters "JSON"
-        int resultsCount "0"
-        uuid clickedProductId "nullable"
-        int clickedPosition "nullable"
+        text filters
+        int resultsCount
+        string clickedProductId
+        int clickedPosition
         datetime createdAt
     }
-
     PredictedPrice {
         uuid id PK
-        uuid productId
+        string productId
         string city
-        float predictedPrice "INR per unit"
-        float confidenceLow "95pct CI lower"
-        float confidenceHigh "95pct CI upper"
-        float confidence "0.0-1.0"
-        string modelVersion "xgboost-v1.2|heuristic-v1"
-        text featuresUsed "JSON"
-        int dataPointsUsed "0"
+        float predictedPrice
+        float confidenceLow
+        float confidenceHigh
+        float confidence
+        string modelVersion
+        text featuresUsed
+        int dataPointsUsed
         datetime validFrom
         datetime validUntil
         datetime createdAt
@@ -1775,86 +1490,80 @@ erDiagram
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> SearchHistory tracks click-through for search relevance tuning. 90-day retention. PredictedPrice is generated by ML models with confidence intervals. Composite unique: <code>[productId, city, validFrom]</code>. Both models feed the AI recommendation engine.
+      <strong>Notes:</strong> SearchHistory tracks click-through for relevance tuning. 90-day retention. PredictedPrice generated by ML with 95% confidence intervals. Unique: [productId, city, validFrom].
     </div>
   </div>
 
-  <!-- ============================================================ -->
   <!-- GROUP 15: INFRASTRUCTURE -->
-  <!-- ============================================================ -->
   <div id="g15" class="section">
     <div class="section-header">
       <h2>Group 15: Infrastructure <span class="badge">3 models</span> <span class="badge" style="background:#059669;">NEW</span></h2>
-      <p>SearchIndex, JobQueue, ApiKey -- System plumbing and operational tracking</p>
+      <p>SearchIndex, JobQueue, ApiKey -- System plumbing</p>
     </div>
     <div class="diagram-container">
       <pre class="mermaid">
 erDiagram
     SearchIndex {
         uuid id PK
-        string entityType "product|brand|category"
+        string entityType
         string entityId
-        string indexName "products"
-        datetime lastSyncedAt "nullable"
-        string syncStatus "pending|synced|failed"
-        text errorMessage "nullable"
-        int version "1"
+        string indexName
+        datetime lastSyncedAt
+        string syncStatus
+        text errorMessage
+        int version
         datetime createdAt
         datetime updatedAt
     }
-
     JobQueue {
         uuid id PK
-        string queueName "email|notification|scrape|ai"
-        string jobId "BullMQ job ID"
+        string queueName
+        string jobId
         string jobType
-        text payload "JSON"
-        string status "waiting|active|completed|failed|delayed"
-        int attempts "0"
-        int maxAttempts "3"
-        text error "nullable"
-        text result "nullable"
-        datetime scheduledFor "nullable"
-        datetime startedAt "nullable"
-        datetime completedAt "nullable"
-        datetime failedAt "nullable"
+        text payload
+        string status
+        int attempts
+        int maxAttempts
+        text error
+        text result
+        datetime scheduledFor
+        datetime startedAt
+        datetime completedAt
+        datetime failedAt
         datetime createdAt
         datetime updatedAt
     }
-
     ApiKey {
         uuid id PK
-        string name "razorpay_production|anthropic_main"
-        string keyPrefix "first 8 chars"
-        string keyHash UK "SHA-256 NEVER raw"
-        string service "razorpay|anthropic|openai|msg91"
-        datetime lastUsedAt "nullable"
-        int totalCalls "0"
-        int totalErrors "0"
-        int monthlyBudgetPaisa "nullable"
-        int monthlySpentPaisa "0"
-        datetime budgetResetDate "nullable"
-        boolean isActive "true"
-        datetime expiresAt "nullable"
-        string createdBy "admin ID"
-        string notes "nullable"
+        string name
+        string keyPrefix
+        string keyHash UK
+        string service
+        datetime lastUsedAt
+        int totalCalls
+        int totalErrors
+        int monthlyBudgetPaisa
+        int monthlySpentPaisa
+        datetime budgetResetDate
+        boolean isActive
+        datetime expiresAt
+        string createdBy
+        string notes
         datetime createdAt
         datetime updatedAt
     }
       </pre>
     </div>
     <div class="legend">
-      <strong>Notes:</strong> All 3 models are standalone operational tables. SearchIndex tracks Elasticsearch sync state. JobQueue mirrors BullMQ for observability. ApiKey NEVER stores raw keys -- only SHA-256 hashes. Monthly budget tracking for cost control.
+      <strong>Notes:</strong> All standalone operational tables. SearchIndex tracks Elasticsearch sync. JobQueue mirrors BullMQ. ApiKey stores SHA-256 hashes only, NEVER raw keys. Monthly budget tracking for cost control.
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- CROSS-DOMAIN REFERENCE -->
-  <!-- ============================================================ -->
+  <!-- CROSS-DOMAIN FK REFERENCE -->
   <div id="xref" class="section">
     <div class="section-header">
       <h2>Cross-Domain FK Reference</h2>
-      <p>All foreign key relationships that cross domain group boundaries</p>
+      <p>All foreign key relationships crossing domain group boundaries</p>
     </div>
     <div class="diagram-container" style="padding:24px 28px;">
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
@@ -1870,14 +1579,14 @@ erDiagram
         <tbody>
           <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">DealerBrandMapping</td><td>brandId</td><td>Brand</td><td>M:1</td><td>Cascade</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">DealerCategoryMapping</td><td>categoryId</td><td>Category</td><td>M:1</td><td>Cascade</td></tr>
-          <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">DealerReview</td><td>userId</td><td>User</td><td>M:1</td><td>-</td></tr>
-          <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">DealerReview</td><td>rfqId</td><td>RFQ</td><td>M:1</td><td>-</td></tr>
+          <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">DealerReview</td><td>userId</td><td>User</td><td>M:1</td><td>--</td></tr>
+          <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">DealerReview</td><td>rfqId</td><td>RFQ</td><td>M:1</td><td>--</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">Product</td><td>productTypeId</td><td>ProductType</td><td>M:1</td><td>Cascade</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">Product</td><td>brandId</td><td>Brand</td><td>M:1</td><td>Cascade</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">SavedProduct</td><td>userId</td><td>User</td><td>M:1</td><td>Cascade</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">SavedProduct</td><td>productId</td><td>Product</td><td>M:1</td><td>Cascade</td></tr>
-          <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">ProductInquiry</td><td>categoryId</td><td>Category</td><td>M:1</td><td>-</td></tr>
-          <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">ProductInquiry</td><td>identifiedBrandId</td><td>Brand</td><td>M:1</td><td>-</td></tr>
+          <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">ProductInquiry</td><td>categoryId</td><td>Category</td><td>M:1</td><td>--</td></tr>
+          <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">ProductInquiry</td><td>identifiedBrandId</td><td>Brand</td><td>M:1</td><td>--</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">InquiryDealerResponse</td><td>dealerId</td><td>Dealer</td><td>M:1</td><td>Cascade</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;background:#faf9f7;"><td style="padding:8px;">RFQ</td><td>userId</td><td>User</td><td>M:1</td><td>Cascade</td></tr>
           <tr style="border-bottom:1px solid #e5e5e5;"><td style="padding:8px;">RFQItem</td><td>productId</td><td>Product</td><td>M:1</td><td>Cascade</td></tr>
@@ -1904,7 +1613,7 @@ erDiagram
 </div>
 
 <footer>
-  Hub4Estate LLP | LLPIN: ACW-4269 | Founder: Shreshth Agarwal | Generated from PRD v2.0.0 | 8 April 2026
+  Hub4Estate LLP | LLPIN: ACW-4269 | Founder: Shreshth Agarwal | PRD v2.0.0 | 8 April 2026
 </footer>
 
 <script>
