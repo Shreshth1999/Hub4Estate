@@ -907,7 +907,7 @@ export function HomePage() {
 
 
       {/* ─── How It Works ─────────────────────────────────────────────────────── */}
-      <section className="bg-white border-t border-gray-100 overflow-hidden">
+      <section className="bg-stone-50 overflow-hidden">
         <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6 pt-20 sm:pt-28 pb-20 sm:pb-28">
 
           {/* Header */}
@@ -1053,27 +1053,30 @@ export function HomePage() {
       </section>
 
       {/* ─── Two Sides. One Platform. ─────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
-        <div ref={twoIn.ref as any} className="max-w-6xl mx-auto px-6">
+      <section className="py-20 sm:py-28 bg-gradient-to-b from-slate-900 via-[#0F172A] to-[#0B1628] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+        <div ref={twoIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
           <div className="text-center mb-16" style={revealStyle(twoIn.inView, 0)}>
-            <h2 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-4 tracking-tight">
+            <p className="text-xs font-semibold text-amber-400 uppercase tracking-[0.2em] mb-3">Built For Both Sides</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
               Two Sides. One Platform.
             </h2>
-            <p className="text-xl text-gray-500 max-w-xl mx-auto">
+            <p className="text-lg text-white/40 max-w-xl mx-auto">
               Hub4Estate works for both buyers and electrical dealers
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6" style={revealStyle(twoIn.inView, 0.08)}>
             {/* For Buyers */}
-            <div className="border border-gray-200 rounded-2xl p-8 bg-white hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/30 hover:-translate-y-1 transition-all duration-300">
+            <div className="group relative bg-white rounded-2xl p-8 shadow-2xl shadow-black/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-violet-500 to-blue-500" />
               <div className="flex items-center gap-3 mb-7">
-                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/20">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-amber-600">For Buyers</span>
-                  <h3 className="text-xl font-semibold text-gray-900">Anyone Buying Electrical Products</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-violet-600">For Buyers</span>
+                  <h3 className="text-lg font-bold text-gray-900">Anyone Buying Electrical Products</h3>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
@@ -1085,8 +1088,8 @@ export function HomePage() {
                   { icon: TrendingUp, title: 'Zero Middlemen', desc: 'You deal directly with the dealer. We just facilitate the connection' },
                 ].map(({ icon: Icon, title, desc }, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-gray-600" />
+                    <div className="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-violet-600" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-gray-900">{title}</p>
@@ -1097,21 +1100,22 @@ export function HomePage() {
               </div>
               <button
                 onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#0B1628] text-white font-semibold rounded-xl hover:bg-[#0F2040] transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-violet-600 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300"
               >
                 Submit Your First Inquiry <ArrowRight className="w-5 h-5" />
               </button>
             </div>
 
             {/* For Dealers */}
-            <div className="border border-gray-700 rounded-2xl p-8 bg-[#0B1628] text-white hover:border-gray-600 hover:shadow-lg transition-all duration-300">
+            <div className="group relative bg-white rounded-2xl p-8 shadow-2xl shadow-black/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-emerald-500 to-teal-500" />
               <div className="flex items-center gap-3 mb-7">
-                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/20">
                   <Store className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-amber-400">For Dealers</span>
-                  <h3 className="text-xl font-semibold text-white">Electrical Shops &amp; Distributors</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">For Dealers</span>
+                  <h3 className="text-lg font-bold text-gray-900">Electrical Shops &amp; Distributors</h3>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
@@ -1123,17 +1127,17 @@ export function HomePage() {
                   { icon: TrendingUp, title: 'Expand Your Reach', desc: 'Reach buyers across your city who would never have found you otherwise' },
                 ].map(({ icon: Icon, title, desc }, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-amber-400" />
+                    <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-white">{title}</p>
-                      <p className="text-sm text-white/50 leading-snug">{desc}</p>
+                      <p className="text-sm font-bold text-gray-900">{title}</p>
+                      <p className="text-sm text-gray-500 leading-snug">{desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link to="/dealer/onboarding" className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-colors">
+              <Link to="/dealer/onboarding" className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
                 Register as a Dealer — Free <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
@@ -1147,15 +1151,15 @@ export function HomePage() {
 
 
       {/* Categories Grid */}
-      <section className="py-20 sm:py-28 bg-gray-50 border-t border-gray-100">
+      <section className="py-20 sm:py-28 bg-[#0F172A]">
         <div ref={catIn.ref as any} className="max-w-6xl mx-auto px-6">
           <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4" style={revealStyle(catIn.inView, 0)}>
             <div>
-              <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-3">Browse by category</p>
-              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2 tracking-tight">
+              <p className="text-xs font-semibold text-amber-400 uppercase tracking-[0.2em] mb-3">Browse by category</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight">
                 {tx.categories.title}
               </h2>
-              <p className="text-base text-gray-500 max-w-lg">
+              <p className="text-base text-white/40 max-w-lg">
                 {tx.categories.subtitle}
               </p>
             </div>
@@ -1168,7 +1172,7 @@ export function HomePage() {
           <div className="text-center mt-12" style={revealStyle(catIn.inView, 0.2)}>
             <Link
               to="/categories"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 text-white font-bold rounded-xl btn-glow"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors"
             >
               {tx.categories.cta}
               <ArrowRight className="w-5 h-5" />
@@ -1179,23 +1183,23 @@ export function HomePage() {
 
 
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-[#0B1628] border-t border-white/5">
+      <section className="py-20 sm:py-28 bg-stone-50">
         <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
 
           {/* Header */}
           <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6" style={revealStyle(dealsIn.inView, 0)}>
             <div>
-              <p className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-3">{tx.realDeals.label}</p>
-              <h2 className="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight leading-tight">
+              <p className="text-xs font-semibold text-emerald-600 uppercase tracking-[0.2em] mb-3">{tx.realDeals.label}</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2 tracking-tight leading-tight">
                 {tx.realDeals.title}
               </h2>
-              <p className="text-base text-white/50 max-w-lg">
+              <p className="text-base text-gray-500 max-w-lg">
                 {tx.realDeals.subtitle}
               </p>
             </div>
-            <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs font-semibold text-white/60">Real verified deals</span>
+            <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-semibold text-emerald-700">Real verified deals</span>
             </div>
           </div>
 
@@ -1203,49 +1207,46 @@ export function HomePage() {
           <div className="grid md:grid-cols-3 gap-5">
             {tx.realDeals.deals.map((deal, di) => {
               const savedAmounts = ['₹37,000', '₹24,000', '₹8,800'];
-              // Bar widths as % of max price for visual comparison
               const barData = [
-                [{ w: 100, label: null }, { w: 91, label: null }, { w: 59, label: null }],
-                [{ w: 100, label: null }, { w: 80, label: null }],
-                [{ w: 100, label: null }, { w: 65, label: null }],
+                [{ w: 100 }, { w: 91 }, { w: 59 }],
+                [{ w: 100 }, { w: 80 }],
+                [{ w: 100 }, { w: 65 }],
               ][di] || [];
               return (
                 <div
                   key={di}
-                  className="group relative bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.07] hover:border-amber-500/30 hover:-translate-y-1 transition-all duration-300"
+                  className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/60 hover:-translate-y-1 transition-all duration-300"
                   style={revealStyle(dealsIn.inView, 0.1 + di * 0.09)}
                 >
-                  {/* Amber top line */}
-                  <div className="h-[2px] bg-gradient-to-r from-amber-500 to-amber-400 group-hover:from-amber-400 group-hover:to-amber-300 transition-all duration-300" />
+                  <div className="h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
 
                   <div className="p-6">
                     {/* Tag */}
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                    <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full mb-4">
                       {deal.tag}
                     </span>
 
                     {/* Title */}
-                    <h3 className="text-base font-bold text-white mt-4 mb-6 leading-snug">{deal.title}</h3>
+                    <h3 className="text-base font-bold text-gray-900 mb-6 leading-snug">{deal.title}</h3>
 
-                    {/* Price comparison with visual bars */}
+                    {/* Price comparison — thick visual bars */}
                     <div className="space-y-4 mb-6">
                       {deal.rows.map((row, ri) => {
                         const bar = barData[ri];
                         const isWinner = !row.strikethrough;
                         return (
                           <div key={ri}>
-                            <div className="flex justify-between items-baseline mb-2">
-                              <span className={`text-xs font-medium ${isWinner ? 'text-amber-400 font-bold' : 'text-white/40'}`}>
+                            <div className="flex justify-between items-baseline mb-1.5">
+                              <span className={`text-xs font-semibold ${isWinner ? 'text-emerald-700' : 'text-gray-400'}`}>
                                 {row.label}
                               </span>
-                              <span className={`text-sm font-bold ${isWinner ? 'text-amber-400 text-lg' : 'text-white/30 line-through'}`}>
+                              <span className={`font-bold ${isWinner ? 'text-emerald-700 text-base' : 'text-gray-300 text-sm line-through'}`}>
                                 {row.price}
                               </span>
                             </div>
-                            {/* Visual bar */}
-                            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                               <div
-                                className={`h-full rounded-full ${isWinner ? 'bg-amber-500' : 'bg-white/15'}`}
+                                className={`h-full rounded-full ${isWinner ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : 'bg-gray-200'}`}
                                 style={{ width: dealsIn.inView ? `${bar?.w ?? 80}%` : '0%', transition: 'width 1.4s cubic-bezier(0.16,1,0.3,1)' }}
                               />
                             </div>
@@ -1254,18 +1255,18 @@ export function HomePage() {
                       })}
                     </div>
 
-                    {/* Savings — Hero number */}
-                    <div className="border-t border-white/8 pt-5">
-                      <p className="text-[10px] text-white/35 uppercase tracking-widest font-semibold mb-1">{deal.savedLabel}</p>
+                    {/* Savings block */}
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
+                      <p className="text-[10px] text-emerald-600 uppercase tracking-widest font-bold mb-1">{deal.savedLabel}</p>
                       <p
-                        className="text-4xl font-black text-amber-400 mb-1 transition-all duration-700"
+                        className="text-3xl font-black text-emerald-700 mb-0.5 transition-all duration-700"
                         style={{
                           opacity: dealsIn.inView ? 1 : 0,
                           transform: dealsIn.inView ? 'translateY(0)' : 'translateY(12px)',
                           transitionDelay: `${0.3 + di * 0.1}s`,
                         }}
                       >{savedAmounts[di]}</p>
-                      <p className="text-xs text-white/30">{deal.savedNote}</p>
+                      <p className="text-xs text-emerald-600/60">{deal.savedNote}</p>
                     </div>
                   </div>
                 </div>
@@ -1273,7 +1274,7 @@ export function HomePage() {
             })}
           </div>
 
-          <p className="text-center text-xs text-white/25 mt-10" style={revealStyle(dealsIn.inView, 0.4)}>
+          <p className="text-center text-xs text-gray-400 mt-10" style={revealStyle(dealsIn.inView, 0.4)}>
             {tx.realDeals.footnote}
           </p>
         </div>
@@ -1281,7 +1282,7 @@ export function HomePage() {
 
 
       {/* ─── Why We Exist ─────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
+      <section className="py-20 sm:py-28 bg-white">
         <div ref={whyIn.ref as any} className="max-w-6xl mx-auto px-6">
 
           {/* Header */}
