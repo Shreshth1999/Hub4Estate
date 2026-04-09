@@ -71,6 +71,7 @@ export function Layout() {
                 { to: '/categories', label: tx.nav.products },
                 { to: '/for-buyers', label: 'For Buyers' },
                 { to: '/for-dealers', label: tx.nav.forDealers },
+                { to: '/community', label: tx.nav.community },
                 { to: '/knowledge', label: tx.nav.guides },
               ].map(({ to, label }) => (
                 <Link
@@ -144,17 +145,25 @@ export function Layout() {
                   </button>
                 </>
               ) : (
-                <Link
-                  to="/"
-                  onClick={(e) => {
-                    const el = document.getElementById('inquiry-form');
-                    if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
-                  }}
-                  className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  {tx.nav.getQuotes}
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                <>
+                  <Link to="/login" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+                    Login
+                  </Link>
+                  <Link to="/signup" className="px-4 py-2 text-sm font-medium text-amber-700 hover:text-amber-800 hover:bg-amber-50 rounded-lg transition-colors">
+                    Sign Up
+                  </Link>
+                  <Link
+                    to="/"
+                    onClick={(e) => {
+                      const el = document.getElementById('inquiry-form');
+                      if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+                    }}
+                    className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+                  >
+                    {tx.nav.getQuotes}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </>
               )}
             </div>
 
@@ -176,6 +185,7 @@ export function Layout() {
                 { to: '/categories', label: tx.nav.products },
                 { to: '/for-buyers', label: 'For Buyers' },
                 { to: '/for-dealers', label: tx.nav.forDealers },
+                { to: '/community', label: tx.nav.community },
                 { to: '/knowledge', label: tx.nav.guides },
                 { to: '/track', label: tx.nav.track },
               ].map(({ to, label }) => (
@@ -230,13 +240,23 @@ export function Layout() {
                     </button>
                   </div>
                 ) : (
-                  <Link
-                    to="/"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl"
-                    onClick={() => { setMobileMenuOpen(false); setTimeout(() => { document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}
-                  >
-                    {tx.nav.getQuotes} <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  <div className="space-y-2">
+                    <Link
+                      to="/"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl"
+                      onClick={() => { setMobileMenuOpen(false); setTimeout(() => { document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}
+                    >
+                      {tx.nav.getQuotes} <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <div className="flex gap-2">
+                      <Link to="/login" className="flex-1 text-center py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        Login
+                      </Link>
+                      <Link to="/signup" className="flex-1 text-center py-2.5 text-sm font-medium text-amber-700 border border-amber-200 rounded-xl hover:bg-amber-50 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                        Sign Up
+                      </Link>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
