@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 10.0.0"
+    "version": ">= 10.0.0",
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -43,14 +44,9 @@
   },
   "submit": {
     "production": {
-      "ios": {
-        "appleId": "shreshth.agarwal@hub4estate.com",
-        "ascAppId": "",
-        "appleTeamId": ""
-      },
       "android": {
         "serviceAccountKeyPath": "./google-play-service-account.json",
-        "track": "production"
+        "track": "internal"
       }
     }
   }

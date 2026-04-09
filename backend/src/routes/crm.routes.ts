@@ -160,7 +160,33 @@ router.post('/companies', authenticateAdmin, validateBody(createCompanySchema), 
 });
 
 // Update company
-router.put('/companies/:id', authenticateAdmin, async (req, res) => {
+const updateCompanySchema = z.object({
+  name: z.string().min(2).optional(),
+  type: z.enum(['MANUFACTURER', 'DISTRIBUTOR', 'DEALER', 'BRAND', 'OTHER']).optional(),
+  segment: z.enum(['PREMIUM', 'MID_RANGE', 'BUDGET', 'ALL_SEGMENTS']).optional(),
+  website: z.string().url().optional().nullable(),
+  email: z.string().email().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  linkedIn: z.string().url().optional().nullable(),
+  address: z.string().optional().nullable(),
+  city: z.string().optional().nullable(),
+  state: z.string().optional().nullable(),
+  country: z.string().optional(),
+  description: z.string().optional().nullable(),
+  productCategories: z.array(z.string()).optional(),
+  yearEstablished: z.number().int().optional().nullable(),
+  employeeCount: z.string().optional().nullable(),
+  annualRevenue: z.string().optional().nullable(),
+  hasApi: z.boolean().optional(),
+  digitalMaturity: z.string().optional().nullable(),
+  dealerNetworkSize: z.string().optional().nullable(),
+  status: z.string().optional(),
+  priority: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  notes: z.string().optional().nullable(),
+});
+
+router.put('/companies/:id', authenticateAdmin, validateBody(updateCompanySchema), async (req, res) => {
   try {
     const company = await prisma.cRMCompany.update({
       where: { id: req.params.id },
@@ -244,8 +270,35 @@ router.post('/contacts', authenticateAdmin, validateBody(createContactSchema), a
 });
 
 // Update contact
-router.put('/contacts/:id', authenticateAdmin, async (req, res) => {
+const updateContactSchema = z.object({
+  name: z.string().min(2).optional(),
+  email: z.string().email().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  linkedIn: z.string().url().optional().nullable(),
+  designation: z.string().optional().nullable(),
+  department: z.string().optional().nullable(),
+  decisionMaker: z.boolean().optional(),
+  isPrimary: z.boolean().optional(),
+  status: z.string().optional(),
+  notes: z.string().optional().nullable(),
+});
+
+router.put('/contacts/:id', authenticateAdmin, validateBody(updateContactSchema), async (req, res) => {
   try {
+    // If setting as primary, unset other primaries for the same company
+    if (req.body.isPrimary) {
+      const existingContact = await prisma.cRMContact.findUnique({
+        where: { id: req.params.id },
+        select: { companyId: true },
+      });
+      if (existingContact) {
+        await prisma.cRMContact.updateMany({
+          where: { companyId: existingContact.companyId, isPrimary: true },
+          data: { isPrimary: false },
+        });
+      }
+    }
+
     const contact = await prisma.cRMContact.update({
       where: { id: req.params.id },
       data: req.body,
@@ -367,7 +420,24 @@ router.post('/outreaches', authenticateAdmin, validateBody(createOutreachSchema)
 });
 
 // Update outreach
-router.put('/outreaches/:id', authenticateAdmin, async (req, res) => {
+const updateOutreachSchema = z.object({
+  type: z.enum(['EMAIL', 'LINKEDIN', 'PHONE_CALL', 'MEETING', 'WHATSAPP', 'OTHER']).optional(),
+  subject: z.string().optional().nullable(),
+  content: z.string().optional(),
+  templateUsed: z.string().optional().nullable(),
+  scheduledAt: z.string().datetime().optional().nullable(),
+  status: z.enum(['SCHEDULED', 'SENT', 'DELIVERED', 'OPENED', 'REPLIED', 'MEETING_SCHEDULED', 'NOT_INTERESTED', 'BOUNCED', 'FAILED']).optional(),
+  followUpDate: z.string().datetime().optional().nullable(),
+  followUpNumber: z.number().int().optional(),
+  notes: z.string().optional().nullable(),
+  sentAt: z.string().datetime().optional().nullable(),
+  openedAt: z.string().datetime().optional().nullable(),
+  repliedAt: z.string().datetime().optional().nullable(),
+  responseContent: z.string().optional().nullable(),
+  responseSentiment: z.enum(['positive', 'neutral', 'negative']).optional().nullable(),
+});
+
+router.put('/outreaches/:id', authenticateAdmin, validateBody(updateOutreachSchema), async (req, res) => {
   try {
     const data: any = { ...req.body };
     if (data.scheduledAt) data.scheduledAt = new Date(data.scheduledAt);
@@ -507,7 +577,20 @@ router.post('/meetings', authenticateAdmin, validateBody(createMeetingSchema), a
 });
 
 // Update meeting
-router.put('/meetings/:id', authenticateAdmin, async (req, res) => {
+const updateMeetingSchema = z.object({
+  title: z.string().min(2).optional(),
+  description: z.string().optional().nullable(),
+  scheduledAt: z.string().datetime().optional(),
+  duration: z.number().int().optional(),
+  meetingLink: z.string().url().optional().nullable(),
+  location: z.string().optional().nullable(),
+  attendees: z.string().optional().nullable(),
+  agenda: z.string().optional().nullable(),
+  status: z.string().optional(),
+  notes: z.string().optional().nullable(),
+});
+
+router.put('/meetings/:id', authenticateAdmin, validateBody(updateMeetingSchema), async (req, res) => {
   try {
     const data: any = { ...req.body };
     if (data.scheduledAt) data.scheduledAt = new Date(data.scheduledAt);
@@ -631,7 +714,16 @@ router.post('/email-templates', authenticateAdmin, validateBody(createTemplateSc
 });
 
 // Update template
-router.put('/email-templates/:id', authenticateAdmin, async (req, res) => {
+const updateTemplateSchema = z.object({
+  name: z.string().min(2).optional(),
+  subject: z.string().min(2).optional(),
+  body: z.string().optional(),
+  category: z.string().optional(),
+  placeholders: z.array(z.string()).optional(),
+  isActive: z.boolean().optional(),
+});
+
+router.put('/email-templates/:id', authenticateAdmin, validateBody(updateTemplateSchema), async (req, res) => {
   try {
     const template = await prisma.emailTemplate.update({
       where: { id: req.params.id },

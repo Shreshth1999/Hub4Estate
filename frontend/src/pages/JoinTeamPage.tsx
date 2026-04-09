@@ -4,7 +4,6 @@ import {
   Zap, Mail, Phone, MapPin, Users, Briefcase, Code, TrendingUp,
   Send, CheckCircle, Linkedin, ArrowRight,
 } from 'lucide-react';
-import { ElectricWireDivider } from '../components/ElectricWireDivider';
 import { useInView, revealStyle } from '../hooks/useInView';
 
 interface ApplicationForm {
@@ -60,7 +59,7 @@ export function JoinTeamPage() {
   ];
 
   const benefits = [
-    { icon: TrendingUp, title: 'Real Ownership', description: 'Real responsibility from day one — not ticket-filing', accent: 'bg-orange-900/30 text-orange-400' },
+    { icon: TrendingUp, title: 'Real Ownership', description: 'Real responsibility from day one — not ticket-filing', accent: 'bg-amber-900/30 text-amber-500' },
     { icon: Users, title: 'Actual Impact', description: 'Your work directly saves buyers money on every deal', accent: 'bg-green-900/30 text-green-400' },
     { icon: Briefcase, title: 'Hard Problems', description: 'Fragmented markets, trust, pricing opacity — not CRUD apps', accent: 'bg-violet-900/30 text-violet-400' },
     { icon: Code, title: 'Long Game', description: 'Building infrastructure for decades — not a quick flip', accent: 'bg-blue-900/30 text-blue-400' },
@@ -105,7 +104,7 @@ Submitted via Hub4Estate Join Team Page`
       {/* Hero — dark */}
       <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-violet-500/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '2s' }} />
         </div>
         <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 relative">
@@ -115,21 +114,19 @@ Submitted via Hub4Estate Join Team Page`
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 tracking-tight" style={revealStyle(heroIn, 0.06)}>
             Join the<br />
-            <span className="gradient-text-orange">Mission</span>
+            <span className="text-amber-500">Mission</span>
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed max-w-2xl" style={revealStyle(heroIn, 0.12)}>
             We're building the price transparency infrastructure for electrical procurement in India.
             We want people who want to solve hard, unsexy problems with real market impact.
           </p>
           <div className="mt-8" style={revealStyle(heroIn, 0.16)}>
-            <a href="#apply" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors btn-glow">
+            <a href="#apply" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors">
               Apply Now <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* Benefits */}
       <div ref={benefitsRef as any} className="px-6 py-20 max-w-5xl mx-auto">
@@ -155,8 +152,6 @@ Submitted via Hub4Estate Join Team Page`
           })}
         </div>
       </div>
-
-      <ElectricWireDivider dark />
 
       {/* Open Positions — dark */}
       <div ref={positionsRef as any} className="bg-[#09090B] px-6 py-20">
@@ -187,7 +182,7 @@ Submitted via Hub4Estate Join Team Page`
                   </div>
                   <a
                     href="#apply"
-                    className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white text-sm font-bold rounded-xl hover:bg-orange-600 transition-colors flex-shrink-0"
+                    className="inline-flex items-center justify-center px-4 py-2 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-700 transition-colors flex-shrink-0"
                   >
                     Apply
                   </a>
@@ -204,8 +199,6 @@ Submitted via Hub4Estate Join Team Page`
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* Application Form */}
       <div id="apply" ref={formRef as any} className="px-6 py-20 bg-white">
@@ -312,13 +305,11 @@ Submitted via Hub4Estate Join Team Page`
         </div>
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* Contact — dark */}
       <div className="bg-[#09090B] px-6 py-16">
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <Zap className="w-6 h-6 text-orange-400" />
+            <Zap className="w-6 h-6 text-amber-500" />
           </div>
           <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Questions?</h2>
           <p className="text-gray-400 mb-8 text-sm">Reach out directly to our founder.</p>

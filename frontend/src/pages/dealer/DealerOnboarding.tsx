@@ -471,7 +471,7 @@ export function DealerOnboarding() {
                               <p className="text-sm font-medium text-gray-700">Upload GST Certificate</p>
                               <p className="text-xs text-gray-400 mt-1">JPG, PNG or PDF · Max 10MB</p>
                             </div>
-                            <span className="text-xs font-medium text-orange-600 bg-orange-50 px-3 py-1.5 rounded-full">
+                            <span className="text-xs font-medium text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full">
                               Auto-extracts GST number & business name
                             </span>
                           </button>
@@ -805,7 +805,7 @@ export function DealerOnboarding() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-colors"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 disabled:opacity-50 transition-colors"
                   >
                     {isSubmitting ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>

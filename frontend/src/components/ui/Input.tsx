@@ -5,18 +5,21 @@ import {
   type TextareaHTMLAttributes,
   type ReactNode,
 } from 'react';
-import { Eye, EyeOff, Search, Phone, IndianRupee } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
-export type InputVariant = 'default' | 'search' | 'password' | 'phone' | 'currency' | 'textarea';
+// ============================================================
+// Types
+// ============================================================
 export type InputSize = 'sm' | 'md' | 'lg';
 
 interface BaseInputProps {
-  variant?: InputVariant;
   inputSize?: InputSize;
   label?: string;
   error?: string;
   helperText?: string;
+  /** Alias for helperText (backward compat) */
+  helper?: string;
   required?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
@@ -29,10 +32,13 @@ export type InputProps = BaseInputProps &
 export type TextareaProps = BaseInputProps &
   Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>;
 
+// ============================================================
+// Shared style maps
+// ============================================================
 const sizeStyles: Record<InputSize, string> = {
-  sm: 'h-8 px-3 text-xs',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-4 text-base',
+  sm: 'h-9 px-3 text-xs',
+  md: 'h-11 px-4 text-sm',
+  lg: 'h-[52px] px-4 text-base',
 };
 
 const textareaSizeStyles: Record<InputSize, string> = {
@@ -47,6 +53,9 @@ const labelSizeStyles: Record<InputSize, string> = {
   lg: 'text-sm mb-2',
 };
 
+// ============================================================
+// InputWrapper — shared label, error, helper layout
+// ============================================================
 function InputWrapper({
   label,
   error,
@@ -56,6 +65,8 @@ function InputWrapper({
   fullWidth = true,
   children,
   id,
+  errorId,
+  helperTextId,
 }: {
   label?: string;
   error?: string;
@@ -65,6 +76,8 @@ function InputWrapper({
   fullWidth?: boolean;
   children: ReactNode;
   id?: string;
+  errorId?: string;
+  helperTextId?: string;
 }) {
   return (
     <div className={cn(fullWidth ? 'w-full' : 'inline-flex flex-col')}>
@@ -77,31 +90,31 @@ function InputWrapper({
           )}
         >
           {label}
-          {required && <span className="text-error-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
         </label>
       )}
       {children}
       {error && (
-        <p className="mt-1.5 text-xs font-medium text-error-600">{error}</p>
+        <p id={errorId} className="mt-1.5 text-xs font-medium text-red-600" role="alert">{error}</p>
       )}
       {helperText && !error && (
-        <p className="mt-1.5 text-xs text-neutral-500">{helperText}</p>
+        <p id={helperTextId} className="mt-1.5 text-xs text-neutral-500">{helperText}</p>
       )}
     </div>
   );
 }
 
 // ============================================================
-// Standard Input (default, search, password, phone, currency)
+// Input
 // ============================================================
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
-      variant = 'default',
       inputSize = 'md',
       label,
       error,
       helperText,
+      helper,
       required,
       leftIcon,
       rightIcon,
@@ -109,6 +122,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       className,
       id,
       disabled,
+      type,
       ...props
     },
     ref,
@@ -116,76 +130,52 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = useState(false);
 
     const inputId = id || props.name || undefined;
+    const isPassword = type === 'password';
+    const resolvedHelper = helperText ?? helper;
+    const errorId = error && inputId ? `${inputId}-error` : undefined;
+    const helperTextId = !error && resolvedHelper && inputId ? `${inputId}-helper` : undefined;
+    const describedBy = [errorId, helperTextId].filter(Boolean).join(' ') || undefined;
 
-    // Determine type override for password variant
-    const resolvedType =
-      variant === 'password'
-        ? showPassword
-          ? 'text'
-          : 'password'
-        : variant === 'search'
-          ? 'search'
-          : variant === 'phone'
-            ? 'tel'
-            : variant === 'currency'
-              ? 'text'
-              : props.type || 'text';
+    const resolvedType = isPassword
+      ? showPassword
+        ? 'text'
+        : 'password'
+      : type || 'text';
 
-    // Determine prefix icons based on variant
-    const prefixIcon =
-      variant === 'search' ? (
-        <Search className="w-4 h-4 text-neutral-400" />
-      ) : variant === 'phone' ? (
-        <span className="flex items-center gap-1 text-neutral-600 font-medium text-sm">
-          <Phone className="w-3.5 h-3.5" />
-          +91
-        </span>
-      ) : variant === 'currency' ? (
-        <IndianRupee className="w-4 h-4 text-neutral-600" />
-      ) : (
-        leftIcon
-      );
-
-    // Determine suffix for password variant
-    const suffixIcon =
-      variant === 'password' ? (
-        <button
-          type="button"
-          tabIndex={-1}
-          onClick={() => setShowPassword((v) => !v)}
-          className="p-1 text-neutral-400 hover:text-neutral-700 transition-colors focus:outline-none"
-          aria-label={showPassword ? 'Hide password' : 'Show password'}
-        >
-          {showPassword ? (
-            <EyeOff className="w-4 h-4" />
-          ) : (
-            <Eye className="w-4 h-4" />
-          )}
-        </button>
-      ) : (
-        rightIcon
-      );
-
-    // Phone variant input pattern
-    const inputMode =
-      variant === 'phone' ? 'numeric' as const
-        : variant === 'currency' ? 'decimal' as const
-          : undefined;
+    const suffixIcon = isPassword ? (
+      <button
+        type="button"
+        tabIndex={-1}
+        onClick={() => setShowPassword((v) => !v)}
+        className="p-1 text-neutral-400 hover:text-neutral-700 transition-colors focus:outline-none min-w-[44px] min-h-[44px] flex items-center justify-center"
+        aria-label={showPassword ? 'Hide password' : 'Show password'}
+      >
+        {showPassword ? (
+          <EyeOff className="w-4 h-4" />
+        ) : (
+          <Eye className="w-4 h-4" />
+        )}
+      </button>
+    ) : (
+      rightIcon
+    );
 
     return (
       <InputWrapper
         label={label}
         error={error}
-        helperText={helperText}
+        helperText={resolvedHelper}
         required={required}
         inputSize={inputSize}
         fullWidth={fullWidth}
         id={inputId}
+        errorId={errorId}
+        helperTextId={helperTextId}
       >
         <div className="relative flex items-center">
-          {prefixIcon && (
-            <div className="absolute left-3 flex items-center pointer-events-none z-10">
-              {prefixIcon}
+          {leftIcon && (
+            <div className="absolute left-3 flex items-center pointer-events-none z-10 text-neutral-400">
+              {leftIcon}
             </div>
           )}
 
@@ -193,22 +183,23 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             type={resolvedType}
-            inputMode={inputMode}
             disabled={disabled}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={describedBy}
+            aria-required={required || undefined}
             className={cn(
-              'block w-full border-2 font-medium transition-all duration-200',
+              'block w-full border-2 font-medium transition-all duration-200 rounded-none',
               'focus:outline-none focus:ring-0',
               'placeholder:text-neutral-400',
               sizeStyles[inputSize],
               // Error state
               error
-                ? 'border-error-500 focus:border-error-600 bg-error-50/50'
+                ? 'border-red-500 focus:border-red-600 bg-red-50/50'
                 : 'border-neutral-300 focus:border-neutral-900 bg-white',
               // Disabled
               disabled && 'cursor-not-allowed bg-neutral-100 text-neutral-500',
-              // Prefix padding
-              prefixIcon && (variant === 'phone' ? 'pl-[4.5rem]' : 'pl-10'),
-              // Suffix padding
+              // Icon padding
+              leftIcon && 'pl-10',
               suffixIcon && 'pr-10',
               className,
             )}
@@ -216,7 +207,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           />
 
           {suffixIcon && (
-            <div className="absolute right-3 flex items-center z-10">
+            <div className="absolute right-1 flex items-center z-10">
               {suffixIcon}
             </div>
           )}
@@ -238,6 +229,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       label,
       error,
       helperText,
+      helper,
       required,
       fullWidth = true,
       className,
@@ -248,28 +240,37 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     ref,
   ) => {
     const inputId = id || (props as { name?: string }).name || undefined;
+    const resolvedHelper = helperText ?? helper;
+    const errorId = error && inputId ? `${inputId}-error` : undefined;
+    const helperTextId = !error && resolvedHelper && inputId ? `${inputId}-helper` : undefined;
+    const describedBy = [errorId, helperTextId].filter(Boolean).join(' ') || undefined;
 
     return (
       <InputWrapper
         label={label}
         error={error}
-        helperText={helperText}
+        helperText={resolvedHelper}
         required={required}
         inputSize={inputSize}
         fullWidth={fullWidth}
         id={inputId}
+        errorId={errorId}
+        helperTextId={helperTextId}
       >
         <textarea
           ref={ref}
           id={inputId}
           disabled={disabled}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
+          aria-required={required || undefined}
           className={cn(
-            'block w-full border-2 font-medium transition-all duration-200 resize-y',
+            'block w-full border-2 font-medium transition-all duration-200 resize-y rounded-none',
             'focus:outline-none focus:ring-0',
             'placeholder:text-neutral-400',
             textareaSizeStyles[inputSize],
             error
-              ? 'border-error-500 focus:border-error-600 bg-error-50/50'
+              ? 'border-red-500 focus:border-red-600 bg-red-50/50'
               : 'border-neutral-300 focus:border-neutral-900 bg-white',
             disabled && 'cursor-not-allowed bg-neutral-100 text-neutral-500',
             className,

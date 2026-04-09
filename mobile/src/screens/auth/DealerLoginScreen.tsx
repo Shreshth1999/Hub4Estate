@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
-  KeyboardAvoidingView, Platform, ScrollView,
+  KeyboardAvoidingView, Platform, ScrollView, Linking,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
@@ -80,7 +80,7 @@ export default function DealerLoginScreen({ navigation }: Props) {
           <Button title="Log In" onPress={handleLogin} loading={loading} style={styles.btn} />
 
           <TouchableOpacity
-            onPress={() => { /* Navigate to forgot password */ }}
+            onPress={() => Linking.openURL('https://hub4estate.com/dealer/forgot-password')}
             style={styles.forgot}
           >
             <Text style={styles.forgotText}>Forgot password?</Text>

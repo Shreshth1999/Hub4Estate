@@ -7,7 +7,6 @@ import {
   Clock, User, MapPin, ArrowRight, Users, Store, Shield,
   HelpCircle, FileText, Briefcase, CheckCircle, X, Loader2
 } from 'lucide-react';
-import { ElectricWireDivider } from '../../components/ElectricWireDivider';
 
 interface Post {
   id: string;
@@ -132,7 +131,7 @@ export function CommunityPage() {
       {/* Hero — dark */}
       <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
         <div className="max-w-6xl mx-auto px-6 py-16 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
@@ -143,7 +142,7 @@ export function CommunityPage() {
               </div>
               <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight">
                 Community Hub.<br />
-                <span className="gradient-text-orange">Learn & Share.</span>
+                <span className="text-amber-500">Learn & Share.</span>
               </h1>
               <p className="text-gray-400 mb-6 leading-relaxed">
                 Connect with homeowners and professionals. Share experiences, ask questions, and get advice on electrical products.
@@ -165,15 +164,13 @@ export function CommunityPage() {
                 <div className="text-xs text-gray-400">Active Discussions</div>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-                <div className="text-2xl font-black text-orange-400 mb-1">Free</div>
+                <div className="text-2xl font-black text-amber-500 mb-1">Free</div>
                 <div className="text-xs text-gray-400">Always open to all</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* Main content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
@@ -352,7 +349,7 @@ export function CommunityPage() {
                   </Link>
                 ))}
               </div>
-              <Link to="/categories" className="block mt-3 text-xs font-medium text-orange-600 hover:text-orange-700">
+              <Link to="/categories" className="block mt-3 text-xs font-medium text-amber-700 hover:text-amber-800">
                 Browse All Products →
               </Link>
             </div>

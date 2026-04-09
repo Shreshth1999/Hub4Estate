@@ -6,7 +6,9 @@ import fs from 'fs';
 import prisma from '../config/database';
 import { env } from '../config/env';
 import { logActivity } from '../services/activity.service';
-import { authenticateAdmin, AuthRequest } from '../middleware/auth';
+import { authenticate, authenticateAdmin, AuthRequest } from '../middleware/auth';
+import { validate } from '../middleware/validate';
+import { createInquirySchema as inquiryValidatorSchema } from '../validators/inquiry.validators';
 
 const router = Router();
 
@@ -72,7 +74,7 @@ const inquirySchema = z.object({
 });
 
 // POST /api/inquiry/submit - No auth required
-router.post('/submit', upload.single('productPhoto'), async (req, res) => {
+router.post('/submit', upload.single('productPhoto'), validate({ body: inquiryValidatorSchema }), async (req, res) => {
   try {
     const parsed = inquirySchema.safeParse(req.body);
     if (!parsed.success) {
@@ -191,6 +193,54 @@ router.get('/track', async (req, res) => {
   } catch (error) {
     console.error('Track inquiry error:', error);
     return res.status(500).json({ error: 'Failed to fetch inquiry status' });
+  }
+});
+
+// GET /api/inquiry/my-inquiries - Get logged-in user's inquiries (by phone or email)
+router.get('/my-inquiries', authenticate('user') as any, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.id;
+
+    // Fetch user's phone/email to match against inquiries
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { phone: true, email: true },
+    });
+
+    if (!user || (!user.phone && !user.email)) {
+      res.json({ inquiries: [] });
+      return;
+    }
+
+    const conditions: any[] = [];
+    if (user.phone) conditions.push({ phone: user.phone });
+    if (user.email) conditions.push({ email: user.email });
+
+    const inquiries = await prisma.productInquiry.findMany({
+      where: { OR: conditions },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      select: {
+        id: true,
+        inquiryNumber: true,
+        name: true,
+        modelNumber: true,
+        quantity: true,
+        deliveryCity: true,
+        productPhoto: true,
+        status: true,
+        quotedPrice: true,
+        shippingCost: true,
+        totalPrice: true,
+        estimatedDelivery: true,
+        respondedAt: true,
+        createdAt: true,
+      },
+    });
+
+    res.json({ inquiries });
+  } catch (error: any) {
+    res.status(500).json({ error: 'Failed to fetch your inquiries' });
   }
 });
 

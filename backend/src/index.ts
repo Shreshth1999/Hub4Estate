@@ -1,10 +1,13 @@
 import express from 'express';
+import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env';
+import { initSentry, Sentry } from './config/sentry';
 import passportConfig from './config/passport';
 import prisma from './config/database';
+import { getRedis, disconnectRedis } from './config/redis';
 import {
   requestId,
   sanitizeInputs,
@@ -26,6 +29,8 @@ import {
   uploadLimiter,
 } from './middleware/rateLimiter';
 import { tokenService } from './services/token.service';
+import { analytics } from './services/analytics.service';
+import { logger } from './lib/logger';
 
 // Routes
 import authRoutes from './routes/auth.routes';
@@ -51,10 +56,24 @@ import professionalRoutes from './routes/professional.routes';
 import paymentRoutes from './routes/payment.routes';
 import subscriptionRoutes from './routes/subscription.routes';
 import priceRoutes from './routes/price.routes';
+import messagingRoutes from './routes/messaging.routes';
 
 const app = express();
 
+// ── Sentry Initialization (before all middleware) ───────────────────────────
+initSentry();
+
 // ── Middleware Chain (PRD §7 order) ──────────────────────────────────────────
+
+// Layer 0: Response compression (gzip/brotli — reduces payload 60-80%)
+app.use(compression({
+  threshold: 1024, // Only compress responses > 1KB
+  filter: (req, res) => {
+    // Don't compress SSE streams
+    if (req.headers.accept === 'text/event-stream') return false;
+    return compression.filter(req, res);
+  },
+}));
 
 // Layer 1: Request ID (correlation)
 app.use(requestId);
@@ -121,7 +140,9 @@ app.get('/health', (_req, res) => {
 app.get('/health/ready', async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    res.json({ status: 'ready', db: 'connected' });
+    const redis = getRedis();
+    const redisStatus = redis ? (redis.status === 'ready' ? 'connected' : redis.status) : 'not_configured';
+    res.json({ status: 'ready', db: 'connected', redis: redisStatus });
   } catch {
     res.status(503).json({ status: 'not_ready', db: 'disconnected' });
   }
@@ -160,10 +181,14 @@ app.use('/api/professional', uploadLimiter, professionalRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/prices', priceRoutes);
+app.use('/api/messaging', messagingRoutes);
 
 // ── Layer 13: 404 + Global Error Handler (MUST be last) ─────────────────────
 
 app.use(notFoundHandler);
+if (env.SENTRY_DSN) {
+  app.use(Sentry.expressErrorHandler());
+}
 app.use(errorHandler);
 
 // ── Start Server ─────────────────────────────────────────────────────────────
@@ -171,8 +196,9 @@ app.use(errorHandler);
 const PORT = env.PORT;
 
 app.listen(PORT, '0.0.0.0', () => {
-  const log = { level: 'info', event: 'server_start', port: PORT, env: env.NODE_ENV };
-  process.stdout.write(JSON.stringify(log) + '\n');
+  // Initialize Redis connection (non-blocking — cache is optional)
+  getRedis();
+  logger.info('server_start', { port: PORT, env: env.NODE_ENV });
 });
 
 // ── Background Jobs ──────────────────────────────────────────────────────────
@@ -182,21 +208,18 @@ setInterval(async () => {
   try {
     const cleaned = await tokenService.cleanupExpiredTokens();
     if (cleaned > 0) {
-      const log = { level: 'info', event: 'token_cleanup', removed: cleaned };
-      process.stdout.write(JSON.stringify(log) + '\n');
+      logger.info('token_cleanup', { removed: cleaned });
     }
   } catch (err) {
-    const log = { level: 'error', event: 'token_cleanup_failed', error: (err as Error).message };
-    process.stdout.write(JSON.stringify(log) + '\n');
+    logger.error('token_cleanup_failed', { error: (err as Error).message });
   }
 }, 6 * 60 * 60 * 1000);
 
 // ── Graceful Shutdown ────────────────────────────────────────────────────────
 
 async function shutdown(signal: string) {
-  const log = { level: 'info', event: 'shutdown', signal };
-  process.stdout.write(JSON.stringify(log) + '\n');
-  await prisma.$disconnect();
+  logger.info('shutdown', { signal });
+  await Promise.all([analytics.shutdown(), prisma.$disconnect(), disconnectRedis()]);
   process.exit(0);
 }
 

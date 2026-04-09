@@ -27,8 +27,6 @@ export type UserTabParamList = {
 export type UserHomeStackParamList = {
   Home: undefined;
   Categories: undefined;
-  ProductType: { slug: string; name: string };
-  ProductDetail: { id: string };
 };
 
 export type UserInquiryStackParamList = {

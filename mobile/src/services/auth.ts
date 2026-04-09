@@ -2,35 +2,14 @@ import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
+import type { AuthUser, OTPVerifyResult } from '../types/auth';
 
-// ── Types aligned with actual backend responses ───────────────────────────────
-
-export interface AuthUser {
-  id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  role?: string;
-  city?: string;
-  type: 'user' | 'dealer' | 'admin';
-  status?: string;
-  profileComplete?: boolean;
-}
+// Re-export for convenience
+export type { AuthUser, OTPVerifyResult };
 
 export interface OTPSendResult {
   message: string;
   debug_otp?: string; // dev only
-}
-
-export interface OTPVerifyResult {
-  // New signup — needs profile completion
-  requiresProfile?: true;
-  identifier?: string;
-  identifierType?: 'phone' | 'email';
-  // Existing user — logged in
-  token?: string;
-  refreshToken?: string;
-  user?: AuthUser;
 }
 
 // ── Storage helpers ───────────────────────────────────────────────────────────

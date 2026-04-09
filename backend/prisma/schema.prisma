@@ -1454,6 +1454,7 @@ model Notification {
   id          String    @id @default(uuid())
   userId      String
   userType    String    // user, dealer
+  type        String    @default("general") // general, inquiry, quote, payment, system, welcome
   title       String
   body        String
   data        String?   // JSON payload
@@ -1463,8 +1464,10 @@ model Notification {
   createdAt   DateTime  @default(now())
 
   @@index([userId])
+  @@index([userId, read])
   @@index([read])
   @@index([createdAt])
+  @@index([type])
 }
 
 // ============================================

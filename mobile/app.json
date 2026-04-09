@@ -59,12 +59,14 @@
           "color": "#F97316",
           "sounds": []
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
-        "projectId": "hub4estate-mobile"
+        "projectId": "9c00098c-4573-4fde-8b57-75c5000b8a25"
       }
-    }
+    },
+    "owner": "shreyyyy"
   }
 }

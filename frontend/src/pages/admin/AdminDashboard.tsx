@@ -206,7 +206,7 @@ export function AdminDashboard() {
             { label: 'Dealers',   value: stats?.totalDealers ?? 0,  icon: Store,     href: '/admin/dealers',  cls: 'bg-green-50 border-green-100',  val: 'text-green-700' },
             { label: 'Inquiries', value: stats?.totalInquiries ?? 0,icon: ClipboardList, href: '/admin/inquiries', cls: 'bg-violet-50 border-violet-100', val: 'text-violet-700' },
             { label: 'RFQs',      value: stats?.totalRFQs ?? 0,     icon: FileText,  href: '/admin/rfqs',     cls: 'bg-amber-50 border-amber-100',  val: 'text-amber-700' },
-            { label: 'Products',  value: stats?.totalProducts ?? 0, icon: Package,   href: '/admin/products', cls: 'bg-orange-50 border-orange-100',val: 'text-orange-700' },
+            { label: 'Products',  value: stats?.totalProducts ?? 0, icon: Package,   href: '/admin/products', cls: 'bg-amber-50 border-amber-100',val: 'text-amber-800' },
             { label: 'Quotes',    value: stats?.totalQuotes ?? 0,   icon: TrendingUp,href: '/admin/rfqs',     cls: 'bg-teal-50 border-teal-100',   val: 'text-teal-700' },
           ].map(({ label, value, icon: Icon, href, cls, val }) => (
             <Link

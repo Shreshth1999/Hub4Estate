@@ -4,6 +4,7 @@ import prisma from '../config/database';
 import { authenticateAdmin, AuthRequest } from '../middleware/auth';
 import { validateBody } from '../middleware/validation';
 import { generateAdminInsights } from '../services/ai.service';
+import { adminAiInsightsRateLimit } from '../middleware/rateLimiter';
 
 const router = Router();
 
@@ -598,7 +599,7 @@ router.post('/professionals/:id/verify', authenticateAdmin, async (req: AuthRequ
 // AI INSIGHTS ENDPOINT
 // ============================================
 
-router.get('/ai-insights', authenticateAdmin, async (_req, res) => {
+router.get('/ai-insights', authenticateAdmin, adminAiInsightsRateLimit, async (_req, res) => {
   try {
     // Pull real-time platform data
     const [

@@ -5,7 +5,7 @@ export function PrivacyPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header — dark */}
-      <div className="bg-[#0B1628] px-6 py-16">
+      <div className="bg-gray-900 px-6 py-16">
         <div className="max-w-3xl mx-auto">
           <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to home

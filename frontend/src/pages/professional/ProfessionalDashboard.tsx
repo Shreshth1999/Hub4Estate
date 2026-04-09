@@ -104,7 +104,7 @@ export function ProfessionalDashboard() {
             {verifStatus !== 'UNDER_REVIEW' && (
               <Link
                 to="/pro/documents"
-                className="flex items-center gap-1.5 text-sm font-medium text-gray-900 hover:text-orange-600 transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 text-sm font-medium text-gray-900 hover:text-amber-700 transition-colors flex-shrink-0"
               >
                 {verifStatus === 'NOT_APPLIED' ? 'Apply now' : 'View'}
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -161,7 +161,7 @@ export function ProfessionalDashboard() {
                   <p className="text-xs text-gray-400 mt-1">Post your first project requirement to get quotes from dealers.</p>
                   <Link
                     to="/rfq/create"
-                    className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-gray-900 hover:text-orange-600 transition-colors"
+                    className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-gray-900 hover:text-amber-700 transition-colors"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Post an RFQ

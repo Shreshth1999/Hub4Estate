@@ -69,7 +69,7 @@ function MarkdownContent({ text, isUser }: { text: string; isUser: boolean }) {
       const bullet = line.slice(2);
       elements.push(
         <div key={i} className="flex gap-2 my-0.5">
-          <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${isUser ? 'bg-white/60' : 'bg-orange-500'}`} />
+          <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${isUser ? 'bg-white/60' : 'bg-amber-600'}`} />
           <span className="flex-1 text-sm">{renderInline(bullet)}</span>
         </div>
       );
@@ -122,8 +122,8 @@ function ToolCard({ tool, result }: { tool: string; result: any }) {
 
   if (tool === 'generate_dealer_quote' && result.success && result.is_dealer_quote) {
     return (
-      <div className="mt-3 border border-orange-200 rounded-xl bg-white overflow-hidden">
-        <div className="bg-orange-500 px-4 py-2 flex items-center justify-between">
+      <div className="mt-3 border border-amber-200 rounded-xl bg-white overflow-hidden">
+        <div className="bg-amber-600 px-4 py-2 flex items-center justify-between">
           <span className="text-white text-xs font-bold uppercase tracking-wider">Quote Preview</span>
           <button
             onClick={copyQuote}
@@ -433,7 +433,7 @@ export function AIAssistantPage() {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-orange-500 flex items-center justify-center mx-auto mb-4 animate-pulse">
+          <div className="w-16 h-16 bg-amber-600 flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Zap className="w-8 h-8 text-white" />
           </div>
           <p className="text-gray-400 text-sm font-medium">Starting Volt...</p>
@@ -455,7 +455,7 @@ export function AIAssistantPage() {
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-orange-500 text-white px-6 py-3 font-bold text-sm hover:bg-orange-600 transition-colors"
+            className="bg-amber-600 text-white px-6 py-3 font-bold text-sm hover:bg-amber-700 transition-colors"
           >
             Retry
           </button>
@@ -478,13 +478,13 @@ export function AIAssistantPage() {
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-orange-500 flex items-center justify-center">
+            <div className="w-8 h-8 bg-amber-600 flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
             </div>
             <div>
               <span className="text-white font-semibold text-sm tracking-tight">Volt</span>
               {isDealer && (
-                <span className="ml-2 text-xs text-orange-400 font-bold uppercase tracking-wider">
+                <span className="ml-2 text-xs text-amber-500 font-bold uppercase tracking-wider">
                   Dealer
                 </span>
               )}
@@ -515,7 +515,7 @@ export function AIAssistantPage() {
         {!hasMessages ? (
           /* Welcome state */
           <div className="flex flex-col items-center justify-center min-h-full px-6 py-12 text-center">
-            <div className="w-20 h-20 bg-orange-500 flex items-center justify-center mb-6">
+            <div className="w-20 h-20 bg-amber-600 flex items-center justify-center mb-6">
               <Zap className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-2xl font-semibold text-white mb-2">
@@ -541,8 +541,8 @@ export function AIAssistantPage() {
                     disabled={isStreaming}
                     className="flex items-start gap-3 p-4 bg-gray-900 border border-gray-800 hover:border-gray-600 hover:bg-gray-800 text-left transition-all group disabled:opacity-40"
                   >
-                    <div className="w-8 h-8 bg-gray-800 group-hover:bg-orange-500/20 flex items-center justify-center flex-shrink-0 transition-colors">
-                      <Icon className="w-4 h-4 text-gray-400 group-hover:text-orange-400" />
+                    <div className="w-8 h-8 bg-gray-800 group-hover:bg-amber-600/20 flex items-center justify-center flex-shrink-0 transition-colors">
+                      <Icon className="w-4 h-4 text-gray-400 group-hover:text-amber-500" />
                     </div>
                     <span className="text-sm text-gray-300 group-hover:text-white font-medium leading-snug transition-colors">
                       {action.label}
@@ -558,7 +558,7 @@ export function AIAssistantPage() {
             {messages.map((msg) => (
               <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                 {/* Avatar */}
-                <div className={`w-8 h-8 flex-shrink-0 flex items-center justify-center ${msg.role === 'user' ? 'bg-gray-700' : 'bg-orange-500'}`}>
+                <div className={`w-8 h-8 flex-shrink-0 flex items-center justify-center ${msg.role === 'user' ? 'bg-gray-700' : 'bg-amber-600'}`}>
                   {msg.role === 'user' ? (
                     <span className="text-white text-xs font-bold">
                       {user?.name?.charAt(0)?.toUpperCase() || 'U'}
@@ -583,7 +583,7 @@ export function AIAssistantPage() {
 
                     {/* Streaming cursor */}
                     {msg.isStreaming && (
-                      <span className="inline-block w-0.5 h-4 bg-orange-400 ml-0.5 animate-pulse align-middle" />
+                      <span className="inline-block w-0.5 h-4 bg-amber-500 ml-0.5 animate-pulse align-middle" />
                     )}
                   </div>
 
@@ -598,9 +598,9 @@ export function AIAssistantPage() {
                   {msg.isStreaming && pendingToolLabel && (
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 border border-gray-700">
                       <div className="flex gap-1">
-                        <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '100ms' }} />
-                        <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
+                        <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce" style={{ animationDelay: '100ms' }} />
+                        <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce" style={{ animationDelay: '200ms' }} />
                       </div>
                       <span className="text-xs text-gray-400">{pendingToolLabel}</span>
                     </div>
@@ -626,7 +626,7 @@ export function AIAssistantPage() {
             {/* Thinking state (before first text arrives) */}
             {isStreaming && messages.at(-1)?.role === 'assistant' && !messages.at(-1)?.content && !pendingToolLabel && (
               <div className="flex gap-3">
-                <div className="w-8 h-8 bg-orange-500 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-amber-600 flex items-center justify-center flex-shrink-0">
                   <Zap className="w-4 h-4 text-white" />
                 </div>
                 <div className="px-4 py-3 bg-gray-900 border border-gray-800">
@@ -713,7 +713,7 @@ export function AIAssistantPage() {
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || isStreaming || !sessionId}
-            className="w-10 h-10 flex-shrink-0 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-800 disabled:text-gray-600 flex items-center justify-center text-white transition-all"
+            className="w-10 h-10 flex-shrink-0 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-800 disabled:text-gray-600 flex items-center justify-center text-white transition-all"
           >
             <Send className="w-4 h-4" />
           </button>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import { UserTabParamList, UserHomeStackParamList, UserInquiryStackParamList, UserDashboardStackParamList } from './types';
 
@@ -42,23 +42,22 @@ function DashboardStackNav() {
   );
 }
 
-function TabIcon({ label, focused }: { label: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    HomeTab: '🏠',
-    InquiryTab: '📦',
-    DashboardTab: '👤',
-  };
-  return (
-    <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>{icons[label] || '•'}</Text>
-  );
-}
+const TAB_ICONS: Record<string, { focused: keyof typeof Ionicons.glyphMap; default: keyof typeof Ionicons.glyphMap }> = {
+  HomeTab: { focused: 'home', default: 'home-outline' },
+  InquiryTab: { focused: 'cube', default: 'cube-outline' },
+  DashboardTab: { focused: 'person', default: 'person-outline' },
+};
 
 export default function UserNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarIcon: ({ focused }) => <TabIcon label={route.name} focused={focused} />,
+        tabBarIcon: ({ focused, color, size }) => {
+          const iconSet = TAB_ICONS[route.name];
+          const iconName = focused ? iconSet.focused : iconSet.default;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
+        },
         tabBarActiveTintColor: colors.primary[500],
         tabBarInactiveTintColor: colors.neutral[400],
         tabBarStyle: {
@@ -70,7 +69,7 @@ export default function UserNavigator() {
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: '600' as const,
         },
       })}
     >

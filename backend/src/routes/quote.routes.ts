@@ -3,6 +3,7 @@ import { z } from 'zod';
 import prisma from '../config/database';
 import { authenticateDealer, AuthRequest } from '../middleware/auth';
 import { validateBody } from '../middleware/validation';
+import { stripBuyerFromRFQ } from '../middleware/blindMatching';
 
 const router = Router();
 
@@ -90,7 +91,10 @@ router.get('/available-rfqs', authenticateDealer, async (req: AuthRequest, res) 
       take: 50,
     });
 
-    return res.json({ rfqs });
+    // Strip buyer identity from RFQs before sending to dealer
+    const safeRfqs = stripBuyerFromRFQ(rfqs as Record<string, any>[]);
+
+    return res.json({ rfqs: safeRfqs });
   } catch (error) {
     console.error('Get available RFQs error:', error);
     return res.status(500).json({ error: 'Failed to fetch RFQs' });

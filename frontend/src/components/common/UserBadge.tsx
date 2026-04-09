@@ -63,8 +63,8 @@ const ROLE_CONFIG: Record<string, { label: string; colors: string; verifiedColor
   },
   dealer: {
     label: 'Dealer',
-    colors: 'bg-orange-50 text-orange-700 border-orange-100',
-    verifiedColors: 'bg-orange-100 text-orange-800 border-orange-200',
+    colors: 'bg-amber-50 text-amber-800 border-amber-100',
+    verifiedColors: 'bg-amber-100 text-amber-800 border-amber-200',
   },
 };
 

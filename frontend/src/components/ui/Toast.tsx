@@ -7,6 +7,7 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, AlertTriangle, XCircle, Info, X } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
@@ -20,7 +21,8 @@ export interface ToastMessage {
   type: ToastType;
   title: string;
   description?: string;
-  duration?: number; // ms, 0 = no auto-dismiss
+  /** Duration in ms. 0 = no auto-dismiss. Default: 5000 */
+  duration?: number;
 }
 
 interface ToastContextValue {
@@ -45,6 +47,7 @@ export function useToast(): ToastContextValue {
 // ============================================================
 // Provider
 // ============================================================
+const MAX_VISIBLE = 3;
 let toastCounter = 0;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -53,7 +56,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const toast = useCallback((msg: Omit<ToastMessage, 'id'>) => {
     const id = `toast-${++toastCounter}-${Date.now()}`;
     const newToast: ToastMessage = { ...msg, id, duration: msg.duration ?? 5000 };
-    setToasts((prev) => [...prev, newToast]);
+    setToasts((prev) => {
+      const next = [...prev, newToast];
+      // Keep only the latest MAX_VISIBLE
+      if (next.length > MAX_VISIBLE) {
+        return next.slice(next.length - MAX_VISIBLE);
+      }
+      return next;
+    });
   }, []);
 
   const dismiss = useCallback((id: string) => {
@@ -67,15 +77,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast, dismiss, dismissAll }}>
       {children}
-      {/* Toast container — top-right, stacked */}
+      {/* Toast container -- bottom-right */}
       <div
-        className="fixed top-4 right-4 z-[9999] flex flex-col gap-3 w-full max-w-[380px] pointer-events-none"
+        className="fixed bottom-4 right-4 z-[9999] flex flex-col-reverse gap-3 w-full max-w-[380px] pointer-events-none"
         aria-live="polite"
         aria-relevant="additions"
       >
-        {toasts.map((t) => (
-          <ToastItem key={t.id} toast={t} onDismiss={dismiss} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {toasts.map((t) => (
+            <ToastItem key={t.id} toast={t} onDismiss={dismiss} />
+          ))}
+        </AnimatePresence>
       </div>
     </ToastContext.Provider>
   );
@@ -86,31 +98,27 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 // ============================================================
 const typeConfig: Record<
   ToastType,
-  { icon: ReactNode; bg: string; border: string; iconColor: string }
+  { icon: ReactNode; borderColor: string; iconColor: string }
 > = {
   success: {
     icon: <CheckCircle className="w-5 h-5" />,
-    bg: 'bg-white',
-    border: 'border-l-4 border-l-success-500 border border-neutral-200',
-    iconColor: 'text-success-500',
+    borderColor: 'border-l-green-500',
+    iconColor: 'text-green-500',
   },
   error: {
     icon: <XCircle className="w-5 h-5" />,
-    bg: 'bg-white',
-    border: 'border-l-4 border-l-error-500 border border-neutral-200',
-    iconColor: 'text-error-500',
+    borderColor: 'border-l-red-500',
+    iconColor: 'text-red-500',
   },
   warning: {
     icon: <AlertTriangle className="w-5 h-5" />,
-    bg: 'bg-white',
-    border: 'border-l-4 border-l-warning-500 border border-neutral-200',
-    iconColor: 'text-warning-500',
+    borderColor: 'border-l-amber-500',
+    iconColor: 'text-amber-500',
   },
   info: {
     icon: <Info className="w-5 h-5" />,
-    bg: 'bg-white',
-    border: 'border-l-4 border-l-info border border-neutral-200',
-    iconColor: 'text-info',
+    borderColor: 'border-l-blue-500',
+    iconColor: 'text-blue-500',
   },
 };
 
@@ -121,13 +129,10 @@ function ToastItem({
   toast: ToastMessage;
   onDismiss: (id: string) => void;
 }) {
-  const [isExiting, setIsExiting] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const handleDismiss = useCallback(() => {
-    setIsExiting(true);
-    // Wait for exit animation then remove
-    setTimeout(() => onDismiss(toast.id), 200);
+    onDismiss(toast.id);
   }, [onDismiss, toast.id]);
 
   // Auto-dismiss
@@ -154,14 +159,19 @@ function ToastItem({
   const config = typeConfig[toast.type];
 
   return (
-    <div
-      role="alert"
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 80, scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+      role={toast.type === 'error' || toast.type === 'warning' ? 'alert' : 'status'}
+      aria-live={toast.type === 'error' || toast.type === 'warning' ? 'assertive' : 'polite'}
       className={cn(
-        'pointer-events-auto shadow-soft',
-        config.bg,
-        config.border,
+        'pointer-events-auto bg-white shadow-soft-lg',
+        'border border-neutral-200 border-l-4',
+        config.borderColor,
         'p-4',
-        isExiting ? 'animate-toast-out' : 'animate-toast-in',
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -180,12 +190,12 @@ function ToastItem({
         </div>
         <button
           onClick={handleDismiss}
-          className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-neutral-400 hover:text-neutral-900 transition-colors"
+          className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-neutral-400 hover:text-neutral-900 transition-colors min-w-[44px] min-h-[44px] -m-2"
           aria-label="Dismiss notification"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Loader2, Linkedin, Zap } from 'lucide-react';
 import { contactApi } from '../lib/api';
-import { ElectricWireDivider } from '../components/ElectricWireDivider';
 import { useInView, revealStyle } from '../hooks/useInView';
 
 interface FormData {
@@ -56,7 +55,7 @@ export function ContactPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
@@ -75,8 +74,6 @@ export function ContactPage() {
           </p>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* Main content */}
       <div ref={formRef as any} className="px-6 py-16 max-w-5xl mx-auto">

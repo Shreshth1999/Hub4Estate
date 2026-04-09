@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../lib/api';
+import { api, productsApi } from '../../lib/api';
 import { ImagePreview } from '../../components/common/ImagePreview';
 import {
-  Package, Phone, MapPin, Loader2, Image as ImageIcon,
-  Hash, User, Calendar, Send, IndianRupee, Truck, X,
+  Package, MapPin, Loader2, Image as ImageIcon,
+  Hash, Calendar, Send, IndianRupee, Truck, X,
   CheckCircle, Mic, MicOff, Sparkles, AlertCircle, Edit3,
-  Zap,
+  Zap, Filter, ChevronDown, ArrowUpDown, Clock,
+  Search,
 } from 'lucide-react';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
-interface Category { id: string; name: string }
+interface Category { id: string; name: string; slug: string }
 interface Brand { id: string; name: string }
 
 interface Inquiry {
@@ -26,7 +27,9 @@ interface Inquiry {
   deliveryCity: string;
   notes: string | null;
   status: string;
+  urgency?: string;
   createdAt: string;
+  deadline?: string;
   category: Category | null;
   identifiedBrand: Brand | null;
   dealerResponse: { status: string; quotedPrice: number } | null;
@@ -55,6 +58,27 @@ const VOICE_TIPS = [
   '"Price 450 per unit, free delivery above 50 pieces"',
 ];
 
+const URGENCY_OPTIONS = [
+  { value: '', label: 'All Urgency' },
+  { value: 'LOW', label: 'Low' },
+  { value: 'MEDIUM', label: 'Medium' },
+  { value: 'HIGH', label: 'High' },
+  { value: 'URGENT', label: 'Urgent' },
+];
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Newest First' },
+  { value: 'deadline', label: 'Deadline (Soonest)' },
+  { value: 'quantity', label: 'Quantity (Highest)' },
+];
+
+const URGENCY_BADGE: Record<string, { bg: string; text: string }> = {
+  LOW: { bg: 'bg-gray-100', text: 'text-gray-600' },
+  MEDIUM: { bg: 'bg-blue-50', text: 'text-blue-700' },
+  HIGH: { bg: 'bg-amber-50', text: 'text-amber-700' },
+  URGENT: { bg: 'bg-red-50', text: 'text-red-700' },
+};
+
 export function DealerAvailableInquiriesPage() {
   const navigate = useNavigate();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -63,10 +87,20 @@ export function DealerAvailableInquiriesPage() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Filters
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedUrgency, setSelectedUrgency] = useState('');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Quote modal
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [quoteForm, setQuoteForm] = useState({ quotedPrice: '', shippingCost: '', estimatedDelivery: '', notes: '' });
   const [submitting, setSubmitting] = useState(false);
 
+  // Spark AI
   const [sparkMode, setSparkMode] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voiceText, setVoiceText] = useState('');
@@ -79,6 +113,13 @@ export function DealerAvailableInquiriesPage() {
   useEffect(() => {
     const interval = setInterval(() => setTipIndex(i => (i + 1) % VOICE_TIPS.length), 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Fetch categories for filter
+  useEffect(() => {
+    productsApi.getCategories()
+      .then(res => setCategories(res.data.categories || []))
+      .catch(() => {});
   }, []);
 
   const fetchInquiries = async () => {
@@ -96,6 +137,28 @@ export function DealerAvailableInquiriesPage() {
   };
 
   useEffect(() => { fetchInquiries(); }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Client-side filtering and sorting
+  const filteredInquiries = inquiries
+    .filter(inq => {
+      if (selectedCategory && inq.category?.id !== selectedCategory) return false;
+      if (selectedUrgency && inq.urgency !== selectedUrgency) return false;
+      if (locationFilter && !inq.deliveryCity.toLowerCase().includes(locationFilter.toLowerCase())) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortBy === 'deadline') {
+        if (!a.deadline && !b.deadline) return 0;
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      }
+      if (sortBy === 'quantity') return b.quantity - a.quantity;
+      return 0;
+    });
+
+  const activeFilterCount = [selectedCategory, selectedUrgency, locationFilter].filter(Boolean).length;
 
   const openQuoteModal = (inq: Inquiry) => {
     setSelectedInquiry(inq);
@@ -189,59 +252,219 @@ export function DealerAvailableInquiriesPage() {
     ? (parseFloat(quoteForm.quotedPrice) || 0) * selectedInquiry.quantity + (parseFloat(quoteForm.shippingCost) || 0)
     : 0;
 
+  const clearFilters = () => {
+    setSelectedCategory('');
+    setSelectedUrgency('');
+    setLocationFilter('');
+    setSortBy('newest');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-5">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">Product Inquiries</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              {total > 0 ? `${total} inquiries available` : 'View and respond to product inquiries'}
-            </p>
+        <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-lg font-semibold text-gray-900">Available Inquiries</h1>
+              <p className="text-sm text-gray-500 mt-0.5">
+                {total > 0 ? `${total} inquiries available` : 'Browse and respond to product inquiries'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 text-xs text-violet-600 bg-violet-50 border border-violet-200 rounded-full px-3 py-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Spark AI voice quotes
+              </div>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                  showFilters || activeFilterCount > 0
+                    ? 'bg-amber-50 border-amber-200 text-amber-700'
+                    : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <Filter className="w-3.5 h-3.5" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-violet-600 bg-violet-50 border border-violet-200 rounded-full px-3 py-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            Spark AI voice quotes
-          </div>
+
+          {/* Filter Bar */}
+          {showFilters && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {/* Category Filter */}
+                <div className="relative">
+                  <label className="block text-xs text-gray-500 mb-1">Category</label>
+                  <div className="relative">
+                    <select
+                      value={selectedCategory}
+                      onChange={e => setSelectedCategory(e.target.value)}
+                      className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:border-amber-400 focus:outline-none pr-8"
+                    >
+                      <option value="">All Categories</option>
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Urgency Filter */}
+                <div className="relative">
+                  <label className="block text-xs text-gray-500 mb-1">Urgency</label>
+                  <div className="relative">
+                    <select
+                      value={selectedUrgency}
+                      onChange={e => setSelectedUrgency(e.target.value)}
+                      className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:border-amber-400 focus:outline-none pr-8"
+                    >
+                      {URGENCY_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Location Filter */}
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Location</label>
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="City name..."
+                      value={locationFilter}
+                      onChange={e => setLocationFilter(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg pl-8 pr-3 py-2 text-sm text-gray-700 focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Sort */}
+                <div className="relative">
+                  <label className="block text-xs text-gray-500 mb-1">Sort by</label>
+                  <div className="relative">
+                    <select
+                      value={sortBy}
+                      onChange={e => setSortBy(e.target.value)}
+                      className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:border-amber-400 focus:outline-none pr-8"
+                    >
+                      {SORT_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              {activeFilterCount > 0 && (
+                <button
+                  onClick={clearFilters}
+                  className="mt-3 text-xs text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-6">
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>
-        ) : inquiries.length === 0 ? (
+        ) : filteredInquiries.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 px-6 py-16 text-center">
             <Package className="w-10 h-10 mx-auto mb-3 text-gray-200" />
-            <p className="text-sm font-medium text-gray-700">No inquiries available</p>
-            <p className="text-xs text-gray-400 mt-1">No product inquiries match your profile yet. Check back later.</p>
+            <p className="text-sm font-medium text-gray-700">
+              {activeFilterCount > 0 ? 'No inquiries match your filters' : 'No inquiries available'}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              {activeFilterCount > 0
+                ? 'Try adjusting your filters to see more results.'
+                : 'No product inquiries match your profile yet. Check back later.'}
+            </p>
+            {activeFilterCount > 0 && (
+              <button
+                onClick={clearFilters}
+                className="mt-3 text-sm font-medium text-amber-600 hover:text-amber-700"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
-            {inquiries.map(inq => (
+            <p className="text-xs text-gray-400 mb-1">
+              Showing {filteredInquiries.length} of {total} inquiries
+            </p>
+            {filteredInquiries.map(inq => (
               <div key={inq.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-gray-300 hover:shadow-sm transition-all">
                 <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50">
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     <span className="font-mono text-sm font-medium text-gray-900">{inq.inquiryNumber}</span>
                     {inq.category && <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-700">{inq.category.name}</span>}
                     {inq.identifiedBrand && <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-violet-50 text-violet-700">{inq.identifiedBrand.name}</span>}
+                    {inq.urgency && inq.urgency !== 'LOW' && (
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${URGENCY_BADGE[inq.urgency]?.bg || 'bg-gray-100'} ${URGENCY_BADGE[inq.urgency]?.text || 'text-gray-600'}`}>
+                        {inq.urgency}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {new Date(inq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  <div className="flex items-center gap-3 text-xs text-gray-400 flex-shrink-0">
+                    {inq.deadline && (
+                      <span className="flex items-center gap-1 text-amber-600">
+                        <Clock className="w-3.5 h-3.5" />
+                        Due {new Date(inq.deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5" />
+                      {new Date(inq.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                 </div>
                 <div className="px-5 py-4">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {/* Product Info - NO buyer identity shown (blind matching) */}
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2"><User className="w-4 h-4 text-gray-400" /><span className="text-sm font-medium text-gray-900">{inq.name}</span></div>
-                      <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" /><a href={`tel:${inq.phone}`} className="text-sm text-blue-600 hover:underline">{inq.phone}</a></div>
-                      <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600">{inq.deliveryCity}</span></div>
+                      {inq.modelNumber && (
+                        <div className="flex items-center gap-2">
+                          <Hash className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm font-medium text-gray-900">{inq.modelNumber}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <Package className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm text-gray-600">Qty: {inq.quantity}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm text-gray-600">{inq.deliveryCity}</span>
+                      </div>
                     </div>
+
+                    {/* Notes */}
                     <div className="space-y-2">
-                      {inq.modelNumber && <div className="flex items-center gap-2"><Hash className="w-4 h-4 text-gray-400" /><span className="text-sm font-medium text-gray-900">{inq.modelNumber}</span></div>}
-                      <div className="flex items-center gap-2"><Package className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600">Qty: {inq.quantity}</span></div>
-                      {inq.notes && <p className="text-sm text-gray-500 italic">"{inq.notes}"</p>}
+                      {inq.notes && (
+                        <p className="text-sm text-gray-500 italic leading-relaxed">&quot;{inq.notes}&quot;</p>
+                      )}
+                      {!inq.notes && !inq.modelNumber && (
+                        <p className="text-sm text-gray-400">No additional details provided</p>
+                      )}
                     </div>
+
+                    {/* Product Image */}
                     <div>
                       {inq.productPhoto ? (
                         <ImagePreview src={`${API_BASE_URL}${inq.productPhoto}`} alt="Product Photo" className="w-full h-32" />
@@ -251,6 +474,8 @@ export function DealerAvailableInquiriesPage() {
                         </div>
                       )}
                     </div>
+
+                    {/* Action */}
                     <div className="flex flex-col gap-2 items-end justify-center">
                       {inq.dealerResponse ? (
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 w-full">
@@ -258,7 +483,7 @@ export function DealerAvailableInquiriesPage() {
                           <p className="text-lg font-semibold text-green-800">Rs{inq.dealerResponse.quotedPrice.toLocaleString('en-IN')}<span className="text-xs font-normal text-green-600">/unit</span></p>
                         </div>
                       ) : (
-                        <button onClick={() => openQuoteModal(inq)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors">
+                        <button onClick={() => openQuoteModal(inq)} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors">
                           <Send className="w-4 h-4" />Submit Quote
                         </button>
                       )}
@@ -272,7 +497,7 @@ export function DealerAvailableInquiriesPage() {
 
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-6">
-            <p className="text-sm text-gray-500">Showing {(page - 1) * 20 + 1}:{Math.min(page * 20, total)} of {total}</p>
+            <p className="text-sm text-gray-500">Page {page} of {totalPages} ({total} total)</p>
             <div className="flex gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors">Previous</button>
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-3.5 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 disabled:opacity-50 transition-colors">Next</button>
@@ -281,13 +506,14 @@ export function DealerAvailableInquiriesPage() {
         )}
       </div>
 
+      {/* Quote Modal */}
       {selectedInquiry && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
               <div>
                 <h2 className="text-base font-semibold text-gray-900">Quote - {selectedInquiry.inquiryNumber}</h2>
-                <p className="text-sm text-gray-500 mt-0.5">{selectedInquiry.name} - {selectedInquiry.deliveryCity}</p>
+                <p className="text-sm text-gray-500 mt-0.5">Deliver to {selectedInquiry.deliveryCity}</p>
               </div>
               <button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
                 <X className="w-5 h-5" />

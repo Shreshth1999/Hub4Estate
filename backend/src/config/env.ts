@@ -42,6 +42,10 @@ const envSchema = z.object({
   RAZORPAY_KEY_ID: z.string().optional(),
   RAZORPAY_KEY_SECRET: z.string().optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+  // Firebase Cloud Messaging (push notifications)
+  FCM_SERVER_KEY: z.string().optional(),
+  // MSG91 Transactional SMS
+  MSG91_TRANSACTIONAL_TEMPLATE_ID: z.string().optional(),
   // Sentry
   SENTRY_DSN: z.string().optional(),
   // PostHog

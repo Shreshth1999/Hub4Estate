@@ -61,7 +61,7 @@ const STATUS_CONFIG: Record<string, { bg: string; color: string; label: string }
   prospect:    { bg: 'bg-blue-50',   color: 'text-blue-700',   label: 'Prospect' },
   contacted:   { bg: 'bg-amber-50',  color: 'text-amber-700',  label: 'Contacted' },
   interested:  { bg: 'bg-violet-50', color: 'text-violet-700', label: 'Interested' },
-  negotiating: { bg: 'bg-orange-50', color: 'text-orange-700', label: 'Negotiating' },
+  negotiating: { bg: 'bg-amber-50', color: 'text-amber-800', label: 'Negotiating' },
   partner:     { bg: 'bg-green-50',  color: 'text-green-700',  label: 'Partner' },
   inactive:    { bg: 'bg-gray-100',  color: 'text-gray-600',   label: 'Inactive' },
 };

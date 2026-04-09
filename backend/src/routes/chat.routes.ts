@@ -2,8 +2,9 @@ import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../config/database';
 import { validateBody } from '../middleware/validation';
-import { optionalAuth, authenticateAdmin, AuthRequest } from '../middleware/auth';
+import { optionalAuth, requireAnyAuth, authenticateAdmin, AuthRequest } from '../middleware/auth';
 import { generateChatResponse, streamChatResponse, parseDealerQuoteFromText, ChatMessage } from '../services/ai.service';
+import { chatMessageRateLimit, parseQuoteRateLimit } from '../middleware/rateLimiter';
 
 const router = Router();
 
@@ -47,7 +48,8 @@ const sendMessageSchema = z.object({
 
 router.post(
   '/message',
-  optionalAuth,
+  requireAnyAuth,
+  chatMessageRateLimit,
   validateBody(sendMessageSchema),
   async (req: AuthRequest, res: Response) => {
     try {
@@ -136,7 +138,8 @@ router.post(
 
 router.post(
   '/message/stream',
-  optionalAuth,
+  requireAnyAuth,
+  chatMessageRateLimit,
   async (req: AuthRequest, res: Response): Promise<void> => {
     const { sessionId, message } = req.body;
 
@@ -272,7 +275,8 @@ router.get(
 
 router.post(
   '/parse-quote',
-  optionalAuth,
+  requireAnyAuth,
+  parseQuoteRateLimit,
   async (req: AuthRequest, res: Response) => {
     const { rawText } = req.body;
 
@@ -289,6 +293,73 @@ router.post(
     }
   }
 );
+
+// ============================================
+// AI AGENT ENDPOINTS — Negotiation & Procurement
+// ============================================
+
+import { analyzeQuoteForBuyer, optimizeQuoteForDealer, getProcurementAdvice } from '../services/ai/negotiation-agent.service';
+
+// Analyze a quote (buyer perspective)
+router.post('/analyze-quote', requireAnyAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const { quoteAmount, productName, quantity, otherQuoteAmounts } = req.body;
+
+    if (!quoteAmount || !productName) {
+      return res.status(400).json({ error: 'quoteAmount and productName are required' });
+    }
+
+    const analysis = await analyzeQuoteForBuyer(
+      quoteAmount,
+      productName,
+      quantity || 1,
+      otherQuoteAmounts || []
+    );
+
+    return res.json(analysis);
+  } catch (error) {
+    console.error('[AI] Analyze quote error:', error);
+    return res.status(500).json({ error: 'Failed to analyze quote' });
+  }
+});
+
+// Optimize a quote (dealer perspective)
+router.post('/optimize-quote', requireAnyAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const { productName, quantity, costEstimate } = req.body;
+
+    if (!productName || !costEstimate) {
+      return res.status(400).json({ error: 'productName and costEstimate are required' });
+    }
+
+    const dealerId = req.user?.id || '';
+    const optimization = await optimizeQuoteForDealer(dealerId, productName, quantity || 1, costEstimate);
+
+    return res.json(optimization);
+  } catch (error) {
+    console.error('[AI] Optimize quote error:', error);
+    return res.status(500).json({ error: 'Failed to optimize quote' });
+  }
+});
+
+// Procurement advice
+router.post('/procurement-advice', requireAnyAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const { projectType, city, budgetMin, budgetMax } = req.body;
+
+    if (!projectType || !city) {
+      return res.status(400).json({ error: 'projectType and city are required' });
+    }
+
+    const budgetRange = budgetMin && budgetMax ? { min: budgetMin, max: budgetMax } : undefined;
+    const advice = await getProcurementAdvice(projectType, city, budgetRange);
+
+    return res.json(advice);
+  } catch (error) {
+    console.error('[AI] Procurement advice error:', error);
+    return res.status(500).json({ error: 'Failed to get procurement advice' });
+  }
+});
 
 // ============================================
 // ADMIN ENDPOINTS

@@ -5,7 +5,6 @@ import {
   BookOpen, Search, Clock, ChevronRight, Lightbulb,
   Zap, Shield, HelpCircle, ArrowRight, Loader2
 } from 'lucide-react';
-import { ElectricWireDivider } from '../../components/ElectricWireDivider';
 import { useInView, revealStyle } from '../../hooks/useInView';
 
 interface Article {
@@ -20,7 +19,7 @@ interface Article {
 }
 
 const FEATURED_TOPICS = [
-  { icon: Zap, title: 'Electrical Basics', description: 'Learn about wiring, safety, and standards', accent: 'text-orange-500 bg-orange-50' },
+  { icon: Zap, title: 'Electrical Basics', description: 'Learn about wiring, safety, and standards', accent: 'text-amber-600 bg-amber-50' },
   { icon: Shield, title: 'Safety Standards', description: 'ISI marks, BIS certification guide', accent: 'text-green-600 bg-green-50' },
   { icon: HelpCircle, title: 'Buying Guides', description: 'How to choose the right products', accent: 'text-violet-600 bg-violet-50' },
   { icon: Lightbulb, title: 'Tips & Tricks', description: 'Expert advice for homeowners', accent: 'text-amber-600 bg-amber-50' },
@@ -40,7 +39,7 @@ const STATIC_ARTICLES: Article[] = [
 
 const CATEGORY_ACCENT: Record<string, string> = {
   'Buying Guides': 'bg-violet-50 text-violet-700',
-  'Electrical Basics': 'bg-orange-50 text-orange-700',
+  'Electrical Basics': 'bg-amber-50 text-amber-800',
   'Safety Standards': 'bg-green-50 text-green-700',
   'Tips & Tricks': 'bg-amber-50 text-amber-700',
 };
@@ -80,7 +79,7 @@ export function KnowledgePage() {
       {/* Hero — dark */}
       <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
         <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 text-center relative">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-800 text-gray-300 text-[11px] font-semibold rounded-full mb-6" style={revealStyle(heroIn, 0)}>
@@ -89,7 +88,7 @@ export function KnowledgePage() {
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight" style={revealStyle(heroIn, 0.06)}>
             Buy smarter with<br />
-            <span className="gradient-text-orange">expert guides</span>
+            <span className="text-amber-500">expert guides</span>
           </h1>
           <p className="text-gray-400 mb-8 max-w-xl mx-auto" style={revealStyle(heroIn, 0.1)}>
             Expert guides on wires, switches, MCBs, lighting, and more — written so you know exactly what to buy and what to pay.
@@ -106,8 +105,6 @@ export function KnowledgePage() {
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* Featured Topics */}
       <div ref={topicsRef as any} className="border-b border-gray-100 bg-gray-50">
@@ -201,15 +198,13 @@ export function KnowledgePage() {
         )}
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* CTA — dark */}
       <div className="bg-[#09090B] px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div>
               <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center mb-5">
-                <Zap className="w-6 h-6 text-orange-400" />
+                <Zap className="w-6 h-6 text-amber-500" />
               </div>
               <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Still have questions?</h2>
               <p className="text-gray-400 text-sm mb-6 leading-relaxed">

@@ -124,12 +124,12 @@ export function ProfessionalOnboarding() {
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-[400px] bg-gray-950 flex-col justify-between p-12 flex-shrink-0">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-orange-500 flex items-center justify-center rounded-lg">
+          <div className="w-8 h-8 bg-amber-600 flex items-center justify-center rounded-lg">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
             <span className="text-base font-semibold text-white block leading-tight">Hub4Estate</span>
-            <span className="text-[10px] text-orange-400 font-medium">Professional Portal</span>
+            <span className="text-[10px] text-amber-500 font-medium">Professional Portal</span>
           </div>
         </Link>
 
@@ -151,7 +151,7 @@ export function ProfessionalOnboarding() {
               'Build a public professional profile',
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0" />
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-600 flex-shrink-0" />
                 <p className="text-sm text-gray-300">{item}</p>
               </div>
             ))}

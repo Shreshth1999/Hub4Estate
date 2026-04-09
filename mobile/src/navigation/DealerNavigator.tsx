@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import { DealerTabParamList, DealerDashboardStackParamList, DealerInquiriesStackParamList } from './types';
 
@@ -30,14 +30,20 @@ function InquiriesStackNav() {
   );
 }
 
+const TAB_ICONS: Record<string, { focused: string; default: string }> = {
+  DashboardTab: { focused: 'stats-chart', default: 'stats-chart-outline' },
+  InquiriesTab: { focused: 'clipboard', default: 'clipboard-outline' },
+};
+
 export default function DealerNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarIcon: ({ focused }) => {
-          const icons: Record<string, string> = { DashboardTab: '📊', InquiriesTab: '📋' };
-          return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>{icons[route.name] || '•'}</Text>;
+        tabBarIcon: ({ focused, color, size }) => {
+          const iconSet = TAB_ICONS[route.name];
+          const iconName = focused ? iconSet.focused : iconSet.default;
+          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: colors.primary[500],
         tabBarInactiveTintColor: colors.neutral[400],
@@ -48,7 +54,7 @@ export default function DealerNavigator() {
           height: 60,
           paddingBottom: 8,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' as const },
       })}
     >
       <Tab.Screen name="DashboardTab" component={DashboardStackNav} options={{ tabBarLabel: 'Dashboard' }} />

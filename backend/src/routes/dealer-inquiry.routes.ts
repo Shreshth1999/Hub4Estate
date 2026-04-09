@@ -3,6 +3,11 @@ import { z } from 'zod';
 import prisma from '../config/database';
 import { authenticateDealer, AuthRequest } from '../middleware/auth';
 import { logActivity } from '../services/activity.service';
+import {
+  stripBuyerIdentity,
+  stripBuyerFromInquiryResponse,
+} from '../middleware/blindMatching';
+import { canRevealIdentityForInquiry } from '../services/blind-matching.service';
 
 const router = Router();
 
@@ -70,9 +75,9 @@ router.get('/available', authenticateDealer, async (req: AuthRequest, res): Prom
       dealerResponses.map(r => [r.inquiryId, r])
     );
 
-    // Add dealer response status to each inquiry
+    // Add dealer response status to each inquiry, stripping buyer identity
     const inquiriesWithStatus = inquiries.map(inquiry => ({
-      ...inquiry,
+      ...stripBuyerIdentity(inquiry as Record<string, any>),
       dealerResponse: responseMap.get(inquiry.id) || null,
     }));
 
@@ -144,9 +149,18 @@ router.get('/:id', authenticateDealer, async (req: AuthRequest, res): Promise<an
       req,
     });
 
+    // Check if identity can be revealed (dealer's quote was selected/accepted)
+    const identityRevealed = await canRevealIdentityForInquiry(inquiryId, dealerId);
+
+    // Strip buyer identity unless identity reveal is authorized
+    const safeInquiry = identityRevealed
+      ? inquiry
+      : stripBuyerIdentity(inquiry as Record<string, any>);
+
     res.json({
-      inquiry,
+      inquiry: safeInquiry,
       dealerResponse,
+      identityRevealed,
     });
   } catch (error: any) {
     console.error('Dealer inquiry detail error:', error);
@@ -308,8 +322,15 @@ router.get('/my-quotes/list', authenticateDealer, async (req: AuthRequest, res) 
       prisma.inquiryDealerResponse.count({ where }),
     ]);
 
+    // Strip buyer identity from nested inquiry data unless quote is selected/accepted
+    const safeQuotes = quotes.map((q) => {
+      const isRevealed = q.status === 'selected' || q.status === 'accepted';
+      if (isRevealed) return q;
+      return stripBuyerFromInquiryResponse(q as Record<string, any>);
+    });
+
     res.json({
-      data: quotes,
+      data: safeQuotes,
       total,
       page: parseInt(String(page)),
       limit: parseInt(String(limit)),

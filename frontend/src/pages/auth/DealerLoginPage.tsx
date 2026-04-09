@@ -52,12 +52,12 @@ export function DealerLoginPage() {
       {/* Left — Brand Panel */}
       <div className="hidden lg:flex lg:w-[440px] bg-gray-950 flex-col justify-between p-12 flex-shrink-0">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-orange-500 flex items-center justify-center rounded-lg">
+          <div className="w-8 h-8 bg-amber-600 flex items-center justify-center rounded-lg">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
             <span className="text-base font-semibold text-white block leading-tight">Hub4Estate</span>
-            <span className="text-[10px] text-orange-400 font-medium">Dealer Portal</span>
+            <span className="text-[10px] text-amber-500 font-medium">Dealer Portal</span>
           </div>
         </Link>
 
@@ -80,7 +80,7 @@ export function DealerLoginPage() {
               'Insights on win rate and pricing',
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0" />
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-600 flex-shrink-0" />
                 <p className="text-sm text-gray-300">{item}</p>
               </div>
             ))}
@@ -101,7 +101,7 @@ export function DealerLoginPage() {
             </div>
             <div>
               <span className="text-sm font-semibold text-gray-900 block leading-tight">Hub4Estate</span>
-              <span className="text-[10px] text-orange-500 font-medium">Dealer Portal</span>
+              <span className="text-[10px] text-amber-600 font-medium">Dealer Portal</span>
             </div>
           </div>
 
@@ -166,7 +166,7 @@ export function DealerLoginPage() {
                   Don&apos;t have an account?{' '}
                   <Link
                     to="/dealer/onboarding"
-                    className="font-medium text-gray-900 hover:text-orange-600 transition-colors"
+                    className="font-medium text-gray-900 hover:text-amber-700 transition-colors"
                   >
                     Register as dealer
                   </Link>

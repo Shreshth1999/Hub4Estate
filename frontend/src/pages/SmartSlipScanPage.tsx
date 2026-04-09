@@ -1,7 +1,6 @@
 import { SmartSlipScanner } from '../components/SmartSlipScanner';
 import { Sparkles, Zap, CheckCircle, Camera, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ElectricWireDivider } from '../components/ElectricWireDivider';
 import { useInView, revealStyle } from '../hooks/useInView';
 
 const STEPS = [
@@ -44,7 +43,7 @@ export function SmartSlipScanPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
@@ -61,7 +60,7 @@ export function SmartSlipScanPage() {
             style={revealStyle(heroIn, 0.06)}
           >
             Smart Slip<br />
-            <span className="gradient-text-orange">Scanner</span>
+            <span className="text-amber-500">Scanner</span>
           </h1>
           <p
             className="text-gray-400 mb-8 max-w-xl mx-auto leading-relaxed"
@@ -73,7 +72,7 @@ export function SmartSlipScanPage() {
           <div className="flex flex-wrap items-center justify-center gap-3" style={revealStyle(heroIn, 0.14)}>
             <a
               href="#scanner"
-              className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-700 transition-colors btn-glow"
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-700 transition-colors"
             >
               <Sparkles className="w-4 h-4" />
               Scan a Slip Now
@@ -87,8 +86,6 @@ export function SmartSlipScanPage() {
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* How it works */}
       <div ref={stepsRef as any} className="max-w-4xl mx-auto px-6 py-14">
@@ -117,10 +114,8 @@ export function SmartSlipScanPage() {
         </div>
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* Scanner — dark background */}
-      <div className="bg-[#0B1628] px-6 py-14">
+      <div className="bg-gray-900 px-6 py-14">
         <div ref={scannerRef as any} className="max-w-4xl mx-auto" style={revealStyle(scannerIn, 0)}>
           <div className="text-center mb-8">
             <h2 className="text-2xl font-black text-white tracking-tight mb-2">Upload your slip</h2>
@@ -131,8 +126,6 @@ export function SmartSlipScanPage() {
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* Features + Tips */}
       <div className="max-w-4xl mx-auto px-6 py-14">
@@ -177,10 +170,8 @@ export function SmartSlipScanPage() {
         </div>
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* CTA — dark */}
-      <div className="bg-[#0B1628] px-6 py-16">
+      <div className="bg-gray-900 px-6 py-16">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-black text-white mb-3 tracking-tight">
             Need to type it manually?

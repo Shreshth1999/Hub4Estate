@@ -57,7 +57,7 @@ export function AISection() {
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-14">
           <div style={revealStyle(inView, 0)}>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0B1628] text-white text-[11px] font-bold rounded-full mb-5 uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-900 text-white text-[11px] font-bold rounded-full mb-5 uppercase tracking-widest">
               <Zap className="w-3 h-3 text-amber-400" />
               {aiSection.badge}
             </div>
@@ -107,7 +107,7 @@ export function AISection() {
               <p className="text-sm text-gray-500 leading-relaxed">{aiSection.features[0].desc}</p>
             </div>
 
-            <div className="bg-[#0B1628] p-4 border-t border-gray-100/5">
+            <div className="bg-gray-900 p-4 border-t border-gray-100/5">
               <p className="text-[9px] text-gray-500 uppercase tracking-widest mb-3 font-bold">Detected items:</p>
               <div className="space-y-2">
                 {SCAN_ITEMS.map((item, i) => (
@@ -137,7 +137,7 @@ export function AISection() {
             className="group rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-100/40 hover:-translate-y-1.5 transition-all duration-300"
             style={revealStyle(inView, 0.2)}
           >
-            <div className="h-[3px] bg-gradient-to-r from-[#0B1628] to-[#1a3060]" />
+            <div className="h-[3px] bg-gradient-to-r from-gray-900 to-gray-700" />
 
             <div className="p-6 pb-5">
               <div className="flex items-start justify-between mb-5">
@@ -151,7 +151,7 @@ export function AISection() {
               <p className="text-sm text-gray-500 leading-relaxed">{aiSection.features[1].desc}</p>
             </div>
 
-            <div className="bg-[#0B1628] p-4 border-t border-gray-100/5">
+            <div className="bg-gray-900 p-4 border-t border-gray-100/5">
               <div className="space-y-2">
                 {voiceMessages(isHi).map((m, i) => (
                   <div
@@ -189,7 +189,7 @@ export function AISection() {
               <p className="text-sm text-gray-500 leading-relaxed">{aiSection.features[2].desc}</p>
             </div>
 
-            <div className="bg-[#0B1628] p-4 border-t border-gray-100/5">
+            <div className="bg-gray-900 p-4 border-t border-gray-100/5">
               <div className="space-y-2">
                 {quotes(isHi).map((q, i) => (
                   <div
@@ -239,7 +239,7 @@ export function AISection() {
           </div>
           <button
             onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-            className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-[#0B1628] text-white text-sm font-semibold rounded-xl hover:bg-[#0f2040] transition-all duration-200 hover:shadow-lg hover:shadow-[#0B1628]/30"
+            className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-all duration-200 hover:shadow-lg hover:shadow-gray-900/30"
           >
             {aiSection.cta} <ArrowRight className="w-4 h-4" />
           </button>

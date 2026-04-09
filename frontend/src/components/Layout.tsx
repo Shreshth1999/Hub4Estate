@@ -1,9 +1,8 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
-import { Menu, X, User, LogOut, ArrowRight, Zap, Search, Globe } from 'lucide-react';
+import { Menu, X, User, LogOut, ArrowRight, Search, Globe } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { AIAssistantWidget } from './AIAssistantWidget';
-import { ElectricalCursor } from './ElectricalCursor';
 import { useLanguage } from '../contexts/LanguageContext';
 import type { LangCode } from '../i18n/translations';
 
@@ -36,22 +35,20 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-white">
       <AIAssistantWidget />
-      <ElectricalCursor />
 
       {/* Announcement Bar */}
-      <div className="bg-[#0B1628] text-center py-2.5 px-4">
-        <p className="text-xs font-medium text-white/70 flex items-center justify-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
-          Real quotes from verified dealers across India. No middlemen. Always free for buyers.
+      <div className="bg-gray-900 text-center py-2 px-4">
+        <p className="text-xs font-medium text-gray-400 flex items-center justify-center gap-2">
+          Verified dealers. Real quotes. Always free for buyers.
           <Link
             to="/"
             onClick={(e) => {
               const el = document.getElementById('inquiry-form');
               if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
             }}
-            className="text-amber-500 hover:text-amber-400 font-semibold transition-colors underline underline-offset-2 ml-1"
+            className="text-amber-500 hover:text-amber-400 font-semibold transition-colors ml-1"
           >
-            Get quotes →
+            Get a quote →
           </Link>
         </p>
       </div>
@@ -62,8 +59,8 @@ export function Layout() {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center group-hover:bg-gray-800 transition-colors">
-                <Zap className="w-4 h-4 text-white" />
+              <div className="w-9 h-9 rounded-xl bg-[#100046] flex items-center justify-center group-hover:shadow-lg group-hover:shadow-purple-500/20 transition-all">
+                <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-6 h-6 object-contain" />
               </div>
               <span className="text-base font-semibold text-gray-900">Hub4Estate</span>
             </Link>
@@ -72,9 +69,9 @@ export function Layout() {
             <nav className="hidden lg:flex items-center gap-0.5">
               {[
                 { to: '/categories', label: tx.nav.products },
+                { to: '/for-buyers', label: 'For Buyers' },
+                { to: '/for-dealers', label: tx.nav.forDealers },
                 { to: '/knowledge', label: tx.nav.guides },
-                { to: '/community', label: tx.nav.community },
-                { to: '/dealer/onboarding', label: tx.nav.forDealers },
               ].map(({ to, label }) => (
                 <Link
                   key={to}
@@ -153,7 +150,7 @@ export function Layout() {
                     const el = document.getElementById('inquiry-form');
                     if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
                   }}
-                  className="flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 transition-all duration-200 hover:shadow-lg hover:shadow-amber-600/30 btn-glow"
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors"
                 >
                   {tx.nav.getQuotes}
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -177,9 +174,9 @@ export function Layout() {
             <div className="px-4 py-4 space-y-0.5">
               {[
                 { to: '/categories', label: tx.nav.products },
+                { to: '/for-buyers', label: 'For Buyers' },
+                { to: '/for-dealers', label: tx.nav.forDealers },
                 { to: '/knowledge', label: tx.nav.guides },
-                { to: '/community', label: tx.nav.community },
-                { to: '/dealer/onboarding', label: tx.nav.forDealers },
                 { to: '/track', label: tx.nav.track },
               ].map(({ to, label }) => (
                 <Link
@@ -250,16 +247,12 @@ export function Layout() {
       <main><Outlet /></main>
 
       {/* Footer */}
-      <footer className="bg-[#0B1628] text-white">
-        {/* Amber accent top line */}
-        <div className="h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
+      <footer className="bg-gray-900 text-white border-t border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div>
               <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-white" />
-                </div>
+                <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-8 h-8 object-contain" />
                 <span className="text-base font-bold">Hub4Estate</span>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-4">{tx.footer.tagline}</p>
@@ -298,7 +291,7 @@ export function Layout() {
             <div>
               <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-4">{tx.footer.sections.forDealers}</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><Link to="/dealer/onboarding" className="text-gray-400 hover:text-white transition-colors">{tx.footer.links.joinDealer}</Link></li>
+                <li><Link to="/for-dealers" className="text-gray-400 hover:text-white transition-colors">{tx.footer.links.joinDealer}</Link></li>
                 <li><Link to="/dealer/login" className="text-gray-400 hover:text-white transition-colors">{tx.footer.links.dealerLogin}</Link></li>
               </ul>
               <div className="mt-5 pt-5 border-t border-gray-800">

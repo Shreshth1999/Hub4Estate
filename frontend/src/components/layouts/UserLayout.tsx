@@ -1,8 +1,9 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
-  User, LogOut, Zap, FileText, Package,
+  User, LogOut, FileText, Package,
   Home, Plus, MessageSquare, Sparkles, BookOpen, Menu, X, Users, Search,
+  ShoppingBag, IndianRupee, Bookmark, Settings,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
@@ -37,6 +38,8 @@ export function UserLayout() {
         { path: '/dashboard', icon: Home, label: 'Home' },
         { path: '/rfq/create', icon: Plus, label: 'New Request', highlight: true },
         { path: '/rfq/my-rfqs', icon: FileText, label: 'My Requests' },
+        { path: '/dashboard/inquiries', icon: ShoppingBag, label: 'Inquiries' },
+        { path: '/dashboard/quotes', icon: IndianRupee, label: 'Quotes' },
       ],
     },
     {
@@ -44,6 +47,7 @@ export function UserLayout() {
       items: [
         { path: '/ai-assistant', icon: Sparkles, label: 'Spark AI' },
         { path: '/user/categories', icon: Package, label: 'Browse Products' },
+        { path: '/dashboard/saved', icon: Bookmark, label: 'Saved Products' },
         { path: '/messages', icon: MessageSquare, label: 'Messages' },
       ],
     },
@@ -53,6 +57,12 @@ export function UserLayout() {
         { path: '/track', icon: Search, label: 'Track Request' },
         { path: '/user/knowledge', icon: BookOpen, label: 'Guides' },
         { path: '/user/community', icon: Users, label: 'Community' },
+      ],
+    },
+    {
+      label: 'Account',
+      items: [
+        { path: '/dashboard/profile', icon: Settings, label: 'Profile Settings' },
       ],
     },
   ];
@@ -82,19 +92,19 @@ export function UserLayout() {
                     ${active
                       ? 'bg-gray-100 text-gray-900'
                       : item.highlight
-                        ? 'text-orange-600 hover:bg-orange-50'
+                        ? 'text-amber-700 hover:bg-amber-50'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }
                   `}
                 >
                   <Icon
                     className={`w-4 h-4 flex-shrink-0 ${
-                      active ? 'text-gray-900' : item.highlight ? 'text-orange-500' : 'text-gray-400'
+                      active ? 'text-gray-900' : item.highlight ? 'text-amber-600' : 'text-gray-400'
                     }`}
                   />
                   {item.label}
                   {item.highlight && !active && (
-                    <span className="ml-auto text-[10px] font-semibold bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full">
+                    <span className="ml-auto text-[10px] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
                       +
                     </span>
                   )}
@@ -115,8 +125,8 @@ export function UserLayout() {
       <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
         <div className="h-14 flex items-center px-4 border-b border-gray-100">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-gray-900 flex items-center justify-center rounded-lg">
-              <Zap className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-lg bg-[#100046] flex items-center justify-center">
+              <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-5 h-5 object-contain" />
             </div>
             <span className="text-sm font-semibold text-gray-900 tracking-tight">Hub4Estate</span>
           </Link>
@@ -147,8 +157,8 @@ export function UserLayout() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-gray-900 flex items-center justify-center rounded-lg">
-            <Zap className="w-4 h-4 text-white" />
+          <div className="w-7 h-7 rounded-lg bg-[#100046] flex items-center justify-center">
+            <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-5 h-5 object-contain" />
           </div>
           <span className="text-sm font-semibold text-gray-900">Hub4Estate</span>
         </Link>

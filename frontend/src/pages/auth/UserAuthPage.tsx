@@ -164,7 +164,7 @@ export function UserAuthPage() {
       {/* Left — Brand Panel */}
       <div className="hidden lg:flex lg:w-[440px] bg-gray-950 flex-col justify-between p-12 flex-shrink-0">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-orange-500 flex items-center justify-center rounded-lg">
+          <div className="w-8 h-8 bg-amber-600 flex items-center justify-center rounded-lg">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <span className="text-base font-semibold text-white">Hub4Estate</span>
@@ -220,7 +220,7 @@ export function UserAuthPage() {
           {step !== 'method' && step !== 'success' && (
             <div className="h-0.5 bg-gray-100 rounded-full mb-8 overflow-hidden">
               <div
-                className="h-full bg-orange-500 rounded-full transition-all duration-500"
+                className="h-full bg-amber-600 rounded-full transition-all duration-500"
                 style={{ width: progressWidth }}
               />
             </div>
@@ -315,14 +315,14 @@ export function UserAuthPage() {
                 {mode === 'signup' ? (
                   <>
                     Already have an account?{' '}
-                    <button onClick={toggleMode} className="font-medium text-gray-900 hover:text-orange-600 transition-colors">
+                    <button onClick={toggleMode} className="font-medium text-gray-900 hover:text-amber-700 transition-colors">
                       Sign in
                     </button>
                   </>
                 ) : (
                   <>
                     Don&apos;t have an account?{' '}
-                    <button onClick={toggleMode} className="font-medium text-gray-900 hover:text-orange-600 transition-colors">
+                    <button onClick={toggleMode} className="font-medium text-gray-900 hover:text-amber-700 transition-colors">
                       Sign up
                     </button>
                   </>
@@ -350,7 +350,7 @@ export function UserAuthPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     placeholder="10-digit number"
-                    className="flex-1 px-4 py-3 border border-gray-200 rounded-r-lg focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 text-sm transition-all"
+                    className="flex-1 px-4 py-3 border border-gray-200 rounded-r-lg focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 text-sm transition-all"
                     autoFocus
                   />
                 </div>

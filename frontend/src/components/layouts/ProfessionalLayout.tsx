@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
-  LogOut, Zap, FileText, Package, Home, Plus,
+  LogOut, FileText, Package, Home, Plus,
   MessageSquare, Sparkles, Menu, X, User, Briefcase,
   ShieldCheck, FolderOpen,
 } from 'lucide-react';
@@ -97,19 +97,19 @@ export function ProfessionalLayout() {
                     ${active
                       ? 'bg-gray-100 text-gray-900'
                       : item.highlight
-                        ? 'text-orange-600 hover:bg-orange-50'
+                        ? 'text-amber-700 hover:bg-amber-50'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }
                   `}
                 >
                   <Icon
                     className={`w-4 h-4 flex-shrink-0 ${
-                      active ? 'text-gray-900' : item.highlight ? 'text-orange-500' : 'text-gray-400'
+                      active ? 'text-gray-900' : item.highlight ? 'text-amber-600' : 'text-gray-400'
                     }`}
                   />
                   {item.label}
                   {item.highlight && !active && (
-                    <span className="ml-auto text-[10px] font-semibold bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full">
+                    <span className="ml-auto text-[10px] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
                       +
                     </span>
                   )}
@@ -130,8 +130,8 @@ export function ProfessionalLayout() {
       <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
         <div className="h-14 flex items-center px-4 border-b border-gray-100">
           <Link to="/pro" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-gray-900 flex items-center justify-center rounded-lg">
-              <Zap className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-lg bg-[#100046] flex items-center justify-center">
+              <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-5 h-5 object-contain" />
             </div>
             <span className="text-sm font-semibold text-gray-900 tracking-tight">Hub4Estate</span>
           </Link>
@@ -164,8 +164,8 @@ export function ProfessionalLayout() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
         <Link to="/pro" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-gray-900 flex items-center justify-center rounded-lg">
-            <Zap className="w-4 h-4 text-white" />
+          <div className="w-7 h-7 rounded-lg bg-[#100046] flex items-center justify-center">
+            <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-5 h-5 object-contain" />
           </div>
           <span className="text-sm font-semibold text-gray-900">Hub4Estate</span>
         </Link>

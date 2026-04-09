@@ -3,9 +3,22 @@ import {
   Bot, X, Send, Loader2, Zap, MessageCircle, Sparkles,
   ChevronDown, Mic, MicOff, CheckCircle, Search, Package, Phone,
 } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import { chatApi, streamChatMessage, StreamEvent } from '../lib/api';
 import { useAuthStore } from '../lib/store';
 import { Analytics } from '../lib/analytics';
+
+// ─── DOMPurify config (XSS protection for AI-generated content) ──────────────
+
+/** Sanitize HTML string through DOMPurify before rendering */
+function sanitizeHtml(dirty: string): string {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'br', 'p', 'ul', 'ol', 'li', 'code', 'pre', 'span'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
+    ALLOW_DATA_ATTR: false,
+    ALLOWED_URI_REGEXP: /^https?:\/\//i,
+  }) as string;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,8 +49,8 @@ function renderMarkdown(text: string): React.ReactNode {
         <ul key={key++} className="space-y-1 my-2 ml-2">
           {listItems.map((item, i) => (
             <li key={i} className="flex gap-2 text-sm leading-relaxed">
-              <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
-              <span dangerouslySetInnerHTML={{ __html: inlineFormat(item) }} />
+              <span className="text-amber-600 mt-0.5 flex-shrink-0">•</span>
+              <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(inlineFormat(item)) }} />
             </li>
           ))}
         </ul>
@@ -64,7 +77,7 @@ function renderMarkdown(text: string): React.ReactNode {
       flushList();
       nodes.push(
         <p key={key++} className="text-sm leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: inlineFormat(line) }} />
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(inlineFormat(line)) }} />
       );
     }
   }
@@ -119,9 +132,9 @@ function ToolResultCard({ toolResults }: { toolResults: ToolResult[] }) {
         }
         if (tr.tool === 'compare_products') {
           return (
-            <div key={i} className="bg-orange-50 border border-orange-200 rounded-lg p-3 flex gap-2">
-              <Package className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-orange-700">Comparing: {tr.result.items?.join(' vs ')}</p>
+            <div key={i} className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex gap-2">
+              <Package className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-800">Comparing: {tr.result.items?.join(' vs ')}</p>
             </div>
           );
         }
@@ -356,17 +369,17 @@ I can help you with:
         `}
         aria-label="Open AI Assistant"
       >
-        <div className="absolute inset-0 rounded-full bg-orange-500 animate-ping opacity-20" />
-        <div className="absolute inset-[-4px] rounded-full border border-orange-500/40 animate-[spin_3s_linear_infinite]">
-          <Zap className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 text-orange-500" />
+        <div className="absolute inset-0 rounded-full bg-amber-600 animate-ping opacity-20" />
+        <div className="absolute inset-[-4px] rounded-full border border-amber-600/40 animate-[spin_3s_linear_infinite]">
+          <Zap className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 text-amber-600" />
         </div>
-        <div className="absolute inset-[-8px] rounded-full border border-orange-500/30 animate-[spin_4s_linear_infinite_reverse]">
-          <Sparkles className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 text-orange-400" />
+        <div className="absolute inset-[-8px] rounded-full border border-amber-600/30 animate-[spin_4s_linear_infinite_reverse]">
+          <Sparkles className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 text-amber-500" />
         </div>
-        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-orange-500/20 to-transparent animate-pulse" />
+        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-amber-600/20 to-transparent animate-pulse" />
         <Bot className="w-7 h-7 relative z-10" />
         {!hasInteracted && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center animate-bounce">
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-600 rounded-full flex items-center justify-center animate-bounce">
             <span className="w-2 h-2 bg-white rounded-full" />
           </span>
         )}
@@ -394,7 +407,7 @@ I can help you with:
           >
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-9 h-9 bg-orange-500 flex items-center justify-center rounded-lg">
+                <div className="w-9 h-9 bg-amber-600 flex items-center justify-center rounded-lg">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
                 <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-gray-700 rounded-full" />
@@ -402,7 +415,7 @@ I can help you with:
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-sm">Volt AI</h3>
-                  <span className="text-[10px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded font-medium">
+                  <span className="text-[10px] bg-amber-600/20 text-amber-500 px-1.5 py-0.5 rounded font-medium">
                     by Hub4Estate
                   </span>
                 </div>
@@ -436,15 +449,15 @@ I can help you with:
                 {isInitializing ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
-                      <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto mb-2" />
+                      <Loader2 className="w-8 h-8 text-amber-600 animate-spin mx-auto mb-2" />
                       <p className="text-sm text-gray-500">Connecting Volt...</p>
                     </div>
                   </div>
                 ) : sessionError ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center px-4">
-                      <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                        <Bot className="w-6 h-6 text-orange-500" />
+                      <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <Bot className="w-6 h-6 text-amber-600" />
                       </div>
                       <p className="text-sm font-medium text-gray-900 mb-1">Volt is unavailable right now</p>
                       <p className="text-xs text-gray-500 mb-4">Our AI assistant couldn't connect. You can retry or reach us directly.</p>
@@ -458,7 +471,7 @@ I can help you with:
                         href="tel:+917690001999"
                         className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-gray-200 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                       >
-                        <Phone className="w-4 h-4 text-orange-500" />
+                        <Phone className="w-4 h-4 text-amber-600" />
                         Call +91 76900 01999
                       </a>
                       <p className="text-[11px] text-gray-400 mt-3">Mon–Sat, 10am–7pm IST</p>
@@ -469,7 +482,7 @@ I can help you with:
                     {messages.map((msg) => (
                       <div key={msg.id} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                         {msg.role === 'assistant' && (
-                          <div className="w-8 h-8 bg-orange-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end mb-0.5">
+                          <div className="w-8 h-8 bg-amber-600 rounded-lg flex-shrink-0 flex items-center justify-center self-end mb-0.5">
                             <Bot className="w-4 h-4 text-white" />
                           </div>
                         )}
@@ -496,7 +509,7 @@ I can help you with:
                     {/* Typing indicator */}
                     {isLoading && (
                       <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-orange-500 rounded-lg flex-shrink-0 flex items-center justify-center self-end">
+                        <div className="w-8 h-8 bg-amber-600 rounded-lg flex-shrink-0 flex items-center justify-center self-end">
                           <Bot className="w-4 h-4 text-white" />
                         </div>
                         <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
@@ -525,7 +538,7 @@ I can help you with:
                         key={i}
                         onClick={() => handleSend(s.message)}
                         disabled={isLoading}
-                        className="px-2.5 py-1 text-xs font-medium border border-gray-200 hover:border-orange-500 hover:text-orange-600 rounded-full transition-colors bg-white"
+                        className="px-2.5 py-1 text-xs font-medium border border-gray-200 hover:border-amber-600 hover:text-amber-700 rounded-full transition-colors bg-white"
                       >
                         {s.label}
                       </button>
@@ -550,7 +563,7 @@ I can help you with:
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder={isListening ? 'Listening...' : 'Message Volt... (Hindi / English)'}
-                    className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors bg-gray-50 focus:bg-white"
+                    className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:border-amber-600 focus:outline-none transition-colors bg-gray-50 focus:bg-white"
                     disabled={isLoading || !sessionId}
                   />
 
@@ -561,7 +574,7 @@ I can help you with:
                       className={`px-3 py-2.5 rounded-xl border transition-all flex items-center justify-center ${
                         isListening
                           ? 'bg-red-500 border-red-500 text-white animate-pulse'
-                          : 'border-gray-200 text-gray-500 hover:border-orange-500 hover:text-orange-500'
+                          : 'border-gray-200 text-gray-500 hover:border-amber-600 hover:text-amber-600'
                       } disabled:opacity-40 disabled:cursor-not-allowed`}
                       aria-label={isListening ? 'Stop listening' : 'Start voice input'}
                       title={isListening ? 'Click to stop' : 'Voice input (Hindi/English)'}
@@ -580,7 +593,7 @@ I can help you with:
                   </button>
                 </div>
                 <p className="text-[10px] text-gray-400 mt-1.5 text-center">
-                  Powered by <span className="font-semibold text-orange-500">Volt AI</span> · Hub4Estate
+                  Powered by <span className="font-semibold text-amber-600">Volt AI</span> · Hub4Estate
                 </p>
               </div>
             </>

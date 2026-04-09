@@ -3,7 +3,6 @@ import {
   ArrowLeft, Target, Users, TrendingUp, Award,
   Mail, Phone, ArrowRight, Linkedin, Zap,
 } from 'lucide-react';
-import { ElectricWireDivider } from '../components/ElectricWireDivider';
 import { useInView, revealStyle } from '../hooks/useInView';
 
 export function AboutPage() {
@@ -53,7 +52,7 @@ export function AboutPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-amber-400/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '1.5s' }} />
@@ -64,13 +63,13 @@ export function AboutPage() {
           </Link>
           <div style={revealStyle(heroIn, 0.06)}>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-800 text-gray-300 text-[11px] font-semibold rounded-full mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
               Our Story
             </span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 tracking-tight" style={revealStyle(heroIn, 0.1)}>
             Fixing the price<br />
-            <span className="gradient-text-orange">information gap</span><br />
+            <span className="text-amber-500">information gap</span><br />
             in electrical procurement.
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed max-w-2xl" style={revealStyle(heroIn, 0.16)}>
@@ -79,8 +78,6 @@ export function AboutPage() {
           </p>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* The Problem */}
       <div ref={problemRef as any} className="px-6 py-20 max-w-6xl mx-auto">
@@ -126,10 +123,8 @@ export function AboutPage() {
         </div>
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* Founder — dark */}
-      <div ref={founderRef as any} className="bg-[#0B1628] px-6 py-20">
+      <div ref={founderRef as any} className="bg-gray-900 px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-black text-white mb-10 text-center tracking-tight" style={revealStyle(founderIn, 0)}>Meet the Founder</h2>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10" style={revealStyle(founderIn, 0.1)}>
@@ -180,8 +175,6 @@ export function AboutPage() {
         </div>
       </div>
 
-      <ElectricWireDivider />
-
       {/* Values */}
       <div ref={valuesRef as any} className="px-6 py-20 max-w-5xl mx-auto">
         <div className="text-center mb-12" style={revealStyle(valuesIn, 0)}>
@@ -208,10 +201,8 @@ export function AboutPage() {
         </div>
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* Journey — dark */}
-      <div ref={journeyRef as any} className="bg-[#0B1628] px-6 py-20">
+      <div ref={journeyRef as any} className="bg-gray-900 px-6 py-20">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12" style={revealStyle(journeyIn, 0)}>
             <h2 className="text-3xl font-black text-white mb-3 tracking-tight">The Journey</h2>
@@ -237,8 +228,6 @@ export function AboutPage() {
         </div>
       </div>
 
-      <ElectricWireDivider />
-
       {/* Company Info */}
       <div className="px-6 py-14 max-w-2xl mx-auto">
         <h3 className="text-base font-bold text-gray-900 mb-5 text-center">Company Details</h3>
@@ -257,10 +246,8 @@ export function AboutPage() {
         </div>
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* CTA */}
-      <div className="bg-[#0B1628] px-6 py-20 text-center relative overflow-hidden">
+      <div className="bg-gray-900 px-6 py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-600/6 rounded-full blur-3xl" />
         </div>
@@ -273,7 +260,7 @@ export function AboutPage() {
             Submit a requirement and let our dealer network compete to give you the best deal.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/rfq/create" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-900 text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors btn-glow">
+            <Link to="/rfq/create" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-900 text-sm font-bold rounded-xl hover:bg-gray-100 transition-colors">
               Post a requirement <ArrowRight className="w-4 h-4" />
             </Link>
             <Link to="/dealer/onboarding" className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-700 text-white text-sm font-medium rounded-xl hover:border-gray-500 transition-colors">

@@ -426,3 +426,19 @@ export const inquiryApi = {
   adminUpdateStatus: (id: string, status: string) =>
     api.patch(`/inquiry/admin/${id}/status`, { status }),
 };
+
+// Messaging API
+export const messagingApi = {
+  getConversations: () =>
+    api.get('/messaging/conversations'),
+  createConversation: (data: { title?: string; type?: string; referenceId?: string; referenceType?: string; participantId: string; participantType: string }) =>
+    api.post('/messaging/conversations', data),
+  getMessages: (conversationId: string, params?: { cursor?: string; limit?: number }) =>
+    api.get(`/messaging/conversations/${conversationId}/messages`, { params }),
+  sendMessage: (conversationId: string, data: { content: string; type?: string; metadata?: Record<string, unknown> }) =>
+    api.post(`/messaging/conversations/${conversationId}/messages`, data),
+  markRead: (conversationId: string) =>
+    api.patch(`/messaging/conversations/${conversationId}/read`),
+  toggleMute: (conversationId: string, muted: boolean) =>
+    api.patch(`/messaging/conversations/${conversationId}/mute`, { muted }),
+};

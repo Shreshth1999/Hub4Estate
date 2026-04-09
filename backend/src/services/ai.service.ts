@@ -1,6 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { env } from '../config/env';
 import prisma from '../config/database';
+import {
+  getCachedResponse,
+  setCachedResponse,
+  recordTokenUsage,
+  selectModel,
+} from './ai-cache.service';
 
 let anthropicClient: Anthropic | null = null;
 
@@ -665,6 +671,11 @@ export async function getAISuggestions(data: {
 }): Promise<AISuggestion> {
   if (!anthropicClient) return { insights: ['AI suggestions unavailable'] };
 
+  // Check cache (keyed by product IDs + city)
+  const cacheParams = { items: data.items.map(i => i.productId).sort(), city: data.city, urgency: data.urgency };
+  const cached = await getCachedResponse<AISuggestion>('rfqSuggestion', cacheParams);
+  if (cached) return cached;
+
   try {
     const products = await prisma.product.findMany({
       where: { id: { in: data.items.map((i) => i.productId) } },
@@ -688,15 +699,25 @@ Products: ${JSON.stringify(productContext, null, 2)}
 Respond ONLY with valid JSON:
 {"missingItems":[],"quantityWarnings":[],"complementaryProducts":[],"insights":[]}`;
 
+    const model = await selectModel('claude-haiku-4-5-20251001', 'low');
+
     const msg = await anthropicClient.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model,
       max_tokens: 512,
       messages: [{ role: 'user', content: prompt }],
     });
 
+    if (msg.usage) {
+      await recordTokenUsage({ model, inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens });
+    }
+
     const text = msg.content[0].type === 'text' ? msg.content[0].text : '{}';
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    return jsonMatch ? JSON.parse(jsonMatch[0]) : { insights: ['Analysis unavailable'] };
+    const result = jsonMatch ? JSON.parse(jsonMatch[0]) : { insights: ['Analysis unavailable'] };
+
+    await setCachedResponse('rfqSuggestion', cacheParams, result);
+
+    return result;
   } catch (error) {
     return { insights: ['AI analysis temporarily unavailable'] };
   }
@@ -704,6 +725,10 @@ Respond ONLY with valid JSON:
 
 export async function generateProductExplanation(productId: string): Promise<string> {
   if (!anthropicClient) return 'Product explanation unavailable';
+
+  // Check cache first
+  const cached = await getCachedResponse<string>('productExplanation', { productId });
+  if (cached) return cached;
 
   try {
     const product = await prisma.product.findUnique({
@@ -716,8 +741,10 @@ export async function generateProductExplanation(productId: string): Promise<str
 
     if (!product) return 'Product not found';
 
+    const model = await selectModel('claude-haiku-4-5-20251001', 'low');
+
     const msg = await anthropicClient.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model,
       max_tokens: 400,
       messages: [
         {
@@ -730,7 +757,21 @@ Cover: what it is, where it's used, why brand matters, what to check before buyi
       ],
     });
 
-    return msg.content[0].type === 'text' ? msg.content[0].text : 'Explanation unavailable';
+    // Track token usage
+    if (msg.usage) {
+      await recordTokenUsage({
+        model,
+        inputTokens: msg.usage.input_tokens,
+        outputTokens: msg.usage.output_tokens,
+      });
+    }
+
+    const result = msg.content[0].type === 'text' ? msg.content[0].text : 'Explanation unavailable';
+
+    // Cache the result
+    await setCachedResponse('productExplanation', { productId }, result);
+
+    return result;
   } catch {
     return 'Explanation temporarily unavailable';
   }
@@ -824,6 +865,15 @@ export async function generateAdminInsights(platformData: {
     }];
   }
 
+  // Check cache (keyed by total counts to detect data changes)
+  const cacheParams = {
+    inquiries: platformData.totalInquiries,
+    rfqs: platformData.activeRFQs,
+    quotes: platformData.totalQuotes,
+  };
+  const cached = await getCachedResponse<AdminAIInsight[]>('adminInsights', cacheParams);
+  if (cached) return cached;
+
   try {
     const prompt = `You are an AI analyst for Hub4Estate, India's electrical products B2B marketplace.
 
@@ -842,17 +892,25 @@ Data:
 Return ONLY a raw JSON array (no markdown):
 [{"type":"hot_lead|demand_trend|dealer_tip|city_activity|action_needed","title":"concise title","body":"1-2 sentence insight","priority":"high|medium|low"}]`;
 
+    const model = await selectModel('claude-haiku-4-5-20251001', 'medium');
+
     const msg = await anthropicClient.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model,
       max_tokens: 600,
       messages: [{ role: 'user', content: prompt }],
     });
+
+    if (msg.usage) {
+      await recordTokenUsage({ model, inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens });
+    }
 
     const text = msg.content[0].type === 'text' ? msg.content[0].text : '[]';
     const match = text.match(/\[[\s\S]*\]/);
     if (match) {
       const result = JSON.parse(match[0]);
-      return Array.isArray(result) ? result.slice(0, 5) : [];
+      const insights = Array.isArray(result) ? result.slice(0, 5) : [];
+      await setCachedResponse('adminInsights', cacheParams, insights);
+      return insights;
     }
     return [];
   } catch (error) {
@@ -863,6 +921,9 @@ Return ONLY a raw JSON array (no markdown):
 
 export async function analyzeDealerPerformance(dealerId: string): Promise<string> {
   if (!anthropicClient) return 'Analysis unavailable';
+
+  const cached = await getCachedResponse<string>('dealerPerformance', { dealerId });
+  if (cached) return cached;
 
   try {
     const dealer = await prisma.dealer.findUnique({
@@ -882,8 +943,10 @@ export async function analyzeDealerPerformance(dealerId: string): Promise<string
       dealer.quotes.filter((q) => q.rankPosition !== null).reduce((s, q) => s + (q.rankPosition || 0), 0) /
       (dealer.quotes.length || 1);
 
+    const model = await selectModel('claude-haiku-4-5-20251001', 'medium');
+
     const msg = await anthropicClient.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model,
       max_tokens: 400,
       messages: [
         {
@@ -893,7 +956,13 @@ export async function analyzeDealerPerformance(dealerId: string): Promise<string
       ],
     });
 
-    return msg.content[0].type === 'text' ? msg.content[0].text : 'Analysis unavailable';
+    if (msg.usage) {
+      await recordTokenUsage({ model, inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens });
+    }
+
+    const result = msg.content[0].type === 'text' ? msg.content[0].text : 'Analysis unavailable';
+    await setCachedResponse('dealerPerformance', { dealerId }, result);
+    return result;
   } catch {
     return 'Analysis temporarily unavailable';
   }

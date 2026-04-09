@@ -3,8 +3,11 @@ import { z } from 'zod';
 import prisma from '../config/database';
 import { authenticateUser, AuthRequest } from '../middleware/auth';
 import { validateBody } from '../middleware/validation';
+import { validate } from '../middleware/validate';
 import { matchDealersForRFQ } from '../services/dealer-matching.service';
 import { getAISuggestions } from '../services/ai.service';
+import { createRfqSchema as rfqValidatorSchema, rfqIdParamSchema } from '../validators/rfq.validators';
+import { stripDealerFromQuote } from '../middleware/blindMatching';
 
 const router = Router();
 
@@ -27,7 +30,7 @@ const createRFQSchema = z.object({
   ).min(1),
 });
 
-router.post('/', authenticateUser, validateBody(createRFQSchema), async (req: AuthRequest, res) => {
+router.post('/', authenticateUser, validate({ body: rfqValidatorSchema }), validateBody(createRFQSchema), async (req: AuthRequest, res) => {
   try {
     const userId = req.user!.id;
     const { items, ...rfqData } = req.body;
@@ -269,11 +272,14 @@ router.get('/:id', authenticateUser, async (req: AuthRequest, res) => {
       return res.status(404).json({ error: 'RFQ not found' });
     }
 
-    // Calculate rankings and distances
-    const quotesWithRanking = rfq.quotes.map((quote, index) => ({
-      ...quote,
-      ranking: index + 1,
-    }));
+    // Calculate rankings and strip dealer identity from non-selected quotes
+    const quotesWithRanking = rfq.quotes.map((quote, index) => {
+      const sanitized = stripDealerFromQuote(quote as Record<string, any>);
+      return {
+        ...sanitized,
+        ranking: index + 1,
+      };
+    });
 
     return res.json({
       ...rfq,

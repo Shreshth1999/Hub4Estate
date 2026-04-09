@@ -1,225 +1,85 @@
 import { type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '@/lib/utils/cn';
-import { CheckCircle, Shield, AlertTriangle, Flame, Minus, Zap } from 'lucide-react';
 
 // ============================================================
-// Base Badge
+// Types
 // ============================================================
-type BadgeSize = 'sm' | 'md';
+export type BadgeStatus = 'success' | 'warning' | 'error' | 'info' | 'neutral';
+export type BadgeVariant = 'dot' | 'pill';
+export type BadgeSize = 'sm' | 'md';
 
-interface BaseBadgeProps extends HTMLAttributes<HTMLSpanElement> {
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  status?: BadgeStatus;
+  variant?: BadgeVariant;
   size?: BadgeSize;
   children: ReactNode;
 }
 
-const baseSizeStyles: Record<BadgeSize, string> = {
-  sm: 'px-2 py-0.5 text-xs',
+// ============================================================
+// Color maps
+// ============================================================
+const pillStyles: Record<BadgeStatus, string> = {
+  success: 'bg-green-100 text-green-800 border-green-300',
+  warning: 'bg-amber-100 text-amber-800 border-amber-300',
+  error: 'bg-red-100 text-red-800 border-red-300',
+  info: 'bg-blue-100 text-blue-800 border-blue-300',
+  neutral: 'bg-neutral-100 text-neutral-700 border-neutral-300',
+};
+
+const dotColors: Record<BadgeStatus, string> = {
+  success: 'bg-green-500',
+  warning: 'bg-amber-500',
+  error: 'bg-red-500',
+  info: 'bg-blue-500',
+  neutral: 'bg-neutral-400',
+};
+
+const sizeStyles: Record<BadgeSize, string> = {
+  sm: 'px-2 py-0.5 text-[10px]',
   md: 'px-3 py-1 text-xs',
 };
 
 // ============================================================
-// Status Badge — active / pending / closed / error
+// Badge component
 // ============================================================
-type StatusType = 'active' | 'pending' | 'closed' | 'error';
-
-const statusStyles: Record<StatusType, string> = {
-  active: 'bg-success-bg text-success-text border-success-500',
-  pending: 'bg-cta-50 text-cta-800 border-cta-500',
-  closed: 'bg-neutral-100 text-neutral-600 border-neutral-400',
-  error: 'bg-error-bg text-error-text border-error-500',
-};
-
-const statusDotColors: Record<StatusType, string> = {
-  active: 'bg-success-500',
-  pending: 'bg-cta-500',
-  closed: 'bg-neutral-400',
-  error: 'bg-error-500',
-};
-
-export function StatusBadge({
-  status,
-  label,
+export function Badge({
+  status = 'neutral',
+  variant = 'pill',
   size = 'sm',
   className,
-  ...props
-}: BaseBadgeProps & { status: StatusType; label?: string }) {
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1.5 font-bold uppercase tracking-wider border',
-        baseSizeStyles[size],
-        statusStyles[status],
-        className,
-      )}
-      {...props}
-    >
-      <span className={cn('w-1.5 h-1.5 rounded-full', statusDotColors[status])} />
-      {label || status}
-    </span>
-  );
-}
-
-// ============================================================
-// Trust Badge — verified / premium
-// ============================================================
-type TrustType = 'verified' | 'premium';
-
-const trustStyles: Record<TrustType, { bg: string; icon: ReactNode }> = {
-  verified: {
-    bg: 'bg-success-bg text-success-text border-success-500',
-    icon: <CheckCircle className="w-3 h-3" />,
-  },
-  premium: {
-    bg: 'bg-cta-50 text-cta-800 border-cta-500',
-    icon: <Shield className="w-3 h-3" />,
-  },
-};
-
-export function TrustBadge({
-  type,
-  label,
-  size = 'sm',
-  className,
-  ...props
-}: BaseBadgeProps & { type: TrustType; label?: string }) {
-  const config = trustStyles[type];
-
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1.5 font-bold uppercase tracking-wider border',
-        baseSizeStyles[size],
-        config.bg,
-        className,
-      )}
-      {...props}
-    >
-      {config.icon}
-      {label || type}
-    </span>
-  );
-}
-
-// ============================================================
-// Urgency Badge — high / medium / low
-// ============================================================
-type UrgencyLevel = 'high' | 'medium' | 'low';
-
-const urgencyStyles: Record<UrgencyLevel, { bg: string; icon: ReactNode }> = {
-  high: {
-    bg: 'bg-error-bg text-error-text border-error-500 animate-pulse-slow',
-    icon: <Flame className="w-3 h-3" />,
-  },
-  medium: {
-    bg: 'bg-cta-50 text-cta-800 border-cta-500',
-    icon: <AlertTriangle className="w-3 h-3" />,
-  },
-  low: {
-    bg: 'bg-primary-50 text-primary-700 border-primary-400',
-    icon: <Minus className="w-3 h-3" />,
-  },
-};
-
-export function UrgencyBadge({
-  level,
-  label,
-  size = 'sm',
-  className,
-  ...props
-}: BaseBadgeProps & { level: UrgencyLevel; label?: string }) {
-  const config = urgencyStyles[level];
-
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1.5 font-bold uppercase tracking-wider border',
-        baseSizeStyles[size],
-        config.bg,
-        className,
-      )}
-      {...props}
-    >
-      {config.icon}
-      {label || `${level} priority`}
-    </span>
-  );
-}
-
-// ============================================================
-// Category Badge
-// ============================================================
-export function CategoryBadge({
   children,
-  size = 'sm',
-  className,
   ...props
-}: BaseBadgeProps) {
+}: BadgeProps) {
+  if (variant === 'dot') {
+    return (
+      <span
+        className={cn(
+          'inline-flex items-center gap-1.5 font-bold uppercase tracking-wider',
+          sizeStyles[size],
+          className,
+        )}
+        {...props}
+      >
+        <span
+          className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', dotColors[status])}
+        />
+        {children}
+      </span>
+    );
+  }
+
+  // pill variant
   return (
     <span
       className={cn(
-        'inline-flex items-center font-bold uppercase tracking-wider',
-        'bg-primary-50 text-primary-700 border border-primary-300',
-        baseSizeStyles[size],
+        'inline-flex items-center font-bold uppercase tracking-wider rounded-full border',
+        sizeStyles[size],
+        pillStyles[status],
         className,
       )}
       {...props}
     >
       {children}
-    </span>
-  );
-}
-
-// ============================================================
-// Count Badge — typically used on icons/tabs
-// ============================================================
-export function CountBadge({
-  count,
-  max = 99,
-  className,
-  ...props
-}: Omit<BaseBadgeProps, 'children' | 'size'> & {
-  count: number;
-  max?: number;
-}) {
-  if (count <= 0) return null;
-
-  const displayCount = count > max ? `${max}+` : count.toString();
-
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center justify-center',
-        'min-w-[18px] h-[18px] px-1 text-[10px]',
-        'font-bold bg-error-500 text-white rounded-full',
-        className,
-      )}
-      {...props}
-    >
-      {displayCount}
-    </span>
-  );
-}
-
-// ============================================================
-// New Badge — "new" indicator
-// ============================================================
-export function NewBadge({
-  size = 'sm',
-  className,
-  ...props
-}: Omit<BaseBadgeProps, 'children'>) {
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1 font-bold uppercase tracking-wider',
-        'bg-cta-500 text-navy border-2 border-navy',
-        baseSizeStyles[size],
-        className,
-      )}
-      {...props}
-    >
-      <Zap className="w-3 h-3" />
-      New
     </span>
   );
 }

@@ -15,7 +15,7 @@
   }
 
   body {
-    @apply bg-white text-neutral-900 antialiased;
+    @apply bg-white text-gray-900 antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
   }
@@ -25,14 +25,12 @@
     font-family: 'Inter', system-ui, sans-serif;
   }
 
-  /* Display headings use Playfair */
   .font-display {
     font-family: 'Playfair Display', Georgia, serif;
   }
 
-  /* Ultra Bold Headlines */
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black;
+    @apply text-4xl md:text-5xl lg:text-6xl font-black;
     letter-spacing: -0.03em;
   }
 
@@ -48,192 +46,7 @@
 }
 
 @layer components {
-  /* ==================== BUTTONS ==================== */
-
-  /* Primary Button - Bold Black */
-  .btn-primary {
-    @apply relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white
-           bg-neutral-900 border-2 border-neutral-900 rounded-none
-           transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2;
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .btn-primary:hover {
-    @apply bg-white text-neutral-900;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-  .btn-primary:active {
-    @apply translate-x-[2px] translate-y-[2px];
-    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* Secondary Button - Outline */
-  .btn-secondary {
-    @apply relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-neutral-900
-           bg-white border-2 border-neutral-900 rounded-none
-           transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2;
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .btn-secondary:hover {
-    @apply bg-neutral-900 text-white;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-  .btn-secondary:active {
-    @apply translate-x-[2px] translate-y-[2px];
-    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* Accent Button - Orange */
-  .btn-accent {
-    @apply relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white
-           bg-accent-600 border-2 border-accent-600 rounded-none
-           transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .btn-accent:hover {
-    @apply bg-accent-700 border-accent-700;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-  .btn-accent:active {
-    @apply translate-x-[2px] translate-y-[2px];
-    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* Ghost Button */
-  .btn-ghost {
-    @apply relative inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-neutral-700
-           bg-transparent border-2 border-transparent rounded-none
-           transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-neutral-300;
-  }
-  .btn-ghost:hover {
-    @apply bg-neutral-100 text-neutral-900;
-  }
-
-  /* Urgent/CTA Button - For pushy actions */
-  .btn-urgent {
-    @apply relative inline-flex items-center justify-center px-10 py-5 text-lg font-black text-white uppercase tracking-wider
-           bg-neutral-950 border-4 border-neutral-950 rounded-none
-           transition-all duration-300
-           focus:outline-none focus:ring-4 focus:ring-accent-500/50;
-    letter-spacing: 0.05em;
-    transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  .btn-urgent:hover {
-    @apply bg-accent-600 border-accent-600 scale-105;
-    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
-  }
-  .btn-urgent:active {
-    @apply scale-100;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* ==================== CARDS ==================== */
-
-  /* Standard Card */
-  .card {
-    @apply bg-white border-2 border-neutral-200 p-6 transition-all duration-300;
-  }
-  .card:hover {
-    @apply border-neutral-900;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* Product Card */
-  .card-product {
-    @apply bg-white border-2 border-neutral-900 p-0 overflow-hidden transition-all duration-300;
-  }
-  .card-product:hover {
-    @apply -translate-y-1;
-    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* Feature Card */
-  .card-feature {
-    @apply bg-primary-50 border-2 border-neutral-900 p-8 transition-all duration-300;
-  }
-  .card-feature:hover {
-    @apply bg-white;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* Dark Card */
-  .card-dark {
-    @apply bg-neutral-900 border-2 border-neutral-800 p-6 text-white transition-all duration-300;
-  }
-  .card-dark:hover {
-    @apply border-accent-500;
-  }
-
-  /* Stat Card */
-  .card-stat {
-    @apply bg-white border-2 border-neutral-900 p-6 transition-all duration-200;
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-  .card-stat:hover {
-    @apply -translate-x-1 -translate-y-1;
-    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* ==================== INPUTS ==================== */
-
-  /* Primary Input */
-  .input-primary {
-    @apply block w-full border-2 border-neutral-300 bg-white px-4 py-4 text-base font-medium
-           transition-all duration-200 rounded-none
-           placeholder:text-neutral-400
-           focus:border-neutral-900 focus:outline-none focus:ring-0
-           disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-500;
-  }
-
-  /* Search Input */
-  .input-search {
-    @apply block w-full border-2 border-neutral-900 bg-white px-6 py-4 text-base font-medium
-           transition-all duration-200 rounded-none
-           placeholder:text-neutral-400 placeholder:font-normal
-           focus:outline-none
-           disabled:cursor-not-allowed disabled:bg-neutral-100;
-  }
-  .input-search:focus {
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-
-  /* ==================== LABELS & BADGES ==================== */
-
-  .label {
-    @apply mb-2 block text-sm font-bold text-neutral-900 uppercase tracking-wide;
-  }
-
-  .badge {
-    @apply inline-flex items-center px-3 py-1.5 text-xs font-bold uppercase tracking-wider
-           border-2 border-neutral-900;
-  }
-
-  .badge-success {
-    @apply bg-success-100 text-success-800 border-success-800;
-  }
-
-  .badge-warning {
-    @apply bg-warning-100 text-warning-800 border-warning-800;
-  }
-
-  .badge-error {
-    @apply bg-error-100 text-error-800 border-error-800;
-  }
-
-  .badge-info {
-    @apply bg-primary-100 text-primary-800 border-primary-800;
-  }
-
-  .badge-urgent {
-    @apply bg-accent-500 text-white border-accent-600;
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* ==================== SECTIONS ==================== */
-
+  /* Sections */
   .section {
     @apply py-20 md:py-28 lg:py-36;
   }
@@ -242,16 +55,7 @@
     @apply py-12 md:py-16 lg:py-20;
   }
 
-  .section-title {
-    @apply text-4xl md:text-5xl lg:text-6xl font-black text-center mb-4 tracking-tight;
-  }
-
-  .section-subtitle {
-    @apply text-lg md:text-xl text-neutral-600 text-center max-w-2xl mx-auto font-medium;
-  }
-
-  /* ==================== CONTAINERS ==================== */
-
+  /* Containers */
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
@@ -264,108 +68,9 @@
     @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  /* ==================== URGENCY & MARKETING ==================== */
-
-  /* Marquee/Ticker */
-  .ticker {
-    @apply overflow-hidden bg-neutral-900 text-white py-3;
-  }
-
-  .ticker-content {
-    @apply inline-flex whitespace-nowrap;
-    animation: marquee 25s linear infinite;
-  }
-
-  .ticker-item {
-    @apply inline-flex items-center mx-8 text-sm font-bold uppercase tracking-widest;
-  }
-
-  /* Urgency Banner */
-  .urgency-banner {
-    @apply bg-accent-500 text-white py-3 px-4 text-center font-bold;
-  }
-
-  /* Countdown Style */
-  .countdown-box {
-    @apply bg-neutral-900 text-white px-4 py-3 min-w-[80px] text-center;
-  }
-
-  .countdown-number {
-    @apply text-3xl md:text-4xl font-black tabular-nums;
-  }
-
-  .countdown-label {
-    @apply text-xs uppercase tracking-wider text-neutral-400 mt-1;
-  }
-
-  /* Trust Indicators */
-  .trust-badge {
-    @apply inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 border border-neutral-200
-           text-sm font-semibold text-neutral-700;
-  }
-
-  /* ==================== SPECIAL ELEMENTS ==================== */
-
-  /* Divider */
+  /* Dividers */
   .divider {
-    @apply h-0.5 bg-neutral-900 my-8;
-  }
-
-  .divider-light {
-    @apply h-px bg-neutral-200 my-8;
-  }
-
-  /* Highlight Text */
-  .highlight {
-    @apply relative inline-block;
-  }
-
-  .highlight::after {
-    content: '';
-    @apply absolute bottom-1 left-0 right-0 h-3 bg-accent-200 -z-10;
-  }
-
-  /* Big Number */
-  .big-number {
-    @apply text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Price Display */
-  .price-display {
-    @apply text-3xl md:text-4xl font-black text-neutral-900;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .price-strike {
-    @apply text-lg text-neutral-400 line-through font-normal;
-  }
-
-  /* List Style */
-  .list-check li {
-    @apply relative pl-8 py-2;
-  }
-
-  .list-check li::before {
-    content: '✓';
-    @apply absolute left-0 top-2 w-6 h-6 flex items-center justify-center
-           bg-neutral-900 text-white text-sm font-bold;
-  }
-
-  /* Quote Block */
-  .quote-block {
-    @apply border-l-4 border-neutral-900 pl-6 py-4 bg-primary-50;
-  }
-
-  /* Step Number */
-  .step-number {
-    @apply w-14 h-14 flex items-center justify-center
-           bg-neutral-900 text-white text-xl font-black;
-  }
-
-  /* Floating Label */
-  .floating-label {
-    @apply absolute -top-3 left-4 px-2 bg-white text-xs font-bold uppercase tracking-wider text-neutral-600;
+    @apply h-px bg-gray-200 my-8;
   }
 }
 
@@ -374,101 +79,29 @@
     text-wrap: balance;
   }
 
-  /* Gradient Text */
-  .gradient-text {
-    @apply bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-900 bg-clip-text text-transparent;
-  }
-
-  .gradient-text-accent {
-    @apply bg-gradient-to-r from-accent-600 to-accent-800 bg-clip-text text-transparent;
-  }
-
-  /* Noise Overlay */
-  .noise-overlay {
-    @apply relative;
-  }
-
-  .noise-overlay::before {
-    content: '';
-    @apply absolute inset-0 bg-noise opacity-[0.03] pointer-events-none;
-  }
-
-  /* Striped Background */
-  .striped-bg {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 10px,
-      rgba(0, 0, 0, 0.03) 10px,
-      rgba(0, 0, 0, 0.03) 20px
-    );
-  }
-
-  /* Grid Background */
-  .grid-bg {
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  /* Blueprint Electrical Background - Technical drawing style */
-  .blueprint-bg {
-    position: relative;
-    background-color: #fafafa;
-  }
-
-  .blueprint-bg::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.06;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23333' stroke-width='0.5'%3E%3C!-- Grid Lines --%3E%3Cpath d='M0 50h400M0 100h400M0 150h400M0 200h400M0 250h400M0 300h400M0 350h400M50 0v400M100 0v400M150 0v400M200 0v400M250 0v400M300 0v400M350 0v400' stroke-dasharray='2,4' stroke-width='0.3'/%3E%3C!-- Switch Symbol --%3E%3Ccircle cx='80' cy='80' r='8'/%3E%3Cpath d='M72 80h-12M88 80h12M80 72v-12'/%3E%3Cpath d='M74 74l12 12' stroke-width='0.8'/%3E%3C!-- Socket Symbol --%3E%3Crect x='290' cy='70' width='20' height='20' rx='2'/%3E%3Ccircle cx='295' cy='77' r='2'/%3E%3Ccircle cx='305' cy='77' r='2'/%3E%3Cpath d='M300 82v6'/%3E%3C!-- Wire Run --%3E%3Cpath d='M40 180h80M120 180v40M120 220h60' stroke-width='1'/%3E%3Ccircle cx='40' cy='180' r='3' fill='%23333'/%3E%3Ccircle cx='180' cy='220' r='3' fill='%23333'/%3E%3C!-- MCB Symbol --%3E%3Crect x='240' cy='160' width='12' height='30' rx='1'/%3E%3Cpath d='M246 160v-15M246 190v15'/%3E%3Crect x='243' cy='170' width='6' height='8' fill='%23333'/%3E%3C!-- Distribution Board --%3E%3Crect x='50' cy='280' width='60' height='80'/%3E%3Cpath d='M60 290h40M60 310h40M60 330h40M60 350h40'/%3E%3Ccircle cx='65' cy='295' r='3'/%3E%3Ccircle cx='65' cy='315' r='3'/%3E%3Ccircle cx='65' cy='335' r='3'/%3E%3Ccircle cx='65' cy='355' r='3'/%3E%3C!-- Fan Symbol --%3E%3Ccircle cx='320' cy='320' r='25'/%3E%3Cpath d='M320 295v50M295 320h50' stroke-width='0.3'/%3E%3Cpath d='M320 300c-8 5-8 15 0 20M320 300c8 5 8 15 0 20M300 320c5-8 15-8 20 0M300 320c5 8 15 8 20 0M340 320c-5 8-15 8-20 0M340 320c-5-8-15-8-20 0M320 340c8-5 8-15 0-20M320 340c-8-5-8-15 0-20' stroke-width='0.8'/%3E%3C!-- Light Symbol --%3E%3Ccircle cx='180' cy='80' r='12'/%3E%3Cpath d='M171 71l18 18M189 71l-18 18' stroke-width='0.8'/%3E%3C!-- Wire Junction --%3E%3Cpath d='M200 280h60M230 280v-40M230 240h40' stroke-width='1'/%3E%3Ccircle cx='230' cy='280' r='4' fill='%23333'/%3E%3C!-- Earth Symbol --%3E%3Cpath d='M350 100v20M340 120h20M344 125h12M348 130h4' stroke-width='1'/%3E%3C!-- Conduit Path --%3E%3Cpath d='M160 350c40-20 80 20 120 0' stroke-dasharray='8,4' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 400px 400px;
-    pointer-events: none;
-  }
-
-  /* Blueprint Electrical Background - Darker variant */
-  .blueprint-bg-dark {
-    position: relative;
-  }
-
-  .blueprint-bg-dark::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='%23fff' stroke-width='0.5'%3E%3C!-- Grid Lines --%3E%3Cpath d='M0 50h400M0 100h400M0 150h400M0 200h400M0 250h400M0 300h400M0 350h400M50 0v400M100 0v400M150 0v400M200 0v400M250 0v400M300 0v400M350 0v400' stroke-dasharray='2,4' stroke-width='0.3'/%3E%3C!-- Switch Symbol --%3E%3Ccircle cx='80' cy='80' r='8'/%3E%3Cpath d='M72 80h-12M88 80h12M80 72v-12'/%3E%3Cpath d='M74 74l12 12' stroke-width='0.8'/%3E%3C!-- Socket Symbol --%3E%3Crect x='290' cy='70' width='20' height='20' rx='2'/%3E%3Ccircle cx='295' cy='77' r='2'/%3E%3Ccircle cx='305' cy='77' r='2'/%3E%3Cpath d='M300 82v6'/%3E%3C!-- Wire Run --%3E%3Cpath d='M40 180h80M120 180v40M120 220h60' stroke-width='1'/%3E%3Ccircle cx='40' cy='180' r='3' fill='%23fff'/%3E%3Ccircle cx='180' cy='220' r='3' fill='%23fff'/%3E%3C!-- MCB Symbol --%3E%3Crect x='240' cy='160' width='12' height='30' rx='1'/%3E%3Cpath d='M246 160v-15M246 190v15'/%3E%3Crect x='243' cy='170' width='6' height='8' fill='%23fff'/%3E%3C!-- Distribution Board --%3E%3Crect x='50' cy='280' width='60' height='80'/%3E%3Cpath d='M60 290h40M60 310h40M60 330h40M60 350h40'/%3E%3Ccircle cx='65' cy='295' r='3'/%3E%3Ccircle cx='65' cy='315' r='3'/%3E%3Ccircle cx='65' cy='335' r='3'/%3E%3Ccircle cx='65' cy='355' r='3'/%3E%3C!-- Fan Symbol --%3E%3Ccircle cx='320' cy='320' r='25'/%3E%3Cpath d='M320 295v50M295 320h50' stroke-width='0.3'/%3E%3Cpath d='M320 300c-8 5-8 15 0 20M320 300c8 5 8 15 0 20M300 320c5-8 15-8 20 0M300 320c5 8 15 8 20 0M340 320c-5 8-15 8-20 0M340 320c-5-8-15-8-20 0M320 340c8-5 8-15 0-20M320 340c-8-5-8-15 0-20' stroke-width='0.8'/%3E%3C!-- Light Symbol --%3E%3Ccircle cx='180' cy='80' r='12'/%3E%3Cpath d='M171 71l18 18M189 71l-18 18' stroke-width='0.8'/%3E%3C!-- Wire Junction --%3E%3Cpath d='M200 280h60M230 280v-40M230 240h40' stroke-width='1'/%3E%3Ccircle cx='230' cy='280' r='4' fill='%23fff'/%3E%3C!-- Earth Symbol --%3E%3Cpath d='M350 100v20M340 120h20M344 125h12M348 130h4' stroke-width='1'/%3E%3C!-- Conduit Path --%3E%3Cpath d='M160 350c40-20 80 20 120 0' stroke-dasharray='8,4' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 400px 400px;
-    pointer-events: none;
-  }
-
   /* Selection */
   ::selection {
-    @apply bg-accent-200 text-neutral-900;
+    @apply bg-amber-100 text-gray-900;
   }
 
-  /* Custom Scrollbar */
+  /* Scrollbar */
   .scrollbar-minimal::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
   .scrollbar-minimal::-webkit-scrollbar-track {
-    @apply bg-neutral-100;
+    @apply bg-gray-100;
   }
 
   .scrollbar-minimal::-webkit-scrollbar-thumb {
-    @apply bg-neutral-400 rounded-full;
+    @apply bg-gray-400 rounded-full;
   }
 
   .scrollbar-minimal::-webkit-scrollbar-thumb:hover {
-    @apply bg-neutral-600;
+    @apply bg-gray-600;
   }
 
-  /* Hide Scrollbar */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -496,130 +129,41 @@
   }
 }
 
-/* ==================== GLOBAL STYLES ==================== */
-
-/* Smooth Scroll */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Default Scrollbar */
+/* Global Styles */
 ::-webkit-scrollbar {
   width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-neutral-100;
+  @apply bg-gray-100;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-neutral-400;
+  @apply bg-gray-400;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-neutral-600;
+  @apply bg-gray-600;
 }
 
-/* Focus Visible */
 *:focus-visible {
-  outline: 3px solid #0a0a0a;
+  outline: 3px solid #111827;
   outline-offset: 2px;
 }
 
-/* Placeholder */
 ::placeholder {
-  @apply text-neutral-400;
+  @apply text-gray-400;
 }
 
-/* Input Autofill */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0 1000px white inset;
-  -webkit-text-fill-color: #171717;
+  -webkit-text-fill-color: #111827;
 }
 
-/* Responsive Typography */
 @media (max-width: 640px) {
   html {
     font-size: 14px;
   }
-}
-
-/* Marquee Animation Keyframes */
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-14px) rotate(1.5deg); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translateY(-6px) rotate(-1deg); }
-  50% { transform: translateY(6px) rotate(1deg); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.05); }
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
-}
-
-.animate-float-delay {
-  animation: float 5s ease-in-out 1.5s infinite;
-}
-
-.animate-glow-pulse {
-  animation: glow-pulse 3s ease-in-out infinite;
-}
-
-/* 3D card hover */
-.card-3d {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.card-3d:hover {
-  transform: perspective(900px) rotateX(-4deg) rotateY(4deg) translateY(-10px);
-  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0,0,0,0.04);
-}
-
-/* Gold gradient text */
-.gradient-text-orange {
-  background: linear-gradient(135deg, #fbbf24 0%, #d97706 50%, #b45309 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glow button */
-.btn-glow {
-  box-shadow: 0 0 0 rgba(217, 119, 6, 0);
-  transition: box-shadow 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
-}
-.btn-glow:hover {
-  box-shadow: 0 0 28px rgba(217, 119, 6, 0.4), 0 8px 20px rgba(217, 119, 6, 0.18);
-  transform: translateY(-2px);
-}
-
-@keyframes electricDashForward {
-  0% { stroke-dashoffset: 18; }
-  100% { stroke-dashoffset: 0; }
-}
-
-@keyframes slideUpFade {
-  0% { opacity: 0; transform: translateY(16px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.animate-slide-up-fade {
-  animation: slideUpFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

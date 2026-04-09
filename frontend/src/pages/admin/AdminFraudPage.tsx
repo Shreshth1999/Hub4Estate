@@ -20,7 +20,7 @@ interface FraudFlag {
 const SEVERITY_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
   LOW:      { label: 'Low',      bg: 'bg-blue-50',   color: 'text-blue-700' },
   MEDIUM:   { label: 'Medium',   bg: 'bg-amber-50',  color: 'text-amber-700' },
-  HIGH:     { label: 'High',     bg: 'bg-orange-50', color: 'text-orange-700' },
+  HIGH:     { label: 'High',     bg: 'bg-amber-50', color: 'text-amber-800' },
   CRITICAL: { label: 'Critical', bg: 'bg-red-50',    color: 'text-red-700' },
 };
 

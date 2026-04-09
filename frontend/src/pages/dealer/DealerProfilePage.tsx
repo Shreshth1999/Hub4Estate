@@ -48,7 +48,7 @@ interface Brand { id: string; name: string; logo?: string }
 const STATUS_CONFIG: Record<string, { dot: string; color: string; bg: string; label: string }> = {
   VERIFIED:             { dot: 'bg-green-400', color: 'text-green-700', bg: 'bg-green-50 border-green-200', label: 'Verified' },
   PENDING_VERIFICATION: { dot: 'bg-amber-400', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200', label: 'Pending Verification' },
-  DOCUMENTS_PENDING:    { dot: 'bg-orange-400', color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200', label: 'Documents Required' },
+  DOCUMENTS_PENDING:    { dot: 'bg-amber-500', color: 'text-amber-800', bg: 'bg-amber-50 border-amber-200', label: 'Documents Required' },
   UNDER_REVIEW:         { dot: 'bg-blue-400',  color: 'text-blue-700',  bg: 'bg-blue-50 border-blue-200',  label: 'Under Review' },
 };
 
@@ -297,6 +297,22 @@ export function DealerProfilePage() {
   const shopImages = profile?.shopImages || [];
   const imgUrl = (p: string) => p.startsWith('http') ? p : `${API_BASE}${p}`;
 
+  // Profile completion percentage
+  const completionChecks = [
+    { label: 'Business name', done: !!profile?.businessName },
+    { label: 'GST number', done: !!profile?.gstNumber },
+    { label: 'Shop address', done: !!profile?.shopAddress },
+    { label: 'Description', done: !!profile?.description },
+    { label: 'Shop photos', done: (profile?.shopImages || []).length > 0 },
+    { label: 'Brands added', done: (profile?.brandMappings || []).length > 0 },
+    { label: 'Categories set', done: (profile?.categoryMappings || []).length > 0 },
+    { label: 'Service areas', done: (profile?.serviceAreas || []).length > 0 },
+    { label: 'GST document', done: !!profile?.gstDocument },
+    { label: 'PAN document', done: !!profile?.panDocument },
+  ];
+  const completedCount = completionChecks.filter(c => c.done).length;
+  const completionPct = Math.round((completedCount / completionChecks.length) * 100);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Toasts */}
@@ -323,10 +339,48 @@ export function DealerProfilePage() {
               {profile?.city}, {profile?.state}
             </p>
           </div>
+          {/* Profile completion indicator in header */}
+          <div className="flex-shrink-0 text-right">
+            <div className="flex items-center gap-2">
+              <div className="w-24 bg-gray-100 rounded-full h-2">
+                <div
+                  className={`h-2 rounded-full transition-all ${completionPct === 100 ? 'bg-green-500' : completionPct >= 60 ? 'bg-amber-500' : 'bg-red-400'}`}
+                  style={{ width: `${completionPct}%` }}
+                />
+              </div>
+              <span className={`text-sm font-semibold ${completionPct === 100 ? 'text-green-600' : completionPct >= 60 ? 'text-amber-600' : 'text-red-500'}`}>
+                {completionPct}%
+              </span>
+            </div>
+            <p className="text-[10px] text-gray-400 mt-0.5">Profile Complete</p>
+          </div>
         </div>
       </div>
 
       <div className="px-6 py-6 max-w-5xl mx-auto">
+        {/* Profile Completion Banner */}
+        {completionPct < 100 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-4 mb-5">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-gray-900">Profile Completion - {completionPct}%</p>
+              <span className="text-xs text-gray-400">{completedCount}/{completionChecks.length} items</span>
+            </div>
+            <div className="w-full bg-gray-100 rounded-full h-2 mb-3">
+              <div
+                className={`h-2 rounded-full transition-all ${completionPct >= 60 ? 'bg-amber-500' : 'bg-red-400'}`}
+                style={{ width: `${completionPct}%` }}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {completionChecks.filter(c => !c.done).map(c => (
+                <span key={c.label} className="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded-md border border-amber-200">
+                  {c.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Alerts */}
         {error && (
           <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-3.5 py-3 mb-5">

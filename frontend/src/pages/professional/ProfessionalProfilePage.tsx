@@ -418,7 +418,7 @@ export function ProfessionalProfilePage() {
                     {!profile?.businessName && !profile?.bio && !profile?.yearsExperience && (
                       <button
                         onClick={() => startEdit('about')}
-                        className="mt-1 text-sm text-orange-600 hover:text-orange-700 font-medium"
+                        className="mt-1 text-sm text-amber-700 hover:text-amber-800 font-medium"
                       >
                         + Add your professional details
                       </button>
@@ -515,7 +515,7 @@ export function ProfessionalProfilePage() {
                     ) : (
                       <div className="flex items-center justify-between">
                         <p className="text-sm text-gray-400 italic">No location added</p>
-                        <button onClick={() => startEdit('contact')} className="text-sm text-orange-600 hover:text-orange-700 font-medium">
+                        <button onClick={() => startEdit('contact')} className="text-sm text-amber-700 hover:text-amber-800 font-medium">
                           + Add location
                         </button>
                       </div>

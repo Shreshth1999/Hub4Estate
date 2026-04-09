@@ -5,7 +5,7 @@ import {
   LogOut, Shield, Users, BarChart3,
   Settings, AlertTriangle, Home, Package, FileText,
   Building2, MessageSquare, Mail, ClipboardList, BookUser,
-  Menu, X, ShieldCheck, ChevronRight, Zap,
+  Menu, X, ShieldCheck, ChevronRight,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { AIAssistantWidget } from '../AIAssistantWidget';
@@ -136,9 +136,7 @@ export function AdminLayout() {
         {/* Brand */}
         <div className="h-14 flex items-center px-4 border-b border-slate-800/80">
           <Link to="/admin" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center rounded-lg shadow-sm">
-              <Shield className="w-4 h-4 text-white" />
-            </div>
+            <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-7 h-7 object-contain" />
             <div>
               <span className="text-sm font-bold text-white block leading-tight tracking-tight">Hub4Estate</span>
               <span className="text-[10px] text-red-400 font-semibold tracking-wider uppercase">Admin</span>
@@ -174,9 +172,7 @@ export function AdminLayout() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 z-50">
         <Link to="/admin" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center rounded-lg">
-            <Shield className="w-4 h-4 text-white" />
-          </div>
+          <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-7 h-7 object-contain" />
           <span className="text-sm font-bold text-white">Hub4Estate Admin</span>
         </Link>
         <div className="flex items-center gap-2">

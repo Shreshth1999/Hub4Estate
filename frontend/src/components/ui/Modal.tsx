@@ -2,13 +2,15 @@ import {
   useEffect,
   useRef,
   useCallback,
+  useId,
   type ReactNode,
   type KeyboardEvent,
 } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
+export type ModalSize = 'sm' | 'md' | 'lg' | 'full';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -28,7 +30,7 @@ const sizeStyles: Record<ModalSize, string> = {
   sm: 'max-w-[400px]',
   md: 'max-w-[560px]',
   lg: 'max-w-[720px]',
-  xl: 'max-w-[900px]',
+  full: 'max-w-[calc(100vw-2rem)] md:max-w-[calc(100vw-4rem)]',
 };
 
 const FOCUSABLE_SELECTOR =
@@ -45,11 +47,12 @@ export function Modal({
   persistent = false,
   footer,
 }: ModalProps) {
-  const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+  const titleId = useId();
+  const descriptionId = useId();
 
-  // ---- Lock body scroll ----
+  // Lock body scroll
   useEffect(() => {
     if (!isOpen) return;
 
@@ -68,15 +71,15 @@ export function Modal({
     };
   }, [isOpen]);
 
-  // ---- Focus management ----
+  // Focus management
   useEffect(() => {
     if (!isOpen) return;
 
     previousActiveElement.current = document.activeElement as HTMLElement;
 
-    // Focus first focusable element in modal (after mount)
     const timer = setTimeout(() => {
-      const firstFocusable = contentRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      const firstFocusable =
+        contentRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
       firstFocusable?.focus();
     }, 50);
 
@@ -86,7 +89,7 @@ export function Modal({
     };
   }, [isOpen]);
 
-  // ---- Escape key ----
+  // Escape key
   useEffect(() => {
     if (!isOpen || persistent) return;
 
@@ -101,12 +104,13 @@ export function Modal({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, persistent, onClose]);
 
-  // ---- Tab trap ----
+  // Tab trap
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
       if (e.key !== 'Tab') return;
 
-      const focusableElements = contentRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+      const focusableElements =
+        contentRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
       if (!focusableElements || focusableElements.length === 0) return;
 
       const first = focusableElements[0];
@@ -123,85 +127,97 @@ export function Modal({
     [],
   );
 
-  // ---- Backdrop click ----
+  // Backdrop click
   const handleBackdropClick = useCallback(() => {
     if (!persistent) onClose();
   }, [persistent, onClose]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      ref={overlayRef}
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-      className="fixed inset-0 z-50 flex items-end md:items-center justify-center"
-      onKeyDown={handleKeyDown}
-    >
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-navy/60 backdrop-blur-sm animate-backdrop-in"
-        onClick={handleBackdropClick}
-        aria-hidden="true"
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          aria-describedby={description ? descriptionId : undefined}
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center"
+          onKeyDown={handleKeyDown}
+        >
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm"
+            onClick={handleBackdropClick}
+            aria-hidden="true"
+          />
 
-      {/* Content — bottom sheet on mobile, centered on md+ */}
-      <div
-        ref={contentRef}
-        className={cn(
-          // Base
-          'relative z-10 bg-white w-full',
-          'flex flex-col max-h-[90vh]',
-          // Mobile: bottom sheet
-          'rounded-t-2xl animate-sheet-up',
-          // Desktop: centered dialog
-          'md:rounded-none md:animate-modal-in md:border-2 md:border-neutral-900 md:shadow-brutal-lg',
-          sizeStyles[size],
-        )}
-      >
-        {/* Header */}
-        {!hideHeader && (
-          <div className="flex items-center justify-between px-5 py-4 border-b-2 border-neutral-200 flex-shrink-0">
-            <div>
-              {title && (
-                <h2 className="text-lg font-bold text-neutral-900 uppercase tracking-wide">
-                  {title}
-                </h2>
-              )}
-              {description && (
-                <p className="text-sm text-neutral-500 mt-0.5">{description}</p>
-              )}
-            </div>
-            <button
-              onClick={onClose}
-              className={cn(
-                'w-10 h-10 flex items-center justify-center flex-shrink-0',
-                'border-2 border-neutral-300 hover:border-neutral-900',
-                'text-neutral-500 hover:text-neutral-900',
-                'transition-all duration-200',
-                'hover:shadow-brutal-sm hover:-translate-y-0.5',
-                'active:translate-x-[1px] active:translate-y-[1px] active:shadow-none',
-              )}
-              aria-label="Close modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        )}
+          {/* Content */}
+          <motion.div
+            ref={contentRef}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className={cn(
+              'relative z-10 bg-white w-full',
+              'flex flex-col max-h-[90vh]',
+              // Mobile: bottom sheet style
+              'rounded-t-2xl',
+              // Desktop: centered dialog
+              'md:rounded-none md:border-2 md:border-neutral-900 md:shadow-brutal-lg',
+              sizeStyles[size],
+            )}
+          >
+            {/* Header */}
+            {!hideHeader && (
+              <div className="flex items-center justify-between px-5 py-4 border-b-2 border-neutral-200 flex-shrink-0">
+                <div>
+                  {title && (
+                    <h2
+                      id={titleId}
+                      className="text-lg font-bold text-neutral-900 uppercase tracking-wide"
+                    >
+                      {title}
+                    </h2>
+                  )}
+                  {description && (
+                    <p id={descriptionId} className="text-sm text-neutral-500 mt-0.5">
+                      {description}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={onClose}
+                  className={cn(
+                    'w-11 h-11 flex items-center justify-center flex-shrink-0',
+                    'border-2 border-neutral-300 hover:border-neutral-900',
+                    'text-neutral-500 hover:text-neutral-900',
+                    'transition-all duration-200',
+                    'hover:shadow-brutal-sm hover:-translate-y-0.5',
+                    'active:translate-x-[1px] active:translate-y-[1px] active:shadow-none',
+                  )}
+                  aria-label="Close modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
 
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto px-5 py-5">
-          {children}
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto px-5 py-5">{children}</div>
+
+            {/* Footer */}
+            {footer && (
+              <div className="px-5 py-4 border-t-2 border-neutral-200 flex-shrink-0">
+                {footer}
+              </div>
+            )}
+          </motion.div>
         </div>
-
-        {/* Footer */}
-        {footer && (
-          <div className="px-5 py-4 border-t-2 border-neutral-200 flex-shrink-0">
-            {footer}
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }

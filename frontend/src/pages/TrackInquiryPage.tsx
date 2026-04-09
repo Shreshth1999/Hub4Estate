@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import { api } from '../lib/api';
 import { ImagePreview } from '../components/common/ImagePreview';
-import { ElectricWireDivider } from '../components/ElectricWireDivider';
 import { useInView, revealStyle } from '../hooks/useInView';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
@@ -95,7 +94,7 @@ export function TrackInquiryPage() {
     <div className="min-h-screen bg-white">
 
       {/* Hero — dark */}
-      <div className="bg-[#0B1628] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
@@ -111,8 +110,6 @@ export function TrackInquiryPage() {
           </p>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       <div className="max-w-2xl mx-auto px-4 py-10 space-y-6">
 

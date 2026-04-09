@@ -323,7 +323,7 @@ export function ConversationList({ conversations, onSelectConversation, selected
                   </p>
                 </div>
                 {conv.unreadCount > 0 && (
-                  <span className="bg-orange-500 text-white text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0">
+                  <span className="bg-amber-600 text-white text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0">
                     {conv.unreadCount}
                   </span>
                 )}

@@ -7,14 +7,32 @@ import { z } from 'zod';
 import prisma from '../config/database';
 import { env } from '../config/env';
 import { validateBody } from '../middleware/validation';
+import { validate } from '../middleware/validate';
 import { authenticateToken } from '../middleware/auth';
 import { sendOTPEmail } from '../services/email.service';
 import { sendOTPSMS } from '../services/sms.service';
 import { logActivity } from '../services/activity.service';
 import { tokenService } from '../services/token.service';
 import { otpLimiter, loginLimiter, credentialLoginLimiter, passwordResetLimiter, refreshLimiter } from '../middleware/rateLimiter';
+import {
+  sendOtpSchema as sendOtpValidatorSchema,
+  verifyOtpSchema as verifyOtpValidatorSchema,
+  dealerRegisterSchema,
+  dealerLoginSchema as dealerLoginValidatorSchema,
+  adminLoginSchema as adminLoginValidatorSchema,
+} from '../validators/auth.validators';
 
 const router = Router();
+const isDev = env.NODE_ENV === 'development';
+
+// Mask phone/email for safe production logging
+function maskPhone(phone: string): string {
+  return '***' + phone.slice(-4);
+}
+function maskEmail(email: string): string {
+  const [local, domain] = email.split('@');
+  return local.slice(0, 2) + '***@' + domain;
+}
 
 // ============================================
 // OTP-BASED AUTH (Phone/Email)
@@ -34,7 +52,7 @@ const sendOTPSchema = z.object({
   message: 'Either phone or email is required',
 });
 
-router.post('/send-otp', otpLimiter, validateBody(sendOTPSchema), async (req, res) => {
+router.post('/send-otp', otpLimiter, validate({ body: sendOtpValidatorSchema }), validateBody(sendOTPSchema), async (req, res) => {
   try {
     const { phone, email, type } = req.body;
     const identifier = phone || email;
@@ -79,18 +97,18 @@ router.post('/send-otp', otpLimiter, validateBody(sendOTPSchema), async (req, re
       sent = await sendOTPEmail(email, otpCode, type);
       method = 'email';
       if (sent) {
-        process.stdout.write(JSON.stringify({ level: 'info', event: 'otp_email_sent', email }) + '\n');
+        process.stdout.write(JSON.stringify({ level: 'info', event: 'otp_email_sent', email: isDev ? email : maskEmail(email) }) + '\n');
       } else {
-        process.stdout.write(JSON.stringify({ level: 'warn', event: 'otp_email_failed', email }) + '\n');
+        process.stdout.write(JSON.stringify({ level: 'warn', event: 'otp_email_failed', email: isDev ? email : maskEmail(email) }) + '\n');
       }
     } else if (phone) {
       const smsResult = await sendOTPSMS(phone, otpCode);
       sent = smsResult.success;
       method = 'phone';
       if (sent) {
-        process.stdout.write(JSON.stringify({ level: 'info', event: 'otp_sms_sent', phone }) + '\n');
+        process.stdout.write(JSON.stringify({ level: 'info', event: 'otp_sms_sent', phone: isDev ? phone : maskPhone(phone) }) + '\n');
       } else {
-        process.stdout.write(JSON.stringify({ level: 'warn', event: 'otp_sms_failed', phone, error: smsResult.error }) + '\n');
+        process.stdout.write(JSON.stringify({ level: 'warn', event: 'otp_sms_failed', phone: isDev ? phone : maskPhone(phone), error: smsResult.error }) + '\n');
       }
     }
 
@@ -127,7 +145,7 @@ const verifyOTPSchema = z.object({
   message: 'Either phone or email is required',
 });
 
-router.post('/verify-otp', loginLimiter, validateBody(verifyOTPSchema), async (req, res) => {
+router.post('/verify-otp', loginLimiter, validate({ body: verifyOtpValidatorSchema }), validateBody(verifyOTPSchema), async (req, res) => {
   try {
     const { phone, email, otp, type } = req.body;
     const identifier = phone || email;
@@ -621,7 +639,7 @@ const dealerRegistrationSchema = z.object({
   pincode: z.string().length(6, 'Pincode must be exactly 6 digits'),
 });
 
-router.post('/dealer/register', validateBody(dealerRegistrationSchema), async (req, res) => {
+router.post('/dealer/register', validate({ body: dealerRegisterSchema }), validateBody(dealerRegistrationSchema), async (req, res) => {
   try {
     process.stdout.write(JSON.stringify({ level: 'info', event: 'dealer_registration_attempt', email: req.body.email }) + '\n');
 
@@ -725,7 +743,7 @@ const dealerLoginSchema = z.object({
   password: z.string(),
 });
 
-router.post('/dealer/login', credentialLoginLimiter, validateBody(dealerLoginSchema), async (req, res) => {
+router.post('/dealer/login', credentialLoginLimiter, validate({ body: dealerLoginValidatorSchema }), validateBody(dealerLoginSchema), async (req, res) => {
   try {
     const dealer = await prisma.dealer.findUnique({
       where: { email: req.body.email },
@@ -814,7 +832,7 @@ const adminLoginSchema = z.object({
   password: z.string(),
 });
 
-router.post('/admin/login', credentialLoginLimiter, validateBody(adminLoginSchema), async (req, res) => {
+router.post('/admin/login', credentialLoginLimiter, validate({ body: adminLoginValidatorSchema }), validateBody(adminLoginSchema), async (req, res) => {
   try {
     const admin = await prisma.admin.findUnique({
       where: { email: req.body.email },

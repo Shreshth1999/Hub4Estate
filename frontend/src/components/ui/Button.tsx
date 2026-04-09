@@ -1,11 +1,13 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'ghost' | 'destructive';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onAnimationStart' | 'onDragStart' | 'onDragEnd' | 'onDrag'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
@@ -16,18 +18,18 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: cn(
-    'bg-cta-500 text-navy border-2 border-navy',
-    'hover:shadow-brutal hover:-translate-y-0.5',
+    'bg-amber-600 text-white border-2 border-neutral-900',
+    'hover:bg-amber-700 hover:shadow-brutal hover:-translate-y-0.5',
     'active:shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px]',
   ),
   secondary: cn(
-    'bg-white text-neutral-900 border-2 border-neutral-900',
-    'hover:bg-neutral-900 hover:text-white hover:shadow-brutal hover:-translate-y-0.5',
+    'bg-neutral-200 text-neutral-900 border-2 border-neutral-300',
+    'hover:bg-neutral-300 hover:shadow-brutal hover:-translate-y-0.5',
     'active:shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px]',
   ),
-  accent: cn(
-    'bg-accent-600 text-white border-2 border-accent-700',
-    'hover:bg-accent-700 hover:shadow-brutal hover:-translate-y-0.5',
+  outline: cn(
+    'bg-white text-neutral-900 border-2 border-neutral-900',
+    'hover:bg-neutral-900 hover:text-white hover:shadow-brutal hover:-translate-y-0.5',
     'active:shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px]',
   ),
   ghost: cn(
@@ -36,16 +38,16 @@ const variantStyles: Record<ButtonVariant, string> = {
     'active:bg-neutral-200',
   ),
   destructive: cn(
-    'bg-error-500 text-white border-2 border-error-700',
-    'hover:bg-error-600 hover:shadow-brutal hover:-translate-y-0.5',
+    'bg-red-500 text-white border-2 border-red-700',
+    'hover:bg-red-600 hover:shadow-brutal hover:-translate-y-0.5',
     'active:shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px]',
   ),
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3 text-xs gap-1.5',
-  md: 'h-10 px-5 text-sm gap-2',
-  lg: 'h-12 px-7 text-base gap-2.5',
+  sm: 'h-9 px-3 text-xs gap-1.5',
+  md: 'h-11 px-5 text-sm gap-2',
+  lg: 'h-[52px] px-7 text-base gap-2.5',
 };
 
 const iconSizes: Record<ButtonSize, string> = {
@@ -73,16 +75,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const isDisabled = disabled || isLoading;
 
     return (
-      <button
+      <motion.button
         ref={ref}
         disabled={isDisabled}
+        aria-disabled={isDisabled || undefined}
+        aria-busy={isLoading || undefined}
+        whileTap={isDisabled ? undefined : { scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
         className={cn(
           // Base styles
           'inline-flex items-center justify-center',
           'font-bold uppercase tracking-wide',
           'transition-all duration-200 ease-out',
-          'select-none whitespace-nowrap',
-          'min-w-[44px] min-h-[44px]', // 44px minimum touch target
+          'select-none whitespace-nowrap rounded-none',
+          // 44px minimum touch target
+          'min-w-[44px] min-h-[44px]',
           // Variant
           variantStyles[variant],
           // Size
@@ -93,18 +100,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
           className,
         )}
-        {...props}
+        {...(props as Omit<HTMLMotionProps<'button'>, 'ref'>)}
       >
         {isLoading ? (
           <Loader2 className={cn('animate-spin', iconSizes[size])} />
         ) : (
-          leftIcon && <span className={cn('flex-shrink-0', iconSizes[size])}>{leftIcon}</span>
+          leftIcon && (
+            <span className={cn('flex-shrink-0', iconSizes[size])}>{leftIcon}</span>
+          )
         )}
         {children}
         {!isLoading && rightIcon && (
           <span className={cn('flex-shrink-0', iconSizes[size])}>{rightIcon}</span>
         )}
-      </button>
+      </motion.button>
     );
   },
 );

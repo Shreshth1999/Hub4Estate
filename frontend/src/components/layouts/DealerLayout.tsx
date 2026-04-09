@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/lib/store';
 import {
-  User, LogOut, Zap, FileText, CheckCircle,
+  User, LogOut, FileText, CheckCircle,
   Award, Home, MessageSquare, Package, Menu, X,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -65,12 +65,10 @@ export function DealerLayout() {
       <aside className="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:inset-y-0 bg-gray-900">
         <div className="h-14 flex items-center px-4 border-b border-gray-800">
           <Link to="/dealer" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-orange-500 flex items-center justify-center rounded-lg">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
+            <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-7 h-7 object-contain" />
             <div>
               <span className="text-sm font-semibold text-white block leading-tight">Hub4Estate</span>
-              <span className="text-[10px] text-orange-400 font-medium">Dealer Portal</span>
+              <span className="text-[10px] text-purple-400 font-medium">Dealer Portal</span>
             </div>
           </Link>
         </div>
@@ -100,9 +98,7 @@ export function DealerLayout() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4 z-50">
         <Link to="/dealer" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-orange-500 flex items-center justify-center rounded-lg">
-            <Zap className="w-4 h-4 text-white" />
-          </div>
+          <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-7 h-7 object-contain" />
           <span className="text-sm font-semibold text-white">Hub4Estate</span>
         </Link>
         <button

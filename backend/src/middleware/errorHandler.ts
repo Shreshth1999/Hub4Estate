@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { Sentry } from '../config/sentry';
 
 /**
  * Custom error class for application errors with HTTP status codes.
@@ -61,6 +62,12 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ): void {
+  // Report to Sentry (skips known/expected errors via ignoreErrors config)
+  Sentry.captureException(err, {
+    tags: { method: req.method, path: req.path },
+    extra: { requestId: req.headers['x-request-id'] },
+  });
+
   const requestId = req.headers['x-request-id'] as string;
 
   if (err instanceof AppError) {

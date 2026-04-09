@@ -11,7 +11,7 @@ const badgeStyles: Record<BadgeVariant, string> = {
   info: 'bg-primary-100 text-primary-800 border-primary-800',
   pending: 'bg-neutral-100 text-neutral-800 border-neutral-800',
   default: 'bg-neutral-100 text-neutral-800 border-neutral-300',
-  urgent: 'bg-accent-500 text-white border-accent-600 animate-pulse-slow',
+  urgent: 'bg-amber-500 text-white border-amber-600 animate-pulse-slow',
 };
 
 export function StatusBadge({
@@ -81,7 +81,7 @@ export function Stepper({
                   index < currentStep
                     ? 'bg-neutral-900 text-white border-neutral-900'
                     : index === currentStep
-                      ? 'bg-accent-500 text-white border-accent-500 shadow-brutal-sm'
+                      ? 'bg-amber-500 text-white border-amber-500 shadow-brutal-sm'
                       : 'bg-white text-neutral-400 border-neutral-300'
                 }`}
               >
@@ -385,9 +385,9 @@ export function Button({
   const variants = {
     primary: 'bg-neutral-900 text-white border-neutral-900 hover:bg-white hover:text-neutral-900 hover:shadow-brutal active:shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px]',
     secondary: 'bg-white text-neutral-900 border-neutral-900 hover:bg-neutral-900 hover:text-white hover:shadow-brutal active:shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px]',
-    accent: 'bg-accent-600 text-white border-accent-600 hover:bg-accent-700 hover:border-accent-700 hover:shadow-brutal active:shadow-brutal-sm',
+    accent: 'bg-amber-600 text-white border-amber-600 hover:bg-amber-700 hover:border-amber-700 hover:shadow-brutal active:shadow-brutal-sm',
     ghost: 'bg-transparent text-neutral-700 border-transparent hover:bg-neutral-100 hover:text-neutral-900',
-    urgent: 'bg-neutral-950 text-white border-neutral-950 hover:bg-accent-600 hover:border-accent-600 hover:scale-105 hover:shadow-brutal-lg active:scale-100',
+    urgent: 'bg-neutral-950 text-white border-neutral-950 hover:bg-amber-600 hover:border-amber-600 hover:scale-105 hover:shadow-brutal-lg active:scale-100',
   };
 
   const sizes = {

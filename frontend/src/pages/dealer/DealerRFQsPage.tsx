@@ -122,7 +122,7 @@ export function DealerRFQsPage() {
             {filter !== 'urgent' && (
               <Link
                 to="/dealer/profile"
-                className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-gray-700 hover:text-orange-600 transition-colors"
+                className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-gray-700 hover:text-amber-700 transition-colors"
               >
                 Update your profile <ChevronRight className="w-3.5 h-3.5" />
               </Link>
@@ -216,7 +216,7 @@ export function DealerRFQsPage() {
                   </div>
 
                   {/* CTA */}
-                  <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg group-hover:bg-orange-600 transition-colors">
+                  <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg group-hover:bg-amber-700 transition-colors">
                     Quote
                     <ChevronRight className="w-3 h-3" />
                   </div>

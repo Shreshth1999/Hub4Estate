@@ -226,16 +226,16 @@ export function ProductDetailPage() {
               <p className="text-gray-600 leading-relaxed">{product.description}</p>
             )}
 
-            <div className="bg-orange-50 rounded-xl border border-orange-100 p-5">
+            <div className="bg-amber-50 rounded-xl border border-amber-100 p-5">
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 bg-amber-600 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Zap className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Get the Best Price in 60 Seconds</h4>
                   <p className="text-sm text-gray-600">
                     Add to RFQ and receive competitive quotes from verified dealers.
-                    <span className="font-medium text-orange-600"> Save 15–25% vs retail prices.</span>
+                    <span className="font-medium text-amber-700"> Save 15–25% vs retail prices.</span>
                   </p>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export function ProductDetailPage() {
               </button>
               <div className="flex gap-2">
                 <button onClick={handleSaveProduct} className="px-3 py-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-                  {isSaved ? <BookmarkCheck className="w-4 h-4 text-orange-500" /> : <Bookmark className="w-4 h-4 text-gray-500" />}
+                  {isSaved ? <BookmarkCheck className="w-4 h-4 text-amber-600" /> : <Bookmark className="w-4 h-4 text-gray-500" />}
                 </button>
                 <button onClick={handleShare} className="px-3 py-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
                   <Share2 className="w-4 h-4 text-gray-500" />
@@ -428,7 +428,7 @@ export function ProductDetailPage() {
               { icon: Shield, title: 'Verified Dealers', text: 'GST registered, ISI certified products only.' },
             ].map(({ icon: Icon, title, text }) => (
               <div key={title} className="bg-white/10 rounded-xl border border-white/10 p-5">
-                <Icon className="w-5 h-5 text-orange-400 mb-3" />
+                <Icon className="w-5 h-5 text-amber-500 mb-3" />
                 <h3 className="text-sm font-semibold text-white mb-1">{title}</h3>
                 <p className="text-xs text-gray-400">{text}</p>
               </div>
@@ -468,7 +468,7 @@ export function ProductDetailPage() {
                     <h3 className="text-xs font-medium text-gray-900 mt-2 line-clamp-2">{sp.name}</h3>
                   </div>
                   <div className="px-3 py-2 bg-gray-50 border-t border-gray-100">
-                    <span className="text-xs font-medium text-orange-600">Get Quote →</span>
+                    <span className="text-xs font-medium text-amber-700">Get Quote →</span>
                   </div>
                 </Link>
               ))}

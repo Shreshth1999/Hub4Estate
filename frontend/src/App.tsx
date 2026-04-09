@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { SkipNav } from '@/components/SkipNav';
 
 // Separate Layouts for each user type
 import { UserLayout, DealerLayout, AdminLayout, ProfessionalLayout } from '@/components/layouts';
@@ -39,6 +40,7 @@ const DealerQuotesPage = lazy(() => import('@/pages/dealer/DealerQuotesPage').th
 const DealerProfilePage = lazy(() => import('@/pages/dealer/DealerProfilePage').then(m => ({ default: m.DealerProfilePage })));
 const DealerQuoteSubmitPage = lazy(() => import('@/pages/dealer/DealerQuoteSubmitPage').then(m => ({ default: m.DealerQuoteSubmitPage })));
 const DealerAvailableInquiriesPage = lazy(() => import('@/pages/dealer/DealerAvailableInquiriesPage').then(m => ({ default: m.DealerAvailableInquiriesPage })));
+const DealerPerformancePage = lazy(() => import('@/pages/dealer/DealerPerformancePage').then(m => ({ default: m.DealerPerformancePage })));
 
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminProfessionalsPage = lazy(() => import('@/pages/admin/AdminProfessionalsPage').then(m => ({ default: m.AdminProfessionalsPage })));
@@ -68,8 +70,14 @@ const ContactPage = lazy(() => import('@/pages/ContactPage').then(m => ({ defaul
 const AIAssistantPage = lazy(() => import('@/pages/AIAssistantPage').then(m => ({ default: m.AIAssistantPage })));
 const TrackInquiryPage = lazy(() => import('@/pages/TrackInquiryPage').then(m => ({ default: m.TrackInquiryPage })));
 const SmartSlipScanPage = lazy(() => import('@/pages/SmartSlipScanPage').then(m => ({ default: m.SmartSlipScanPage })));
+const DealerLandingPage = lazy(() => import('@/pages/DealerLandingPage').then(m => ({ default: m.DealerLandingPage })));
+const UserLandingPage = lazy(() => import('@/pages/UserLandingPage').then(m => ({ default: m.UserLandingPage })));
 
 const UserDashboard = lazy(() => import('@/pages/user/UserDashboard').then(m => ({ default: m.UserDashboard })));
+const UserInquiriesPage = lazy(() => import('@/pages/user/UserInquiriesPage').then(m => ({ default: m.UserInquiriesPage })));
+const UserQuotesPage = lazy(() => import('@/pages/user/UserQuotesPage').then(m => ({ default: m.UserQuotesPage })));
+const UserProfilePage = lazy(() => import('@/pages/user/UserProfilePage').then(m => ({ default: m.UserProfilePage })));
+const UserSavedProductsPage = lazy(() => import('@/pages/user/UserSavedProductsPage').then(m => ({ default: m.UserSavedProductsPage })));
 const MessagesPage = lazy(() => import('@/pages/MessagesPage').then(m => ({ default: m.MessagesPage })));
 const ComparePage = lazy(() => import('@/pages/ComparePage').then(m => ({ default: m.ComparePage })));
 
@@ -95,6 +103,9 @@ function PageLoader() {
  */
 function App() {
   return (
+    <>
+    <SkipNav />
+    <div id="main-content">
     <Suspense fallback={<PageLoader />}>
       <Routes>
         {/* ========================================
@@ -136,6 +147,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/track" element={<TrackInquiryPage />} />
           <Route path="/smart-scan" element={<SmartSlipScanPage />} />
+          <Route path="/for-dealers" element={<DealerLandingPage />} />
+          <Route path="/for-buyers" element={<UserLandingPage />} />
         </Route>
 
         {/* ========================================
@@ -145,6 +158,10 @@ function App() {
         <Route element={<ProtectedRoute requiredRole="user" />}>
           <Route element={<UserLayout />}>
             <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/dashboard/inquiries" element={<UserInquiriesPage />} />
+            <Route path="/dashboard/quotes" element={<UserQuotesPage />} />
+            <Route path="/dashboard/profile" element={<UserProfilePage />} />
+            <Route path="/dashboard/saved" element={<UserSavedProductsPage />} />
             <Route path="/rfq/create" element={<CreateRFQPage />} />
             <Route path="/rfq/my-rfqs" element={<MyRFQsPage />} />
             <Route path="/rfq/:id" element={<RFQDetailPage />} />
@@ -185,6 +202,7 @@ function App() {
             <Route path="/dealer/rfqs/:rfqId/quote" element={<DealerQuoteSubmitPage />} />
             <Route path="/dealer/quotes" element={<DealerQuotesPage />} />
             <Route path="/dealer/profile" element={<DealerProfilePage />} />
+            <Route path="/dealer/performance" element={<DealerPerformancePage />} />
             <Route path="/dealer/messages" element={<MessagesPage />} />
           </Route>
         </Route>
@@ -214,6 +232,8 @@ function App() {
         </Route>
       </Routes>
     </Suspense>
+    </div>
+    </>
   );
 }
 

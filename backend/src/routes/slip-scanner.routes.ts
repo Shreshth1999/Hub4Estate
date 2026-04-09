@@ -2,8 +2,9 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
-import { authenticateUser, AuthRequest } from '../middleware/auth';
+import { authenticateUser, requireAnyAuth, AuthRequest } from '../middleware/auth';
 import { analyzeImageWithClaudeVision, parseProductsWithAI, getBrandSuggestions } from '../services/ai-parser.service';
+import { slipScanRateLimit, brandSuggestionRateLimit } from '../middleware/rateLimiter';
 import prisma from '../config/database';
 import { z } from 'zod';
 
@@ -43,8 +44,9 @@ const upload = multer({
 /**
  * POST /api/slip-scanner/parse
  * Upload image or PDF and parse with Claude AI (Vision for images, text for PDFs)
+ * CRIT-15 FIX: Requires authentication + per-user rate limit (10/hour)
  */
-router.post('/parse', upload.single('image'), async (req: AuthRequest, res) => {
+router.post('/parse', requireAnyAuth, slipScanRateLimit, upload.single('image'), async (req: AuthRequest, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
@@ -112,8 +114,9 @@ router.post('/parse', upload.single('image'), async (req: AuthRequest, res) => {
 /**
  * GET /api/slip-scanner/brand-suggestions?productName=xxx
  * Get top 5 brand suggestions for a product name
+ * Requires authentication + per-user rate limit (20/hour)
  */
-router.get('/brand-suggestions', async (req, res) => {
+router.get('/brand-suggestions', requireAnyAuth, brandSuggestionRateLimit, async (req, res) => {
   const { productName } = req.query;
   if (!productName || typeof productName !== 'string') {
     return res.status(400).json({ error: 'productName query param is required' });

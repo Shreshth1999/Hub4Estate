@@ -5,7 +5,6 @@ import { CategoryTile, STATIC_CATEGORIES } from '../../components/InteractiveCat
 import {
   Search, ArrowRight, Package, Shield, CheckCircle, Zap, Loader2
 } from 'lucide-react';
-import { ElectricWireDivider } from '../../components/ElectricWireDivider';
 import { useInView, revealStyle } from '../../hooks/useInView';
 
 interface Category {
@@ -51,7 +50,7 @@ export function CategoriesPage() {
       {/* Hero — dark */}
       <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-orange-500/8 rounded-full blur-3xl animate-glow-pulse" />
+          <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-amber-400/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '1.5s' }} />
         </div>
         <div ref={heroRef as any} className="max-w-6xl mx-auto px-6 py-20 relative">
@@ -63,7 +62,7 @@ export function CategoriesPage() {
               </div>
               <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight" style={revealStyle(heroIn, 0.06)}>
                 Electrical Products.<br />
-                <span className="gradient-text-orange">Best Prices.</span>
+                <span className="text-amber-500">Best Prices.</span>
               </h1>
               <p className="text-gray-400 mb-8 leading-relaxed" style={revealStyle(heroIn, 0.1)}>
                 Browse our catalog. Submit a requirement and get quotes from verified dealers across India — always free for buyers.
@@ -87,8 +86,8 @@ export function CategoriesPage() {
                 { icon: Zap, title: 'Completely Free for Buyers', desc: 'Submit as many requirements as you need. You never pay Hub4Estate.' },
               ].map(({ icon: Icon, title, desc }, i) => (
                 <div key={i} className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-2xl p-4">
-                  <div className="w-9 h-9 bg-orange-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-orange-400" />
+                  <div className="w-9 h-9 bg-amber-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-amber-500" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-white mb-0.5">{title}</p>
@@ -100,8 +99,6 @@ export function CategoriesPage() {
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       {/* Categories Grid */}
       <div ref={gridRef as any} className="max-w-6xl mx-auto px-6 py-14">
@@ -139,8 +136,6 @@ export function CategoriesPage() {
         )}
       </div>
 
-      <ElectricWireDivider dark />
-
       {/* Buying Guides — dark */}
       <div ref={guidesRef as any} className="bg-[#09090B] px-6 py-16">
         <div className="max-w-6xl mx-auto">
@@ -152,7 +147,7 @@ export function CategoriesPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              { title: 'How to Choose the Right Wire Size', description: 'Understanding wire gauge, current capacity, and safety ratings for your project.', category: 'Wires & Cables', accent: 'bg-orange-500/20 text-orange-400' },
+              { title: 'How to Choose the Right Wire Size', description: 'Understanding wire gauge, current capacity, and safety ratings for your project.', category: 'Wires & Cables', accent: 'bg-amber-600/20 text-amber-500' },
               { title: 'MCB vs RCCB: What You Need', description: 'Learn the difference between circuit breakers and when to use each type.', category: 'Switchgear', accent: 'bg-violet-500/20 text-violet-400' },
               { title: 'LED Lighting Guide for Homes', description: 'Wattage, color temperature, and placement tips for perfect home lighting.', category: 'Lighting', accent: 'bg-green-500/20 text-green-400' },
             ].map((guide, index) => (
@@ -166,7 +161,7 @@ export function CategoriesPage() {
                 </span>
                 <h3 className="text-sm font-bold text-white mb-2">{guide.title}</h3>
                 <p className="text-xs text-gray-400 mb-5 leading-relaxed">{guide.description}</p>
-                <Link to="/knowledge" className="text-xs font-bold text-orange-400 hover:text-orange-300 transition-colors">
+                <Link to="/knowledge" className="text-xs font-bold text-amber-500 hover:text-amber-400 transition-colors">
                   Read Guide →
                 </Link>
               </div>
@@ -174,8 +169,6 @@ export function CategoriesPage() {
           </div>
         </div>
       </div>
-
-      <ElectricWireDivider />
 
       <div className="max-w-6xl mx-auto px-6 py-14 text-center">
         <h2 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">Ready to get the best price?</h2>

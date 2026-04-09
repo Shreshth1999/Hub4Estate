@@ -1,71 +1,65 @@
 import { cn } from '@/lib/utils/cn';
 
 // ============================================================
-// Base shimmer bar
+// Types
 // ============================================================
-interface SkeletonBaseProps {
+export type SkeletonVariant = 'text' | 'card' | 'avatar' | 'table-row';
+
+export interface SkeletonProps {
+  variant?: SkeletonVariant;
   className?: string;
+  /** Number of skeleton items to render */
+  count?: number;
+  /** Width override (e.g. '80%', '200px') */
+  width?: string;
+  /** Number of text lines (only for variant="text") */
+  lines?: number;
+  /** Number of table columns (only for variant="table-row") */
+  columns?: number;
+  /** Avatar size in px (only for variant="avatar") */
+  avatarSize?: number;
 }
 
-function SkeletonPulse({ className }: SkeletonBaseProps) {
+// ============================================================
+// Base shimmer block
+// ============================================================
+function Shimmer({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <div
       className={cn(
-        'bg-neutral-200 animate-shimmer',
+        'bg-neutral-200 animate-shimmer rounded-sm',
         'bg-[length:400%_100%]',
         'bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200',
         className,
       )}
+      style={style}
     />
   );
 }
 
 // ============================================================
-// Text — single line of text
+// Text variant — renders one or more shimmer lines
 // ============================================================
-export function SkeletonText({
-  width = '100%',
-  className,
-}: SkeletonBaseProps & { width?: string }) {
-  return (
-    <SkeletonPulse
-      className={cn('h-4 rounded-sm', className)}
-      style-width={width}
-    />
-  );
-}
-
-// Re-implement with inline style so width prop works
-export function TextSkeleton({
-  width = '100%',
-  className,
-}: { width?: string; className?: string }) {
-  return (
-    <div
-      className={cn(
-        'h-4 rounded-sm bg-neutral-200 animate-shimmer',
-        'bg-[length:400%_100%]',
-        'bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200',
-        className,
-      )}
-      style={{ width }}
-    />
-  );
-}
-
-// ============================================================
-// Text Paragraph — multiple lines simulating a paragraph
-// ============================================================
-export function ParagraphSkeleton({
+function TextSkeleton({
   lines = 3,
+  width,
   className,
-}: { lines?: number; className?: string }) {
+}: {
+  lines?: number;
+  width?: string;
+  className?: string;
+}) {
   return (
     <div className={cn('space-y-2.5', className)}>
       {Array.from({ length: lines }).map((_, i) => (
-        <TextSkeleton
+        <Shimmer
           key={i}
-          width={i === lines - 1 ? '60%' : '100%'}
+          className="h-4"
+          style={{
+            width:
+              width ||
+              (i === lines - 1 && lines > 1 ? '60%' : '100%'),
+          }}
         />
       ))}
     </div>
@@ -73,58 +67,23 @@ export function ParagraphSkeleton({
 }
 
 // ============================================================
-// Avatar — square or circle placeholder
+// Card variant
 // ============================================================
-export function AvatarSkeleton({
-  size = 48,
-  rounded = false,
-  className,
-}: { size?: number; rounded?: boolean; className?: string }) {
-  return (
-    <SkeletonPulse
-      className={cn(
-        rounded ? 'rounded-full' : '',
-        className,
-      )}
-    />
-  );
-}
-
-// We need a wrapper because SkeletonPulse uses className, but we need inline size
-export function AvatarSkeletonSized({
-  size = 48,
-  rounded = false,
-  className,
-}: { size?: number; rounded?: boolean; className?: string }) {
+function CardSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'bg-neutral-200 animate-shimmer flex-shrink-0',
-        'bg-[length:400%_100%]',
-        'bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200',
-        rounded ? 'rounded-full' : '',
+        'bg-white border border-neutral-200 rounded-2xl overflow-hidden',
         className,
       )}
-      style={{ width: size, height: size }}
-    />
-  );
-}
-
-// ============================================================
-// Card — full card skeleton
-// ============================================================
-export function CardSkeleton({ className }: { className?: string }) {
-  return (
-    <div className={cn('bg-white border-2 border-neutral-200 overflow-hidden', className)}>
-      {/* Image placeholder */}
-      <SkeletonPulse className="w-full aspect-square" />
-      {/* Content */}
-      <div className="p-4 space-y-3">
-        <TextSkeleton width="40%" />
-        <TextSkeleton width="80%" />
-        <TextSkeleton width="50%" />
+    >
+      <Shimmer className="w-full aspect-video rounded-none" />
+      <div className="p-5 space-y-3">
+        <Shimmer className="h-4 w-2/5" />
+        <Shimmer className="h-4 w-4/5" />
+        <Shimmer className="h-4 w-3/5" />
         <div className="pt-2">
-          <SkeletonPulse className="h-10 w-full" />
+          <Shimmer className="h-10 w-full" />
         </div>
       </div>
     </div>
@@ -132,12 +91,33 @@ export function CardSkeleton({ className }: { className?: string }) {
 }
 
 // ============================================================
-// Table Row — single row placeholder
+// Avatar variant (circle)
 // ============================================================
-export function TableRowSkeleton({
+function AvatarSkeleton({
+  size = 48,
+  className,
+}: {
+  size?: number;
+  className?: string;
+}) {
+  return (
+    <Shimmer
+      className={cn('rounded-full flex-shrink-0', className)}
+      style={{ width: size, height: size }}
+    />
+  );
+}
+
+// ============================================================
+// Table row variant
+// ============================================================
+function TableRowSkeleton({
   columns = 4,
   className,
-}: { columns?: number; className?: string }) {
+}: {
+  columns?: number;
+  className?: string;
+}) {
   return (
     <div
       className={cn(
@@ -145,14 +125,12 @@ export function TableRowSkeleton({
         className,
       )}
     >
-      {/* Checkbox-like placeholder */}
-      <SkeletonPulse className="w-5 h-5 flex-shrink-0" />
-      {/* Dynamic columns */}
+      <Shimmer className="w-5 h-5 flex-shrink-0" />
       {Array.from({ length: columns }).map((_, i) => (
-        <TextSkeleton
+        <Shimmer
           key={i}
-          width={i === 0 ? '30%' : `${Math.max(10, 25 - i * 4)}%`}
-          className="flex-1"
+          className="h-4 flex-1"
+          style={{ maxWidth: i === 0 ? '30%' : `${Math.max(10, 25 - i * 4)}%` }}
         />
       ))}
     </div>
@@ -160,50 +138,31 @@ export function TableRowSkeleton({
 }
 
 // ============================================================
-// Stat — metric box placeholder
+// Convenience Skeleton component
 // ============================================================
-export function StatSkeleton({ className }: { className?: string }) {
-  return (
-    <div className={cn('bg-white border-2 border-neutral-200 p-5', className)}>
-      <TextSkeleton width="50%" className="h-3 mb-4" />
-      <SkeletonPulse className="h-8 w-2/3 mb-2" />
-      <TextSkeleton width="40%" className="h-3" />
-    </div>
-  );
-}
-
-// ============================================================
-// Convenience component that renders any variant by name
-// ============================================================
-export type SkeletonVariant = 'text' | 'paragraph' | 'avatar' | 'card' | 'table-row' | 'stat';
-
 export function Skeleton({
   variant = 'text',
   className,
   count = 1,
-}: {
-  variant?: SkeletonVariant;
-  className?: string;
-  count?: number;
-}) {
+  width,
+  lines = 3,
+  columns = 4,
+  avatarSize = 48,
+}: SkeletonProps) {
   const items = Array.from({ length: count });
 
   const renderItem = (key: number) => {
     switch (variant) {
       case 'text':
-        return <TextSkeleton key={key} className={className} />;
-      case 'paragraph':
-        return <ParagraphSkeleton key={key} className={className} />;
-      case 'avatar':
-        return <AvatarSkeletonSized key={key} className={className} />;
+        return <TextSkeleton key={key} lines={lines} width={width} className={className} />;
       case 'card':
         return <CardSkeleton key={key} className={className} />;
+      case 'avatar':
+        return <AvatarSkeleton key={key} size={avatarSize} className={className} />;
       case 'table-row':
-        return <TableRowSkeleton key={key} className={className} />;
-      case 'stat':
-        return <StatSkeleton key={key} className={className} />;
+        return <TableRowSkeleton key={key} columns={columns} className={className} />;
       default:
-        return <TextSkeleton key={key} className={className} />;
+        return <TextSkeleton key={key} lines={lines} width={width} className={className} />;
     }
   };
 
