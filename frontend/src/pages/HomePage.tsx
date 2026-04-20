@@ -424,16 +424,21 @@ export function HomePage() {
                 ))}
               </div>
 
-              {/* Verified deal proof — floating pill cards */}
-              <div className="mt-10 flex flex-wrap gap-3" style={revealStyle(heroIn.inView, 0.30)}>
+              {/* Verified deal proof — neobrutalist pill cards with hard shadows */}
+              <div className="mt-10 flex flex-wrap gap-4" style={revealStyle(heroIn.inView, 0.30)}>
                 {[
                   { label: 'Sony Speaker', saved: '₹37,000 saved', sub: 'vs Croma ₹1,05,000' },
                   { label: 'Philips LED ×200', saved: '₹24,000 saved', sub: 'vs local dealer' },
                 ].map((d, i) => (
-                  <div key={i} className={`bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
-                    <p className="text-[11px] text-primary-500 mb-0.5 font-medium">{d.label}</p>
-                    <p className="text-sm font-bold text-amber-700">{d.saved}</p>
-                    <p className="text-[11px] text-primary-500">{d.sub}</p>
+                  <div
+                    key={i}
+                    className={`bg-white border-2 border-primary-950 rounded-xl px-5 py-3.5 shadow-neo-md hover:shadow-neo-lg hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-200 ${
+                      i === 0 ? 'animate-float' : 'animate-float-delay'
+                    }`}
+                  >
+                    <p className="text-[11px] text-primary-600 mb-0.5 font-bold uppercase tracking-wider">{d.label}</p>
+                    <p className="text-base font-black text-amber-700">{d.saved}</p>
+                    <p className="text-[11px] text-primary-500 font-medium">{d.sub}</p>
                   </div>
                 ))}
               </div>
@@ -948,34 +953,43 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* Steps — animated individual cards */}
+          {/* Steps — boxy neobrutalist cards with big numbered badges */}
           <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mb-8"
             style={{
               opacity: tabAnimating ? 0 : 1,
               transform: tabAnimating ? 'translateY(10px)' : 'translateY(0)',
               transition: 'opacity 0.2s ease, transform 0.2s ease',
             }}
           >
-            {(flowView === 'buyer' ? BUYER_STEPS : DEALER_STEPS).map((step, i) => (
-              <div
-                key={step.step}
-                className="group relative bg-white border-2 border-primary-200 rounded-2xl p-6 overflow-hidden hover:border-amber-300 hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-200 cursor-default"
-                style={revealStyle(howIn.inView, 0.08 + i * 0.06)}
-              >
-                {/* Icon — soft amber, fills on hover */}
-                <div className="w-10 h-10 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center mb-5 group-hover:bg-amber-500 group-hover:border-amber-500 transition-all duration-300">
-                  <step.Icon className="w-5 h-5 text-amber-600 group-hover:text-white transition-colors duration-300" />
+            {(flowView === 'buyer' ? BUYER_STEPS : DEALER_STEPS).map((step, i) => {
+              const lastInRow = (i + 1) % 3 === 0;
+              return (
+                <div
+                  key={step.step}
+                  className={`group relative bg-white border-2 border-primary-950 rounded-2xl p-7 overflow-hidden transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 ${
+                    lastInRow ? 'shadow-neo-lg hover:shadow-neo-xl' : 'shadow-neo-md hover:shadow-neo-lg'
+                  }`}
+                  style={revealStyle(howIn.inView, 0.08 + i * 0.06)}
+                >
+                  {/* Big black numbered badge — screenshot-3 style */}
+                  <div className="w-12 h-12 bg-primary-950 rounded-xl border-2 border-primary-950 shadow-neo-sm flex items-center justify-center mb-6">
+                    <span className="text-base font-black text-white">{step.step}</span>
+                  </div>
+
+                  <h3 className="text-lg font-black text-primary-950 tracking-tight leading-tight mb-2">{step.title}</h3>
+                  <p className="text-sm text-primary-600 leading-relaxed mb-4">{step.desc}</p>
+
+                  <div className="inline-flex items-center gap-1.5">
+                    <step.Icon className="w-3.5 h-3.5 text-amber-700" />
+                    <span className="text-[11px] font-black text-amber-700 uppercase tracking-[0.15em]">{step.title.split(' ').slice(0, 2).join(' ')}</span>
+                  </div>
+
+                  {/* Bottom accent line — slides in on hover */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-amber-600 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                 </div>
-
-                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.15em] mb-1.5">Step {step.step}</p>
-                <p className="text-sm font-bold text-primary-950 mb-1.5 relative">{step.title}</p>
-                <p className="text-xs text-primary-600 leading-relaxed relative">{step.desc}</p>
-
-                {/* Bottom accent line — slides in on hover */}
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Blind Matching Engine */}
@@ -1071,79 +1085,80 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6" style={revealStyle(twoIn.inView, 0.08)}>
-            {/* For Buyers */}
-            <div className="group relative bg-white rounded-2xl p-8 border-2 border-primary-200 shadow-neo-sm hover:shadow-neo-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-primary-950 rounded-tl-2xl rounded-bl-2xl" />
-              <div className="flex items-center gap-3 mb-7">
-                <div className="w-12 h-12 bg-primary-950 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Users className="w-6 h-6 text-white" />
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8" style={revealStyle(twoIn.inView, 0.08)}>
+            {/* ─── For Buyers — WHITE card with hard black offset shadow ─── */}
+            <div className="group relative bg-white rounded-2xl p-8 md:p-10 border-2 border-primary-950 shadow-neo-lg hover:shadow-neo-xl hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 overflow-hidden">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-14 h-14 bg-amber-600 rounded-xl border-2 border-primary-950 shadow-neo-sm flex items-center justify-center flex-shrink-0">
+                  <Users className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-primary-600">For Buyers</span>
-                  <h3 className="text-lg font-bold text-primary-950">Anyone Buying Electrical Products</h3>
+                  <span className="text-[11px] font-black uppercase tracking-[0.15em] text-amber-700">For Buyers</span>
+                  <h3 className="text-xl sm:text-2xl font-black text-primary-950 tracking-tight leading-tight">Home Builders &amp; Contractors</h3>
                 </div>
               </div>
-              <div className="space-y-4 mb-8">
+              <div className="space-y-5 mb-10">
                 {[
-                  { icon: IndianRupee, title: 'Compare Real Dealer Prices', desc: 'See what multiple verified dealers are actually charging — side by side' },
-                  { icon: Shield, title: 'Verified Dealers Only', desc: 'We check dealers before connecting you. No unknown vendors' },
-                  { icon: FileText, title: 'Full Documentation', desc: 'GST bills, warranty cards, delivery proof — proper paperwork every time' },
-                  { icon: Truck, title: 'Doorstep Delivery', desc: 'Products delivered to your site, home, or office where available' },
-                  { icon: TrendingUp, title: 'Zero Middlemen', desc: 'You deal directly with the dealer. We just facilitate the connection' },
+                  { icon: IndianRupee, title: 'Save 20-40% on Every Order', desc: 'Dealers compete to give you the best price' },
+                  { icon: Shield, title: '100% Verified Products', desc: 'No fake brands, no duplicates, full warranty' },
+                  { icon: FileText, title: 'Get Quotes in 60 Seconds', desc: 'No more visiting 10 shops to compare prices' },
+                  { icon: Award, title: 'Proper Documentation', desc: 'GST bills, warranty cards, delivery proof' },
+                  { icon: Truck, title: 'Doorstep Delivery', desc: 'Products delivered to your site or home' },
                 ].map(({ icon: Icon, title, desc }, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary-50 border border-primary-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-primary-700" />
+                  <div key={i} className="flex items-start gap-3.5">
+                    <div className="w-9 h-9 bg-primary-50 border-2 border-primary-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-primary-950" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-primary-950">{title}</p>
-                      <p className="text-sm text-primary-600 leading-snug">{desc}</p>
+                      <p className="text-[15px] font-bold text-primary-950 leading-tight">{title}</p>
+                      <p className="text-sm text-primary-600 leading-snug mt-0.5">{desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <button
                 onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full btn-primary"
+                className="w-full inline-flex items-center justify-center gap-2 bg-primary-950 hover:bg-black text-white font-black text-sm uppercase tracking-wider px-6 py-4 rounded-xl border-2 border-primary-950 shadow-neo-md hover:shadow-neo-lg hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-150"
               >
-                Submit Your First Inquiry <ArrowRight className="w-5 h-5" />
+                Get Free Quotes Now <ArrowRight className="w-5 h-5" />
               </button>
             </div>
 
-            {/* For Dealers */}
-            <div className="group relative bg-white rounded-2xl p-8 border-2 border-primary-200 shadow-neo-sm hover:shadow-neo-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-600 rounded-tl-2xl rounded-bl-2xl" />
-              <div className="flex items-center gap-3 mb-7">
-                <div className="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Store className="w-6 h-6 text-white" />
+            {/* ─── For Dealers — BLACK card with hard black offset shadow ─── */}
+            <div className="group relative bg-primary-950 rounded-2xl p-8 md:p-10 border-2 border-primary-950 shadow-neo-lg hover:shadow-neo-xl hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 overflow-hidden">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-14 h-14 bg-amber-600 rounded-xl border-2 border-amber-700 shadow-neo-sm flex items-center justify-center flex-shrink-0">
+                  <Store className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-amber-700">For Dealers</span>
-                  <h3 className="text-lg font-bold text-primary-950">Electrical Shops &amp; Distributors</h3>
+                  <span className="text-[11px] font-black uppercase tracking-[0.15em] text-amber-500">For Dealers</span>
+                  <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">Electrical Shops &amp; Distributors</h3>
                 </div>
               </div>
-              <div className="space-y-4 mb-8">
+              <div className="space-y-5 mb-10">
                 {[
-                  { icon: Users, title: 'Qualified Buyer Inquiries', desc: 'Receive real inquiries from buyers who know what they want' },
-                  { icon: IndianRupee, title: 'Free to Join', desc: 'No listing fees, no upfront charges to get started' },
-                  { icon: Award, title: 'Build Your Reputation', desc: 'Get rated by real customers. Better ratings, more inquiries' },
-                  { icon: BarChart3, title: 'Track Your Performance', desc: 'See your quotes, conversions, and earnings in one dashboard' },
-                  { icon: TrendingUp, title: 'Expand Your Reach', desc: 'Reach buyers across your city who would never have found you otherwise' },
+                  { icon: Users, title: 'Quality Leads Daily', desc: 'Get verified buyer inquiries delivered to you' },
+                  { icon: IndianRupee, title: 'Zero Upfront Fees', desc: 'No listing fees, no monthly charges' },
+                  { icon: Award, title: 'Build Your Reputation', desc: 'Get reviews and ratings from real customers' },
+                  { icon: BarChart3, title: 'Performance Analytics', desc: 'Track your quotes, wins, and conversion rate' },
+                  { icon: TrendingUp, title: 'Grow Your Business', desc: 'Access customers you could never reach before' },
                 ].map(({ icon: Icon, title, desc }, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-amber-700" />
+                  <div key={i} className="flex items-start gap-3.5">
+                    <div className="w-9 h-9 bg-white/5 border-2 border-white/15 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-amber-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-primary-950">{title}</p>
-                      <p className="text-sm text-primary-600 leading-snug">{desc}</p>
+                      <p className="text-[15px] font-bold text-white leading-tight">{title}</p>
+                      <p className="text-sm text-primary-300 leading-snug mt-0.5">{desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link to="/dealer/onboarding" className="w-full btn-primary flex items-center justify-center gap-2">
-                Register as a Dealer — Free <ArrowRight className="w-5 h-5" />
+              <Link
+                to="/dealer/onboarding"
+                className="w-full inline-flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-black text-sm uppercase tracking-wider px-6 py-4 rounded-xl border-2 border-primary-950 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.25)] hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.3)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-150"
+              >
+                Register as Dealer — Free <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
           </div>
