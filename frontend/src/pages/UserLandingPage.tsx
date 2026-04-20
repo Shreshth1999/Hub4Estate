@@ -41,7 +41,7 @@ const STEPS = [
     title: 'Dealers compete for your order',
     desc: 'Multiple verified dealers send you blind quotes. You see price, shipping, delivery time — all side by side.',
     detail: 'Dealers cannot see each other\'s quotes. Pure competition drives the best price for you.',
-    color: 'bg-emerald-500',
+    color: 'bg-accent-500',
   },
   {
     Icon: CheckCircle,
@@ -224,7 +224,7 @@ export function UserLandingPage() {
               { step: '05', title: 'Dealer contact revealed', desc: 'Once you pick a quote, the winning dealer\'s contact is revealed. You coordinate directly — place the order, confirm delivery, get GST bills.', time: 'Instant', Icon: Star, accent: 'amber' },
               { step: '06', title: 'We follow up', desc: 'After delivery, our team checks in to make sure everything went smoothly. Your feedback helps us maintain dealer quality.', time: '24 hours after delivery', Icon: Headphones, accent: 'blue' },
             ].map((item, i) => {
-              const accentColors: Record<string, string> = { amber: 'bg-amber-500 text-amber-500 border-amber-500', blue: 'bg-blue-500 text-blue-500 border-blue-500', emerald: 'bg-emerald-500 text-emerald-500 border-emerald-500', purple: 'bg-purple-500 text-purple-500 border-purple-500' };
+              const accentColors: Record<string, string> = { amber: 'bg-amber-500 text-amber-500 border-amber-500', blue: 'bg-blue-500 text-blue-500 border-blue-500', emerald: 'bg-accent-500 text-accent-600 border-accent-500', purple: 'bg-purple-500 text-purple-500 border-purple-500' };
               const colors = accentColors[item.accent];
               const [bgColor] = colors.split(' ');
               const textColor = colors.split(' ')[1];
@@ -352,13 +352,13 @@ export function UserLandingPage() {
                     'Businesses needing GST-compliant documentation',
                   ].map((text, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-5 h-5 text-accent-600 flex-shrink-0 mt-0.5" />
                       <p className="text-gray-700">{text}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-gray-100 bg-gradient-to-r from-amber-50 to-emerald-50 -mx-8 -mb-8 px-8 pb-8 rounded-b-2xl">
+                <div className="mt-8 pt-6 border-t border-gray-100 bg-gradient-to-r from-amber-50 to-accent-50 -mx-8 -mb-8 px-8 pb-8 rounded-b-2xl">
                   <p className="text-sm text-gray-500 mb-1">Cost for buyers</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-4xl font-black text-gray-900">Free</p>
@@ -409,7 +409,7 @@ export function UserLandingPage() {
       <section className="bg-white border-t border-gray-100">
         <div ref={audienceRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(audienceRef.inView, 0)}>
-            <span className="inline-block px-4 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Who It's For</span>
+            <span className="inline-block px-4 py-1.5 bg-accent-50 text-accent-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Who It's For</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">Built for anyone who buys electrical products</h2>
             <p className="text-lg text-gray-500 max-w-2xl mx-auto">Whether you're doing a home renovation or managing a construction project — if you've ever overpaid without knowing it, this is for you.</p>
           </div>
@@ -481,7 +481,7 @@ export function UserLandingPage() {
                         ₹<AnimatedNumber value={deal.saved} />
                       </p>
                     </div>
-                    <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 text-sm font-bold rounded-lg">
+                    <span className="px-3 py-1.5 bg-accent-500/10 text-accent-400 text-sm font-bold rounded-lg">
                       <TrendingDown className="w-3.5 h-3.5 inline mr-1" />{deal.percent} less
                     </span>
                   </div>
@@ -509,7 +509,7 @@ export function UserLandingPage() {
               { Icon: IndianRupee, title: 'Always free for buyers', desc: 'No signup fees, no commissions, no hidden charges. You pay the dealer directly for the product. We never take a cut from your purchase.', accent: 'emerald' },
               { Icon: Eye, title: 'Full transparency', desc: 'You see every quote, every price, every detail. We never hide information or push you toward a specific dealer. Your choice is always yours.', accent: 'blue' },
             ].map(({ Icon, title, desc, accent }, i) => {
-              const accents: Record<string, string> = { amber: 'bg-amber-100 text-amber-700', emerald: 'bg-emerald-100 text-emerald-700', blue: 'bg-blue-100 text-blue-700' };
+              const accents: Record<string, string> = { amber: 'bg-amber-100 text-amber-700', emerald: 'bg-accent-100 text-accent-700', blue: 'bg-blue-100 text-blue-700' };
               const [bg, text] = accents[accent].split(' ');
               return (
                 <div key={i} className="text-center" style={revealStyle(trustRef.inView, 0.08 + i * 0.1)}>

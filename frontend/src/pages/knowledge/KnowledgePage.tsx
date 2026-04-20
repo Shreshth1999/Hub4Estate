@@ -84,7 +84,7 @@ export function KnowledgePage() {
       />
 
       {/* Hero — dark */}
-      <div className="bg-[#1a1410] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
@@ -206,7 +206,7 @@ export function KnowledgePage() {
       </div>
 
       {/* CTA — dark */}
-      <div className="bg-[#1a1410] px-6 py-16">
+      <div className="bg-[#09090B] px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div>

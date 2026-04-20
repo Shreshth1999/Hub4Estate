@@ -33,20 +33,20 @@
     --color-accent-900: #74412f;
     --color-accent-950: #3d2118;
 
-    /* CTA — remapped from amber (orange) to warm dark brown */
-    --color-cta:        #1a1410;
-    --color-cta-hover:  #33281a;
-    --color-cta-active: #0f0a07;
-    --color-cta-light:  #8b6f47;
+    /* CTA — terracotta / rust earth tone (matches reference design). */
+    --color-cta:        #c4724f;
+    --color-cta-hover:  #a85f42;
+    --color-cta-active: #8c4e37;
+    --color-cta-light:  #d3815e;
 
     /* Semantic */
     --color-success:      #22C55E;
     --color-success-bg:   #DCFCE7;
     --color-success-text: #166534;
     /* warning — desaturated into brown palette to avoid orange/gold */
-    --color-warning:      #8b6f47;
-    --color-warning-bg:   #f2ece2;
-    --color-warning-text: #33281a;
+    --color-warning:      #c4724f;
+    --color-warning-bg:   #faeee8;
+    --color-warning-text: #74412f;
     --color-error:        #EF4444;
     --color-error-bg:     #FEE2E2;
     --color-error-text:   #991B1B;
@@ -54,8 +54,8 @@
     --color-info-bg:      #DBEAFE;
     --color-info-text:    #1E40AF;
 
-    /* Special — navy remapped from blue to warm dark brown */
-    --color-navy:        #1a1410;
+    /* Special — pure near-black (RGB 9,9,11), used for dark sections */
+    --color-navy:        #09090B;
     --color-white:       #FFFFFF;
     --color-warm-white:  #faf9f7;
     --color-cream:       #f5f3ef;
@@ -350,9 +350,9 @@
 ::-webkit-scrollbar-thumb { background: #b8ad9a; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #8a7a62; }
 
-/* Focus visible — warm dark brown ring for keyboard navigation */
+/* Focus visible — terracotta ring for keyboard navigation */
 *:focus-visible {
-  outline: 2px solid #1a1410;
+  outline: 2px solid #c4724f;
   outline-offset: 2px;
   border-radius: 4px;
 }

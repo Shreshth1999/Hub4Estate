@@ -1056,8 +1056,8 @@ export function CategoryTile({ category, index }: { category: Category; index: n
         className="absolute inset-0 opacity-20 transition-opacity duration-500 group-hover:opacity-40"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(139,111,71,0.35) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(139,111,71,0.35) 1px, transparent 1px)
+            linear-gradient(rgba(64,64,64,0.35) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(64,64,64,0.35) 1px, transparent 1px)
           `,
           backgroundSize: '20px 20px',
         }}
@@ -1067,19 +1067,19 @@ export function CategoryTile({ category, index }: { category: Category; index: n
       <div
         className={`absolute inset-0 transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(139,111,71,0.28) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse at center, rgba(211,129,94,0.22) 0%, transparent 70%)',
         }}
       />
 
       {/* Pulse ring — emanates on hover */}
       <div
-        className={`pointer-events-none absolute inset-0 rounded-xl ring-1 ring-[#8b6f47]/40 ${isHovered ? 'animate-pulse-ring' : 'opacity-0'}`}
+        className={`pointer-events-none absolute inset-0 rounded-xl ring-1 ring-[#c4724f]/50 ${isHovered ? 'animate-pulse-ring' : 'opacity-0'}`}
       />
 
       {/* Active border on hover */}
       <div
         className={`absolute inset-0 rounded-xl border-2 transition-all duration-300 ${
-          isHovered ? 'border-[#8b6f47]/70' : 'border-transparent'
+          isHovered ? 'border-[#c4724f]/70' : 'border-transparent'
         }`}
       />
 
@@ -1097,7 +1097,7 @@ export function CategoryTile({ category, index }: { category: Category; index: n
         {/* Category info */}
         <div className="flex-1">
           <h3 className={`text-base font-semibold transition-colors duration-300 ${
-            isHovered ? 'text-[#d4c5a8]' : 'text-white'
+            isHovered ? 'text-[#d3815e]' : 'text-white'
           }`}>
             {category.name}
           </h3>
@@ -1107,15 +1107,15 @@ export function CategoryTile({ category, index }: { category: Category; index: n
         {/* Arrow indicator */}
         <ArrowRight
           className={`absolute bottom-5 right-5 w-5 h-5 transition-all duration-300 ${
-            isHovered ? 'text-[#d4c5a8] translate-x-1' : 'text-gray-600'
+            isHovered ? 'text-[#c4724f] translate-x-1' : 'text-gray-600'
           }`}
         />
 
         {/* Corner measurement marks (blueprint style) */}
-        <div className="absolute top-2 left-2 w-3 h-3 border-l border-t border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
-        <div className="absolute top-2 right-2 w-3 h-3 border-r border-t border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
-        <div className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
-        <div className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
+        <div className="absolute top-2 left-2 w-3 h-3 border-l border-t border-gray-600 opacity-30 transition-opacity duration-300 group-hover:opacity-70 group-hover:border-[#c4724f]" />
+        <div className="absolute top-2 right-2 w-3 h-3 border-r border-t border-gray-600 opacity-30 transition-opacity duration-300 group-hover:opacity-70 group-hover:border-[#c4724f]" />
+        <div className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-gray-600 opacity-30 transition-opacity duration-300 group-hover:opacity-70 group-hover:border-[#c4724f]" />
+        <div className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-gray-600 opacity-30 transition-opacity duration-300 group-hover:opacity-70 group-hover:border-[#c4724f]" />
       </div>
     </Link>
   );

@@ -401,7 +401,7 @@ export function BrandLandingPage() {
       </section>
 
       {/* ─── Final CTA ─────────────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28 bg-[#1a1410]">
+      <section className="py-20 md:py-28 bg-[#09090B]">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-6">Free for Buyers, Always</p>
           <h2 className="text-3xl md:text-5xl font-black text-white mb-5 tracking-tight leading-tight">

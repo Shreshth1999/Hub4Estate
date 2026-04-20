@@ -16,56 +16,59 @@ export default {
     },
     extend: {
       colors: {
-        // ─── THREE-SHADE SYSTEM (2026 refresh) ────────────────────────────────
-        // No blue, no navy, no orange, no gold, no yellow.
-        // Only: warm cream (bg) · near-black brown (ink/CTA) · muted tan (accent).
+        // ─── FOUR-SHADE SYSTEM (matches reference screenshots) ────────────────
+        // white · cream (alt) · pure black (dark) · terracotta (accent)
         //
-        // Shade 1 — cream (#faf7f2)  : page backgrounds
-        // Shade 2 — ink   (#1a1410)  : text, dark sections, primary CTA
-        // Shade 3 — tan   (#8b6f47)  : borders, secondary accent, hover
+        // NO dark blue, NO navy, NO yellow-gold amber. The rust/terracotta
+        // accent is a muted earth tone — distinct from the yellow-gold orange
+        // we banned.
         //
-        // All legacy color tokens (amber/violet/purple/accent/navy) are
-        // REMAPPED to this palette so existing classes auto-convert.
+        //   Accent (terracotta): #d3815e (500) · #c4724f (600) · #a85f42 (700)
+        //   Dark (pure black):   #09090B
+        //   Alt bg (cream):      #f5f3ef · #faf9f7
+        //   Primary bg:          white
         primary: {
-          50:  '#faf7f2',
-          100: '#f2ece2',
-          200: '#e6dcc9',
-          300: '#d4c5a8',
-          400: '#b8a484',
-          500: '#8b6f47',
-          600: '#6b5537',
-          700: '#4d3d27',
-          800: '#33281a',
-          900: '#241c12',
-          950: '#1a1410',
+          50:  '#f5f0eb',
+          100: '#ede5db',
+          200: '#e0d5c5',
+          300: '#d4cdc0',
+          400: '#b8ad9a',
+          500: '#9c8e78',
+          600: '#8a7a62',
+          700: '#726452',
+          800: '#5e5345',
+          900: '#4d4439',
+          950: '#2a2418',
         },
-        // Legacy "accent" palette — retuned from terracotta → warm brown.
         accent: {
-          50:  '#faf7f2',
-          100: '#f2ece2',
-          200: '#e6dcc9',
-          300: '#d4c5a8',
-          400: '#b8a484',
-          500: '#8b6f47',
-          600: '#6b5537',
-          700: '#4d3d27',
-          800: '#33281a',
-          900: '#241c12',
-          950: '#1a1410',
+          // Terracotta / rust — the earth-tone accent from the reference.
+          50:  '#fdf8f5',
+          100: '#faeee8',
+          200: '#f5dcd0',
+          300: '#edc4b0',
+          400: '#e3a688',
+          500: '#d3815e',
+          600: '#c4724f',
+          700: '#a85f42',
+          800: '#8c4e37',
+          900: '#74412f',
+          950: '#3d2118',
         },
-        // Override Tailwind's built-in amber (was orange). Now maps to brown.
+        // Override Tailwind's built-in amber — remap to terracotta so every
+        // legacy `bg-amber-600` on the site renders as the reference rust tone,
+        // not the banned yellow-gold #D97706.
         amber: {
-          50:  '#faf7f2',
-          100: '#f2ece2',
-          200: '#e6dcc9',
-          300: '#d4c5a8',
-          400: '#b8a484',
-          500: '#8b6f47',
-          600: '#1a1410',
-          700: '#0f0a07',
-          800: '#0a0704',
-          900: '#000000',
-          950: '#000000',
+          50:  '#fdf8f5',
+          100: '#faeee8',
+          200: '#f5dcd0',
+          300: '#edc4b0',
+          400: '#e3a688',
+          500: '#d3815e',
+          600: '#c4724f',
+          700: '#a85f42',
+          800: '#8c4e37',
+          900: '#74412f',
+          950: '#3d2118',
         },
         // Override violet/purple — kill any lingering logo or card purples.
         violet: {
@@ -94,6 +97,64 @@ export default {
           900: '#1a1410',
           950: '#0f0a07',
         },
+        // Override Tailwind's built-in blue — remap to neutral slate/grey.
+        // User banned dark blue + navy; routing all blue-* classes to
+        // greys keeps semantic contrast without color-casting.
+        blue: {
+          50:  '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#09090b',
+        },
+        // Also map indigo/sky to the same neutral scale.
+        indigo: {
+          50:  '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#09090b',
+        },
+        sky: {
+          50:  '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#09090b',
+        },
+        // Also override yellow → terracotta so stray yellow stars/badges
+        // on older screenshots render as the accent instead of banned gold.
+        yellow: {
+          50:  '#fdf8f5',
+          100: '#faeee8',
+          200: '#f5dcd0',
+          300: '#edc4b0',
+          400: '#e3a688',
+          500: '#d3815e',
+          600: '#c4724f',
+          700: '#a85f42',
+          800: '#8c4e37',
+          900: '#74412f',
+          950: '#3d2118',
+        },
 
         // ─── §10.2.4 Semantic Colors ──────────────────────────────────────────
         success: {
@@ -109,16 +170,16 @@ export default {
           800: '#166534',
         },
         warning: {
-          // Desaturated into brown palette — no orange/gold anywhere
-          DEFAULT: '#8b6f47',
-          bg:      '#f2ece2',
-          text:    '#33281a',
-          50:  '#faf7f2',
-          100: '#f2ece2',
-          200: '#e6dcc9',
-          500: '#8b6f47',
-          700: '#33281a',
-          800: '#241c12',
+          // Warning uses the terracotta family — earth tone, no yellow-gold.
+          DEFAULT: '#c4724f',
+          bg:      '#faeee8',
+          text:    '#74412f',
+          50:  '#fdf8f5',
+          100: '#faeee8',
+          200: '#f5dcd0',
+          500: '#d3815e',
+          700: '#a85f42',
+          800: '#8c4e37',
         },
         error: {
           DEFAULT: '#EF4444',
@@ -132,21 +193,23 @@ export default {
           800: '#991b1b',
         },
         info: {
-          DEFAULT: '#3B82F6',
-          bg:      '#DBEAFE',
-          text:    '#1E40AF',
-          50:  '#eff6ff',
-          100: '#dbeafe',
-          500: '#3b82f6',
-          700: '#1d4ed8',
-          800: '#1e40af',
+          // info remapped from blue to neutral slate — no dark blue anywhere.
+          DEFAULT: '#64748b',
+          bg:      '#f1f5f9',
+          text:    '#334155',
+          50:  '#f8fafc',
+          100: '#f1f5f9',
+          500: '#64748b',
+          700: '#334155',
+          800: '#1e293b',
         },
         // ─── §10.2.5 Special Colors ───────────────────────────────────────────
-        // navy remapped from blue #0B1628 → warm dark brown #1a1410
-        navy: '#1a1410',
-        'warm-white': '#faf7f2',
-        cream: '#f2ece2',
-        'light-beige': '#e6dcc9',
+        // "navy" is a misnomer — #09090B is pure near-black (RGB 9,9,11).
+        // Used for dark sections (hero category grid, dark CTAs, footer).
+        navy: '#09090B',
+        'warm-white': '#faf9f7',
+        cream: '#f5f3ef',
+        'light-beige': '#e8e4db',
       },
       fontFamily: {
         // PRD §10.3.1
@@ -202,7 +265,7 @@ export default {
         'neo-md':    '4px 4px 0px 0px #2a2418',
         'neo-lg':    '6px 6px 0px 0px #2a2418',
         'neo-xl':    '8px 8px 0px 0px #2a2418',
-        'neo-amber': '4px 4px 0px 0px #1a1410',
+        'neo-amber': '4px 4px 0px 0px #c4724f',
         // Soft elevation shadows for cards, modals
         'warm-sm':   '0 1px 3px 0 rgba(42,36,24,0.06), 0 1px 2px -1px rgba(42,36,24,0.04)',
         'warm':      '0 4px 16px -2px rgba(42,36,24,0.08), 0 2px 6px -2px rgba(42,36,24,0.05)',
@@ -210,7 +273,7 @@ export default {
         'warm-lg':   '0 16px 40px -6px rgba(42,36,24,0.12), 0 8px 16px -6px rgba(42,36,24,0.07)',
         'warm-xl':   '0 24px 56px -8px rgba(42,36,24,0.14), 0 12px 24px -8px rgba(42,36,24,0.08)',
         // Focus ring
-        'focus-amber': '0 0 0 3px rgba(26,20,16,0.30)',
+        'focus-amber': '0 0 0 3px rgba(196,114,79,0.35)',
         'focus-primary': '0 0 0 3px rgba(42,36,24,0.20)',
         // Legacy (keep for existing components that reference these)
         'soft':    '0 4px 20px -2px rgba(0,0,0,0.08)',
@@ -328,9 +391,9 @@ export default {
       },
       backgroundImage: {
         // PRD section alternating pattern: white > warm-white > white
-        'warm-gradient':  'linear-gradient(135deg, #faf7f2 0%, #f2ece2 100%)',
-        'hero-gradient':  'linear-gradient(160deg, #ffffff 0%, #faf7f2 40%, #f2ece2 100%)',
-        'amber-gradient': 'linear-gradient(135deg, #4d3d27 0%, #1a1410 100%)',
+        'warm-gradient':  'linear-gradient(135deg, #faf9f7 0%, #f5f0eb 100%)',
+        'hero-gradient':  'linear-gradient(160deg, #ffffff 0%, #faf9f7 40%, #f5f0eb 100%)',
+        'amber-gradient': 'linear-gradient(135deg, #d3815e 0%, #c4724f 100%)',
         'shimmer-warm':   'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.7) 50%, transparent 100%)',
       },
     },

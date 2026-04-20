@@ -136,7 +136,7 @@ export function CommunityPage() {
         canonicalUrl="/community"
       />
       {/* Hero — dark */}
-      <div className="bg-[#1a1410] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>

@@ -55,7 +55,7 @@ export function CategoriesPage() {
       />
 
       {/* Hero — dark */}
-      <div className="bg-[#1a1410] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-amber-400/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '1.5s' }} />
@@ -144,7 +144,7 @@ export function CategoriesPage() {
       </div>
 
       {/* Buying Guides — dark */}
-      <div ref={guidesRef as any} className="bg-[#1a1410] px-6 py-16">
+      <div ref={guidesRef as any} className="bg-[#09090B] px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10" style={revealStyle(guidesIn, 0)}>
             <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Buying Guides</h2>

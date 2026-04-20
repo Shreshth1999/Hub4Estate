@@ -48,7 +48,7 @@ const STEPS = [
     title: 'Win and connect',
     desc: 'If you win, the buyer\'s contact is revealed instantly. If you lose, you get the winning price as a market benchmark.',
     detail: 'Every quote, win or lose, builds your market intelligence and pricing strategy.',
-    color: 'bg-emerald-500',
+    color: 'bg-accent-500',
   },
 ];
 
@@ -257,7 +257,7 @@ export function DealerLandingPage() {
       <section className="bg-white border-t border-gray-100">
         <div ref={benefitsRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(benefitsRef.inView, 0)}>
-            <span className="inline-block px-4 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Why Join</span>
+            <span className="inline-block px-4 py-1.5 bg-accent-50 text-accent-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Why Join</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">Why dealers choose Hub4Estate</h2>
             <p className="text-lg text-gray-500 max-w-2xl mx-auto">Everything you need to grow your electrical business. Zero cost to get started.</p>
           </div>

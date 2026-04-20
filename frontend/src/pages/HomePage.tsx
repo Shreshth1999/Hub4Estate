@@ -343,9 +343,9 @@ export function HomePage() {
       <section className="relative bg-white overflow-hidden border-b border-gray-100">
         {/* Subtle warm glow orbs */}
         <div className="absolute top-[-10%] right-[-5%] w-[700px] h-[700px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(26,20,16,0.05) 0%, transparent 65%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(196,114,79,0.10) 0%, transparent 65%)' }} />
         <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(139,111,71,0.06) 0%, transparent 65%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(211,129,94,0.08) 0%, transparent 65%)' }} />
 
         <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 py-20 lg:py-28 relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
