@@ -7,6 +7,7 @@ import {
   Bookmark, BookmarkCheck, Share2, Clock, Zap,
   ArrowRight, TrendingUp, CheckCircle, Star, Loader2
 } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 interface Product {
   id: string;
@@ -134,6 +135,28 @@ export function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        canonicalUrl={`/products/${id}`}
+        title={`${product.name} by ${product.brand.name} — Best Price | Hub4Estate`}
+        description={`Get the best price on ${product.name} by ${product.brand.name}. ${product.description ? product.description.slice(0, 120) : ''} Compare verified dealer prices on Hub4Estate. Zero middlemen. Free delivery available.`}
+        keywords={`${product.name} best price, buy ${product.name}, ${product.brand.name} ${product.productType.name}, ${product.name} dealer price, Hub4Estate ${product.brand.name}`}
+        ogType="product"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product.name,
+          "description": product.description,
+          "brand": { "@type": "Brand", "name": product.brand.name },
+          "category": product.productType.subCategory.category.name,
+          "image": product.images?.[0] || "https://hub4estate.com/logos/hub4estate/logo-full.png",
+          "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock",
+            "seller": { "@type": "Organization", "name": "Hub4Estate" }
+          }
+        }}
+      />
       {/* Success toast */}
       {showAddedMessage && (
         <div className="fixed top-20 right-4 z-50 bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-center gap-3 shadow-sm">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { communityApi } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
+import { SEO } from '@/components/SEO';
 import {
   ThumbsUp, MessageCircle, Clock, User, MapPin, ArrowLeft,
   Send, Shield, Store, Share2, Bookmark, CheckCircle, AlertCircle, Loader2
@@ -162,6 +163,12 @@ export function PostDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO
+        title={post.title}
+        description={post.content.slice(0, 160)}
+        keywords={`${post.category || 'electrical'}, Hub4Estate community, ${post.postType.toLowerCase()}, electrical products discussion`}
+        canonicalUrl={`/community/${post.id}`}
+      />
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-6 py-4">

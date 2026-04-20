@@ -2,6 +2,7 @@ import { SmartSlipScanner } from '../components/SmartSlipScanner';
 import { Sparkles, Zap, CheckCircle, Camera, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '@/components/SEO';
 
 const STEPS = [
   {
@@ -41,6 +42,12 @@ export function SmartSlipScanPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Smart Slip Scanner - Scan & Compare Electrical Product Prices"
+        description="Upload a photo of your electrical product bill or price list and instantly compare prices from verified dealers on Hub4Estate. AI-powered price comparison."
+        keywords="electrical price scanner, compare electrical prices, smart slip scan, Hub4Estate AI scanner"
+        canonicalUrl="/smart-scan"
+      />
 
       {/* Hero — dark */}
       <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">

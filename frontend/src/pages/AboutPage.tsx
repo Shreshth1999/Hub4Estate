@@ -4,9 +4,18 @@ import {
   Mail, Phone, ArrowRight, Linkedin, Zap,
 } from 'lucide-react';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '../components/SEO';
 
 export function AboutPage() {
   const { ref: heroRef, inView: heroIn } = useInView(0.05);
+  const aboutSeo = (
+    <SEO
+      canonicalUrl="/about"
+      title="About Hub4Estate — India's Transparent Electrical Products Platform"
+      description="Hub4Estate was founded by Shreshth Agarwal to solve the pricing opacity in electrical product procurement. After 2 years of validation, we built India's first transparent marketplace connecting buyers with verified dealers. Zero middlemen, best prices guaranteed."
+      keywords="about Hub4Estate, Hub4Estate founder, Shreshth Agarwal, Hub4Estate story, electrical marketplace India, transparent procurement, Hub for Estate about, Hub4Estate LLP, electrical platform startup India"
+    />
+  );
   const { ref: problemRef, inView: problemIn } = useInView(0.05);
   const { ref: founderRef, inView: founderIn } = useInView(0.05);
   const { ref: valuesRef, inView: valuesIn } = useInView(0.05);
@@ -50,6 +59,7 @@ export function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {aboutSeo}
 
       {/* Hero — dark */}
       <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">

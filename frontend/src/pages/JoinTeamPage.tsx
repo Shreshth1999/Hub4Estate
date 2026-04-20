@@ -5,6 +5,7 @@ import {
   Send, CheckCircle, Linkedin, ArrowRight,
 } from 'lucide-react';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '@/components/SEO';
 
 interface ApplicationForm {
   name: string;
@@ -100,9 +101,15 @@ Submitted via Hub4Estate Join Team Page`
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Join Our Team - Careers at Hub4Estate"
+        description="Join Hub4Estate and help build India's first transparent procurement platform for electrical products. Open positions in engineering, sales, operations, and more."
+        keywords="Hub4Estate careers, jobs at Hub4Estate, electrical marketplace jobs India, construction tech careers"
+        canonicalUrl="/join-team"
+      />
 
       {/* Hero — dark */}
-      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#1a1410] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-violet-500/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '2s' }} />
@@ -154,7 +161,7 @@ Submitted via Hub4Estate Join Team Page`
       </div>
 
       {/* Open Positions — dark */}
-      <div ref={positionsRef as any} className="bg-[#09090B] px-6 py-20">
+      <div ref={positionsRef as any} className="bg-[#1a1410] px-6 py-20">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-black text-white mb-8 tracking-tight" style={revealStyle(positionsIn, 0)}>Open Positions</h2>
           <div className="space-y-3">
@@ -306,7 +313,7 @@ Submitted via Hub4Estate Join Team Page`
       </div>
 
       {/* Contact — dark */}
-      <div className="bg-[#09090B] px-6 py-16">
+      <div className="bg-[#1a1410] px-6 py-16">
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-5">
             <Zap className="w-6 h-6 text-amber-500" />

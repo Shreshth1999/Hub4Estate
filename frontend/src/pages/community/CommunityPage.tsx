@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { communityApi } from '../../lib/api';
 import { useAuthStore } from '../../lib/store';
+import { SEO } from '@/components/SEO';
 import {
   MessageSquare, ThumbsUp, MessageCircle, Plus, Search,
   Clock, User, MapPin, ArrowRight, Users, Store, Shield,
@@ -128,8 +129,14 @@ export function CommunityPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Community - Electrical Products Discussion Forum"
+        description="Join the Hub4Estate community. Discuss electrical products, share experiences, ask questions, and connect with professionals in the electrical industry."
+        keywords="electrical products forum, electrical community India, electrician forum, Hub4Estate community"
+        canonicalUrl="/community"
+      />
       {/* Hero — dark */}
-      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#1a1410] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>

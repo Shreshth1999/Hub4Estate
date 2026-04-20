@@ -1,169 +1,384 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── PRD §10.2.6 CSS Custom Properties ───────────────────────────────────── */
 @layer base {
   :root {
-    --color-black: #0a0a0a;
-    --color-white: #ffffff;
+    /* Primary palette */
+    --color-primary-50:  #f5f0eb;
+    --color-primary-100: #ede5db;
+    --color-primary-200: #e0d5c5;
+    --color-primary-300: #d4cdc0;
+    --color-primary-400: #b8ad9a;
+    --color-primary-500: #9c8e78;
+    --color-primary-600: #8a7a62;
+    --color-primary-700: #726452;
+    --color-primary-800: #5e5345;
+    --color-primary-900: #4d4439;
+    --color-primary-950: #2a2418;
+
+    /* Accent palette (terracotta) */
+    --color-accent-50:  #fdf8f5;
+    --color-accent-100: #faeee8;
+    --color-accent-200: #f5dcd0;
+    --color-accent-300: #edc4b0;
+    --color-accent-400: #e3a688;
+    --color-accent-500: #d3815e;
+    --color-accent-600: #c4724f;
+    --color-accent-700: #a85f42;
+    --color-accent-800: #8c4e37;
+    --color-accent-900: #74412f;
+    --color-accent-950: #3d2118;
+
+    /* CTA — remapped from amber (orange) to warm dark brown */
+    --color-cta:        #1a1410;
+    --color-cta-hover:  #33281a;
+    --color-cta-active: #0f0a07;
+    --color-cta-light:  #8b6f47;
+
+    /* Semantic */
+    --color-success:      #22C55E;
+    --color-success-bg:   #DCFCE7;
+    --color-success-text: #166534;
+    /* warning — desaturated into brown palette to avoid orange/gold */
+    --color-warning:      #8b6f47;
+    --color-warning-bg:   #f2ece2;
+    --color-warning-text: #33281a;
+    --color-error:        #EF4444;
+    --color-error-bg:     #FEE2E2;
+    --color-error-text:   #991B1B;
+    --color-info:         #3B82F6;
+    --color-info-bg:      #DBEAFE;
+    --color-info-text:    #1E40AF;
+
+    /* Special — navy remapped from blue to warm dark brown */
+    --color-navy:        #1a1410;
+    --color-white:       #FFFFFF;
+    --color-warm-white:  #faf9f7;
+    --color-cream:       #f5f3ef;
+    --color-light-beige: #e8e4db;
+
+    /* Semantic background aliases */
+    --color-bg-primary:   #FFFFFF;
+    --color-bg-secondary: #faf9f7;
+    --color-bg-tertiary:  #f5f3ef;
+    --color-bg-input:     #f5f3ef;
+
+    /* Text */
+    --color-text-primary:     #2a2418;
+    --color-text-secondary:   #5e5345;
+    --color-text-tertiary:    #9c8e78;
+    --color-text-placeholder: #b8ad9a;
+    --color-text-disabled:    #d4cdc0;
+
+    /* Borders */
+    --color-border-default: #e0d5c5;
+    --color-border-strong:  #b8ad9a;
+    --color-border-focus:   #8a7a62;
   }
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
+  /* PRD §10.1.1: White or warm neutral backgrounds ONLY. Never dark. */
   body {
-    @apply bg-white text-gray-900 antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply bg-white text-primary-950 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     min-height: 100vh;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-
-  .font-display {
-    font-family: 'Playfair Display', Georgia, serif;
-  }
-
+  /* PRD §10.3.2: Heading scale */
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl font-black;
-    letter-spacing: -0.03em;
-  }
-
-  h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl font-bold;
+    @apply font-extrabold tracking-tight text-primary-950;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    line-height: 1.05;
     letter-spacing: -0.02em;
   }
-
+  h2 {
+    @apply font-bold tracking-tight text-primary-950;
+    font-size: clamp(1.875rem, 4vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
   h3 {
-    @apply text-2xl md:text-3xl font-bold;
+    @apply font-bold text-primary-900;
+    font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+    line-height: 1.2;
     letter-spacing: -0.01em;
+  }
+  h4 {
+    @apply font-semibold text-primary-900;
+    font-size: clamp(1rem, 2vw, 1.375rem);
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+  }
+  h5, h6 {
+    @apply font-semibold text-primary-800;
+    line-height: 1.4;
+  }
+
+  /* PRD §10.3.1: JetBrains Mono for prices, inquiry numbers, model numbers */
+  .font-mono,
+  code,
+  kbd,
+  samp {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
+  }
+
+  /* PRD §10.3.1: Playfair Display for hero headlines on landing pages only */
+  .font-display {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  }
+
+  /* PRD §10.1.5: MOBILE FIRST — 44px minimum touch targets */
+  button,
+  [role="button"],
+  a,
+  input[type="submit"],
+  input[type="button"] {
+    min-height: 44px;
   }
 }
 
+/* ─── Component Layer ──────────────────────────────────────────────────────── */
 @layer components {
-  /* Sections */
+  /* Section rhythm: white > warm-white > white (PRD §10.2.5) */
   .section {
     @apply py-20 md:py-28 lg:py-36;
   }
-
   .section-sm {
     @apply py-12 md:py-16 lg:py-20;
   }
+  .section-white {
+    @apply bg-white;
+  }
+  .section-warm {
+    @apply bg-[#faf9f7];
+  }
+  .section-cream {
+    @apply bg-[#f5f3ef];
+  }
+  .section-primary {
+    @apply bg-primary-50;
+  }
 
-  /* Containers */
+  /* Container system */
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-
   .container-tight {
     @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-
   .container-narrow {
     @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+  .container-wide {
+    @apply max-w-[88rem] mx-auto px-4 sm:px-6 lg:px-8;
+  }
 
-  /* Dividers */
+  /* PRD §10: Primary CTA button — amber-600, neobrutalist style */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-amber-600 hover:bg-amber-700 active:bg-amber-800
+           text-white font-semibold text-sm
+           px-5 py-3 rounded-xl
+           border-2 border-transparent
+           shadow-neo-sm hover:shadow-neo-md
+           transition-all duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    min-height: 48px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Secondary CTA — outlined, primary-950 border */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-white hover:bg-primary-50 active:bg-primary-100
+           text-primary-950 font-semibold text-sm
+           px-5 py-3 rounded-xl
+           border-2 border-primary-950
+           shadow-neo-sm hover:shadow-neo-md
+           transition-all duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-950 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    min-height: 48px;
+  }
+
+  /* Ghost button — no border, text accent */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           bg-transparent hover:bg-primary-100 active:bg-primary-200
+           text-primary-700 hover:text-primary-950 font-medium text-sm
+           px-4 py-2.5 rounded-lg
+           transition-all duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2;
+    min-height: 44px;
+  }
+
+  /* PRD §10: Card — neobrutalist (cream bg, hard border, offset shadow) */
+  .card {
+    @apply bg-white rounded-2xl border-2 border-light-beige shadow-warm transition-shadow duration-200;
+  }
+  .card-neo {
+    @apply bg-white rounded-2xl border-2 border-primary-950 shadow-neo-md hover:shadow-neo-lg transition-all duration-200;
+  }
+  .card-cream {
+    @apply bg-cream rounded-2xl border-2 border-light-beige shadow-warm;
+  }
+
+  /* Input fields — cream background, primary-200 border, primary-600 focus */
+  .input {
+    @apply w-full bg-cream border-2 border-primary-200 rounded-xl
+           px-4 py-3 text-sm text-primary-950 placeholder-primary-400
+           transition-all duration-150
+           focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-600/20
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    min-height: 48px;
+  }
+
+  /* Inline divider */
   .divider {
-    @apply h-px bg-gray-200 my-8;
+    @apply h-px bg-primary-200 my-8;
+  }
+
+  /* Badge system */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide;
+  }
+  .badge-amber {
+    @apply bg-amber-100 text-amber-800 border border-amber-200;
+  }
+  .badge-success {
+    @apply bg-success-bg text-success-text border border-success-200;
+  }
+  .badge-error {
+    @apply bg-error-bg text-error-text border border-error-200;
+  }
+  .badge-primary {
+    @apply bg-primary-100 text-primary-800 border border-primary-200;
+  }
+  .badge-accent {
+    @apply bg-accent-100 text-accent-800 border border-accent-200;
+  }
+
+  /* Section label (PRD: uppercase tracking-wide small label above headings) */
+  .section-label {
+    @apply text-xs font-bold uppercase tracking-widest text-accent-600;
   }
 }
 
+/* ─── Utility Layer ────────────────────────────────────────────────────────── */
 @layer utilities {
+  /* PRD §10.2.4: text-balance for headlines */
   .text-balance {
     text-wrap: balance;
   }
 
-  /* Selection */
+  /* PRD §10.2.3: CTA amber selection color */
   ::selection {
-    @apply bg-amber-100 text-gray-900;
+    background-color: #FDE68A;
+    color: #2a2418;
   }
 
-  /* Scrollbar */
+  /* Scrollbar — minimal warm style */
+  .scrollbar-minimal {
+    scrollbar-width: thin;
+    scrollbar-color: #b8ad9a #f5f0eb;
+  }
   .scrollbar-minimal::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-
   .scrollbar-minimal::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    background: #f5f0eb;
+    border-radius: 4px;
   }
-
   .scrollbar-minimal::-webkit-scrollbar-thumb {
-    @apply bg-gray-400 rounded-full;
+    background: #b8ad9a;
+    border-radius: 4px;
   }
-
   .scrollbar-minimal::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-600;
+    background: #9c8e78;
   }
-
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
 
-  /* Aspect Ratios */
-  .aspect-4\/3 {
-    aspect-ratio: 4 / 3;
+  /* Shimmer loading animation */
+  .shimmer {
+    background: linear-gradient(90deg, #f5f0eb 0%, #ede5db 50%, #f5f0eb 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
   }
 
-  .aspect-3\/2 {
-    aspect-ratio: 3 / 2;
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
-
-  /* Line Clamp */
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Aspect ratios */
+  .aspect-4\/3 { aspect-ratio: 4 / 3; }
+  .aspect-3\/2 { aspect-ratio: 3 / 2; }
+  .aspect-16\/9 { aspect-ratio: 16 / 9; }
 }
 
-/* Global Styles */
-::-webkit-scrollbar {
-  width: 12px;
-}
+/* ─── Global Overrides ─────────────────────────────────────────────────────── */
 
-::-webkit-scrollbar-track {
-  @apply bg-gray-100;
-}
+/* Custom scrollbar (global) */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f5f0eb; }
+::-webkit-scrollbar-thumb { background: #b8ad9a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #8a7a62; }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-400;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-600;
-}
-
+/* Focus visible — warm dark brown ring for keyboard navigation */
 *:focus-visible {
-  outline: 3px solid #111827;
+  outline: 2px solid #1a1410;
   outline-offset: 2px;
+  border-radius: 4px;
 }
 
-::placeholder {
-  @apply text-gray-400;
-}
-
+/* Input autofill — keep warm background */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px white inset;
-  -webkit-text-fill-color: #111827;
+  -webkit-box-shadow: 0 0 0 1000px #f5f3ef inset;
+  -webkit-text-fill-color: #2a2418;
+  border-color: #8a7a62 !important;
 }
 
-@media (max-width: 640px) {
-  html {
-    font-size: 14px;
+::placeholder {
+  color: #b8ad9a;
+}
+
+/* Mobile typography scaling */
+@media (max-width: 360px) {
+  html { font-size: 14px; }
+}
+
+/* PRD §10.1.5: Bottom-sticky CTAs on mobile */
+@media (max-width: 767px) {
+  .sticky-cta-mobile {
+    @apply fixed bottom-0 left-0 right-0 p-4 bg-white border-t-2 border-primary-200 z-50;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }

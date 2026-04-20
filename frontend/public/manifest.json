@@ -1,0 +1,38 @@
+{
+  "name": "Hub4Estate — Best Prices on Electrical Products | Zero Middlemen",
+  "short_name": "Hub4Estate",
+  "description": "India's first transparent procurement platform for electrical products. Get the best price from verified dealers — zero middlemen, full transparency. Concierge service available for any product.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#F59E0B",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-IN",
+  "categories": [
+    "business",
+    "shopping",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/logos/hub4estate/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/hub4estate/favicon-64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/hub4estate/logo-full.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

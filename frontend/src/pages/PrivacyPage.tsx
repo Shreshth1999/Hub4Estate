@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield } from 'lucide-react';
+import { SEO } from '@/components/SEO';
 
 export function PrivacyPage() {
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Privacy Policy"
+        description="Hub4Estate Privacy Policy. Learn how we protect your data and handle personal information on India's leading electrical products procurement platform."
+        keywords="Hub4Estate privacy policy, data protection, electrical products platform privacy"
+        canonicalUrl="/privacy"
+      />
       {/* Header — dark */}
       <div className="bg-gray-900 px-6 py-16">
         <div className="max-w-3xl mx-auto">

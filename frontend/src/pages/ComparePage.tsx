@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { productsApi } from '../lib/api';
+import { SEO } from '@/components/SEO';
 import {
   X, Plus, ChevronRight, Check, Minus, ArrowLeft,
   ShoppingCart, Star, Shield, Package, Zap, AlertCircle
@@ -201,6 +202,12 @@ export function ComparePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO
+        title="Compare Electrical Products - Side by Side Comparison"
+        description="Compare electrical products side by side on Hub4Estate. Compare specifications, prices, and features of wires, switches, MCBs, fans, and more."
+        keywords="compare electrical products, electrical product comparison, compare wires, compare MCBs, compare fans, Hub4Estate compare"
+        canonicalUrl="/compare"
+      />
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-4">

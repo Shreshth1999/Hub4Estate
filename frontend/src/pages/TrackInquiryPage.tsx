@@ -7,6 +7,7 @@ import {
 import { api } from '../lib/api';
 import { ImagePreview } from '../components/common/ImagePreview';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '@/components/SEO';
 
 const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
@@ -92,6 +93,12 @@ export function TrackInquiryPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Track Your Inquiry"
+        description="Track the status of your electrical product inquiry on Hub4Estate. Get real-time updates on quotes from verified dealers."
+        keywords="track inquiry, electrical product inquiry status, Hub4Estate tracking"
+        canonicalUrl="/track"
+      />
 
       {/* Hero — dark */}
       <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">

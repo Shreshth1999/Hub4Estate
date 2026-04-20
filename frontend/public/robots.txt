@@ -1,0 +1,65 @@
+# Hub4Estate - Robots.txt
+# https://hub4estate.com
+
+User-agent: *
+Allow: /
+Allow: /categories
+Allow: /categories/*
+Allow: /product-types/*
+Allow: /products/*
+Allow: /for-buyers
+Allow: /for-dealers
+Allow: /community
+Allow: /knowledge
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /track
+Allow: /smart-scan
+Allow: /blog
+Allow: /blog/*
+Allow: /brands/*
+Allow: /buy/*
+Allow: /government-schemes
+Allow: /government-schemes/*
+Allow: /seo/
+Allow: /seo/*
+
+# Disallow admin, auth, and internal routes
+Disallow: /admin/*
+Disallow: /dealer/*
+Disallow: /user/*
+Disallow: /auth/*
+Disallow: /login
+Disallow: /register
+Disallow: /api/*
+
+# Sitemaps
+Sitemap: https://hub4estate.com/sitemap.xml
+
+# Crawl-delay (be kind to server)
+User-agent: *
+Crawl-delay: 2
+
+# Google specific
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing specific
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# LinkedIn bot
+User-agent: LinkedInBot
+Allow: /
+
+# Facebook bot
+User-agent: facebookexternalhit
+Allow: /
+
+# Twitter bot
+User-agent: Twitterbot
+Allow: /

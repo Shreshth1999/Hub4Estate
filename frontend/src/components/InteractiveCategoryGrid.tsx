@@ -1044,20 +1044,20 @@ export function CategoryTile({ category, index }: { category: Category; index: n
   return (
     <Link
       to={`/categories/${category.slug}`}
-      className="group relative bg-gray-700/50 border border-gray-600 overflow-hidden transition-all duration-500"
+      className="group relative bg-gray-800/60 border border-white/10 overflow-hidden rounded-xl transition-all duration-500 ease-smooth will-change-transform hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-warm-lg animate-tile-reveal"
       style={{
-        animationDelay: `${index * 50}ms`,
+        animationDelay: `${index * 60}ms`,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Blueprint grid background */}
       <div
-        className="absolute inset-0 opacity-20 transition-opacity duration-300"
+        className="absolute inset-0 opacity-20 transition-opacity duration-500 group-hover:opacity-40"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(64,64,64,0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(64,64,64,0.3) 1px, transparent 1px)
+            linear-gradient(rgba(139,111,71,0.35) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(139,111,71,0.35) 1px, transparent 1px)
           `,
           backgroundSize: '20px 20px',
         }}
@@ -1067,21 +1067,26 @@ export function CategoryTile({ category, index }: { category: Category; index: n
       <div
         className={`absolute inset-0 transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(211,129,94,0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse at center, rgba(139,111,71,0.28) 0%, transparent 70%)',
         }}
+      />
+
+      {/* Pulse ring — emanates on hover */}
+      <div
+        className={`pointer-events-none absolute inset-0 rounded-xl ring-1 ring-[#8b6f47]/40 ${isHovered ? 'animate-pulse-ring' : 'opacity-0'}`}
       />
 
       {/* Active border on hover */}
       <div
-        className={`absolute inset-0 border-2 transition-all duration-300 ${
-          isHovered ? 'border-amber-600/50' : 'border-transparent'
+        className={`absolute inset-0 rounded-xl border-2 transition-all duration-300 ${
+          isHovered ? 'border-[#8b6f47]/70' : 'border-transparent'
         }`}
       />
 
       {/* Content */}
       <div className="relative p-5 h-full flex flex-col">
         {/* Illustration area */}
-        <div className="h-24 mb-4 flex items-center justify-center">
+        <div className={`h-24 mb-4 flex items-center justify-center transition-transform duration-500 ease-smooth ${isHovered ? '-translate-y-0.5 scale-105' : ''}`}>
           {illustration ? (
             illustration.renderSVG(isHovered, animationPhase)
           ) : (
@@ -1092,7 +1097,7 @@ export function CategoryTile({ category, index }: { category: Category; index: n
         {/* Category info */}
         <div className="flex-1">
           <h3 className={`text-base font-semibold transition-colors duration-300 ${
-            isHovered ? 'text-amber-500' : 'text-white'
+            isHovered ? 'text-[#d4c5a8]' : 'text-white'
           }`}>
             {category.name}
           </h3>
@@ -1102,15 +1107,15 @@ export function CategoryTile({ category, index }: { category: Category; index: n
         {/* Arrow indicator */}
         <ArrowRight
           className={`absolute bottom-5 right-5 w-5 h-5 transition-all duration-300 ${
-            isHovered ? 'text-amber-600 translate-x-1' : 'text-gray-600'
+            isHovered ? 'text-[#d4c5a8] translate-x-1' : 'text-gray-600'
           }`}
         />
 
         {/* Corner measurement marks (blueprint style) */}
-        <div className="absolute top-2 left-2 w-3 h-3 border-l border-t border-gray-600 opacity-30" />
-        <div className="absolute top-2 right-2 w-3 h-3 border-r border-t border-gray-600 opacity-30" />
-        <div className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-gray-600 opacity-30" />
-        <div className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-gray-600 opacity-30" />
+        <div className="absolute top-2 left-2 w-3 h-3 border-l border-t border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
+        <div className="absolute top-2 right-2 w-3 h-3 border-r border-t border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
+        <div className="absolute bottom-2 left-2 w-3 h-3 border-l border-b border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
+        <div className="absolute bottom-2 right-2 w-3 h-3 border-r border-b border-[#8b6f47] opacity-30 transition-opacity duration-300 group-hover:opacity-70" />
       </div>
     </Link>
   );

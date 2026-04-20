@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Mail, Phone, MapPin, Clock, ArrowRight, CheckCircle, Loader2, Linkedin, Zap } from 'lucide-react';
 import { contactApi } from '../lib/api';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '../components/SEO';
 
 interface FormData {
   name: string;
@@ -53,6 +54,12 @@ export function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        canonicalUrl="/contact"
+        title="Contact Hub4Estate — Get in Touch for Best Prices on Electrical Products"
+        description="Contact Hub4Estate for inquiries about electrical products, dealer registration, concierge service, or partnerships. Email: shreshth.agarwal@hub4estate.com | Phone: +91 76900 01999. Based in Sri Ganganagar, Rajasthan — serving all of India."
+        keywords="contact Hub4Estate, Hub4Estate phone number, Hub4Estate email, electrical products inquiry, dealer registration contact, Hub for Estate contact, electrical supplier contact India"
+      />
 
       {/* Hero — dark */}
       <div className="bg-gray-900 blueprint-bg-dark relative overflow-hidden">

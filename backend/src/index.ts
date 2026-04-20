@@ -18,6 +18,7 @@ import {
 } from './middleware/security';
 import { requestLogger } from './middleware/requestLogger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { seoPrerender } from './middleware/seoPrerender';
 import {
   inquiryLimiter,
   contactLimiter,
@@ -62,6 +63,9 @@ const app = express();
 
 // ── Sentry Initialization (before all middleware) ───────────────────────────
 initSentry();
+
+// ── SEO Pre-render (MUST be before everything — serves static HTML to search engine bots) ──
+app.use(seoPrerender);
 
 // ── Middleware Chain (PRD §7 order) ──────────────────────────────────────────
 

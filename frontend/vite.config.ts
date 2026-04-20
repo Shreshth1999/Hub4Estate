@@ -26,11 +26,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    // SEO: Ensure clean URLs and proper asset paths
+    assetsDir: 'assets',
     rollupOptions: {
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-ui': ['lucide-react', 'zustand', '@tanstack/react-query'],
+          'vendor-seo': ['react-helmet-async'],
         },
       },
     },

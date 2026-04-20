@@ -7,9 +7,8 @@ import { productsApi, api } from '../lib/api';
 import { Analytics } from '../lib/analytics';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '../components/SEO';
 
-
-const API_BASE_URL = (import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3001/api').replace(/\/api$/, '');
 
 // ─── How It Works flow data ────────────────────────────────────────────────────
 const BUYER_STEPS = [
@@ -333,14 +332,20 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen relative">
+      <SEO
+        canonicalUrl="/"
+        title="Best Prices on Electrical Products in India — Zero Middlemen, Verified Dealers"
+        description="Hub4Estate is India's first transparent procurement platform for electrical products. Compare prices from 6+ verified dealers on wires, cables, LEDs, switches, MCBs, fans & more. Save up to 40%. Concierge service available — we source any product at the best price. Better than IndiaMART for electricals."
+        keywords="Hub4Estate, Hub for Estate, Hub 4 Estate, best price electrical products India, buy electrical products online, verified electrical dealers, electrical procurement platform, wires cables best price, LED lights wholesale, switches sockets MCB, IndiaMART alternative, electrical marketplace India, concierge service, zero middlemen, construction electrical supplies, building materials electrical, Havells Polycab Philips Legrand Anchor Finolex Syska Crompton Orient, electrical shop online India, FRLS wire, modular switches, LED panel lights, ceiling fan best price, distribution board, smart home electrical, electrical dealer near me, bulk electrical products, wholesale electrical India"
+      />
 
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
       <section className="relative bg-white overflow-hidden border-b border-gray-100">
         {/* Subtle warm glow orbs */}
         <div className="absolute top-[-10%] right-[-5%] w-[700px] h-[700px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(217,119,6,0.07) 0%, transparent 65%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(26,20,16,0.05) 0%, transparent 65%)' }} />
         <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.05) 0%, transparent 65%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(139,111,71,0.06) 0%, transparent 65%)' }} />
 
         <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 py-20 lg:py-28 relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -360,7 +365,7 @@ export function HomePage() {
 
               {/* Main Headline */}
               <h1
-                className="text-5xl md:text-6xl lg:text-7xl font-semibold text-gray-900 mb-6 leading-[0.93] tracking-tight"
+                className="text-5xl md:text-6xl lg:text-7xl font-semibold text-primary-950 mb-6 leading-[0.93] tracking-tight"
                 style={revealStyle(heroIn.inView, 0.06)}
               >
                 {isHi ? (
@@ -376,7 +381,7 @@ export function HomePage() {
 
               {/* Subheadline */}
               <p
-                className="text-lg text-gray-500 mb-8 max-w-lg leading-relaxed"
+                className="text-lg text-primary-600 mb-8 max-w-lg leading-relaxed"
                 style={revealStyle(heroIn.inView, 0.12)}
               >
                 {tx.hero.subheadline}
@@ -389,14 +394,14 @@ export function HomePage() {
               >
                 <button
                   onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 text-white font-bold text-base rounded-xl btn-glow group"
+                  className="btn-primary px-8 py-4 group"
                 >
                   {tx.hero.ctaPrimary}
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <Link
                   to="/track"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-gray-200 text-gray-600 font-medium text-base rounded-xl hover:border-gray-300 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
+                  className="btn-secondary px-8 py-4"
                 >
                   {tx.hero.ctaSecondary}
                 </Link>
@@ -412,8 +417,8 @@ export function HomePage() {
                   { Icon: Shield, text: 'We verify dealers before connecting you' },
                   { Icon: FileText, text: 'Full transparency — you see every quote, no hidden fees' },
                 ].map(({ Icon, text }, index) => (
-                  <div key={index} className="flex items-center gap-2.5 text-sm font-semibold text-gray-700">
-                    <Icon className="w-4 h-4 text-gray-900 flex-shrink-0" />
+                  <div key={index} className="flex items-center gap-2.5 text-sm font-semibold text-primary-800">
+                    <Icon className="w-4 h-4 text-primary-950 flex-shrink-0" />
                     <span>{text}</span>
                   </div>
                 ))}
@@ -425,10 +430,10 @@ export function HomePage() {
                   { label: 'Sony Speaker', saved: '₹37,000 saved', sub: 'vs Croma ₹1,05,000' },
                   { label: 'Philips LED ×200', saved: '₹24,000 saved', sub: 'vs local dealer' },
                 ].map((d, i) => (
-                  <div key={i} className={`bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
-                    <p className="text-[11px] text-gray-400 mb-0.5 font-medium">{d.label}</p>
+                  <div key={i} className={`bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 ${i === 0 ? 'animate-float' : 'animate-float-delay'}`}>
+                    <p className="text-[11px] text-primary-500 mb-0.5 font-medium">{d.label}</p>
                     <p className="text-sm font-bold text-amber-700">{d.saved}</p>
-                    <p className="text-[11px] text-gray-400">{d.sub}</p>
+                    <p className="text-[11px] text-primary-500">{d.sub}</p>
                   </div>
                 ))}
               </div>
@@ -436,22 +441,22 @@ export function HomePage() {
 
             {/* Right Side - Product Inquiry Form */}
             <div style={revealStyle(heroIn.inView, 0.08)}>
-              <div id="inquiry-form" className="bg-white rounded-2xl p-6 lg:p-8 shadow-xl shadow-gray-200/80 ring-1 ring-gray-100">
+              <div id="inquiry-form" className="bg-white rounded-2xl p-6 lg:p-8 border-2 border-primary-200 shadow-warm-lg">
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-amber-700 mx-auto mb-4" />
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-2">{tx.hero.submitted.title}</h3>
-                    <p className="text-gray-600 mb-4">{tx.hero.submitted.subtitle}</p>
+                    <h3 className="text-2xl font-semibold text-primary-950 mb-2">{tx.hero.submitted.title}</h3>
+                    <p className="text-primary-600 mb-4">{tx.hero.submitted.subtitle}</p>
                     {submittedInquiryId && (
-                      <div className="bg-gray-50 border border-gray-200 p-4 mb-4 text-left">
-                        <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{tx.hero.submitted.inquiryLabel}</p>
-                        <p className="font-mono text-lg font-semibold text-gray-900">{submittedInquiryId}</p>
-                        <p className="text-xs text-gray-400 mt-1">{tx.hero.submitted.inquiryHint}</p>
+                      <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-4 mb-4 text-left">
+                        <p className="text-xs font-bold uppercase tracking-wider text-primary-500 mb-1">{tx.hero.submitted.inquiryLabel}</p>
+                        <p className="font-mono text-lg font-semibold text-primary-950">{submittedInquiryId}</p>
+                        <p className="text-xs text-primary-400 mt-1">{tx.hero.submitted.inquiryHint}</p>
                       </div>
                     )}
                     <Link
                       to={`/track?phone=${encodeURIComponent(inquiryForm.phone)}`}
-                      className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+                      className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 text-sm font-semibold rounded-xl transition-colors"
                     >
                       {tx.hero.submitted.trackBtn}
                       <ArrowRight className="w-4 h-4" />
@@ -472,23 +477,23 @@ export function HomePage() {
                 ) : (
                   <>
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-xl font-semibold text-gray-900">{tx.hero.formTitle}</h3>
-                      <span className="flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                      <h3 className="text-xl font-semibold text-primary-950">{tx.hero.formTitle}</h3>
+                      <span className="flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
                         <Sparkles className="w-3 h-3" /> AI-powered
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mb-6">{tx.hero.formSubtitle}</p>
+                    <p className="text-sm text-primary-600 mb-6">{tx.hero.formSubtitle}</p>
 
                     {/* Toggle: Manual vs AI Scan */}
-                    <div className="relative mb-6 bg-gray-100 border border-gray-200 p-1">
+                    <div className="relative mb-6 bg-primary-50 border-2 border-primary-200 rounded-xl p-1">
                       <div className="grid grid-cols-2 gap-1 relative">
                         <button
                           type="button"
                           onClick={() => { setUseAIScan(false); stopCamera(); setAiParsedItems([]); }}
                           className={`relative px-4 py-3 text-sm font-bold transition-all duration-200 ${
                             !useAIScan
-                              ? 'bg-gray-900 text-white'
-                              : 'text-gray-600 hover:text-gray-900'
+                              ? 'bg-primary-950 text-white'
+                              : 'text-primary-600 hover:text-primary-950'
                           }`}
                         >
                           <div className="flex items-center justify-center gap-2">
@@ -515,9 +520,9 @@ export function HomePage() {
 
                     {/* AI Scan Guide */}
                     {useAIScan && !cameraActive && !photoPreview && (
-                      <div className="mb-6 bg-gray-50 border border-gray-200 p-4">
+                      <div className="mb-6 bg-primary-50 border border-primary-200 p-4 rounded-xl">
                         <div className="flex items-start gap-3 mb-3">
-                          <div className="w-8 h-8 bg-gray-900 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 bg-primary-950 rounded-lg flex items-center justify-center flex-shrink-0">
                             <Sparkles className="w-4 h-4 text-white" />
                           </div>
                           <div>
@@ -527,7 +532,7 @@ export function HomePage() {
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-center">
                           {tx.hero.aiScan.steps.map((step, i) => (
-                            <div key={i} className="bg-white border border-gray-200 p-2">
+                            <div key={i} className="bg-white border border-primary-200 p-2 rounded-lg">
                               <div className="text-lg font-semibold text-amber-700 mb-0.5">{i + 1}</div>
                               <div className="text-xs font-medium text-gray-700">{step}</div>
                             </div>
@@ -551,7 +556,7 @@ export function HomePage() {
                         <div className="space-y-4">
                           {cameraActive ? (
                             <div className="space-y-4">
-                              <div className="relative overflow-hidden border border-gray-200 rounded-xl">
+                              <div className="relative overflow-hidden border-2 border-primary-200 rounded-xl">
                                 <video
                                   ref={videoRef}
                                   autoPlay
@@ -572,7 +577,7 @@ export function HomePage() {
                                   type="button"
                                   onClick={capturePhoto}
                                   disabled={aiScanning}
-                                  className="flex-1 px-4 py-3 bg-gray-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors disabled:opacity-50"
+                                  className="flex-1 px-4 py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
                                 >
                                   <Camera className="w-5 h-5" />
                                   <span>Capture & Scan</span>
@@ -580,7 +585,7 @@ export function HomePage() {
                                 <button
                                   type="button"
                                   onClick={stopCamera}
-                                  className="px-5 bg-gray-200 hover:bg-gray-300 font-bold text-sm transition-colors"
+                                  className="px-5 bg-primary-100 hover:bg-primary-200 text-primary-950 font-bold text-sm rounded-xl transition-colors"
                                 >
                                   Cancel
                                 </button>
@@ -588,25 +593,25 @@ export function HomePage() {
                             </div>
                           ) : photoPreview ? (
                             <div className="space-y-4">
-                              <div className="relative overflow-hidden border border-gray-300">
-                                <img src={photoPreview} alt="Product" className="w-full bg-gray-50" />
+                              <div className="relative overflow-hidden border-2 border-primary-200 rounded-xl">
+                                <img src={photoPreview} alt="Product" className="w-full bg-primary-50" />
                                 <button
                                   type="button"
                                   onClick={() => {
                                     removePhoto();
                                     setAiParsedItems([]);
                                   }}
-                                  className="absolute top-3 right-3 bg-gray-900/80 hover:bg-gray-900 text-white p-2 transition-colors"
+                                  className="absolute top-3 right-3 bg-primary-950/80 hover:bg-primary-950 text-white p-2 rounded-lg transition-colors"
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
                               </div>
 
                               {aiScanning ? (
-                                <div className="bg-gray-100 border border-gray-200 p-6 text-center">
-                                  <Loader2 className="w-8 h-8 animate-spin text-gray-700 mx-auto mb-3" />
-                                  <p className="text-sm font-bold text-gray-900 mb-1">Scanning your slip...</p>
-                                  <p className="text-xs text-gray-600">Extracting products, quantities, and brands</p>
+                                <div className="bg-primary-50 border border-primary-200 p-6 text-center rounded-xl">
+                                  <Loader2 className="w-8 h-8 animate-spin text-primary-700 mx-auto mb-3" />
+                                  <p className="text-sm font-bold text-primary-950 mb-1">Scanning your slip...</p>
+                                  <p className="text-xs text-primary-600">Extracting products, quantities, and brands</p>
                                 </div>
                               ) : aiParsedItems.length > 0 ? (
                                 <div className="bg-amber-50 border border-amber-300 p-5 space-y-3">
@@ -626,7 +631,7 @@ export function HomePage() {
                                           <div className="text-gray-600 flex items-center gap-2 flex-wrap">
                                             <span>{item.quantity} {item.unit}</span>
                                             {item.brand && (
-                                              <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-medium">
+                                              <span className="px-2 py-0.5 bg-primary-100 text-primary-700 text-xs font-medium rounded">
                                                 {item.brand}
                                               </span>
                                             )}
@@ -645,7 +650,7 @@ export function HomePage() {
                                                       setAiParsedItems(updated);
                                                       if (i === 0) setInquiryForm(f => ({ ...f, modelNumber: `${item.productName} ${s.name}`.trim() }));
                                                     }}
-                                                    className="px-2 py-0.5 border border-gray-300 text-xs font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+                                                    className="px-2 py-0.5 border border-primary-200 text-xs font-bold text-primary-700 bg-primary-50 hover:bg-primary-100 rounded transition-colors"
                                                     title={s.reason}
                                                   >
                                                     {s.name}
@@ -684,13 +689,13 @@ export function HomePage() {
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDrop}
-                                className={`w-full h-40 border border-dashed transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
+                                className={`w-full h-40 border-2 border-dashed rounded-xl transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
                                   isDragging
-                                    ? 'border-gray-500 bg-gray-100'
-                                    : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
+                                    ? 'border-primary-500 bg-primary-100'
+                                    : 'border-primary-300 bg-primary-50 hover:border-primary-400 hover:bg-primary-100'
                                 }`}
                               >
-                                <div className="w-12 h-12 bg-gray-900 flex items-center justify-center">
+                                <div className="w-12 h-12 bg-primary-950 rounded-xl flex items-center justify-center">
                                   <Upload className="w-6 h-6 text-white" />
                                 </div>
                                 <span className="text-sm font-bold text-gray-900">{tx.hero.aiScan.upload}</span>
@@ -711,16 +716,16 @@ export function HomePage() {
                               <button
                                 type="button"
                                 onClick={startCamera}
-                                className="w-full px-4 py-3 bg-gray-900 text-white font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+                                className="w-full px-4 py-3 bg-primary-950 hover:bg-primary-900 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
                               >
                                 <Camera className="w-5 h-5" />
                                 <span>{tx.hero.aiScan.camera}</span>
                               </button>
 
                               {/* Tips */}
-                              <div className="bg-gray-50 border border-gray-200 p-4">
-                                <p className="text-xs font-bold text-gray-700 mb-2">{tx.hero.aiScan.tips.title}</p>
-                                <ul className="text-xs text-gray-600 space-y-1">
+                              <div className="bg-primary-50 border border-primary-200 p-4 rounded-xl">
+                                <p className="text-xs font-bold text-primary-800 mb-2">{tx.hero.aiScan.tips.title}</p>
+                                <ul className="text-xs text-primary-600 space-y-1">
                                   {tx.hero.aiScan.tips.items.map((tip, i) => (
                                     <li key={i}>• {tip}</li>
                                   ))}
@@ -732,16 +737,16 @@ export function HomePage() {
                       ) : (
                         /* Manual Entry Mode */
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                            Product Photo <span className="text-gray-400 normal-case font-normal">(optional)</span>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-primary-700 mb-2">
+                            Product Photo <span className="text-primary-400 normal-case font-normal">(optional)</span>
                           </label>
                           {photoPreview ? (
-                            <div className="relative w-full h-32 border border-gray-200 overflow-hidden">
-                              <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-gray-50" />
+                            <div className="relative w-full h-32 border-2 border-primary-200 rounded-xl overflow-hidden">
+                              <img src={photoPreview} alt="Product" className="w-full h-full object-contain bg-primary-50" />
                               <button
                                 type="button"
                                 onClick={removePhoto}
-                                className="absolute top-2 right-2 bg-gray-900 text-white p-1"
+                                className="absolute top-2 right-2 bg-primary-950 text-white p-1 rounded"
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -750,10 +755,10 @@ export function HomePage() {
                             <button
                               type="button"
                               onClick={() => fileInputRef.current?.click()}
-                              className="w-full h-24 border border-dashed border-gray-300 flex flex-col items-center justify-center gap-2 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                              className="w-full h-24 border-2 border-dashed border-primary-300 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-primary-400 hover:bg-primary-50 transition-colors"
                             >
-                              <Camera className="w-5 h-5 text-gray-400" />
-                              <span className="text-sm text-gray-500">Upload product photo</span>
+                              <Camera className="w-5 h-5 text-primary-400" />
+                              <span className="text-sm text-primary-500">Upload product photo</span>
                             </button>
                           )}
                         </div>
@@ -761,7 +766,7 @@ export function HomePage() {
 
                       {/* Model Number */}
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-primary-700 mb-1 flex items-center justify-between">
                           <span>{tx.hero.formLabels.productModel}</span>
                           <button
                             type="button"
@@ -781,8 +786,8 @@ export function HomePage() {
                           placeholder={isVoiceListening ? 'Listening... speak your product name' : 'e.g. Havells Crabtree 16A switch, Polycab 2.5mm wire...'}
                           value={inquiryForm.modelNumber}
                           onChange={e => setInquiryForm(f => ({ ...f, modelNumber: e.target.value }))}
-                          className={`w-full px-4 py-2.5 border focus:border-gray-400 outline-none text-sm transition-colors ${
-                            isVoiceListening ? 'border-amber-300 bg-amber-50' : 'border-gray-200'
+                          className={`w-full px-4 py-2.5 border-2 rounded-lg focus:border-primary-600 outline-none text-sm transition-colors ${
+                            isVoiceListening ? 'border-amber-300 bg-amber-50' : 'border-primary-200 bg-cream'
                           }`}
                         />
                         {isVoiceListening && (
@@ -792,18 +797,19 @@ export function HomePage() {
 
                       {/* Quantity & City */}
                       <div className="grid grid-cols-2 gap-3">
+
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">{tx.hero.formLabels.quantity}</label>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-primary-700 mb-1">{tx.hero.formLabels.quantity}</label>
                           <input
                             type="number"
                             min="1"
                             value={inquiryForm.quantity}
                             onChange={e => setInquiryForm(f => ({ ...f, quantity: e.target.value }))}
-                            className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
+                            className="w-full px-4 py-2.5 border-2 border-primary-200 bg-cream rounded-lg focus:border-primary-600 outline-none text-sm"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1 flex items-center justify-between">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-primary-700 mb-1 flex items-center justify-between">
                             <span>{tx.hero.formLabels.city}</span>
                             <button
                               type="button"
@@ -819,47 +825,47 @@ export function HomePage() {
                             placeholder="e.g. Mumbai"
                             value={inquiryForm.deliveryCity}
                             onChange={e => setInquiryForm(f => ({ ...f, deliveryCity: e.target.value }))}
-                            className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
+                            className="w-full px-4 py-2.5 border-2 border-primary-200 bg-cream rounded-lg focus:border-primary-600 outline-none text-sm"
                           />
                         </div>
                       </div>
 
                       {/* Name & Phone */}
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">{tx.hero.formLabels.yourName}</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-primary-700 mb-1">{tx.hero.formLabels.yourName}</label>
                         <input
                           type="text"
                           placeholder="Full name"
                           value={inquiryForm.name}
                           onChange={e => setInquiryForm(f => ({ ...f, name: e.target.value }))}
-                          className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
+                          className="w-full px-4 py-2.5 border-2 border-primary-200 bg-cream rounded-lg focus:border-primary-600 outline-none text-sm"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">{tx.hero.formLabels.phone}</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-primary-700 mb-1">{tx.hero.formLabels.phone}</label>
                         <input
                           type="tel"
                           placeholder="10-digit mobile number"
                           value={inquiryForm.phone}
                           onChange={e => setInquiryForm(f => ({ ...f, phone: e.target.value }))}
-                          className="w-full px-4 py-2.5 border border-gray-200 focus:border-gray-400 outline-none text-sm"
+                          className="w-full px-4 py-2.5 border-2 border-primary-200 bg-cream rounded-lg focus:border-primary-600 outline-none text-sm"
                         />
                       </div>
 
                       {formError && (
-                        <div className="bg-red-50 border border-red-200 p-4 flex items-start gap-3">
-                          <div className="w-5 h-5 bg-red-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="bg-error-bg border border-error-200 p-4 rounded-xl flex items-start gap-3">
+                          <div className="w-5 h-5 bg-error flex items-center justify-center flex-shrink-0 mt-0.5 rounded">
                             <X className="w-3 h-3 text-white" />
                           </div>
-                          <p className="text-sm text-red-700">{formError}</p>
+                          <p className="text-sm text-error-text">{formError}</p>
                         </div>
                       )}
 
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50"
+                        className="w-full btn-primary"
                       >
                         {submitting ? (
                           <>
@@ -887,9 +893,9 @@ export function HomePage() {
       </section>
 
       {/* ─── Key Facts Bar ─────────────────────────────────────────────────────── */}
-      <div className="border-t border-b border-gray-100 bg-white">
+      <div className="border-t-2 border-b-2 border-primary-100 bg-white">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-primary-100">
             {[
               { stat: '₹37,000', label: 'Average saved per order' },
               { stat: '100%', label: 'Free for buyers, always' },
@@ -897,8 +903,8 @@ export function HomePage() {
               { stat: 'Zero', label: 'Spam calls to your number' },
             ].map((f, i) => (
               <div key={i} className="px-6 py-6 text-center">
-                <p className="text-2xl font-black text-[#0B1628] mb-1">{f.stat}</p>
-                <p className="text-xs text-gray-400 leading-snug">{f.label}</p>
+                <p className="text-2xl font-black text-primary-950 mb-1">{f.stat}</p>
+                <p className="text-xs text-primary-500 leading-snug">{f.label}</p>
               </div>
             ))}
           </div>
@@ -907,19 +913,19 @@ export function HomePage() {
 
 
       {/* ─── How It Works ─────────────────────────────────────────────────────── */}
-      <section className="bg-stone-50 overflow-hidden">
+      <section className="bg-[#faf9f7] overflow-hidden">
         <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6 pt-20 sm:pt-28 pb-20 sm:pb-28">
 
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12" style={revealStyle(howIn.inView, 0)}>
             <div>
-              <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-3">{tx.howItWorks.label}</p>
-              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">
+              <p className="section-label mb-3">{tx.howItWorks.label}</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-primary-950 tracking-tight">
                 {tx.howItWorks.title}
               </h2>
             </div>
             {/* Tab toggle */}
-            <div className="inline-flex bg-gray-50 border border-gray-100 rounded-xl p-1 gap-1 flex-shrink-0" style={revealStyle(howIn.inView, 0.06)}>
+            <div className="inline-flex bg-primary-50 border border-primary-200 rounded-xl p-1 gap-1 flex-shrink-0" style={revealStyle(howIn.inView, 0.06)}>
               {([
                 { id: 'buyer' as const, label: 'For Buyers' },
                 { id: 'dealer' as const, label: 'For Dealers' },
@@ -929,8 +935,8 @@ export function HomePage() {
                   onClick={() => switchTab(id)}
                   className={`relative px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                     flowView === id
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-400 hover:text-gray-700'
+                      ? 'bg-white text-primary-950 shadow-warm-sm'
+                      : 'text-primary-500 hover:text-primary-800'
                   }`}
                 >
                   {label}
@@ -954,7 +960,7 @@ export function HomePage() {
             {(flowView === 'buyer' ? BUYER_STEPS : DEALER_STEPS).map((step, i) => (
               <div
                 key={step.step}
-                className="group relative bg-white border border-gray-100 rounded-2xl p-6 overflow-hidden hover:border-amber-200 hover:shadow-lg hover:shadow-amber-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+                className="group relative bg-white border-2 border-primary-200 rounded-2xl p-6 overflow-hidden hover:border-amber-300 hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-200 cursor-default"
                 style={revealStyle(howIn.inView, 0.08 + i * 0.06)}
               >
                 {/* Icon — soft amber, fills on hover */}
@@ -963,8 +969,8 @@ export function HomePage() {
                 </div>
 
                 <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.15em] mb-1.5">Step {step.step}</p>
-                <p className="text-sm font-bold text-gray-900 mb-1.5 relative">{step.title}</p>
-                <p className="text-xs text-gray-500 leading-relaxed relative">{step.desc}</p>
+                <p className="text-sm font-bold text-primary-950 mb-1.5 relative">{step.title}</p>
+                <p className="text-xs text-primary-600 leading-relaxed relative">{step.desc}</p>
 
                 {/* Bottom accent line — slides in on hover */}
                 <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-amber-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
@@ -973,19 +979,19 @@ export function HomePage() {
           </div>
 
           {/* Blind Matching Engine */}
-          <div className="bg-[#0B1628] rounded-xl px-6 py-4 flex flex-wrap items-center gap-4" style={revealStyle(howIn.inView, 0.18)}>
+          <div className="bg-primary-950 rounded-xl px-6 py-4 flex flex-wrap items-center gap-4" style={revealStyle(howIn.inView, 0.18)}>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
               <p className="text-sm font-semibold text-white">Blind Matching Engine</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {['No names shared', 'Quotes sent blind', 'Instant routing', 'Market data on every bid'].map((tag, i) => (
-                <span key={i} className="text-xs text-gray-400 bg-white/[0.07] px-3 py-1 rounded-full border border-white/10">{tag}</span>
+                <span key={i} className="text-xs text-primary-200 bg-white/[0.07] px-3 py-1 rounded-full border border-white/10">{tag}</span>
               ))}
             </div>
             <button
               onClick={() => setFlowView(flowView === 'buyer' ? 'dealer' : 'buyer')}
-              className="ml-auto text-xs text-amber-500 hover:text-amber-400 transition-colors flex-shrink-0"
+              className="ml-auto text-xs text-amber-400 hover:text-amber-300 transition-colors flex-shrink-0"
             >
               {flowView === 'buyer' ? 'View dealer flow →' : 'View buyer flow →'}
             </button>
@@ -995,16 +1001,16 @@ export function HomePage() {
       </section>
 
       {/* ─── Anyone Who Buys ──────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-white border-t border-gray-100">
+      <section className="py-20 sm:py-28 bg-white border-t-2 border-primary-100">
         <div ref={whoIn.ref as any} className="max-w-6xl mx-auto px-6">
 
           {/* Header */}
           <div className="max-w-3xl mb-14" style={revealStyle(whoIn.inView, 0)}>
-            <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-3">Who We Serve</p>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-4">
+            <p className="section-label mb-3">Who We Serve</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-primary-950 tracking-tight mb-4">
               Anyone Who Buys Electrical Products
             </h2>
-            <p className="text-lg text-gray-500 leading-relaxed max-w-xl">
+            <p className="text-lg text-primary-600 leading-relaxed max-w-xl">
               If you've ever paid more than you should have — without knowing it — Hub4Estate was built for you.
             </p>
           </div>
@@ -1021,11 +1027,11 @@ export function HomePage() {
             ].map((segment, i) => (
               <div
                 key={i}
-                className="group relative bg-white rounded-2xl p-7 border border-gray-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col"
+                className="group relative bg-white rounded-2xl p-7 border-2 border-primary-200 hover:border-amber-300 hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col"
                 style={revealStyle(whoIn.inView, 0.05 + i * 0.07)}
               >
                 {/* Card number */}
-                <span className="absolute top-5 right-6 text-5xl font-black leading-none select-none pointer-events-none text-gray-50 group-hover:text-amber-50 transition-colors duration-300">
+                <span className="absolute top-5 right-6 text-5xl font-black leading-none select-none pointer-events-none text-primary-50 group-hover:text-amber-50 transition-colors duration-300">
                   {String(i + 1).padStart(2, '0')}
                 </span>
 
@@ -1035,13 +1041,13 @@ export function HomePage() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-base font-bold text-gray-900 mb-1">{segment.title}</h3>
-                <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-4">{segment.useCase}</p>
+                <h3 className="text-base font-bold text-primary-950 mb-1">{segment.title}</h3>
+                <p className="text-xs text-primary-500 uppercase tracking-wider font-semibold mb-4">{segment.useCase}</p>
 
                 {/* Benefit */}
-                <div className="mt-auto flex items-start gap-2.5 pt-4 border-t border-gray-100">
-                  <ArrowRight className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-gray-600 leading-snug">{segment.benefit}</p>
+                <div className="mt-auto flex items-start gap-2.5 pt-4 border-t border-primary-100">
+                  <ArrowRight className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-primary-700 leading-snug">{segment.benefit}</p>
                 </div>
 
                 {/* Bottom accent line */}
@@ -1053,30 +1059,29 @@ export function HomePage() {
       </section>
 
       {/* ─── Two Sides. One Platform. ─────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-gradient-to-b from-slate-900 via-[#0F172A] to-[#0B1628] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-        <div ref={twoIn.ref as any} className="max-w-6xl mx-auto px-6 relative">
+      <section className="py-20 sm:py-28 bg-[#faf9f7] border-t border-primary-100 overflow-hidden">
+        <div ref={twoIn.ref as any} className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16" style={revealStyle(twoIn.inView, 0)}>
-            <p className="text-xs font-semibold text-amber-400 uppercase tracking-[0.2em] mb-3">Built For Both Sides</p>
-            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
+            <p className="section-label mb-3">Built For Both Sides</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-primary-950 mb-4 tracking-tight">
               Two Sides. One Platform.
             </h2>
-            <p className="text-lg text-white/40 max-w-xl mx-auto">
-              Hub4Estate works for both buyers and electrical dealers
+            <p className="text-lg text-primary-600 max-w-xl mx-auto">
+              Hub4Estate works equally well for buyers and electrical dealers
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6" style={revealStyle(twoIn.inView, 0.08)}>
             {/* For Buyers */}
-            <div className="group relative bg-white rounded-2xl p-8 shadow-2xl shadow-black/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-violet-500 to-blue-500" />
+            <div className="group relative bg-white rounded-2xl p-8 border-2 border-primary-200 shadow-neo-sm hover:shadow-neo-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-primary-950 rounded-tl-2xl rounded-bl-2xl" />
               <div className="flex items-center gap-3 mb-7">
-                <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/20">
+                <div className="w-12 h-12 bg-primary-950 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-violet-600">For Buyers</span>
-                  <h3 className="text-lg font-bold text-gray-900">Anyone Buying Electrical Products</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-primary-600">For Buyers</span>
+                  <h3 className="text-lg font-bold text-primary-950">Anyone Buying Electrical Products</h3>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
@@ -1088,34 +1093,34 @@ export function HomePage() {
                   { icon: TrendingUp, title: 'Zero Middlemen', desc: 'You deal directly with the dealer. We just facilitate the connection' },
                 ].map(({ icon: Icon, title, desc }, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-violet-600" />
+                    <div className="w-8 h-8 bg-primary-50 border border-primary-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-primary-700" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">{title}</p>
-                      <p className="text-sm text-gray-500 leading-snug">{desc}</p>
+                      <p className="text-sm font-bold text-primary-950">{title}</p>
+                      <p className="text-sm text-primary-600 leading-snug">{desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <button
                 onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-violet-600 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300"
+                className="w-full btn-primary"
               >
                 Submit Your First Inquiry <ArrowRight className="w-5 h-5" />
               </button>
             </div>
 
             {/* For Dealers */}
-            <div className="group relative bg-white rounded-2xl p-8 shadow-2xl shadow-black/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-emerald-500 to-teal-500" />
+            <div className="group relative bg-white rounded-2xl p-8 border-2 border-primary-200 shadow-neo-sm hover:shadow-neo-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-600 rounded-tl-2xl rounded-bl-2xl" />
               <div className="flex items-center gap-3 mb-7">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/20">
+                <div className="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Store className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">For Dealers</span>
-                  <h3 className="text-lg font-bold text-gray-900">Electrical Shops &amp; Distributors</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-700">For Dealers</span>
+                  <h3 className="text-lg font-bold text-primary-950">Electrical Shops &amp; Distributors</h3>
                 </div>
               </div>
               <div className="space-y-4 mb-8">
@@ -1127,17 +1132,17 @@ export function HomePage() {
                   { icon: TrendingUp, title: 'Expand Your Reach', desc: 'Reach buyers across your city who would never have found you otherwise' },
                 ].map(({ icon: Icon, title, desc }, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-emerald-600" />
+                    <div className="w-8 h-8 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-amber-700" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">{title}</p>
-                      <p className="text-sm text-gray-500 leading-snug">{desc}</p>
+                      <p className="text-sm font-bold text-primary-950">{title}</p>
+                      <p className="text-sm text-primary-600 leading-snug">{desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link to="/dealer/onboarding" className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300">
+              <Link to="/dealer/onboarding" className="w-full btn-primary flex items-center justify-center gap-2">
                 Register as a Dealer — Free <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
@@ -1151,15 +1156,15 @@ export function HomePage() {
 
 
       {/* Categories Grid */}
-      <section className="py-20 sm:py-28 bg-[#0F172A]">
+      <section className="py-20 sm:py-28 bg-white border-t border-primary-100">
         <div ref={catIn.ref as any} className="max-w-6xl mx-auto px-6">
           <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4" style={revealStyle(catIn.inView, 0)}>
             <div>
-              <p className="text-xs font-semibold text-amber-400 uppercase tracking-[0.2em] mb-3">Browse by category</p>
-              <h2 className="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight">
+              <p className="section-label mb-3">Browse by category</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-primary-950 mb-2 tracking-tight">
                 {tx.categories.title}
               </h2>
-              <p className="text-base text-white/40 max-w-lg">
+              <p className="text-base text-primary-600 max-w-lg">
                 {tx.categories.subtitle}
               </p>
             </div>
@@ -1172,7 +1177,7 @@ export function HomePage() {
           <div className="text-center mt-12" style={revealStyle(catIn.inView, 0.2)}>
             <Link
               to="/categories"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors"
+              className="btn-primary inline-flex items-center gap-2 px-8 py-4"
             >
               {tx.categories.cta}
               <ArrowRight className="w-5 h-5" />
@@ -1183,23 +1188,23 @@ export function HomePage() {
 
 
       {/* ─── Real Deals ───────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-28 bg-stone-50">
+      <section className="py-20 sm:py-28 bg-[#faf9f7] border-t border-primary-100">
         <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
 
           {/* Header */}
           <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6" style={revealStyle(dealsIn.inView, 0)}>
             <div>
-              <p className="text-xs font-semibold text-emerald-600 uppercase tracking-[0.2em] mb-3">{tx.realDeals.label}</p>
-              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2 tracking-tight leading-tight">
+              <p className="section-label mb-3">{tx.realDeals.label}</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-primary-950 mb-2 tracking-tight leading-tight">
                 {tx.realDeals.title}
               </h2>
-              <p className="text-base text-gray-500 max-w-lg">
+              <p className="text-base text-primary-600 max-w-lg">
                 {tx.realDeals.subtitle}
               </p>
             </div>
-            <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-semibold text-emerald-700">Real verified deals</span>
+            <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-success-bg border border-success-200 rounded-xl">
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <span className="text-xs font-semibold text-success-text">Real verified deals</span>
             </div>
           </div>
 
@@ -1215,14 +1220,14 @@ export function HomePage() {
               return (
                 <div
                   key={di}
-                  className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/60 hover:-translate-y-1 transition-all duration-300"
+                  className="group bg-white rounded-2xl border-2 border-primary-200 overflow-hidden shadow-neo-sm hover:shadow-neo-md hover:-translate-y-0.5 transition-all duration-200"
                   style={revealStyle(dealsIn.inView, 0.1 + di * 0.09)}
                 >
-                  <div className="h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
+                  <div className="h-1.5 bg-amber-600" />
 
                   <div className="p-6">
                     {/* Tag */}
-                    <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full mb-4">
+                    <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-primary-700 bg-primary-50 border border-primary-200 px-2.5 py-1 rounded-full mb-4">
                       {deal.tag}
                     </span>
 
@@ -1237,16 +1242,16 @@ export function HomePage() {
                         return (
                           <div key={ri}>
                             <div className="flex justify-between items-baseline mb-1.5">
-                              <span className={`text-xs font-semibold ${isWinner ? 'text-emerald-700' : 'text-gray-400'}`}>
+                              <span className={`text-xs font-semibold ${isWinner ? 'text-success-700' : 'text-primary-400'}`}>
                                 {row.label}
                               </span>
-                              <span className={`font-bold ${isWinner ? 'text-emerald-700 text-base' : 'text-gray-300 text-sm line-through'}`}>
+                              <span className={`font-bold ${isWinner ? 'text-success-700 text-base' : 'text-primary-300 text-sm line-through'}`}>
                                 {row.price}
                               </span>
                             </div>
                             <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                               <div
-                                className={`h-full rounded-full ${isWinner ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : 'bg-gray-200'}`}
+                                className={`h-full rounded-full ${isWinner ? 'bg-success-500' : 'bg-primary-200'}`}
                                 style={{ width: dealsIn.inView ? `${bar?.w ?? 80}%` : '0%', transition: 'width 1.4s cubic-bezier(0.16,1,0.3,1)' }}
                               />
                             </div>
@@ -1256,17 +1261,17 @@ export function HomePage() {
                     </div>
 
                     {/* Savings block */}
-                    <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
-                      <p className="text-[10px] text-emerald-600 uppercase tracking-widest font-bold mb-1">{deal.savedLabel}</p>
+                    <div className="bg-success-bg border border-success-200 rounded-xl p-4">
+                      <p className="text-[10px] text-success-600 uppercase tracking-widest font-bold mb-1">{deal.savedLabel}</p>
                       <p
-                        className="text-3xl font-black text-emerald-700 mb-0.5 transition-all duration-700"
+                        className="text-3xl font-black text-success-700 mb-0.5 transition-all duration-700"
                         style={{
                           opacity: dealsIn.inView ? 1 : 0,
                           transform: dealsIn.inView ? 'translateY(0)' : 'translateY(12px)',
                           transitionDelay: `${0.3 + di * 0.1}s`,
                         }}
                       >{savedAmounts[di]}</p>
-                      <p className="text-xs text-emerald-600/60">{deal.savedNote}</p>
+                      <p className="text-xs text-success-600">{deal.savedNote}</p>
                     </div>
                   </div>
                 </div>
@@ -1274,7 +1279,7 @@ export function HomePage() {
             })}
           </div>
 
-          <p className="text-center text-xs text-gray-400 mt-10" style={revealStyle(dealsIn.inView, 0.4)}>
+          <p className="text-center text-xs text-primary-500 mt-10" style={revealStyle(dealsIn.inView, 0.4)}>
             {tx.realDeals.footnote}
           </p>
         </div>
@@ -1287,11 +1292,11 @@ export function HomePage() {
 
           {/* Header */}
           <div className="mb-16 max-w-2xl" style={revealStyle(whyIn.inView, 0)}>
-            <p className="text-xs font-semibold text-amber-600 uppercase tracking-[0.2em] mb-4">{tx.whyWeExist.label}</p>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
+            <p className="section-label mb-4">{tx.whyWeExist.label}</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-primary-950 mb-4 tracking-tight leading-tight">
               {tx.whyWeExist.title}
             </h2>
-            <p className="text-lg text-gray-500 leading-relaxed max-w-xl">
+            <p className="text-lg text-primary-600 leading-relaxed max-w-xl">
               {tx.whyWeExist.subtitle}
             </p>
           </div>
@@ -1307,11 +1312,11 @@ export function HomePage() {
               return (
                 <div
                   key={i}
-                  className="group relative bg-white border border-gray-100 rounded-2xl p-7 overflow-hidden hover:border-amber-200/80 hover:shadow-xl hover:shadow-amber-100/30 hover:-translate-y-1.5 transition-all duration-300"
+                  className="group relative bg-white border-2 border-primary-200 rounded-2xl p-7 overflow-hidden hover:border-amber-300 hover:shadow-warm-md hover:-translate-y-0.5 transition-all duration-200"
                   style={revealStyle(whyIn.inView, 0.08 + i * 0.08)}
                 >
                   {/* Faded step number background */}
-                  <span className="absolute right-5 top-4 text-7xl font-black text-gray-50 group-hover:text-amber-50/80 transition-colors duration-300 select-none leading-none pointer-events-none">
+                  <span className="absolute right-5 top-4 text-7xl font-black text-primary-50 group-hover:text-amber-50 transition-colors duration-300 select-none leading-none pointer-events-none">
                     0{i + 1}
                   </span>
 
@@ -1320,13 +1325,13 @@ export function HomePage() {
                     <Icon className={`w-5 h-5 ${color}`} />
                   </div>
 
-                  <h3 className="text-base font-bold text-gray-900 mb-3 relative">{item?.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-6 relative">{item?.desc}</p>
+                  <h3 className="text-base font-bold text-primary-950 mb-3 relative">{item?.title}</h3>
+                  <p className="text-sm text-primary-600 leading-relaxed mb-6 relative">{item?.desc}</p>
 
                   {/* Real example callout */}
-                  <div className="border-t border-gray-100 pt-4">
+                  <div className="border-t border-primary-100 pt-4">
                     <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider mb-1">Real example</p>
-                    <p className="text-sm font-bold text-gray-800">{stat}</p>
+                    <p className="text-sm font-bold text-primary-900">{stat}</p>
                   </div>
 
                   {/* Hover accent bottom line */}
@@ -1338,11 +1343,11 @@ export function HomePage() {
 
           {/* Solution block */}
           <div
-            className="bg-[#0B1628] rounded-2xl p-8 sm:p-12 grid sm:grid-cols-2 gap-10 items-center"
+            className="bg-primary-950 rounded-2xl p-8 sm:p-12 grid sm:grid-cols-2 gap-10 items-center border-2 border-primary-900"
             style={revealStyle(whyIn.inView, 0.36)}
           >
             <div>
-              <p className="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-5">
+              <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-5">
                 {tx.whyWeExist.cards[3]?.title}
               </p>
               <h3 className="text-2xl sm:text-4xl font-black text-white leading-tight">
@@ -1350,11 +1355,11 @@ export function HomePage() {
               </h3>
             </div>
             <div className="space-y-5">
-              <p className="text-base text-white/60 leading-relaxed">{tx.whyWeExist.cards[3]?.desc}</p>
-              <p className="text-sm text-white/40 leading-relaxed">{tx.whyWeExist.summary.desc}</p>
+              <p className="text-base text-primary-200 leading-relaxed">{tx.whyWeExist.cards[3]?.desc}</p>
+              <p className="text-sm text-primary-400 leading-relaxed">{tx.whyWeExist.summary.desc}</p>
               <button
                 onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-colors"
+                className="btn-primary"
               >
                 See Your Price <ArrowRight className="w-4 h-4" />
               </button>
@@ -1364,10 +1369,10 @@ export function HomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-[#0B1628] py-24 sm:py-32">
+      <section className="bg-amber-600 py-24 sm:py-32 border-t-2 border-amber-700">
         <div ref={ctaIn.ref as any} className="max-w-4xl mx-auto px-6 text-center">
           <p
-            className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-6"
+            className="text-xs font-semibold text-amber-100 uppercase tracking-[0.2em] mb-6"
             style={revealStyle(ctaIn.inView, 0)}
           >
             Free · No Account Required
@@ -1379,7 +1384,7 @@ export function HomePage() {
             {tx.finalCta.title}
           </h2>
           <p
-            className="text-lg text-white/60 mb-10 max-w-xl mx-auto leading-relaxed"
+            className="text-lg text-amber-100 mb-10 max-w-xl mx-auto leading-relaxed"
             style={revealStyle(ctaIn.inView, 0.13)}
           >
             {tx.finalCta.subtitle}
@@ -1390,14 +1395,14 @@ export function HomePage() {
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-10 py-4 bg-amber-600 text-white font-bold text-base rounded-xl btn-glow group"
+              className="inline-flex items-center gap-2 px-10 py-4 bg-white text-amber-700 font-bold text-base rounded-xl hover:bg-amber-50 shadow-neo-sm hover:shadow-neo-md transition-all duration-150 group"
             >
               {tx.finalCta.ctaPrimary}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <Link
               to="/track"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 border border-white/20 text-white/75 font-medium text-base rounded-xl hover:border-white/40 hover:text-white transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 border-2 border-white/40 text-white font-medium text-base rounded-xl hover:border-white hover:bg-white/10 transition-all duration-200"
             >
               {tx.finalCta.ctaSecondary}
             </Link>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
 import { ArrowRight, Upload, SlidersHorizontal, CheckCircle, Home, Wrench, Palette, Building2, Users, Store, Shield, IndianRupee, Headphones, FileText, Truck, Star, Sparkles, Camera, Mic, Search, BookOpen, MessageSquare, BarChart3, Eye, EyeOff, Zap, Clock, ChevronRight, Play, TrendingDown, Globe, Award } from 'lucide-react';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '../components/SEO';
 
 /* ─── Animated Counter ─── */
 function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
@@ -96,6 +97,12 @@ export function UserLandingPage() {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        canonicalUrl="/for-buyers"
+        title="Buy Electrical Products at Best Price — Concierge Service, Verified Dealers"
+        description="Stop overpaying for electrical products. Hub4Estate connects you with verified dealers across India — get the best price on wires, cables, LEDs, switches, MCBs, fans & more. Our concierge service personally sources any product at the lowest price. Save up to 40% on every order. Zero middlemen, full transparency."
+        keywords="buy electrical products best price, Hub4Estate for buyers, electrical products concierge service, best price wires cables India, LED lights best deal, switches sockets cheap, MCB switchgear wholesale, ceiling fans best price, electrical products no middlemen, verified electrical dealers India, Hub for Estate buyers, electrical shopping online, construction materials best price, building electrical supplies, home electrical products, office electrical products, bulk electrical order, Havells best price, Polycab best price, Philips LED best price"
+      />
 
       {/* ═══════ Hero ═══════ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">

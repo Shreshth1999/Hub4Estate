@@ -114,7 +114,7 @@ export function RFQDetailPage() {
   }
 
   const status = STATUS_CONFIG[rfq.status] || STATUS_CONFIG.DRAFT;
-  const sortedQuotes = [...rfq.quotes].sort((a, b) => a.ranking - b.ranking);
+  const sortedQuotes = [...(rfq.quotes || [])].sort((a, b) => a.ranking - b.ranking);
   const canSelect = ['PUBLISHED', 'QUOTES_RECEIVED'].includes(rfq.status);
   const lowestPrice = sortedQuotes.length > 0 ? Math.min(...sortedQuotes.map(q => q.totalAmount)) : 0;
   const highestPrice = sortedQuotes.length > 0 ? Math.max(...sortedQuotes.map(q => q.totalAmount)) : 0;
@@ -239,11 +239,11 @@ export function RFQDetailPage() {
                           </span>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{quote.dealer.businessName}</p>
+                          <p className="text-sm font-medium text-gray-900">{quote.dealer?.businessName || '—'}</p>
                           <p className="text-xs text-gray-400">
-                            {quote.dealer.city}
-                            {quote.dealer.conversionRate > 0 && (
-                              <> · {(quote.dealer.conversionRate * 100).toFixed(0)}% success rate</>
+                            {quote.dealer?.city || ''}
+                            {(quote.dealer?.conversionRate ?? 0) > 0 && (
+                              <> · {((quote.dealer?.conversionRate ?? 0) * 100).toFixed(0)}% success rate</>
                             )}
                           </p>
                         </div>
@@ -325,14 +325,14 @@ export function RFQDetailPage() {
               <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
                 <Package className="w-3.5 h-3.5 text-gray-400" />
                 <h3 className="text-sm font-medium text-gray-900">Products</h3>
-                <span className="text-xs text-gray-400 ml-auto">{rfq.items.length}</span>
+                <span className="text-xs text-gray-400 ml-auto">{(rfq.items || []).length}</span>
               </div>
               <div className="divide-y divide-gray-100">
-                {rfq.items.map(item => (
+                {(rfq.items || []).map(item => (
                   <div key={item.id} className="px-4 py-3 flex items-center justify-between">
                     <div className="min-w-0">
-                      <p className="text-sm text-gray-900 truncate">{item.product.name}</p>
-                      <p className="text-xs text-gray-400">{item.product.brand.name}</p>
+                      <p className="text-sm text-gray-900 truncate">{item.product?.name || '—'}</p>
+                      <p className="text-xs text-gray-400">{item.product?.brand?.name || '—'}</p>
                     </div>
                     <span className="text-xs font-medium text-gray-500 flex-shrink-0 ml-2">×{item.quantity}</span>
                   </div>
@@ -388,11 +388,11 @@ export function RFQDetailPage() {
             <div className="p-5 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <span className="font-semibold text-gray-700">{confirmQuote.dealer.businessName.charAt(0)}</span>
+                  <span className="font-semibold text-gray-700">{(confirmQuote.dealer?.businessName || '?').charAt(0)}</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{confirmQuote.dealer.businessName}</p>
-                  <p className="text-xs text-gray-400">{confirmQuote.dealer.city}</p>
+                  <p className="text-sm font-medium text-gray-900">{confirmQuote.dealer?.businessName || '—'}</p>
+                  <p className="text-xs text-gray-400">{confirmQuote.dealer?.city || ''}</p>
                 </div>
                 <p className="ml-auto text-lg font-semibold text-gray-900">{fmtCurrency(confirmQuote.totalAmount)}</p>
               </div>

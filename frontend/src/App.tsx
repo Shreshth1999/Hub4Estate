@@ -1,5 +1,6 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
+import { useAuthStore } from '@/lib/store';
 import { Layout } from '@/components/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { SkipNav } from '@/components/SkipNav';
@@ -72,6 +73,14 @@ const TrackInquiryPage = lazy(() => import('@/pages/TrackInquiryPage').then(m =>
 const SmartSlipScanPage = lazy(() => import('@/pages/SmartSlipScanPage').then(m => ({ default: m.SmartSlipScanPage })));
 const DealerLandingPage = lazy(() => import('@/pages/DealerLandingPage').then(m => ({ default: m.DealerLandingPage })));
 const UserLandingPage = lazy(() => import('@/pages/UserLandingPage').then(m => ({ default: m.UserLandingPage })));
+const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage').then(m => ({ default: m.BlogIndexPage })));
+const BlogPostPage = lazy(() => import('@/pages/blog/BlogPostPage').then(m => ({ default: m.BlogPostPage })));
+
+// SEO Programmatic Pages (lazy - crawled but not in main navigation)
+const BuyProductCityPage = lazy(() => import('@/pages/seo/BuyProductCityPage').then(m => ({ default: m.BuyProductCityPage })));
+const BrandLandingPage = lazy(() => import('@/pages/seo/BrandLandingPage').then(m => ({ default: m.BrandLandingPage })));
+const GovtSchemesPage = lazy(() => import('@/pages/seo/GovtSchemesPage').then(m => ({ default: m.GovtSchemesPage })));
+const GovtSchemeDetailPage = lazy(() => import('@/pages/seo/GovtSchemeDetailPage').then(m => ({ default: m.GovtSchemeDetailPage })));
 
 const UserDashboard = lazy(() => import('@/pages/user/UserDashboard').then(m => ({ default: m.UserDashboard })));
 const UserInquiriesPage = lazy(() => import('@/pages/user/UserInquiriesPage').then(m => ({ default: m.UserInquiriesPage })));
@@ -80,6 +89,14 @@ const UserProfilePage = lazy(() => import('@/pages/user/UserProfilePage').then(m
 const UserSavedProductsPage = lazy(() => import('@/pages/user/UserSavedProductsPage').then(m => ({ default: m.UserSavedProductsPage })));
 const MessagesPage = lazy(() => import('@/pages/MessagesPage').then(m => ({ default: m.MessagesPage })));
 const ComparePage = lazy(() => import('@/pages/ComparePage').then(m => ({ default: m.ComparePage })));
+
+/** Redirect to an auth-required dashboard route, or to /login for guests */
+function AuthGateRedirect({ to, paramKey }: { to: string; paramKey?: string }) {
+  const { isAuthenticated } = useAuthStore();
+  const params = useParams();
+  const target = paramKey && params[paramKey] ? `${to}/${params[paramKey]}` : to;
+  return <Navigate to={isAuthenticated ? target : '/login'} replace />;
+}
 
 // Loading fallback for lazy routes
 function PageLoader() {
@@ -125,6 +142,15 @@ function App() {
         <Route path="/dealer/registration-status" element={<DealerRegistrationStatus />} />
 
         {/* ========================================
+            AUTH-GATED REDIRECTS
+            These routes redirect guests to /login and
+            authenticated users to the dashboard version
+            ======================================== */}
+        <Route path="/community" element={<AuthGateRedirect to="/user/community" />} />
+        <Route path="/community/:id" element={<AuthGateRedirect to="/user/community" paramKey="id" />} />
+        <Route path="/knowledge" element={<AuthGateRedirect to="/user/knowledge" />} />
+
+        {/* ========================================
             PUBLIC ROUTES (Main Layout)
             Landing page and public-facing content
             ======================================== */}
@@ -137,9 +163,6 @@ function App() {
           <Route path="/categories/:slug" element={<CategoryDetailPage />} />
           <Route path="/product-types/:slug" element={<ProductTypePage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/community" element={<CommunityPage />} />
-          <Route path="/community/:id" element={<PostDetailPage />} />
-          <Route path="/knowledge" element={<KnowledgePage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/join-team" element={<JoinTeamPage />} />
@@ -149,6 +172,14 @@ function App() {
           <Route path="/smart-scan" element={<SmartSlipScanPage />} />
           <Route path="/for-dealers" element={<DealerLandingPage />} />
           <Route path="/for-buyers" element={<UserLandingPage />} />
+          <Route path="/blog" element={<BlogIndexPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
+
+          {/* SEO Programmatic Pages */}
+          <Route path="/buy/:productSlug" element={<BuyProductCityPage />} />
+          <Route path="/brands/:brandSlug" element={<BrandLandingPage />} />
+          <Route path="/government-schemes" element={<GovtSchemesPage />} />
+          <Route path="/government-schemes/:slug" element={<GovtSchemeDetailPage />} />
         </Route>
 
         {/* ========================================

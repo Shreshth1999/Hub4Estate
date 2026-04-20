@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, FileText } from 'lucide-react';
+import { SEO } from '@/components/SEO';
 
 export function TermsPage() {
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Terms of Service"
+        description="Hub4Estate Terms of Service. Read the terms and conditions for using India's first transparent electrical products procurement platform."
+        keywords="Hub4Estate terms of service, terms and conditions, electrical products marketplace"
+        canonicalUrl="/terms"
+      />
       {/* Header — dark */}
       <div className="bg-gray-900 px-6 py-16">
         <div className="max-w-3xl mx-auto">

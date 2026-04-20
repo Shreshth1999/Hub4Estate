@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../config/database';
 import { validateBody } from '../middleware/validation';
-import { optionalAuth, requireAnyAuth, authenticateAdmin, AuthRequest } from '../middleware/auth';
+import { optionalAuth, authenticateAdmin, AuthRequest } from '../middleware/auth';
 import { generateChatResponse, streamChatResponse, parseDealerQuoteFromText, ChatMessage } from '../services/ai.service';
 import { chatMessageRateLimit, parseQuoteRateLimit } from '../middleware/rateLimiter';
 
@@ -48,7 +48,7 @@ const sendMessageSchema = z.object({
 
 router.post(
   '/message',
-  requireAnyAuth,
+  optionalAuth,
   chatMessageRateLimit,
   validateBody(sendMessageSchema),
   async (req: AuthRequest, res: Response) => {
@@ -138,7 +138,7 @@ router.post(
 
 router.post(
   '/message/stream',
-  requireAnyAuth,
+  optionalAuth,
   chatMessageRateLimit,
   async (req: AuthRequest, res: Response): Promise<void> => {
     const { sessionId, message } = req.body;
@@ -275,7 +275,7 @@ router.get(
 
 router.post(
   '/parse-quote',
-  requireAnyAuth,
+  optionalAuth,
   parseQuoteRateLimit,
   async (req: AuthRequest, res: Response) => {
     const { rawText } = req.body;
@@ -301,7 +301,7 @@ router.post(
 import { analyzeQuoteForBuyer, optimizeQuoteForDealer, getProcurementAdvice } from '../services/ai/negotiation-agent.service';
 
 // Analyze a quote (buyer perspective)
-router.post('/analyze-quote', requireAnyAuth, async (req: AuthRequest, res: Response) => {
+router.post('/analyze-quote', optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { quoteAmount, productName, quantity, otherQuoteAmounts } = req.body;
 
@@ -324,7 +324,7 @@ router.post('/analyze-quote', requireAnyAuth, async (req: AuthRequest, res: Resp
 });
 
 // Optimize a quote (dealer perspective)
-router.post('/optimize-quote', requireAnyAuth, async (req: AuthRequest, res: Response) => {
+router.post('/optimize-quote', optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { productName, quantity, costEstimate } = req.body;
 
@@ -343,7 +343,7 @@ router.post('/optimize-quote', requireAnyAuth, async (req: AuthRequest, res: Res
 });
 
 // Procurement advice
-router.post('/procurement-advice', requireAnyAuth, async (req: AuthRequest, res: Response) => {
+router.post('/procurement-advice', optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const { projectType, city, budgetMin, budgetMax } = req.body;
 

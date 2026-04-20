@@ -5,6 +5,7 @@ import {
   ChevronRight, Package, Info, AlertTriangle, CheckCircle,
   ArrowRight, Clock, Shield, Award, TrendingUp, Loader2
 } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 interface SubCategory {
   id: string;
@@ -82,6 +83,12 @@ export function CategoryDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        canonicalUrl={`/categories/${slug}`}
+        title={`${category.name} — Best Prices from Verified Dealers | Hub4Estate`}
+        description={`Buy ${category.name} at the best price on Hub4Estate. Compare prices from verified dealers across India. ${totalProducts} products available. Zero middlemen, full transparency. Save up to 40%.`}
+        keywords={`${category.name} best price, buy ${category.name} online India, ${category.name} wholesale, ${category.name} verified dealer, Hub4Estate ${category.name}, electrical ${category.name}`}
+      />
       {/* Breadcrumb + Hero */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-10">

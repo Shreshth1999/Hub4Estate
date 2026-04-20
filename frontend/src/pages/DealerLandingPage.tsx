@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
 import { ArrowRight, Inbox, IndianRupee, UserCheck, Shield, BarChart3, TrendingUp, Users, Award, ChevronDown, Zap, Eye, EyeOff, Bell, Clock, Star, CheckCircle, Globe, FileText, MessageSquare, Sparkles, Target, PieChart, Layers, Truck, Phone } from 'lucide-react';
 import { useInView, revealStyle } from '../hooks/useInView';
+import { SEO } from '../components/SEO';
 
 /* ─── Animated Counter ─── */
 function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
@@ -100,6 +101,12 @@ export function DealerLandingPage() {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        canonicalUrl="/for-dealers"
+        title="Become a Verified Dealer — Get High-Intent Buyer Leads, Grow Your Business"
+        description="Join Hub4Estate's verified dealer network and receive high-intent buyer leads matched to your products. No commission on sales. Simple subscription plans. Verified dealer badge, analytics dashboard, concierge leads. Electrical dealers across India trust Hub4Estate to grow their business. Average 35% revenue increase."
+        keywords="Hub4Estate for dealers, become electrical dealer, electrical dealer registration, verified dealer India, get buyer leads electrical, electrical B2B marketplace, sell electrical products online, dealer lead generation, electrical wholesale business, grow electrical business, Hub for Estate dealers, dealer subscription, electrical supplier registration, wires cables dealer, LED lights dealer, switches dealer, MCB dealer, fans dealer, electrical products seller, IndiaMART dealer alternative"
+      />
 
       {/* ═══════ Hero ═══════ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">

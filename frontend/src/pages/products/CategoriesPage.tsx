@@ -6,6 +6,7 @@ import {
   Search, ArrowRight, Package, Shield, CheckCircle, Zap, Loader2
 } from 'lucide-react';
 import { useInView, revealStyle } from '../../hooks/useInView';
+import { SEO } from '../../components/SEO';
 
 interface Category {
   id: string;
@@ -46,9 +47,15 @@ export function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        canonicalUrl="/categories"
+        title="Electrical Product Categories — Wires, LEDs, Switches, MCBs, Fans & More"
+        description="Browse all electrical product categories on Hub4Estate. Wires & cables, LED lighting, switches & sockets, MCBs & switchgear, fans, distribution boards, conduits, inverters, earthing & safety, smart home. Best prices from verified dealers across India."
+        keywords="electrical product categories, buy wires cables online, LED lighting wholesale, modular switches best price, MCB switchgear buy, ceiling fans wholesale, distribution board, conduit pipes, inverter UPS, earthing safety, smart home electrical, Hub4Estate categories, electrical products India, Havells Polycab Philips Legrand Anchor Finolex"
+      />
 
       {/* Hero — dark */}
-      <div className="bg-[#09090B] blueprint-bg-dark relative overflow-hidden">
+      <div className="bg-[#1a1410] blueprint-bg-dark relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-amber-400/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '1.5s' }} />
@@ -137,7 +144,7 @@ export function CategoriesPage() {
       </div>
 
       {/* Buying Guides — dark */}
-      <div ref={guidesRef as any} className="bg-[#09090B] px-6 py-16">
+      <div ref={guidesRef as any} className="bg-[#1a1410] px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10" style={revealStyle(guidesIn, 0)}>
             <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Buying Guides</h2>

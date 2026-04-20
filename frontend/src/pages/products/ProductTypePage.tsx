@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productsApi } from '../../lib/api';
 import { useAuthStore, useRFQStore } from '../../lib/store';
+import { SEO } from '@/components/SEO';
 import {
   Package, ChevronRight, ArrowRight, Clock, Shield, Award, TrendingUp, Plus, Check, Filter, Loader2
 } from 'lucide-react';
@@ -113,6 +114,12 @@ export function ProductTypePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title={`${productType.name} - Best Price from Verified Dealers`}
+        description={`Buy ${productType.name} at the best price from verified dealers on Hub4Estate. Compare ${brands.map(b => b.name).join(', ')} and more. ${pagination.total} products available with up to 40% savings.`}
+        keywords={`${productType.name}, ${brands.map(b => b.name).join(', ')}, best price, Hub4Estate, electrical products, verified dealers, ${category.name}, ${subCategory.name}`}
+        canonicalUrl={`/products/type/${slug}`}
+      />
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-10">
