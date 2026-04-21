@@ -96,12 +96,20 @@ export function Layout() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex justify-between items-center h-16">
 
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-amber-600 flex items-center justify-center shadow-neo-sm group-hover:shadow-neo-md transition-all duration-150">
-                <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-5 h-5 object-contain brightness-200" />
+            {/* Logo — black square + crisp inline bolt (matches reference) */}
+            <Link to="/" className="flex items-center gap-3 group flex-shrink-0">
+              <div className="w-11 h-11 rounded-lg bg-primary-950 flex items-center justify-center shadow-neo-sm group-hover:shadow-neo-md group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-150">
+                <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" aria-hidden="true">
+                  <path
+                    d="M13.5 3 L6 13.5 H11 L10 21 L17.5 10.5 H12.5 L13.5 3 Z"
+                    fill="#ffffff"
+                    stroke="#ffffff"
+                    strokeWidth="1.2"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
-              <span className="text-[15px] font-bold text-primary-950 tracking-tight">Hub4Estate</span>
+              <span className="text-[17px] font-black text-primary-950 tracking-tight">Hub4Estate</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -357,11 +365,19 @@ export function Layout() {
 
             {/* Brand */}
             <div>
-              <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-8 h-8 rounded-xl bg-amber-600 flex items-center justify-center shadow-neo-sm">
-                  <img src="/logos/hub4estate/favicon-64.png" alt="" className="w-5 h-5 object-contain brightness-200" />
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-lg bg-primary-950 flex items-center justify-center shadow-neo-sm">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" aria-hidden="true">
+                    <path
+                      d="M13.5 3 L6 13.5 H11 L10 21 L17.5 10.5 H12.5 L13.5 3 Z"
+                      fill="#ffffff"
+                      stroke="#ffffff"
+                      strokeWidth="1.2"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </div>
-                <span className="text-base font-bold text-primary-950">Hub4Estate</span>
+                <span className="text-base font-black text-primary-950">Hub4Estate</span>
               </div>
               <p className="text-primary-700 text-sm leading-relaxed mb-4">{tx.footer.tagline}</p>
               <div className="space-y-1.5">

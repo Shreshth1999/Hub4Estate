@@ -26,20 +26,26 @@ interface InteractiveCategoryGridProps {
 
 // Static fallback categories to display when API fails or returns empty
 export const STATIC_CATEGORIES: Category[] = [
-  { id: '1', name: 'Wires & Cables', slug: 'wires-cables', description: 'House wiring and armoured cables' },
-  { id: '2', name: 'Modular Switches & Sockets', slug: 'switches-sockets', description: 'Premium modular switches' },
-  { id: '3', name: 'MCBs & Distribution', slug: 'mcbs-distribution', description: 'Circuit breakers and distribution boards' },
-  { id: '4', name: 'Switchgear & Protection', slug: 'switchgear-protection', description: 'MCBs, RCCBs, and surge protection' },
-  { id: '5', name: 'Lighting', slug: 'lighting', description: 'LED bulbs, panels, and tubes' },
-  { id: '6', name: 'Lighting & Luminaires', slug: 'lighting-luminaires', description: 'LED panels and decorative fixtures' },
-  { id: '7', name: 'Fans & Ventilation', slug: 'fans-ventilation', description: 'Ceiling fans and exhaust systems' },
-  { id: '8', name: 'Water Heaters', slug: 'water-heaters', description: 'Geysers and water heating solutions' },
-  { id: '9', name: 'Earthing & Safety Systems', slug: 'earthing-safety-systems', description: 'Earth pits and lightning protection' },
-  { id: '10', name: 'Power Backup & Solar', slug: 'power-backup-solar', description: 'Inverters, batteries, and solar' },
-  { id: '11', name: 'Doorbells & Accessories', slug: 'doorbells-accessories', description: 'Wired and wireless doorbells' },
-  { id: '12', name: 'Conduits & Accessories', slug: 'conduits-accessories', description: 'PVC conduits and wiring accessories' },
-  { id: '13', name: 'Tools & Testers', slug: 'tools-testers', description: 'Multimeters and hand tools' },
+  { id: '1',  name: 'Wires & Cables',              slug: 'wires-cables',              description: 'House wiring and armoured cables' },
+  { id: '2',  name: 'Modular Switches & Sockets',  slug: 'switches-sockets',          description: 'Premium modular switches' },
+  { id: '3',  name: 'MCBs & Distribution',         slug: 'mcbs-distribution',         description: 'Circuit breakers and distribution boards' },
+  { id: '4',  name: 'Switchgear & Protection',     slug: 'switchgear-protection',     description: 'MCBs, RCCBs, and surge protection' },
+  { id: '5',  name: 'Bulbs & Tubes',               slug: 'bulbs-tubes',               description: 'LED bulbs, CFL, tube lights' },
+  { id: '6',  name: 'Lighting & Luminaires',       slug: 'lighting-luminaires',       description: 'LED panels and decorative fixtures' },
+  { id: '7',  name: 'Fans & Ventilation',          slug: 'fans-ventilation',          description: 'Ceiling fans and exhaust systems' },
+  { id: '8',  name: 'Water Heaters',               slug: 'water-heaters',             description: 'Geysers and water heating solutions' },
+  { id: '9',  name: 'Earthing & Safety Systems',   slug: 'earthing-safety-systems',   description: 'Earth pits and lightning protection' },
+  { id: '10', name: 'Power Backup & Solar',        slug: 'power-backup-solar',        description: 'Inverters, batteries, and solar' },
+  { id: '11', name: 'Doorbells & Accessories',     slug: 'doorbells-accessories',     description: 'Wired and wireless doorbells' },
+  { id: '12', name: 'Conduits & Accessories',      slug: 'conduits-accessories',      description: 'PVC conduits and wiring accessories' },
+  { id: '13', name: 'Tools & Testers',             slug: 'tools-testers',             description: 'Multimeters and hand tools' },
   { id: '14', name: 'Smart Electrical & Automation', slug: 'smart-electrical-automation', description: 'Smart switches and home automation' },
+  { id: '15', name: 'Air Conditioning',            slug: 'air-conditioning',          description: 'Split ACs, window ACs and cooling' },
+  { id: '16', name: 'Stabilizers & UPS',           slug: 'stabilizers-ups',           description: 'Voltage stabilizers and online UPS' },
+  { id: '17', name: 'CCTV & Security',             slug: 'cctv-security',             description: 'IP cameras, DVR and alarm systems' },
+  { id: '18', name: 'Extension Boards & Strips',   slug: 'extension-boards',          description: 'Spike busters and surge strips' },
+  { id: '19', name: 'Junction Boxes & Enclosures', slug: 'junction-boxes',            description: 'Metal and PVC junction boxes' },
+  { id: '20', name: 'Electrical Wiring',           slug: 'electrical-wiring',         description: 'Single core, multi-core house wiring' },
 ];
 
 // Category illustration configurations
@@ -975,6 +981,193 @@ export const categoryIllustrations: Record<string, {
       </svg>
     ),
   },
+
+  // ── Bulbs & Tubes — LED bulb with filament glow ────────────────────────────
+  'bulbs-tubes': {
+    renderSVG: (isHovered) => (
+      <svg viewBox="0 0 120 100" className="w-full h-full">
+        {/* Bulb glass */}
+        <ellipse cx="60" cy="42" rx="22" ry="26" fill={isHovered ? '#fef3c7' : '#1a1a1a'} stroke="#525252" strokeWidth="1.5" opacity={isHovered ? '0.35' : '1'} />
+        {/* Base / threading */}
+        <rect x="50" y="64" width="20" height="5" fill="#525252" />
+        <rect x="51" y="69" width="18" height="3" fill="#404040" />
+        <rect x="52" y="72" width="16" height="3" fill="#525252" />
+        <rect x="53" y="75" width="14" height="3" fill="#404040" />
+        <rect x="55" y="78" width="10" height="4" fill="#262626" rx="1" />
+        {/* Filament */}
+        <g stroke={isHovered ? '#f59e0b' : '#525252'} strokeWidth="1.5" fill="none">
+          <path d="M 52 40 Q 55 32 60 34 Q 65 36 68 40" />
+          <path d="M 52 46 Q 55 54 60 52 Q 65 50 68 46" />
+          <line x1="52" y1="40" x2="52" y2="46" />
+          <line x1="68" y1="40" x2="68" y2="46" />
+        </g>
+        {/* Glow rays on hover */}
+        {isHovered && (
+          <g stroke="#f59e0b" strokeWidth="1" opacity="0.55">
+            {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+              const r1 = 30, r2 = 38;
+              const x1 = 60 + Math.cos(deg * Math.PI / 180) * r1;
+              const y1 = 42 + Math.sin(deg * Math.PI / 180) * r1;
+              const x2 = 60 + Math.cos(deg * Math.PI / 180) * r2;
+              const y2 = 42 + Math.sin(deg * Math.PI / 180) * r2;
+              return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} />;
+            })}
+          </g>
+        )}
+        <text x="60" y="93" fill="#52525b" fontSize="5" textAnchor="middle" fontFamily="monospace">9W LED</text>
+      </svg>
+    ),
+  },
+
+  // ── Stabilizers & UPS — voltage stabilizer box with dial ───────────────────
+  'stabilizers-ups': {
+    renderSVG: (isHovered) => (
+      <svg viewBox="0 0 120 100" className="w-full h-full">
+        <rect x="25" y="18" width="70" height="64" fill="#262626" stroke="#525252" strokeWidth="1.5" rx="3" />
+        {/* Dial */}
+        <circle cx="60" cy="40" r="13" fill="#1a1a1a" stroke="#525252" strokeWidth="1" />
+        <g stroke="#52525b" strokeWidth="0.6">
+          {[-60, -30, 0, 30, 60].map((deg) => (
+            <line key={deg} x1={60 + Math.cos((deg - 90) * Math.PI / 180) * 10} y1={40 + Math.sin((deg - 90) * Math.PI / 180) * 10}
+                  x2={60 + Math.cos((deg - 90) * Math.PI / 180) * 12} y2={40 + Math.sin((deg - 90) * Math.PI / 180) * 12} />
+          ))}
+        </g>
+        {/* Needle */}
+        <line x1="60" y1="40"
+              x2={60 + Math.cos(((isHovered ? 10 : -40) - 90) * Math.PI / 180) * 10}
+              y2={40 + Math.sin(((isHovered ? 10 : -40) - 90) * Math.PI / 180) * 10}
+              stroke={isHovered ? '#d3815e' : '#a3a3a3'} strokeWidth="1.5" style={{ transition: 'all 0.8s ease' }} />
+        <circle cx="60" cy="40" r="1.5" fill="#a3a3a3" />
+        {/* Display */}
+        <rect x="35" y="58" width="50" height="10" fill="#1a1a1a" rx="1" />
+        <text x="60" y="66" fill={isHovered ? '#d3815e' : '#525252'} fontSize="7" textAnchor="middle" fontFamily="monospace">230V</text>
+        {/* Status LEDs */}
+        <circle cx="32" cy="75" r="1.5" fill={isHovered ? '#22c55e' : '#404040'} />
+        <circle cx="40" cy="75" r="1.5" fill="#404040" />
+        <circle cx="48" cy="75" r="1.5" fill="#404040" />
+        <text x="60" y="93" fill="#52525b" fontSize="5" textAnchor="middle" fontFamily="monospace">5 kVA</text>
+      </svg>
+    ),
+  },
+
+  // ── CCTV & Security — dome camera + lens glow ──────────────────────────────
+  'cctv-security': {
+    renderSVG: (isHovered) => (
+      <svg viewBox="0 0 120 100" className="w-full h-full">
+        {/* Mounting bracket */}
+        <rect x="55" y="15" width="10" height="8" fill="#525252" />
+        <rect x="50" y="23" width="20" height="4" fill="#404040" />
+        {/* Dome */}
+        <path d="M 30 30 Q 60 15 90 30 L 90 55 L 30 55 Z" fill="#262626" stroke="#525252" strokeWidth="1.5" />
+        <path d="M 30 55 L 90 55" stroke="#525252" strokeWidth="1" />
+        {/* Lens */}
+        <circle cx="60" cy="48" r="12" fill="#0a0a0a" stroke="#525252" strokeWidth="1.5" />
+        <circle cx="60" cy="48" r="7" fill={isHovered ? '#1a1a1a' : '#0a0a0a'} stroke="#404040" strokeWidth="0.5" />
+        <circle cx="60" cy="48" r="3" fill={isHovered ? '#d3815e' : '#1a1a1a'} />
+        {/* Lens reflection */}
+        <circle cx="57" cy="45" r="1.5" fill="#a3a3a3" opacity="0.6" />
+        {/* IR LEDs ring */}
+        <g fill={isHovered ? '#dc2626' : '#404040'}>
+          {[0, 60, 120, 180, 240, 300].map((deg) => {
+            const x = 60 + Math.cos(deg * Math.PI / 180) * 14;
+            const y = 48 + Math.sin(deg * Math.PI / 180) * 14;
+            return <circle key={deg} cx={x} cy={y} r="1" />;
+          })}
+        </g>
+        {/* Recording dot */}
+        {isHovered && (
+          <g>
+            <circle cx="28" cy="25" r="2" fill="#dc2626">
+              <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite" />
+            </circle>
+            <text x="33" y="28" fill="#dc2626" fontSize="5" fontFamily="monospace">REC</text>
+          </g>
+        )}
+        <text x="60" y="85" fill="#52525b" fontSize="5" textAnchor="middle" fontFamily="monospace">Dome IP</text>
+        <text x="60" y="93" fill="#52525b" fontSize="4" textAnchor="middle" fontFamily="monospace">1080p · Night Vision</text>
+      </svg>
+    ),
+  },
+
+  // ── Extension Boards & Strips — plug strip with 4 sockets ──────────────────
+  'extension-boards': {
+    renderSVG: (isHovered) => (
+      <svg viewBox="0 0 120 100" className="w-full h-full">
+        {/* Strip body */}
+        <rect x="12" y="38" width="96" height="26" fill="#262626" stroke="#525252" strokeWidth="1.5" rx="3" />
+        {/* Power switch */}
+        <rect x="18" y="44" width="12" height="14" fill="#1a1a1a" stroke="#525252" strokeWidth="0.5" rx="1" />
+        <rect x="20" y={isHovered ? 46 : 50} width="8" height="6" fill={isHovered ? '#22c55e' : '#525252'} rx="0.5" style={{ transition: 'all 0.3s' }} />
+        {/* 4 sockets */}
+        {[38, 58, 78, 98].map((x, i) => (
+          <g key={i}>
+            <circle cx={x} cy="51" r="7" fill="#1a1a1a" stroke="#525252" strokeWidth="0.8" />
+            <rect x={x - 4} y="48" width="1.5" height="3" fill="#404040" />
+            <rect x={x + 2.5} y="48" width="1.5" height="3" fill="#404040" />
+            <rect x={x - 0.75} y="53" width="1.5" height="2.5" fill="#404040" />
+          </g>
+        ))}
+        {/* Cable */}
+        <path d="M 12 50 Q 2 50 2 65 Q 2 82 14 82" stroke="#404040" strokeWidth="2" fill="none" />
+        {/* Plug */}
+        <rect x="14" y="78" width="18" height="10" fill="#1a1a1a" stroke="#525252" strokeWidth="0.8" rx="1" />
+        <rect x="18" y="75" width="2" height="5" fill="#a3a3a3" />
+        <rect x="26" y="75" width="2" height="5" fill="#a3a3a3" />
+        {/* Power flowing animation on hover */}
+        {isHovered && (
+          <circle r="1.5" fill="#d3815e">
+            <animateMotion dur="2s" repeatCount="indefinite" path="M 32 83 Q 2 82 2 65 Q 2 50 12 50 L 108 50" />
+          </circle>
+        )}
+        <text x="60" y="30" fill="#52525b" fontSize="5" textAnchor="middle" fontFamily="monospace">4-Way · Surge Protected</text>
+      </svg>
+    ),
+  },
+
+  // ── Junction Boxes — metal box with conduit entries ────────────────────────
+  'junction-boxes': {
+    renderSVG: (isHovered) => (
+      <svg viewBox="0 0 120 100" className="w-full h-full">
+        {/* Box */}
+        <rect x="32" y="22" width="56" height="56" fill="#262626" stroke="#525252" strokeWidth="2" rx="2" />
+        {/* Corner screws */}
+        {[[36, 26], [84, 26], [36, 74], [84, 74]].map(([x, y], i) => (
+          <g key={i}>
+            <circle cx={x} cy={y} r="2" fill="#1a1a1a" stroke="#525252" strokeWidth="0.5" />
+            <line x1={x - 1.3} y1={y} x2={x + 1.3} y2={y} stroke="#525252" strokeWidth="0.5" />
+          </g>
+        ))}
+        {/* Cover plate */}
+        <rect x="38" y="30" width="44" height="40" fill="#1a1a1a" stroke="#404040" strokeWidth="0.5" />
+        {/* Conduit entries (top/bottom/sides) */}
+        <circle cx="60" cy="22" r="4" fill="#0a0a0a" stroke="#525252" strokeWidth="0.8" />
+        <circle cx="60" cy="78" r="4" fill="#0a0a0a" stroke="#525252" strokeWidth="0.8" />
+        <circle cx="32" cy="50" r="4" fill="#0a0a0a" stroke="#525252" strokeWidth="0.8" />
+        <circle cx="88" cy="50" r="4" fill="#0a0a0a" stroke="#525252" strokeWidth="0.8" />
+        {/* Conduit pipes extending */}
+        <rect x="58" y="10" width="4" height="12" fill="#525252" />
+        <rect x="58" y="78" width="4" height="12" fill="#525252" />
+        <rect x="20" y="48" width="12" height="4" fill="#525252" />
+        <rect x="88" y="48" width="12" height="4" fill="#525252" />
+        {/* Wires inside (visible on hover) */}
+        {isHovered && (
+          <g>
+            <circle cx="60" cy="50" r="10" fill="none" stroke="#404040" strokeWidth="0.5" />
+            {[
+              { c: '#dc2626', d: 'M 60 22 L 60 50 L 88 50' },
+              { c: '#2563eb', d: 'M 60 78 L 60 50 L 32 50' },
+              { c: '#22c55e', d: 'M 32 50 L 45 50' },
+            ].map((w, i) => (
+              <path key={i} d={w.d} stroke={w.c} strokeWidth="1.2" fill="none" opacity="0.75">
+                <animate attributeName="opacity" values="0.75;0.3;0.75" dur="2s" begin={`${i * 0.3}s`} repeatCount="indefinite" />
+              </path>
+            ))}
+          </g>
+        )}
+        <text x="60" y="95" fill="#52525b" fontSize="5" textAnchor="middle" fontFamily="monospace">IP65 · 4-way</text>
+      </svg>
+    ),
+  },
 };
 
 // Map category slugs to illustration keys
@@ -996,19 +1189,34 @@ export function getIllustrationKey(slug: string): string {
     'power-backup-solar': 'power-backup-solar',
     'tools-testers': 'tools-testers',
     'smart-electrical-automation': 'smart-electrical-automation',
+    'air-conditioning': 'air-conditioning',
+
+    // New categories (each has its own unique illustration)
+    'bulbs-tubes':      'bulbs-tubes',
+    'stabilizers-ups':  'stabilizers-ups',
+    'cctv-security':    'cctv-security',
+    'extension-boards': 'extension-boards',
+    'junction-boxes':   'junction-boxes',
 
     // Fallback aliases for different naming conventions
-    'lighting': 'led-lighting',
-    'lighting-fixtures': 'led-lighting',
+    'lighting': 'bulbs-tubes',
+    'lighting-fixtures': 'lighting-luminaires',
     'circuit-protection': 'mcbs-distribution',
     'water-heating': 'water-heaters',
     'earthing-safety': 'earthing-safety-systems',
-    'power-backup': 'power-backup-solar',
+    'power-backup': 'stabilizers-ups',
     'smart-electrical': 'smart-electrical-automation',
     'smart-automation': 'smart-electrical-automation',
-    'conduits-accessories': 'electrical-wiring',
-    'air-conditioning': 'air-conditioning',
+    'conduits-accessories': 'junction-boxes',
     'modular-switches-sockets': 'modular-switches-sockets',
+    'extension-strips': 'extension-boards',
+    'surge-protectors': 'extension-boards',
+    'cctv': 'cctv-security',
+    'home-security': 'cctv-security',
+    'ups': 'stabilizers-ups',
+    'voltage-stabilizers': 'stabilizers-ups',
+    'ac': 'air-conditioning',
+    'split-ac': 'air-conditioning',
 
     // Additional database slugs from earlier seed
     'mcbs-switchgear': 'mcbs-distribution',
@@ -1016,7 +1224,7 @@ export function getIllustrationKey(slug: string): string {
     'earthing-lightning': 'earthing-safety-systems',
     'smart-home': 'smart-electrical-automation',
     'solar-renewable': 'power-backup-solar',
-    'ups-power-backup': 'power-backup-solar',
+    'ups-power-backup': 'stabilizers-ups',
     'meters-instruments': 'tools-testers',
     'tools-safety': 'tools-testers',
   };
