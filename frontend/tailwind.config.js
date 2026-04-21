@@ -383,6 +383,10 @@ export default {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%':      { backgroundPosition: '100% 50%' },
         },
+        marquee: {
+          '0%':   { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       transitionTimingFunction: {
         'smooth':    'cubic-bezier(0.16, 1, 0.3, 1)',
