@@ -128,7 +128,7 @@ export function UserProfilePage() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-6 py-6 space-y-5">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-5">
 
         {/* Profile Avatar + Name Header */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">

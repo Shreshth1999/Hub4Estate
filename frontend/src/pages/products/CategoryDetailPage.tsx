@@ -88,10 +88,43 @@ export function CategoryDetailPage() {
         title={`${category.name} — Best Prices from Verified Dealers | Hub4Estate`}
         description={`Buy ${category.name} at the best price on Hub4Estate. Compare prices from verified dealers across India. ${totalProducts} products available. Zero middlemen, full transparency. Save up to 40%.`}
         keywords={`${category.name} best price, buy ${category.name} online India, ${category.name} wholesale, ${category.name} verified dealer, Hub4Estate ${category.name}, electrical ${category.name}`}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "@id": `https://hub4estate.com/categories/${slug}#collection`,
+            "name": `${category.name} — Best Prices on Hub4Estate`,
+            "description": category.description || `Browse ${totalProducts}+ ${category.name.toLowerCase()} product types from India's top brands on Hub4Estate. Compare quotes from verified dealers.`,
+            "url": `https://hub4estate.com/categories/${slug}`,
+            "isPartOf": { "@id": "https://hub4estate.com/#website" },
+            "about": { "@type": "Thing", "name": category.name },
+            "mainEntity": {
+              "@type": "ItemList",
+              "numberOfItems": totalProducts,
+              "itemListElement": category.subCategories.flatMap((sc, sIdx) =>
+                sc.productTypes.filter((pt) => pt.isActive).map((pt, pIdx) => ({
+                  "@type": "ListItem",
+                  "position": sIdx * 100 + pIdx + 1,
+                  "name": pt.name,
+                  "url": `https://hub4estate.com/product-types/${pt.slug}`
+                }))
+              )
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://hub4estate.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Categories", "item": "https://hub4estate.com/categories" },
+              { "@type": "ListItem", "position": 3, "name": category.name, "item": `https://hub4estate.com/categories/${slug}` }
+            ]
+          }
+        ]}
       />
       {/* Breadcrumb + Hero */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
             <Link to="/categories" className="hover:text-gray-900 transition-colors">Categories</Link>
@@ -138,7 +171,7 @@ export function CategoryDetailPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
@@ -307,7 +340,7 @@ export function CategoryDetailPage() {
 
       {/* Trust Indicators */}
       <div className="border-t border-gray-200 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { icon: Shield, value: '100%', label: 'Verified Dealers' },

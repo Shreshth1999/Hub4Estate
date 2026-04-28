@@ -157,7 +157,7 @@ export function AdminDashboard() {
                 className={`${bg} border ${borderColor} rounded-2xl p-5 hover:bg-white/10 transition-all group`}
               >
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">{label}</p>
-                <p className={`text-5xl font-black ${color} tabular-nums mb-2`}>
+                <p className={`text-3xl sm:text-4xl lg:text-5xl font-black ${color} tabular-nums mb-2`}>
                   {value.toLocaleString('en-IN')}
                 </p>
                 <p className="text-xs text-slate-500 flex items-center justify-between">

@@ -97,7 +97,7 @@ export function AdminAnalyticsPage() {
         <p className="text-sm text-gray-500 mt-0.5">Key metrics and AI-powered insights</p>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-6 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
         {/* Key Metrics */}
         <div>

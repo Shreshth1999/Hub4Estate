@@ -139,17 +139,17 @@ export function UserDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* Page Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-6">
+      {/* Page Header — compact on mobile */}
+      <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-4 sm:py-6">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-base sm:text-xl font-semibold text-gray-900 truncate">
                 {getGreeting()}, {firstName}
               </h1>
-              <p className="text-sm text-gray-400 mt-0.5">
+              <p className="text-xs sm:text-sm text-gray-400 mt-0.5 line-clamp-2">
                 {urgentRfqs.length > 0
-                  ? `${urgentRfqs.length} request${urgentRfqs.length !== 1 ? 's' : ''} with quotes ready to review`
+                  ? `${urgentRfqs.length} request${urgentRfqs.length !== 1 ? 's' : ''} with quotes ready`
                   : stats.activeRfqs > 0
                   ? `${stats.activeRfqs} live request${stats.activeRfqs !== 1 ? 's' : ''} waiting for quotes`
                   : 'Your procurement dashboard'}
@@ -157,16 +157,18 @@ export function UserDashboard() {
             </div>
             <Link
               to="/rfq/create"
-              className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+              aria-label="Create new request"
+              className="flex-shrink-0 flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gray-900 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              New Request
+              <span className="hidden sm:inline">New Request</span>
+              <span className="sm:hidden">New</span>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-6 space-y-5">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-5">
 
         {/* Urgent: Quotes Ready Banner */}
         {urgentRfqs.length > 0 && (

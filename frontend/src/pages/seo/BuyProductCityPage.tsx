@@ -30,7 +30,7 @@ function GenericProductCitySection({ productSlug, citySlug }: { productSlug: str
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-amber-50 via-white to-amber-50/30 border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-24">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
             <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3" />
@@ -54,7 +54,7 @@ function GenericProductCitySection({ productSlug, citySlug }: { productSlug: str
       </section>
 
       {/* Browse section */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse Electrical Products</h2>
         <p className="text-gray-600 mb-8 max-w-2xl">
           We are expanding our catalog every day. Browse our current categories or submit a custom requirement and our team will source the best price for you.
@@ -146,7 +146,7 @@ export function BuyProductCityPage() {
       {/* ─── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-amber-50 via-white to-amber-50/30 border-b border-gray-100 relative overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 65%)' }} />
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24 relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-24 relative">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6 flex-wrap">
             <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
@@ -240,7 +240,7 @@ export function BuyProductCityPage() {
 
       {/* ─── Why Buy From Hub4Estate in {City} ─────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             Why Buy {product.shortName} from Hub4Estate in {city.name}?
           </h2>
@@ -270,7 +270,7 @@ export function BuyProductCityPage() {
 
       {/* ─── Price Range Section ───────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             {product.name} Price Range in {city.name}
           </h2>
@@ -333,7 +333,7 @@ export function BuyProductCityPage() {
 
       {/* ─── Top Brands Available ──────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             Top {product.category} Brands Available in {city.name}
           </h2>
@@ -363,7 +363,7 @@ export function BuyProductCityPage() {
 
       {/* ─── How To Order ──────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-[#09090B]">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-amber-400 uppercase tracking-[0.2em] mb-3">Simple 3-Step Process</p>
             <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
@@ -391,7 +391,7 @@ export function BuyProductCityPage() {
 
       {/* ─── Delivery Info ─────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             {product.shortName} Delivery in {city.name}
           </h2>
@@ -424,7 +424,7 @@ export function BuyProductCityPage() {
       {/* ─── Related Products ──────────────────────────────────────────────── */}
       {relatedProducts.length > 0 && (
         <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-          <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
               Related Electrical Products in {city.name}
             </h2>
@@ -451,7 +451,7 @@ export function BuyProductCityPage() {
 
       {/* ─── Also Available In ─────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Buy {product.shortName} in Other Cities
           </h2>
@@ -471,7 +471,7 @@ export function BuyProductCityPage() {
 
       {/* ─── FAQ Section ───────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             Frequently Asked Questions — {product.shortName} in {city.name}
           </h2>
@@ -494,7 +494,7 @@ export function BuyProductCityPage() {
 
       {/* ─── Final CTA ─────────────────────────────────────────────────────── */}
       <section className="py-20 md:py-28 bg-[#09090B]">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-6">Free for Buyers, Always</p>
           <h2 className="text-3xl md:text-5xl font-black text-white mb-5 tracking-tight leading-tight">
             Get the Best Price on {product.shortName} in {city.name}
@@ -521,7 +521,7 @@ export function BuyProductCityPage() {
 
       {/* ─── Internal Links Footer ─────────────────────────────────────────── */}
       <section className="py-10 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-4 gap-8 text-sm">
             <div>
               <h4 className="font-bold text-gray-900 mb-3">Popular Products</h4>

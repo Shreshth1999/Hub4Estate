@@ -151,7 +151,7 @@ export function ComparePage() {
   if (!isLoading && products.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-md mx-auto text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Package className="w-8 h-8 text-gray-400" />
@@ -173,7 +173,7 @@ export function ComparePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin w-8 h-8 border-4 border-gray-200 border-t-gray-900 rounded-full"></div>
           </div>
@@ -185,7 +185,7 @@ export function ComparePage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-md mx-auto text-center">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h1 className="text-xl font-bold text-gray-900 mb-2">Error Loading Products</h1>
@@ -210,7 +210,7 @@ export function ComparePage() {
       />
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 py-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link to="/user/categories" className="p-2 hover:bg-gray-100 rounded-lg">
@@ -236,7 +236,7 @@ export function ComparePage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
         {/* Product Headers */}
         <div className="bg-white border border-gray-200 overflow-x-auto">
           <table className="w-full min-w-[800px]">

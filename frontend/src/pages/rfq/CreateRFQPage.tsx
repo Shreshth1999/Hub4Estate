@@ -138,7 +138,7 @@ export function CreateRFQPage() {
         </div>
       </div>
 
-      <div className="px-6 py-6 max-w-2xl mx-auto">
+      <div className="px-4 sm:px-6 py-6 max-w-2xl mx-auto">
         <div className="bg-white rounded-xl border border-gray-200 p-6">
 
           {error && (
@@ -308,7 +308,7 @@ export function CreateRFQPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Delivery preference</label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {DELIVERY_PREFS.map(pref => (
                     <button
                       key={pref.id}

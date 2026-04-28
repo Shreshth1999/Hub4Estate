@@ -103,9 +103,9 @@ export function DealerLayout() {
         </Link>
         <button
           onClick={() => setSidebarOpen(true)}
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-800 transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-md hover:bg-gray-800 transition-colors"
         >
-          <Menu className="w-4 h-4 text-gray-400" />
+          <Menu className="w-5 h-5 text-gray-400" />
         </button>
       </div>
 
@@ -117,7 +117,7 @@ export function DealerLayout() {
       )}
 
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 w-56 bg-gray-900 z-50 flex flex-col transform transition-transform duration-200 ${
+        className={`lg:hidden fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-gray-900 z-50 flex flex-col transform transition-transform duration-200 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -125,9 +125,9 @@ export function DealerLayout() {
           <span className="text-sm font-semibold text-white">Menu</span>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-800"
+            className="w-11 h-11 flex items-center justify-center rounded-md hover:bg-gray-800"
           >
-            <X className="w-4 h-4 text-gray-400" />
+            <X className="w-5 h-5 text-gray-400" />
           </button>
         </div>
         <NavContent onItemClick={() => setSidebarOpen(false)} />

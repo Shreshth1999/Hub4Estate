@@ -54,7 +54,7 @@ export function SmartSlipScanPage() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
-        <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 text-center relative">
+        <div ref={heroRef as any} className="max-w-4xl mx-auto px-4 sm:px-6 py-20 text-center relative">
           <div
             className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-600/20 text-amber-500 text-[11px] font-semibold rounded-full mb-6 border border-amber-600/30"
             style={revealStyle(heroIn, 0)}
@@ -63,7 +63,7 @@ export function SmartSlipScanPage() {
             AI-Powered · Free to use
           </div>
           <h1
-            className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 tracking-tight"
             style={revealStyle(heroIn, 0.06)}
           >
             Smart Slip<br />
@@ -95,7 +95,7 @@ export function SmartSlipScanPage() {
       </div>
 
       {/* How it works */}
-      <div ref={stepsRef as any} className="max-w-4xl mx-auto px-6 py-14">
+      <div ref={stepsRef as any} className="max-w-4xl mx-auto px-4 sm:px-6 py-14">
         <div className="text-center mb-10" style={revealStyle(stepsIn, 0)}>
           <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-2">How it works</h2>
           <p className="text-sm text-gray-500">Three steps from photo to quote.</p>
@@ -135,7 +135,7 @@ export function SmartSlipScanPage() {
       </div>
 
       {/* Features + Tips */}
-      <div className="max-w-4xl mx-auto px-6 py-14">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Smart Features */}
           <div>

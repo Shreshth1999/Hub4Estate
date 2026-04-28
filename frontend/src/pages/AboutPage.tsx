@@ -67,7 +67,7 @@ export function AboutPage() {
           <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-amber-400/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '1.5s' }} />
         </div>
-        <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 relative">
+        <div ref={heroRef as any} className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative">
           <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 mb-10 transition-colors" style={revealStyle(heroIn, 0)}>
             <ArrowLeft className="w-4 h-4" /> Back to home
           </Link>
@@ -77,7 +77,7 @@ export function AboutPage() {
               Our Story
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 tracking-tight" style={revealStyle(heroIn, 0.1)}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 tracking-tight" style={revealStyle(heroIn, 0.1)}>
             Fixing the price<br />
             <span className="text-amber-500">information gap</span><br />
             in electrical procurement.

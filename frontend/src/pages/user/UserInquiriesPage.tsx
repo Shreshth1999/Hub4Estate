@@ -158,7 +158,7 @@ export function UserInquiriesPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-6 h-6 animate-spin text-gray-300 mb-3" />

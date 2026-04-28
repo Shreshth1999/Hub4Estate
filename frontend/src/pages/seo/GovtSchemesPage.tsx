@@ -79,7 +79,7 @@ export function GovtSchemesPage() {
       {/* ─── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-amber-50 via-white to-blue-50/30 border-b border-gray-100 relative overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%)' }} />
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24 relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-24 relative">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
             <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
@@ -124,7 +124,7 @@ export function GovtSchemesPage() {
 
       {/* ─── Quick Stats ───────────────────────────────────────────────────── */}
       <div className="border-b border-gray-100 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
             {[
               { stat: `${SEO_GOVERNMENT_SCHEMES.length}`, label: 'Schemes Covered' },
@@ -143,7 +143,7 @@ export function GovtSchemesPage() {
 
       {/* ─── Category Navigation ───────────────────────────────────────────── */}
       <section className="py-12 bg-stone-50 border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Browse by Category</h2>
           <div className="flex flex-wrap gap-3">
             {schemesByCategory.map(({ category, label, colors, Icon }) => (
@@ -163,7 +163,7 @@ export function GovtSchemesPage() {
       {/* ─── Scheme Sections by Category ───────────────────────────────────── */}
       {schemesByCategory.map(({ category, label, colors, Icon, schemes }) => (
         <section key={category} id={category} className="py-16 md:py-20 bg-white border-b border-gray-100">
-          <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
             {/* Category header */}
             <div className="flex items-center gap-3 mb-8">
               <div className={`w-10 h-10 ${colors.bg} ${colors.border} border rounded-xl flex items-center justify-center`}>
@@ -216,7 +216,7 @@ export function GovtSchemesPage() {
 
       {/* ─── How Hub4Estate Helps ──────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-[#09090B]">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-amber-400 uppercase tracking-[0.2em] mb-3">Hub4Estate Advantage</p>
             <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
@@ -258,7 +258,7 @@ export function GovtSchemesPage() {
 
       {/* ─── All Schemes Quick Reference ───────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">All Government Schemes — Quick Reference</h2>
           <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
             <div className="grid grid-cols-4 bg-gray-50 border-b border-gray-200 px-6 py-3 hidden md:grid">
@@ -290,7 +290,7 @@ export function GovtSchemesPage() {
 
       {/* ─── Final CTA ─────────────────────────────────────────────────────── */}
       <section className="py-20 md:py-28 bg-[#09090B]">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-6">Hub4Estate for Government Scheme Projects</p>
           <h2 className="text-3xl md:text-5xl font-black text-white mb-5 tracking-tight leading-tight">
             Need Electrical Products for a Government Scheme Project?
@@ -317,7 +317,7 @@ export function GovtSchemesPage() {
 
       {/* ─── Internal Links Footer ─────────────────────────────────────────── */}
       <section className="py-10 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-4 gap-8 text-sm">
             <div>
               <h4 className="font-bold text-gray-900 mb-3">Government Schemes</h4>

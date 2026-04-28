@@ -382,3 +382,68 @@ input:-webkit-autofill:focus {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }
+
+/* ─── MOBILE-FIRST DENSITY OVERRIDES ──────────────────────────────────────── */
+/*
+ * The desktop design uses generous spacing (py-20, text-5xl, gap-12).
+ * On phones this creates "everything is huge" feel and forces excessive scroll.
+ * These overrides aggressively compress the design for ≤640px without
+ * touching individual pages — they cascade everywhere.
+ *
+ * Strategy: target Tailwind utility classes directly via attribute selectors
+ * so we don't have to rewrite every page. Tailwind's `sm:` prefix kicks in
+ * at 640px+, so anything below stays in this compressed mode.
+ */
+@media (max-width: 639px) {
+  /* Cap headings — clamp() in @layer base already handles h1/h2/h3, but
+     pages often use direct text-Nxl classes that bypass it. Override here. */
+  .text-6xl { font-size: 2rem !important; line-height: 1.05 !important; }
+  .text-5xl { font-size: 1.875rem !important; line-height: 1.1 !important; }
+  .text-4xl { font-size: 1.625rem !important; line-height: 1.15 !important; }
+  .text-3xl { font-size: 1.375rem !important; line-height: 1.2 !important; }
+  .text-2xl { font-size: 1.25rem !important; line-height: 1.3 !important; }
+
+  /* Section padding — desktop uses py-20/24/28/32, mobile needs ~py-10 max.
+     We don't want to override py-2/3/4 (small UI), only py-12+ (sections). */
+  .py-12 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+  .py-14 { padding-top: 2.25rem !important; padding-bottom: 2.25rem !important; }
+  .py-16 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+  .py-20 { padding-top: 2.75rem !important; padding-bottom: 2.75rem !important; }
+  .py-24 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+  .py-28 { padding-top: 3.25rem !important; padding-bottom: 3.25rem !important; }
+  .py-32 { padding-top: 3.5rem !important; padding-bottom: 3.5rem !important; }
+  .pt-20, .pt-24, .pt-28, .pt-32 { padding-top: 2.75rem !important; }
+  .pb-20, .pb-24, .pb-28, .pb-32 { padding-bottom: 2.75rem !important; }
+
+  /* Section margin — same logic for mb-/mt- on heros/banners */
+  .mb-12, .mb-14, .mb-16 { margin-bottom: 1.75rem !important; }
+  .mt-12, .mt-14, .mt-16 { margin-top: 1.75rem !important; }
+
+  /* Big gaps in grids/flex — compress */
+  .gap-10 { gap: 1.5rem !important; }
+  .gap-12 { gap: 1.75rem !important; }
+  .gap-16 { gap: 2rem !important; }
+
+  /* Card/container padding — p-8/p-10/p-12 → ~p-4 */
+  .p-8 { padding: 1rem !important; }
+  .p-10 { padding: 1.25rem !important; }
+  .p-12 { padding: 1.5rem !important; }
+  .px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .px-10, .px-12 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+  /* Reduce min-height on global links/buttons that don't actually need 44px
+     (icon-only chrome links inside running text). Real CTAs declare their own
+     min-height via .btn-primary or explicit padding so they stay tappable. */
+  p a, span a, li a, td a {
+    min-height: 0;
+  }
+}
+
+/* ─── BOTTOM NAV SAFE AREA ────────────────────────────────────────────────── */
+/* Reserve space at the bottom of <main> so the fixed bottom nav doesn't
+   cover the last bit of every page. Only on mobile where nav is shown. */
+@media (max-width: 1023px) {
+  body.has-bottom-nav main {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+}

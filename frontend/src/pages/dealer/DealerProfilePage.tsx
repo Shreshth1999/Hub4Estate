@@ -619,7 +619,7 @@ export function DealerProfilePage() {
                       <input value={editData.shopAddress || ''} onChange={e => setEditData(d => ({ ...d, shopAddress: e.target.value }))}
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-gray-400" />
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
                         <label className="block text-xs text-gray-500 mb-1">City</label>
                         <input value={editData.city || ''} onChange={e => setEditData(d => ({ ...d, city: e.target.value }))}

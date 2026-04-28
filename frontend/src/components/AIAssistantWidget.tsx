@@ -359,10 +359,11 @@ I can help you with:
       <button
         onClick={() => { setIsOpen(true); setIsMinimized(false); Analytics.sparkOpened(); }}
         className={`
-          fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full
+          hidden lg:flex
+          fixed lg:bottom-6 lg:right-6 z-50 lg:w-16 lg:h-16 rounded-full
           bg-gray-900 text-white
           shadow-lg
-          flex items-center justify-center transition-all duration-300
+          items-center justify-center transition-all duration-300
           hover:scale-110 hover:shadow-xl
           ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}
           group
@@ -385,10 +386,11 @@ I can help you with:
         )}
       </button>
 
-      {/* Chat Panel */}
+      {/* Chat Panel — desktop only. On mobile, users access chat via /ai-assistant page. */}
       <div className={`
-        fixed bottom-6 right-6 z-50
-        w-[400px] max-w-[calc(100vw-24px)]
+        hidden lg:block
+        fixed lg:inset-x-auto lg:bottom-6 lg:right-6 z-50
+        lg:w-[400px]
         transition-all duration-300 ease-out
         ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}
       `}>
@@ -397,7 +399,7 @@ I can help you with:
           flex flex-col overflow-hidden
           shadow-lg
           transition-all duration-300
-          ${isMinimized ? 'h-[60px]' : 'h-[560px] max-h-[85vh]'}
+          ${isMinimized ? 'h-[60px]' : 'h-[72vh] lg:h-[560px] lg:max-h-[85vh]'}
         `}>
 
           {/* Header */}

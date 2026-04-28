@@ -114,12 +114,12 @@ Submitted via Hub4Estate Join Team Page`
           <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-violet-500/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '2s' }} />
         </div>
-        <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 relative">
+        <div ref={heroRef as any} className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-800 text-gray-300 text-[11px] font-semibold rounded-full mb-6" style={revealStyle(heroIn, 0)}>
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             We're hiring
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 tracking-tight" style={revealStyle(heroIn, 0.06)}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-5 tracking-tight" style={revealStyle(heroIn, 0.06)}>
             Join the<br />
             <span className="text-amber-500">Mission</span>
           </h1>

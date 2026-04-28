@@ -140,7 +140,7 @@ export function CommunityPage() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
-        <div className="max-w-6xl mx-auto px-6 py-16 relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-800 text-gray-300 text-[11px] font-semibold rounded-full mb-6">
@@ -180,7 +180,7 @@ export function CommunityPage() {
       </div>
 
       {/* Main content */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Feed */}
           <div className="flex-1">

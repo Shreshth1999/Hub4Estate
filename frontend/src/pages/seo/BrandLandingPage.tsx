@@ -28,7 +28,7 @@ function GenericBrandPage({ brandSlug }: { brandSlug: string }) {
       />
 
       <section className="bg-gradient-to-br from-amber-50 via-white to-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-24">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
             <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3" />
@@ -51,7 +51,7 @@ function GenericBrandPage({ brandSlug }: { brandSlug: string }) {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-6 py-16">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Browse All Brands</h2>
         <div className="flex flex-wrap gap-3">
           {SEO_BRANDS.map(b => (
@@ -78,20 +78,94 @@ export function BrandLandingPage() {
   const pageDescription = `Get the best price on ${brand.name} electrical products from verified dealers on Hub4Estate. ${brand.tagline}. Compare quotes. Save 20-35%. Free delivery.`;
   const pageKeywords = `${brand.name} products, ${brand.name} electrical, buy ${brand.name} online, ${brand.name} best price, ${brand.name} dealer, ${brand.name} price list, ${brand.popularProducts.join(', ')}, Hub4Estate`;
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Brand',
-    name: brand.name,
-    description: brand.overview,
-    url: `https://hub4estate.com/brands/${brand.slug}`,
-    logo: `https://hub4estate.com/logos/brands/${brand.slug}.png`,
-    foundingDate: brand.founded,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: brand.headquarters,
-      addressCountry: brand.headquarters.includes('India') ? 'IN' : undefined,
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      '@id': `https://hub4estate.com/brands/${brand.slug}#organization`,
+      name: brand.name,
+      alternateName: brand.name,
+      description: brand.overview,
+      url: `https://hub4estate.com/brands/${brand.slug}`,
+      logo: `https://hub4estate.com/logos/brands/${brand.slug}.png`,
+      ...(brand.founded ? { foundingDate: brand.founded } : {}),
+      ...(brand.headquarters
+        ? {
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: brand.headquarters,
+              addressCountry: brand.headquarters.includes('India') ? 'IN' : undefined,
+            },
+          }
+        : {}),
+      brand: { '@type': 'Brand', name: brand.name },
+      makesOffer: brand.popularProducts.map((p) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Product', name: p, brand: { '@type': 'Brand', name: brand.name } },
+        priceCurrency: 'INR',
+        availability: 'https://schema.org/InStock',
+        seller: { '@type': 'Organization', name: 'Hub4Estate', url: 'https://hub4estate.com' },
+      })),
     },
-  };
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': `https://hub4estate.com/brands/${brand.slug}#collection`,
+      name: pageTitle,
+      description: pageDescription,
+      url: `https://hub4estate.com/brands/${brand.slug}`,
+      about: { '@id': `https://hub4estate.com/brands/${brand.slug}#organization` },
+      isPartOf: { '@id': 'https://hub4estate.com/#website' },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: brand.popularProducts.length,
+        itemListElement: brand.popularProducts.map((p, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: `${brand.name} ${p}`,
+        })),
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://hub4estate.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Brands', item: 'https://hub4estate.com/brands' },
+        { '@type': 'ListItem', position: 3, name: brand.name, item: `https://hub4estate.com/brands/${brand.slug}` },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: `What is the best price for ${brand.name} products in India?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `On Hub4Estate, ${brand.name} products are 20-35% cheaper than MRP. We connect you with 6+ authorized ${brand.name} dealers who compete on price. Raise an RFQ and get sealed quotes within 60 seconds.`,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: `Are ${brand.name} products on Hub4Estate genuine?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `Yes. Every ${brand.name} dealer on Hub4Estate is KYC-verified (GST, business registration) and certified as an authorized distributor. You receive genuine ${brand.name} products with full manufacturer warranty and proper GST invoicing.`,
+          },
+        },
+        {
+          '@type': 'Question',
+          name: `Which ${brand.name} products can I buy on Hub4Estate?`,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: `Hub4Estate carries the full ${brand.name} catalog including ${brand.popularProducts.slice(0, 5).join(', ')}, and more. Contact our concierge for any ${brand.name} product not listed.`,
+          },
+        },
+      ],
+    },
+  ];
 
   // Get products from this brand (match topBrands)
   const brandProducts = SEO_PRODUCTS.filter(p => p.topBrands.includes(brand.name));
@@ -112,7 +186,7 @@ export function BrandLandingPage() {
       {/* ─── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-amber-50 via-white to-amber-50/30 border-b border-gray-100 relative overflow-hidden">
         <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 65%)' }} />
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24 relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-24 relative">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
             <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
@@ -188,7 +262,7 @@ export function BrandLandingPage() {
 
       {/* ─── About Brand ───────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             About {brand.name}
           </h2>
@@ -217,7 +291,7 @@ export function BrandLandingPage() {
 
       {/* ─── Product Categories ────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             {brand.name} Product Categories on Hub4Estate
           </h2>
@@ -246,7 +320,7 @@ export function BrandLandingPage() {
 
       {/* ─── Why Buy Brand from Hub4Estate ─────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             Why Buy {brand.name} from Hub4Estate?
           </h2>
@@ -272,7 +346,7 @@ export function BrandLandingPage() {
 
       {/* ─── Price List Overview ───────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             {brand.name} Price List Overview
           </h2>
@@ -304,7 +378,7 @@ export function BrandLandingPage() {
 
       {/* ─── Popular Products ──────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             Popular {brand.name} Products
           </h2>
@@ -350,7 +424,7 @@ export function BrandLandingPage() {
       {/* ─── Compare With Other Brands ─────────────────────────────────────── */}
       {compareBrands.length > 0 && (
         <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-          <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
               Compare {brand.name} with Other Brands
             </h2>
@@ -379,7 +453,7 @@ export function BrandLandingPage() {
 
       {/* ─── FAQ Section ───────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
             Frequently Asked Questions About {brand.name}
           </h2>
@@ -402,7 +476,7 @@ export function BrandLandingPage() {
 
       {/* ─── Final CTA ─────────────────────────────────────────────────────── */}
       <section className="py-20 md:py-28 bg-[#09090B]">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-6">Free for Buyers, Always</p>
           <h2 className="text-3xl md:text-5xl font-black text-white mb-5 tracking-tight leading-tight">
             Get the Best Prices on {brand.name} Products
@@ -429,7 +503,7 @@ export function BrandLandingPage() {
 
       {/* ─── Internal Links Footer ─────────────────────────────────────────── */}
       <section className="py-10 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-4 gap-8 text-sm">
             <div>
               <h4 className="font-bold text-gray-900 mb-3">All Brands</h4>

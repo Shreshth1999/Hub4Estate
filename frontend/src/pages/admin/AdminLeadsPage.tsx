@@ -104,7 +104,7 @@ export function AdminLeadsPage() {
         <p className="text-sm text-gray-500 mt-0.5">Manage contact form submissions</p>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">

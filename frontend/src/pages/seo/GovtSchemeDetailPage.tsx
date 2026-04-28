@@ -29,7 +29,7 @@ function GenericSchemePage({ slug }: { slug: string }) {
       />
 
       <section className="bg-gradient-to-br from-amber-50 via-white to-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-24">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
             <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3" />
@@ -124,7 +124,7 @@ export function GovtSchemeDetailPage() {
       {/* ─── Hero ──────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-amber-50 via-white to-blue-50/30 border-b border-gray-100 relative overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 65%)' }} />
-        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24 relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-24 relative">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6 flex-wrap">
             <Link to="/" className="hover:text-amber-600 transition-colors">Home</Link>
@@ -208,7 +208,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── Scheme Overview ───────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center">
               <BookOpen className="w-5 h-5 text-amber-600" />
@@ -223,7 +223,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── Eligibility ───────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center">
               <Users className="w-5 h-5 text-blue-600" />
@@ -243,7 +243,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── Benefits ──────────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center">
               <IndianRupee className="w-5 h-5 text-emerald-600" />
@@ -263,7 +263,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── How to Apply ──────────────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-violet-50 border border-violet-100 rounded-xl flex items-center justify-center">
               <FileText className="w-5 h-5 text-violet-600" />
@@ -298,7 +298,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── Electrical Products Needed ─────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center">
               <Package className="w-5 h-5 text-amber-600" />
@@ -347,7 +347,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── How Hub4Estate Helps ──────────────────────────────────────────── */}
       <section className="py-16 md:py-20 bg-[#09090B]">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-xs font-semibold text-amber-400 uppercase tracking-[0.2em] mb-3">Hub4Estate Advantage</p>
             <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
@@ -378,7 +378,7 @@ export function GovtSchemeDetailPage() {
       {/* ─── Related Schemes ───────────────────────────────────────────────── */}
       {relatedSchemes.length > 0 && (
         <section className="py-16 md:py-20 bg-stone-50 border-t border-gray-100">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-6 tracking-tight">Related Schemes</h2>
             <div className="space-y-4">
               {relatedSchemes.map((rs) => {
@@ -410,7 +410,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── Final CTA ─────────────────────────────────────────────────────── */}
       <section className="py-20 md:py-28 bg-[#09090B]">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-xs font-semibold text-amber-500 uppercase tracking-[0.2em] mb-6">Hub4Estate for {scheme.name}</p>
           <h2 className="text-3xl md:text-5xl font-black text-white mb-5 tracking-tight leading-tight">
             Need Materials for {scheme.name}?
@@ -437,7 +437,7 @@ export function GovtSchemeDetailPage() {
 
       {/* ─── Internal Links Footer ─────────────────────────────────────────── */}
       <section className="py-10 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-4 gap-8 text-sm">
             <div>
               <h4 className="font-bold text-gray-900 mb-3">More Schemes</h4>

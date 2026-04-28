@@ -141,7 +141,7 @@ export function AdminFraudPage() {
       </div>
 
       {/* Flags List */}
-      <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         {filteredFlags.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 px-6 py-16 text-center">
             <CheckCircle className="w-10 h-10 text-green-300 mx-auto mb-3" />

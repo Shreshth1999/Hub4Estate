@@ -3,6 +3,7 @@ import { useAuthStore } from '@/lib/store';
 import { Menu, X, User, LogOut, ArrowRight, Search, Globe, ChevronDown, Mail, Phone } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { AIAssistantWidget } from './AIAssistantWidget';
+import { MobileBottomNav } from './MobileBottomNav';
 import { useLanguage } from '../contexts/LanguageContext';
 import type { LangCode } from '../i18n/translations';
 
@@ -69,13 +70,13 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-white">
       <AIAssistantWidget />
+      <MobileBottomNav />
 
-      {/* ── Announcement Bar — PRD §10: NO dark sections ── */}
-      <div className="bg-primary-50 border-b border-primary-200">
+      {/* ── Announcement Bar — hidden on mobile to save vertical space ── */}
+      <div className="hidden sm:block bg-primary-50 border-b border-primary-200">
         <div className="max-w-6xl mx-auto px-4">
           <p className="text-xs font-medium text-primary-700 flex items-center justify-center gap-2 py-2.5 text-center">
-            <span className="hidden sm:inline">Verified dealers · Real quotes · Zero middlemen ·</span>
-            <span className="sm:hidden">Verified dealers · Zero middlemen ·</span>
+            Verified dealers · Real quotes · Zero middlemen ·
             <Link
               to="/"
               onClick={scrollToInquiryForm}
@@ -94,12 +95,12 @@ export function Layout() {
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-14 sm:h-16">
 
-            {/* Logo — black square + crisp inline bolt (matches reference) */}
-            <Link to="/" className="flex items-center gap-3 group flex-shrink-0">
-              <div className="w-11 h-11 rounded-lg bg-primary-950 flex items-center justify-center shadow-neo-sm group-hover:shadow-neo-md group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-150">
-                <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" aria-hidden="true">
+            {/* Logo — smaller on mobile to leave more room */}
+            <Link to="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-primary-950 flex items-center justify-center shadow-neo-sm group-hover:shadow-neo-md group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-150">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6" fill="none" aria-hidden="true">
                   <path
                     d="M13.5 3 L6 13.5 H11 L10 21 L17.5 10.5 H12.5 L13.5 3 Z"
                     fill="#ffffff"
@@ -109,7 +110,7 @@ export function Layout() {
                   />
                 </svg>
               </div>
-              <span className="text-[17px] font-black text-primary-950 tracking-tight">Hub4Estate</span>
+              <span className="text-[15px] sm:text-[17px] font-black text-primary-950 tracking-tight">Hub4Estate</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -234,7 +235,7 @@ export function Layout() {
 
             {/* Mobile menu button */}
             <button
-              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl border-2 border-primary-200 hover:bg-primary-50 transition-all duration-150"
+              className="lg:hidden w-11 h-11 flex items-center justify-center rounded-xl border-2 border-primary-200 hover:bg-primary-50 transition-all duration-150"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileMenuOpen}
@@ -360,8 +361,75 @@ export function Layout() {
 
       {/* ── Footer — PRD §10: warm-white bg, NO dark background ── */}
       <footer className="bg-[#faf9f7] border-t-2 border-primary-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16">
+        {/* SEO link silo — distributes internal PageRank to programmatic & comparison pages */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 pb-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 sm:gap-8 lg:gap-12 text-[12px]">
+            <div>
+              <p className="section-label mb-3">Electrical Products by City</p>
+              <ul className="space-y-1.5">
+                <li><a href="/seo/electrical-products-mumbai.html" className="text-primary-600 hover:text-primary-950">Mumbai</a></li>
+                <li><a href="/seo/electrical-products-delhi.html" className="text-primary-600 hover:text-primary-950">Delhi</a></li>
+                <li><a href="/seo/electrical-products-bangalore.html" className="text-primary-600 hover:text-primary-950">Bangalore</a></li>
+                <li><a href="/seo/electrical-products-chennai.html" className="text-primary-600 hover:text-primary-950">Chennai</a></li>
+                <li><a href="/seo/electrical-products-hyderabad.html" className="text-primary-600 hover:text-primary-950">Hyderabad</a></li>
+                <li><a href="/seo/electrical-products-pune.html" className="text-primary-600 hover:text-primary-950">Pune</a></li>
+                <li><a href="/seo/electrical-products-kolkata.html" className="text-primary-600 hover:text-primary-950">Kolkata</a></li>
+                <li><a href="/seo/electrical-products-ahmedabad.html" className="text-primary-600 hover:text-primary-950">Ahmedabad</a></li>
+                <li><a href="/seo/electrical-products-jaipur.html" className="text-primary-600 hover:text-primary-950">Jaipur</a></li>
+                <li><a href="/seo/electrical-products-lucknow.html" className="text-primary-600 hover:text-primary-950">Lucknow</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="section-label mb-3">Top Electrical Brands</p>
+              <ul className="space-y-1.5">
+                <li><Link to="/brands/havells" className="text-primary-600 hover:text-primary-950">Havells</Link></li>
+                <li><Link to="/brands/polycab" className="text-primary-600 hover:text-primary-950">Polycab</Link></li>
+                <li><Link to="/brands/philips" className="text-primary-600 hover:text-primary-950">Philips</Link></li>
+                <li><Link to="/brands/legrand" className="text-primary-600 hover:text-primary-950">Legrand</Link></li>
+                <li><Link to="/brands/anchor" className="text-primary-600 hover:text-primary-950">Anchor</Link></li>
+                <li><Link to="/brands/finolex" className="text-primary-600 hover:text-primary-950">Finolex</Link></li>
+                <li><Link to="/brands/syska" className="text-primary-600 hover:text-primary-950">Syska</Link></li>
+                <li><Link to="/brands/crompton" className="text-primary-600 hover:text-primary-950">Crompton</Link></li>
+                <li><Link to="/brands/orient" className="text-primary-600 hover:text-primary-950">Orient</Link></li>
+                <li><Link to="/brands/schneider" className="text-primary-600 hover:text-primary-950">Schneider</Link></li>
+              </ul>
+            </div>
+            <div>
+              <p className="section-label mb-3">Buying Guides</p>
+              <ul className="space-y-1.5">
+                <li><a href="/seo/wires-cables-buying-guide-india.html" className="text-primary-600 hover:text-primary-950">Wires &amp; Cables Guide</a></li>
+                <li><a href="/seo/led-lighting-buying-guide-india.html" className="text-primary-600 hover:text-primary-950">LED Lighting Guide</a></li>
+                <li><a href="/seo/switches-sockets-buying-guide-india.html" className="text-primary-600 hover:text-primary-950">Switches &amp; Sockets Guide</a></li>
+                <li><a href="/seo/mcb-switchgear-buying-guide-india.html" className="text-primary-600 hover:text-primary-950">MCB &amp; Switchgear Guide</a></li>
+                <li><a href="/seo/ceiling-fan-buying-guide-india.html" className="text-primary-600 hover:text-primary-950">Ceiling Fan Guide</a></li>
+                <li><a href="/seo/home-wiring-complete-guide.html" className="text-primary-600 hover:text-primary-950">Home Wiring Guide</a></li>
+                <li><a href="/seo/electrical-safety-standards-india.html" className="text-primary-600 hover:text-primary-950">Safety Standards</a></li>
+                <li><a href="/seo/best-electrical-brands-india.html" className="text-primary-600 hover:text-primary-950">Best Brands in India</a></li>
+                <li><a href="/seo/solar-electrical-products-india.html" className="text-primary-600 hover:text-primary-950">Solar Products Guide</a></li>
+                <li><a href="/seo/electrical-products-price-list-2024.html" className="text-primary-600 hover:text-primary-950">Price List 2024</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="section-label mb-3">Compare Hub4Estate</p>
+              <ul className="space-y-1.5">
+                <li><a href="/seo/hub4estate-vs-indiamart.html" className="text-primary-600 hover:text-primary-950">vs IndiaMART</a></li>
+                <li><a href="/seo/hub4estate-vs-justdial.html" className="text-primary-600 hover:text-primary-950">vs JustDial</a></li>
+                <li><a href="/seo/hub4estate-vs-moglix.html" className="text-primary-600 hover:text-primary-950">vs Moglix</a></li>
+                <li><a href="/seo/hub4estate-vs-amazon-electrical.html" className="text-primary-600 hover:text-primary-950">vs Amazon</a></li>
+                <li><a href="/seo/indiamart-alternative-electrical-products.html" className="text-primary-600 hover:text-primary-950">IndiaMART Alternative</a></li>
+                <li><a href="/seo/best-electrical-procurement-platform-india.html" className="text-primary-600 hover:text-primary-950">Best Procurement Platform</a></li>
+                <li><a href="/seo/concierge-service-buy-anything-best-price.html" className="text-primary-600 hover:text-primary-950">Concierge Service</a></li>
+                <li><a href="/seo/electrical-dealer-registration-india.html" className="text-primary-600 hover:text-primary-950">Dealer Registration</a></li>
+                <li><a href="/seo/government-schemes-electrical-products.html" className="text-primary-600 hover:text-primary-950">Government Schemes</a></li>
+                <li><a href="/seo/index.html" className="text-primary-600 hover:text-primary-950 font-semibold">All SEO Pages →</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-primary-100 mt-10" />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-16">
 
             {/* Brand */}
             <div>

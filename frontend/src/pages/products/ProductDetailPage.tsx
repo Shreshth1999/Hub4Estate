@@ -141,21 +141,88 @@ export function ProductDetailPage() {
         description={`Get the best price on ${product.name} by ${product.brand.name}. ${product.description ? product.description.slice(0, 120) : ''} Compare verified dealer prices on Hub4Estate. Zero middlemen. Free delivery available.`}
         keywords={`${product.name} best price, buy ${product.name}, ${product.brand.name} ${product.productType.name}, ${product.name} dealer price, Hub4Estate ${product.brand.name}`}
         ogType="product"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Product",
-          "name": product.name,
-          "description": product.description,
-          "brand": { "@type": "Brand", "name": product.brand.name },
-          "category": product.productType.subCategory.category.name,
-          "image": product.images?.[0] || "https://hub4estate.com/logos/hub4estate/logo-full.png",
-          "offers": {
-            "@type": "AggregateOffer",
-            "priceCurrency": "INR",
-            "availability": "https://schema.org/InStock",
-            "seller": { "@type": "Organization", "name": "Hub4Estate" }
+        ogImage={product.images?.[0] || 'https://hub4estate.com/logos/hub4estate/logo-full.png'}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "@id": `https://hub4estate.com/products/${id}#product`,
+            "name": product.name,
+            "description": product.description || `${product.name} by ${product.brand.name}. Compare quotes from verified dealers on Hub4Estate.`,
+            "sku": product.sku || product.modelNumber || product.id,
+            "mpn": product.modelNumber || undefined,
+            "url": `https://hub4estate.com/products/${id}`,
+            "image": product.images && product.images.length > 0
+              ? product.images
+              : ["https://hub4estate.com/logos/hub4estate/logo-full.png"],
+            "brand": {
+              "@type": "Brand",
+              "name": product.brand.name,
+              "url": `https://hub4estate.com/brands/${product.brand.slug}`
+            },
+            "category": `${product.productType.subCategory.category.name} > ${product.productType.subCategory.name} > ${product.productType.name}`,
+            "manufacturer": { "@type": "Organization", "name": product.brand.name },
+            "isRelatedTo": { "@type": "Thing", "name": product.productType.name },
+            ...(product.certifications && product.certifications.length > 0
+              ? { "additionalProperty": product.certifications.map((c) => ({ "@type": "PropertyValue", "name": "Certification", "value": c })) }
+              : {}),
+            ...(product.warrantyYears
+              ? { "hasMerchantReturnPolicy": { "@type": "MerchantReturnPolicy", "applicableCountry": "IN", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/FreeReturn" } }
+              : {}),
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "INR",
+              "availability": "https://schema.org/InStock",
+              "itemCondition": "https://schema.org/NewCondition",
+              "url": `https://hub4estate.com/products/${id}`,
+              "seller": { "@type": "Organization", "name": "Hub4Estate", "url": "https://hub4estate.com" },
+              "priceSpecification": {
+                "@type": "PriceSpecification",
+                "priceCurrency": "INR",
+                "description": "Live dealer-competitive pricing — raise an RFQ to get 6+ verified dealer quotes within 60 seconds."
+              },
+              "businessFunction": "https://schema.org/Sell",
+              "areaServed": { "@type": "Country", "name": "India" }
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://hub4estate.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Categories", "item": "https://hub4estate.com/categories" },
+              { "@type": "ListItem", "position": 3, "name": category.name, "item": `https://hub4estate.com/categories/${category.slug}` },
+              { "@type": "ListItem", "position": 4, "name": subCategory.name, "item": `https://hub4estate.com/categories/${category.slug}#${subCategory.slug}` },
+              { "@type": "ListItem", "position": 5, "name": product.name, "item": `https://hub4estate.com/products/${id}` }
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": `What is the best price for ${product.name}?`,
+                "acceptedAnswer": { "@type": "Answer", "text": `Hub4Estate connects you with 6+ verified dealers across India who compete on price for ${product.name} by ${product.brand.name}. Raise an RFQ and receive competitive quotes in under 60 seconds — save 15-25% vs retail.` }
+              },
+              {
+                "@type": "Question",
+                "name": `Is ${product.name} by ${product.brand.name} genuine on Hub4Estate?`,
+                "acceptedAnswer": { "@type": "Answer", "text": `Yes. Every dealer on Hub4Estate is KYC-verified (GST, trade license, business registration). You get authentic ${product.brand.name} products with manufacturer warranty, sourced directly from authorised distributors.` }
+              },
+              {
+                "@type": "Question",
+                "name": `Where is ${product.name} delivered?`,
+                "acceptedAnswer": { "@type": "Answer", "text": `Hub4Estate delivers ${product.name} pan-India — Delhi, Mumbai, Bangalore, Chennai, Hyderabad, Kolkata, Pune, Ahmedabad, Jaipur, Sri Ganganagar, and 500+ cities. Delivery is typically 2-5 days depending on dealer proximity.` }
+              },
+              {
+                "@type": "Question",
+                "name": `How do I buy ${product.name} in bulk?`,
+                "acceptedAnswer": { "@type": "Answer", "text": `For bulk orders, add ${product.name} to your RFQ on Hub4Estate and specify the quantity. Verified dealers will submit sealed bids — you pick the best price. No middlemen, no markups, GST-compliant invoicing.` }
+              }
+            ]
           }
-        }}
+        ]}
       />
       {/* Success toast */}
       {showAddedMessage && (
@@ -168,7 +235,7 @@ export function ProductDetailPage() {
 
       {/* Breadcrumb */}
       <div className="bg-gray-50 border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center gap-1.5 text-sm text-gray-500">
             <Link to="/categories" className="hover:text-gray-900">Categories</Link>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -182,7 +249,7 @@ export function ProductDetailPage() {
       </div>
 
       {/* Product Details */}
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image */}
           <div className="space-y-4">
@@ -323,13 +390,13 @@ export function ProductDetailPage() {
 
       {/* Specifications */}
       <div className="border-t border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2">
               <h2 className="text-lg font-semibold text-gray-900 mb-5">Technical Specifications</h2>
               {product.specifications ? (
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <table className="w-full">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+                  <table className="w-full min-w-[480px]">
                     <tbody>
                       {(() => {
                         try {
@@ -439,7 +506,7 @@ export function ProductDetailPage() {
 
       {/* Why Hub4Estate */}
       <div className="border-t border-gray-200 bg-gray-900">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
           <div className="text-center mb-8">
             <h2 className="text-xl font-semibold text-white mb-2">Why Get Quote Through Hub4Estate?</h2>
             <p className="text-sm text-gray-400">Stop wasting time calling multiple dealers. Let them compete for your business.</p>
@@ -463,7 +530,7 @@ export function ProductDetailPage() {
       {/* Similar Products */}
       {similarProducts.length > 0 && (
         <div className="border-t border-gray-200 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-6 py-10">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">Similar Products</h2>

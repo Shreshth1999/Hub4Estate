@@ -60,14 +60,14 @@ export function CategoriesPage() {
           <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-amber-400/6 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: '1.5s' }} />
         </div>
-        <div ref={heroRef as any} className="max-w-6xl mx-auto px-6 py-20 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div ref={heroRef as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-800 text-gray-300 text-[11px] font-semibold rounded-full mb-6" style={revealStyle(heroIn, 0)}>
                 <Package className="w-3.5 h-3.5" />
                 Product Catalog
               </div>
-              <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight" style={revealStyle(heroIn, 0.06)}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight" style={revealStyle(heroIn, 0.06)}>
                 Electrical Products.<br />
                 <span className="text-amber-500">Best Prices.</span>
               </h1>
@@ -108,7 +108,7 @@ export function CategoriesPage() {
       </div>
 
       {/* Categories Grid */}
-      <div ref={gridRef as any} className="max-w-6xl mx-auto px-6 py-14">
+      <div ref={gridRef as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
         <div className="flex items-center justify-between mb-8" style={revealStyle(gridIn, 0)}>
           <div>
             <h2 className="text-2xl font-black text-gray-900 tracking-tight">All Categories</h2>
@@ -144,7 +144,7 @@ export function CategoriesPage() {
       </div>
 
       {/* Buying Guides — dark */}
-      <div ref={guidesRef as any} className="bg-[#09090B] px-6 py-16">
+      <div ref={guidesRef as any} className="bg-[#09090B] px-4 sm:px-6 py-12 sm:py-16">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10" style={revealStyle(guidesIn, 0)}>
             <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Buying Guides</h2>
@@ -177,7 +177,7 @@ export function CategoriesPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-14 text-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 text-center">
         <h2 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">Ready to get the best price?</h2>
         <p className="text-gray-500 mb-6 max-w-md mx-auto text-sm">
           Tell us what you need. We'll connect you with verified dealers who compete to give you the best deal.

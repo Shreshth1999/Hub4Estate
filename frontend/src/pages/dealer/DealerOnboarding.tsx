@@ -305,7 +305,7 @@ export function DealerOnboarding() {
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
@@ -316,7 +316,7 @@ export function DealerOnboarding() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <div className="grid lg:grid-cols-3 gap-10">
 
           {/* ── Left: Why Join ──────────────────────────────────────────────── */}

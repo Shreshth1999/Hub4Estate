@@ -380,7 +380,7 @@ export function DealerAvailableInquiriesPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>
         ) : filteredInquiries.length === 0 ? (

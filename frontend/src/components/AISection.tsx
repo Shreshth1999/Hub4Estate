@@ -52,19 +52,19 @@ export function AISection() {
         .ai-bar  { animation: barGrow 1.2s cubic-bezier(0.16,1,0.3,1) both; }
       `}</style>
 
-      <div ref={ref as any} className="max-w-6xl mx-auto px-6 py-20 sm:py-28">
+      <div ref={ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-28">
 
         {/* ── Header ── */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-14">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6 mb-6 sm:mb-14">
           <div style={revealStyle(inView, 0)}>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-900 text-white text-[11px] font-bold rounded-full mb-5 uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-900 text-white text-[11px] font-bold rounded-full mb-3 sm:mb-5 uppercase tracking-widest">
               <Zap className="w-3 h-3 text-amber-400" />
               {aiSection.badge}
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-3">
+            <h2 className="text-2xl sm:text-5xl font-black text-gray-900 tracking-tight mb-2 sm:mb-3 leading-[1.1]">
               {aiSection.title}
             </h2>
-            <p className="text-lg text-gray-500 max-w-lg leading-relaxed">
+            <p className="text-sm sm:text-lg text-gray-500 max-w-lg leading-snug sm:leading-relaxed">
               {aiSection.subtitle}
             </p>
           </div>
@@ -85,7 +85,7 @@ export function AISection() {
         </div>
 
         {/* ── 3 Cards ── */}
-        <div className="grid sm:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
 
           {/* Card 1 — Slip Scanner */}
           <div
@@ -95,9 +95,9 @@ export function AISection() {
             {/* Amber accent top */}
             <div className="h-[3px] bg-gradient-to-r from-amber-500 to-amber-400" />
 
-            <div className="p-6 pb-5">
-              <div className="flex items-start justify-between mb-5">
-                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
+            <div className="p-4 sm:p-6 sm:pb-5">
+              <div className="flex items-start justify-between mb-3 sm:mb-5">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
                   <Camera className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-4xl font-black text-gray-50 group-hover:text-amber-50 transition-colors duration-300 leading-none select-none">01</span>
@@ -139,9 +139,9 @@ export function AISection() {
           >
             <div className="h-[3px] bg-gradient-to-r from-gray-900 to-gray-700" />
 
-            <div className="p-6 pb-5">
-              <div className="flex items-start justify-between mb-5">
-                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
+            <div className="p-4 sm:p-6 sm:pb-5">
+              <div className="flex items-start justify-between mb-3 sm:mb-5">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
                   <Mic className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-4xl font-black text-gray-50 group-hover:text-amber-50 transition-colors duration-300 leading-none select-none">02</span>
@@ -177,9 +177,9 @@ export function AISection() {
           >
             <div className="h-[3px] bg-gradient-to-r from-amber-500 to-amber-400" />
 
-            <div className="p-6 pb-5">
-              <div className="flex items-start justify-between mb-5">
-                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
+            <div className="p-4 sm:p-6 sm:pb-5">
+              <div className="flex items-start justify-between mb-3 sm:mb-5">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-200/60">
                   <BarChart2 className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-4xl font-black text-gray-50 group-hover:text-amber-50 transition-colors duration-300 leading-none select-none">03</span>
@@ -226,7 +226,7 @@ export function AISection() {
 
         {/* ── CTA bar ── */}
         <div
-          className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 border border-gray-100 rounded-2xl px-7 py-5"
+          className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 bg-gray-50 border border-gray-100 rounded-xl sm:rounded-2xl px-4 py-4 sm:px-7 sm:py-5"
           style={revealStyle(inView, 0.42)}
         >
           <div>

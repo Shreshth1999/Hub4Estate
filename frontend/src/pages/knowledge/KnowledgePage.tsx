@@ -88,12 +88,12 @@ export function KnowledgePage() {
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-amber-600/8 rounded-full blur-3xl animate-glow-pulse" />
         </div>
-        <div ref={heroRef as any} className="max-w-4xl mx-auto px-6 py-20 text-center relative">
+        <div ref={heroRef as any} className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 text-center relative">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-800 text-gray-300 text-[11px] font-semibold rounded-full mb-6" style={revealStyle(heroIn, 0)}>
             <BookOpen className="w-3.5 h-3.5" />
             Knowledge Hub
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight" style={revealStyle(heroIn, 0.06)}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 tracking-tight" style={revealStyle(heroIn, 0.06)}>
             Buy smarter with<br />
             <span className="text-amber-500">expert guides</span>
           </h1>
@@ -115,7 +115,7 @@ export function KnowledgePage() {
 
       {/* Featured Topics */}
       <div ref={topicsRef as any} className="border-b border-gray-100 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {FEATURED_TOPICS.map((topic, index) => {
               const Icon = topic.icon;
@@ -142,7 +142,7 @@ export function KnowledgePage() {
       </div>
 
       {/* Articles */}
-      <div ref={articlesRef as any} className="max-w-6xl mx-auto px-6 py-12">
+      <div ref={articlesRef as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
         <div className="flex items-center justify-between mb-6" style={revealStyle(articlesIn, 0)}>
           <div>
             <h2 className="text-2xl font-black text-gray-900 tracking-tight">

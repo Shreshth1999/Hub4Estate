@@ -185,9 +185,9 @@ export function AdminLayout() {
           )}
           <button
             onClick={() => setSidebarOpen(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-800 transition-colors"
+            className="w-11 h-11 flex items-center justify-center rounded-md hover:bg-slate-800 transition-colors"
           >
-            <Menu className="w-4 h-4 text-slate-400" />
+            <Menu className="w-5 h-5 text-slate-400" />
           </button>
         </div>
       </div>
@@ -200,7 +200,7 @@ export function AdminLayout() {
       )}
 
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 w-56 bg-slate-900 z-50 flex flex-col transform transition-transform duration-200 ${
+        className={`lg:hidden fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-slate-900 z-50 flex flex-col transform transition-transform duration-200 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -213,9 +213,9 @@ export function AdminLayout() {
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-800"
+            className="w-11 h-11 flex items-center justify-center rounded-md hover:bg-slate-800"
           >
-            <X className="w-4 h-4 text-slate-400" />
+            <X className="w-5 h-5 text-slate-400" />
           </button>
         </div>
         <NavContent onItemClick={() => setSidebarOpen(false)} />

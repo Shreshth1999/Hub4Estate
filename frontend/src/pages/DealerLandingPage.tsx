@@ -113,7 +113,7 @@ export function DealerLandingPage() {
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/4" />
 
-        <div ref={heroRef.ref as any} className="relative max-w-6xl mx-auto px-6 py-20 lg:py-32">
+        <div ref={heroRef.ref as any} className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-32">
           <div className="max-w-3xl" style={revealStyle(heroRef.inView, 0)}>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full mb-8">
               <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
@@ -176,7 +176,7 @@ export function DealerLandingPage() {
 
       {/* ═══════ How It Works — Overview ═══════ */}
       <section className="bg-white border-t border-gray-100">
-        <div ref={stepsRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={stepsRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(stepsRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">How It Works</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">Simple, transparent, profitable</h2>
@@ -209,7 +209,7 @@ export function DealerLandingPage() {
 
       {/* ═══════ Full Dealer Journey ═══════ */}
       <section className="bg-stone-50 border-t border-gray-100">
-        <div ref={journeyRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={journeyRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(journeyRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wider rounded-full mb-4">Your Journey</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">From registration to revenue</h2>
@@ -255,7 +255,7 @@ export function DealerLandingPage() {
 
       {/* ═══════ Benefits ═══════ */}
       <section className="bg-white border-t border-gray-100">
-        <div ref={benefitsRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={benefitsRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(benefitsRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-accent-50 text-accent-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Why Join</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">Why dealers choose Hub4Estate</h2>
@@ -283,7 +283,7 @@ export function DealerLandingPage() {
 
       {/* ═══════ Dashboard Preview ═══════ */}
       <section className="bg-gray-900 border-t border-gray-800">
-        <div ref={dashboardRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={dashboardRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(dashboardRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Your Dashboard</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">Everything you need in one place</h2>
@@ -309,7 +309,7 @@ export function DealerLandingPage() {
       {/* ═══════ Social Proof Numbers ═══════ */}
       <section className="relative overflow-hidden bg-gradient-to-r from-amber-500 via-amber-500 to-amber-600 border-t border-amber-400">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-        <div ref={statsRef.ref as any} className="relative max-w-6xl mx-auto px-6 py-16 lg:py-20">
+        <div ref={statsRef.ref as any} className="relative max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lg:py-20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center" style={revealStyle(statsRef.inView, 0)}>
             {[
               { value: 10, suffix: '+', prefix: '', label: 'Active clients served' },
@@ -331,7 +331,7 @@ export function DealerLandingPage() {
 
       {/* ═══════ FAQ ═══════ */}
       <section className="bg-white border-t border-gray-100">
-        <div ref={faqRef.ref as any} className="max-w-3xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={faqRef.ref as any} className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-12" style={revealStyle(faqRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">FAQ</span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Common questions from dealers</h2>
@@ -362,7 +362,7 @@ export function DealerLandingPage() {
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
 
-        <div className="relative max-w-4xl mx-auto px-6 py-20 lg:py-28 text-center">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28 text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight">Ready to grow your business?</h2>
           <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">Join Hub4Estate for free. Start receiving qualified buyer inquiries today. No commitments, no charges.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

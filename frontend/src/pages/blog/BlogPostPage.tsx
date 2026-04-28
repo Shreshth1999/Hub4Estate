@@ -176,7 +176,7 @@ function NotFoundState() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO title="Article Not Found" noindex />
-      <div className="max-w-2xl mx-auto px-6 py-24 text-center">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12 sm:py-24 text-center">
         <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-6" />
         <h1 className="text-3xl font-black text-gray-900 mb-3">Article Not Found</h1>
         <p className="text-gray-500 mb-8">
@@ -321,7 +321,7 @@ export function BlogPostPage() {
 
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <nav className="flex items-center gap-1.5 text-sm text-gray-400 overflow-x-auto">
             <Link to="/" className="hover:text-gray-700 transition-colors flex-shrink-0">
               Home
@@ -345,7 +345,7 @@ export function BlogPostPage() {
 
       {/* Article Header */}
       <header className="bg-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-6 py-12 lg:py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
           <Link
             to="/blog"
             className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors mb-8"
@@ -390,7 +390,7 @@ export function BlogPostPage() {
       </header>
 
       {/* Article Body + ToC Sidebar */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Main Article */}
           <article className="flex-1 max-w-4xl">
@@ -425,7 +425,7 @@ export function BlogPostPage() {
 
       {/* CTA Banner */}
       <section className="bg-gradient-to-r from-amber-600 to-orange-500">
-        <div className="max-w-4xl mx-auto px-6 py-12 flex flex-col md:flex-row md:items-center gap-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 flex flex-col md:flex-row md:items-center gap-6">
           <div className="flex-1">
             <h2 className="text-xl md:text-2xl font-black text-white mb-2">
               Need electrical products at the best price?
@@ -448,7 +448,7 @@ export function BlogPostPage() {
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
         <section className="bg-white border-t border-gray-100">
-          <div className="max-w-7xl mx-auto px-6 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
             <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-8">
               Related Articles
             </h2>
@@ -505,7 +505,7 @@ export function BlogPostPage() {
 
       {/* Back to Blog */}
       <section className="bg-gray-50 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 text-center">
           <Link
             to="/blog"
             className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"

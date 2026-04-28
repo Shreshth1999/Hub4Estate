@@ -111,7 +111,7 @@ export function UserLandingPage() {
         {/* Amber glow */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
 
-        <div ref={heroRef.ref as any} className="relative max-w-6xl mx-auto px-6 py-20 lg:py-32">
+        <div ref={heroRef.ref as any} className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-32">
           <div className="max-w-3xl" style={revealStyle(heroRef.inView, 0)}>
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full mb-8">
               <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
@@ -174,7 +174,7 @@ export function UserLandingPage() {
 
       {/* ═══════ How It Works — Detailed ═══════ */}
       <section className="bg-white border-t border-gray-100">
-        <div ref={stepsRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={stepsRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(stepsRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">How It Works</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">Three steps to your best price</h2>
@@ -208,7 +208,7 @@ export function UserLandingPage() {
 
       {/* ═══════ The Full Process ═══════ */}
       <section className="bg-stone-50 border-t border-gray-100">
-        <div ref={processRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={processRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(processRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-gray-900 text-white text-xs font-bold uppercase tracking-wider rounded-full mb-4">Behind the Scenes</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">What happens after you submit</h2>
@@ -259,7 +259,7 @@ export function UserLandingPage() {
 
       {/* ═══════ Browse Products ═══════ */}
       <section className="bg-white border-t border-gray-100">
-        <div ref={categoriesRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={categoriesRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12" style={revealStyle(categoriesRef.inView, 0)}>
             <div>
               <span className="inline-block px-4 py-1.5 bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Product Catalog</span>
@@ -291,7 +291,7 @@ export function UserLandingPage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-amber-50/50 to-white border-t border-amber-100">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-300/20 rounded-full blur-[100px]" />
 
-        <div ref={conciergeRef.ref as any} className="relative max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={conciergeRef.ref as any} className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div style={revealStyle(conciergeRef.inView, 0)}>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 border border-amber-200 rounded-full mb-6">
@@ -374,7 +374,7 @@ export function UserLandingPage() {
 
       {/* ═══════ Platform Features ═══════ */}
       <section className="bg-gray-900 border-t border-gray-800">
-        <div ref={featuresRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={featuresRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(featuresRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Platform Features</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">More than just quotes</h2>
@@ -407,7 +407,7 @@ export function UserLandingPage() {
 
       {/* ═══════ Who It's For ═══════ */}
       <section className="bg-white border-t border-gray-100">
-        <div ref={audienceRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={audienceRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(audienceRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-accent-50 text-accent-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Who It's For</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight mb-4">Built for anyone who buys electrical products</h2>
@@ -437,7 +437,7 @@ export function UserLandingPage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 border-t border-gray-800">
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[100px]" />
 
-        <div ref={dealsRef.ref as any} className="relative max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={dealsRef.ref as any} className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(dealsRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Verified Savings</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">Real savings from real deals</h2>
@@ -497,7 +497,7 @@ export function UserLandingPage() {
 
       {/* ═══════ Why Trust Us ═══════ */}
       <section className="bg-white border-t border-gray-100">
-        <div ref={trustRef.ref as any} className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div ref={trustRef.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
           <div className="text-center mb-16" style={revealStyle(trustRef.inView, 0)}>
             <span className="inline-block px-4 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Trust & Safety</span>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-4">Built on trust, not tricks</h2>
@@ -529,7 +529,7 @@ export function UserLandingPage() {
       {/* ═══════ Final CTA ═══════ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-amber-500 via-amber-500 to-amber-600">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-        <div ref={statsRef.ref as any} className="relative max-w-4xl mx-auto px-6 py-20 lg:py-28 text-center">
+        <div ref={statsRef.ref as any} className="relative max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28 text-center">
           <div style={revealStyle(statsRef.inView, 0)}>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-6 tracking-tight">Stop overpaying for electrical products.</h2>
             <p className="text-xl text-amber-900/70 mb-10 max-w-2xl mx-auto">Submit your first inquiry. It takes 30 seconds and it's completely free. No account needed.</p>

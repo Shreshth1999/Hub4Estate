@@ -143,7 +143,7 @@ export function PostDetailPage() {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-3xl mx-auto px-6">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="bg-red-50 border border-red-100 rounded-xl p-4 text-sm text-red-700 mb-4">
             {error || 'Post not found'}
           </div>
@@ -171,7 +171,7 @@ export function PostDetailPage() {
       />
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-6 py-4">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4">
           <Link
             to="/community"
             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
@@ -182,7 +182,7 @@ export function PostDetailPage() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-8 space-y-5">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-5">
         {/* Post */}
         <article className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="p-6 border-b border-gray-100">

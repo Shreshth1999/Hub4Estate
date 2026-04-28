@@ -271,7 +271,7 @@ export function BlogIndexPage() {
 
       {/* Hero */}
       <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:py-20">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full mb-6">
               <BookOpen className="w-3.5 h-3.5 text-amber-600" />
@@ -292,7 +292,7 @@ export function BlogIndexPage() {
 
       {/* Filters */}
       <section className="bg-white border-b border-gray-100 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             {/* Category Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 flex-1 scrollbar-hide">
@@ -330,7 +330,7 @@ export function BlogIndexPage() {
       </section>
 
       {/* Content */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Main Grid */}
           <div className="flex-1">
@@ -407,7 +407,7 @@ export function BlogIndexPage() {
       </section>
 
       {/* Mobile Sidebar (below grid) */}
-      <section className="lg:hidden max-w-7xl mx-auto px-6 pb-12">
+      <section className="lg:hidden max-w-7xl mx-auto px-4 sm:px-6 pb-12">
         <Sidebar categoryCounts={categoryCounts} popularPosts={popularPosts} />
       </section>
     </div>

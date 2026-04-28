@@ -364,20 +364,20 @@ export function HomePage() {
 
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
       <section className="relative bg-white overflow-hidden border-b-2 border-primary-100">
-        {/* Subtle warm glow orbs */}
-        <div className="absolute top-[-10%] right-[-5%] w-[700px] h-[700px] rounded-full pointer-events-none"
+        {/* Subtle warm glow orbs — scaled down on mobile to prevent overflow */}
+        <div className="absolute top-[-10%] right-[-5%] w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] lg:w-[700px] lg:h-[700px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(196,114,79,0.10) 0%, transparent 65%)' }} />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none"
+        <div className="absolute bottom-[-10%] left-[-5%] w-[250px] h-[250px] sm:w-[400px] sm:h-[400px] lg:w-[500px] lg:h-[500px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(211,129,94,0.08) 0%, transparent 65%)' }} />
 
-        <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-6 py-16 lg:py-20 relative">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div ref={heroIn.ref as any} className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-16 lg:py-20 relative">
+          <div className="grid lg:grid-cols-2 gap-5 sm:gap-12 lg:gap-16 items-center">
 
-            {/* Left Content — matches screenshot 1 left column exactly */}
-            <div>
-              {/* Solid black boxy tag */}
+            {/* Left Content — DESKTOP keeps full marketing layout, MOBILE gets a compressed version */}
+            <div className="order-1 lg:order-1">
+              {/* Tag — hidden on mobile (form-first UX), shown lg+ */}
               <div
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-950 rounded-md mb-8 shadow-neo-sm"
+                className="hidden lg:inline-flex items-center gap-2 px-4 py-2 bg-primary-950 rounded-md mb-8 shadow-neo-sm"
                 style={revealStyle(heroIn.inView, 0)}
               >
                 <CheckCircle className="w-3.5 h-3.5 text-white" />
@@ -386,9 +386,9 @@ export function HomePage() {
                 </span>
               </div>
 
-              {/* Main Headline — "Buy Electrical / At Best Prices." */}
+              {/* Headline — much smaller on mobile, single line for impact */}
               <h1
-                className="text-5xl md:text-6xl lg:text-[5.5rem] font-black text-primary-950 mb-6 leading-[0.92] tracking-tight"
+                className="text-[1.75rem] sm:text-5xl md:text-6xl lg:text-[5.5rem] font-black text-primary-950 mb-2 lg:mb-6 leading-[1.05] lg:leading-[0.92] tracking-tight"
                 style={revealStyle(heroIn.inView, 0.06)}
               >
                 Buy Electrical
@@ -396,17 +396,20 @@ export function HomePage() {
                 <span className="text-amber-600">At Best Prices.</span>
               </h1>
 
-              {/* Subheadline */}
+              {/* Subheadline — shorter, tighter on mobile */}
               <p
-                className="text-lg text-primary-700 mb-8 max-w-xl leading-relaxed"
+                className="text-sm lg:text-lg text-primary-700 mb-3 lg:mb-8 max-w-xl leading-snug lg:leading-relaxed"
                 style={revealStyle(heroIn.inView, 0.12)}
               >
-                Compare quotes from <span className="font-black text-primary-950">500+ verified dealers</span> for wires, switches, MCBs, fans, and more. Save 15-25% on every order.
+                <span className="lg:hidden">500+ verified dealers compete for your order. Save 15-25%.</span>
+                <span className="hidden lg:inline">
+                  Compare quotes from <span className="font-black text-primary-950">500+ verified dealers</span> for wires, switches, MCBs, fans, and more. Save 15-25% on every order.
+                </span>
               </p>
 
-              {/* Boxy stat pills — white bg, black border, hard shadow */}
+              {/* Stat pills — desktop only (decorative, eats vertical space on mobile) */}
               <div
-                className="flex flex-wrap gap-3 mb-8"
+                className="hidden lg:flex flex-wrap gap-3 mb-8"
                 style={revealStyle(heroIn.inView, 0.16)}
               >
                 {[
@@ -421,9 +424,18 @@ export function HomePage() {
                 ))}
               </div>
 
-              {/* Two boxy CTAs with hard offset shadows */}
+              {/* Mobile-only inline trust strip — replaces the heavy stat pills */}
+              <div className="lg:hidden flex items-center gap-3 text-[11px] font-semibold text-primary-600 mb-4">
+                <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-amber-600" /> Verified</span>
+                <span className="w-1 h-1 rounded-full bg-primary-300" />
+                <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-amber-600" /> 24hr quotes</span>
+                <span className="w-1 h-1 rounded-full bg-primary-300" />
+                <span className="flex items-center gap-1"><TrendingUp className="w-3 h-3 text-amber-600" /> Save 15-25%</span>
+              </div>
+
+              {/* CTAs — desktop only. On mobile the form below IS the CTA. */}
               <div
-                className="flex flex-col sm:flex-row gap-4 mb-10"
+                className="hidden lg:flex flex-col sm:flex-row gap-4 mb-10"
                 style={revealStyle(heroIn.inView, 0.20)}
               >
                 <button
@@ -441,9 +453,9 @@ export function HomePage() {
                 </Link>
               </div>
 
-              {/* Avatar row with quote count */}
+              {/* Avatar row — desktop only (decorative social proof) */}
               <div
-                className="flex items-center gap-3"
+                className="hidden lg:flex items-center gap-3"
                 style={revealStyle(heroIn.inView, 0.24)}
               >
                 <div className="flex -space-x-2">
@@ -466,8 +478,8 @@ export function HomePage() {
             </div>
 
             {/* Right Side - Product Inquiry Form */}
-            <div style={revealStyle(heroIn.inView, 0.08)}>
-              <div id="inquiry-form" className="bg-white rounded-2xl p-6 lg:p-8 border-2 border-primary-200 shadow-warm-lg">
+            <div className="order-2 lg:order-2" style={revealStyle(heroIn.inView, 0.08)}>
+              <div id="inquiry-form" className="bg-white rounded-xl lg:rounded-2xl p-3 sm:p-6 lg:p-8 border-2 border-primary-200 shadow-warm-lg">
                 {submitted ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-amber-700 mx-auto mb-4" />
@@ -822,7 +834,7 @@ export function HomePage() {
                       </div>
 
                       {/* Quantity & City */}
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                         <div>
                           <label className="block text-xs font-bold uppercase tracking-wider text-primary-700 mb-1">{tx.hero.formLabels.quantity}</label>
@@ -920,7 +932,7 @@ export function HomePage() {
 
       {/* ─── Key Facts Bar ─────────────────────────────────────────────────────── */}
       <div className="border-t-2 border-b-2 border-primary-100 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-primary-100">
             {[
               { stat: '₹37,000', label: 'Average saved per order' },
@@ -928,9 +940,9 @@ export function HomePage() {
               { stat: 'Verified', label: 'Every dealer, vetted manually' },
               { stat: 'Zero', label: 'Spam calls to your number' },
             ].map((f, i) => (
-              <div key={i} className="px-6 py-6 text-center">
-                <p className="text-2xl font-black text-primary-950 mb-1">{f.stat}</p>
-                <p className="text-xs text-primary-500 leading-snug">{f.label}</p>
+              <div key={i} className="px-3 py-4 sm:px-6 sm:py-6 text-center">
+                <p className="text-lg sm:text-2xl font-black text-primary-950 mb-0.5 sm:mb-1 leading-tight">{f.stat}</p>
+                <p className="text-[11px] sm:text-xs text-primary-500 leading-snug">{f.label}</p>
               </div>
             ))}
           </div>
@@ -940,20 +952,20 @@ export function HomePage() {
 
       {/* ─── 3 Steps. 60 Seconds. Done. (matches screenshot 3) ────────────── */}
       <section className="bg-white border-t-2 border-primary-100 overflow-hidden">
-        <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-6 pt-20 sm:pt-28 pb-20 sm:pb-28">
+        <div ref={howIn.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-28 pb-12 sm:pb-28">
 
           {/* Centered header */}
-          <div className="text-center max-w-3xl mx-auto mb-16" style={revealStyle(howIn.inView, 0)}>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-primary-950 tracking-tight leading-[0.95] mb-5">
+          <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-16" style={revealStyle(howIn.inView, 0)}>
+            <h2 className="text-[26px] sm:text-5xl lg:text-6xl font-black text-primary-950 tracking-tight leading-[1.05] sm:leading-[0.95] mb-3 sm:mb-5">
               3 Steps. 60 Seconds. <span className="text-primary-950">Done.</span>
             </h2>
-            <p className="text-lg text-primary-600 leading-relaxed">
+            <p className="text-sm sm:text-lg text-primary-600 leading-snug sm:leading-relaxed">
               No more running to 10 shops. No more haggling. No more getting ripped off.
             </p>
           </div>
 
-          {/* 3 boxy cards with big numbered badges, stacked-shadow emphasis on 3rd */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-14">
+          {/* 3 cards — light shadows on mobile (no offset chaos), neobrutalist on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 lg:gap-8 mb-6 sm:mb-14">
             {[
               { num: '01', title: 'Tell Us What You Need',  desc: 'Select products from our catalog. Add quantities. Takes 30 seconds.', accent: 'TAKES 30 SECONDS' },
               { num: '02', title: 'Dealers Fight For You',   desc: 'Verified dealers compete to give you the best price. You sit back.',  accent: 'YOU SIT BACK' },
@@ -963,24 +975,31 @@ export function HomePage() {
               return (
                 <div
                   key={step.num}
-                  className={`group relative bg-white border-2 border-primary-950 rounded-2xl p-8 sm:p-10 transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 ${
-                    isLast ? 'shadow-neo-xl hover:shadow-[10px_10px_0px_0px_#2a2418]' : 'shadow-neo-lg hover:shadow-neo-xl'
+                  className={`group relative bg-white border border-primary-200 rounded-xl p-4 sm:p-10 transition-all duration-200 sm:border-2 sm:border-primary-950 sm:rounded-2xl sm:hover:-translate-x-0.5 sm:hover:-translate-y-0.5 ${
+                    isLast ? 'sm:shadow-neo-xl sm:hover:shadow-[10px_10px_0px_0px_#2a2418]' : 'sm:shadow-neo-lg sm:hover:shadow-neo-xl'
                   }`}
                   style={revealStyle(howIn.inView, 0.08 + i * 0.08)}
                 >
-                  {/* Big black numbered badge */}
-                  <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-950 rounded-md border-2 border-primary-950 shadow-neo-sm mb-8">
-                    <span className="text-xl font-black text-white">{step.num}</span>
+                  {/* Number badge — small inline circle on mobile, big square on desktop */}
+                  <div className="flex items-center gap-3 sm:block mb-3 sm:mb-8">
+                    <div className="inline-flex items-center justify-center w-9 h-9 sm:w-14 sm:h-14 bg-primary-950 rounded-md sm:border-2 sm:border-primary-950 sm:shadow-neo-sm flex-shrink-0">
+                      <span className="text-sm sm:text-xl font-black text-white">{step.num}</span>
+                    </div>
+                    {/* Title inline next to badge on mobile, below on desktop */}
+                    <h3 className="text-base sm:hidden font-black text-primary-950 tracking-tight leading-tight flex-1">
+                      {step.title}
+                    </h3>
                   </div>
 
-                  <h3 className="text-2xl sm:text-[28px] font-black text-primary-950 tracking-tight leading-[1.1] mb-4">
+                  {/* Desktop-only title (mobile shows it inline above) */}
+                  <h3 className="hidden sm:block text-2xl sm:text-[28px] font-black text-primary-950 tracking-tight leading-[1.1] mb-4">
                     {step.title}
                   </h3>
-                  <p className="text-base text-primary-600 leading-relaxed mb-6">
+                  <p className="text-[13px] sm:text-base text-primary-600 leading-snug sm:leading-relaxed mb-2 sm:mb-6">
                     {step.desc}
                   </p>
 
-                  <p className="text-[11px] font-black text-amber-700 uppercase tracking-[0.18em]">
+                  <p className="text-[10px] sm:text-[11px] font-black text-amber-700 uppercase tracking-[0.15em] sm:tracking-[0.18em]">
                     {step.accent}
                   </p>
                 </div>
@@ -988,14 +1007,14 @@ export function HomePage() {
             })}
           </div>
 
-          {/* Black CTA band at bottom */}
+          {/* CTA — full-width on mobile, centered button on desktop */}
           <div className="flex justify-center" style={revealStyle(howIn.inView, 0.32)}>
             <button
               onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center gap-2 bg-primary-950 hover:bg-black text-white font-black text-sm uppercase tracking-[0.15em] px-10 py-5 rounded-md border-2 border-primary-950 shadow-neo-md hover:shadow-neo-lg hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-150"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary-950 hover:bg-black text-white font-black text-xs sm:text-sm uppercase tracking-[0.12em] sm:tracking-[0.15em] px-6 sm:px-10 py-3.5 sm:py-5 rounded-md border-2 border-primary-950 shadow-neo-md hover:shadow-neo-lg hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all duration-150"
             >
               Start Getting Quotes Now
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
@@ -1004,20 +1023,20 @@ export function HomePage() {
 
       {/* ─── You're Getting Ripped Off. (matches screenshot 5) ─────────────── */}
       <section className="py-20 sm:py-28 bg-white border-t-2 border-primary-100">
-        <div ref={whoIn.ref as any} className="max-w-6xl mx-auto px-6">
+        <div ref={whoIn.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6">
 
           {/* Centered header with red tag */}
           <div className="text-center max-w-3xl mx-auto mb-14" style={revealStyle(whoIn.inView, 0)}>
             <span className="inline-block text-[11px] font-black text-red-600 uppercase tracking-[0.2em] mb-5">
               THE UGLY TRUTH
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-primary-950 tracking-tight leading-[0.95]">
+            <h2 className="text-[26px] sm:text-5xl lg:text-6xl font-black text-primary-950 tracking-tight leading-[1.1] sm:leading-[0.95]">
               You're Getting Ripped Off.<br />Here's How.
             </h2>
           </div>
 
-          {/* 2x2 grid of boxy red-stat cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          {/* 2x2 grid — light borders + tight padding on mobile, neobrutalist on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 lg:gap-8">
             {[
               { title: 'The 40% Markup Scam', stat: '40%',  unit: 'AVERAGE MARKUP',     desc: 'Local dealers mark up prices 30-50%. The same wire that costs ₹1,200 at wholesale is sold to you for ₹1,800.', emphasis: false },
               { title: 'The Fake Brand Trap', stat: '23%',  unit: 'PRODUCTS ARE FAKE',  desc: 'Duplicate products look identical to originals. Without proper verification, you could be buying counterfeit goods.', emphasis: true },
@@ -1026,21 +1045,21 @@ export function HomePage() {
             ].map((card, i) => (
               <div
                 key={i}
-                className={`bg-white border-2 border-primary-950 rounded-2xl p-8 transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 ${
-                  card.emphasis ? 'shadow-neo-xl hover:shadow-[10px_10px_0px_0px_#2a2418]' : 'shadow-neo-md hover:shadow-neo-lg'
+                className={`bg-white border border-primary-200 rounded-xl p-4 sm:p-8 transition-all duration-200 sm:border-2 sm:border-primary-950 sm:rounded-2xl sm:hover:-translate-x-0.5 sm:hover:-translate-y-0.5 ${
+                  card.emphasis ? 'sm:shadow-neo-xl sm:hover:shadow-[10px_10px_0px_0px_#2a2418]' : 'sm:shadow-neo-md sm:hover:shadow-neo-lg'
                 }`}
                 style={revealStyle(whoIn.inView, 0.08 + i * 0.06)}
               >
-                <div className="flex items-start justify-between gap-6 mb-4">
-                  <h3 className="text-xl sm:text-2xl font-black text-primary-950 tracking-tight leading-tight">
+                <div className="flex items-start justify-between gap-3 sm:gap-6 mb-2 sm:mb-4">
+                  <h3 className="text-base sm:text-2xl font-black text-primary-950 tracking-tight leading-tight">
                     {card.title}
                   </h3>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-4xl sm:text-5xl font-black text-red-600 leading-none mb-1.5">{card.stat}</p>
-                    <p className="text-[10px] font-black text-primary-500 uppercase tracking-[0.15em]">{card.unit}</p>
+                    <p className="text-2xl sm:text-5xl font-black text-red-600 leading-none mb-0.5 sm:mb-1.5">{card.stat}</p>
+                    <p className="text-[9px] sm:text-[10px] font-black text-primary-500 uppercase tracking-[0.12em] sm:tracking-[0.15em]">{card.unit}</p>
                   </div>
                 </div>
-                <p className="text-base text-primary-700 leading-relaxed">{card.desc}</p>
+                <p className="text-[13px] sm:text-base text-primary-700 leading-snug sm:leading-relaxed">{card.desc}</p>
               </div>
             ))}
           </div>
@@ -1049,7 +1068,7 @@ export function HomePage() {
 
       {/* ─── Two Sides. One Platform. ─────────────────────────────────────────── */}
       <section className="py-20 sm:py-28 bg-[#faf9f7] border-t border-primary-100 overflow-hidden">
-        <div ref={twoIn.ref as any} className="max-w-6xl mx-auto px-6">
+        <div ref={twoIn.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16" style={revealStyle(twoIn.inView, 0)}>
             <p className="section-label mb-3">Built For Both Sides</p>
             <h2 className="text-4xl sm:text-5xl font-black text-primary-950 mb-4 tracking-tight">
@@ -1062,17 +1081,17 @@ export function HomePage() {
 
           <div className="grid md:grid-cols-2 gap-6 md:gap-8" style={revealStyle(twoIn.inView, 0.08)}>
             {/* ─── For Buyers — WHITE card with hard black offset shadow ─── */}
-            <div className="group relative bg-white rounded-2xl p-8 md:p-10 border-2 border-primary-950 shadow-neo-lg hover:shadow-neo-xl hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 overflow-hidden">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-14 h-14 bg-amber-600 rounded-xl border-2 border-primary-950 shadow-neo-sm flex items-center justify-center flex-shrink-0">
-                  <Users className="w-7 h-7 text-white" />
+            <div className="group relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-8 md:p-10 border border-primary-200 sm:border-2 sm:border-primary-950 sm:shadow-neo-lg sm:hover:shadow-neo-xl sm:hover:-translate-x-1 sm:hover:-translate-y-1 transition-all duration-200 overflow-hidden">
+              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-8">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-amber-600 rounded-lg sm:rounded-xl border-2 border-primary-950 sm:shadow-neo-sm flex items-center justify-center flex-shrink-0">
+                  <Users className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div>
                   <span className="text-[11px] font-black uppercase tracking-[0.15em] text-amber-700">For Buyers</span>
                   <h3 className="text-xl sm:text-2xl font-black text-primary-950 tracking-tight leading-tight">Home Builders &amp; Contractors</h3>
                 </div>
               </div>
-              <div className="space-y-5 mb-10">
+              <div className="space-y-3 sm:space-y-5 mb-5 sm:mb-10">
                 {[
                   { icon: IndianRupee, title: 'Save 20-40% on Every Order', desc: 'Dealers compete to give you the best price' },
                   { icon: Shield, title: '100% Verified Products', desc: 'No fake brands, no duplicates, full warranty' },
@@ -1100,17 +1119,17 @@ export function HomePage() {
             </div>
 
             {/* ─── For Dealers — BLACK card with hard black offset shadow ─── */}
-            <div className="group relative bg-primary-950 rounded-2xl p-8 md:p-10 border-2 border-primary-950 shadow-neo-lg hover:shadow-neo-xl hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 overflow-hidden">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-14 h-14 bg-amber-600 rounded-xl border-2 border-amber-700 shadow-neo-sm flex items-center justify-center flex-shrink-0">
-                  <Store className="w-7 h-7 text-white" />
+            <div className="group relative bg-primary-950 rounded-xl sm:rounded-2xl p-4 sm:p-8 md:p-10 border-2 border-primary-950 sm:shadow-neo-lg sm:hover:shadow-neo-xl sm:hover:-translate-x-1 sm:hover:-translate-y-1 transition-all duration-200 overflow-hidden">
+              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-8">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-amber-600 rounded-lg sm:rounded-xl border-2 border-amber-700 sm:shadow-neo-sm flex items-center justify-center flex-shrink-0">
+                  <Store className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div>
                   <span className="text-[11px] font-black uppercase tracking-[0.15em] text-amber-500">For Dealers</span>
                   <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">Electrical Shops &amp; Distributors</h3>
                 </div>
               </div>
-              <div className="space-y-5 mb-10">
+              <div className="space-y-3 sm:space-y-5 mb-5 sm:mb-10">
                 {[
                   { icon: Users, title: 'Quality Leads Daily', desc: 'Get verified buyer inquiries delivered to you' },
                   { icon: IndianRupee, title: 'Zero Upfront Fees', desc: 'No listing fees, no monthly charges' },
@@ -1147,14 +1166,14 @@ export function HomePage() {
 
       {/* ─── Everything Electrical. One Platform. (matches screenshot 4) ───── */}
       <section className="py-20 sm:py-28 bg-[#09090B] border-t-2 border-primary-950">
-        <div ref={catIn.ref as any} className="max-w-6xl mx-auto px-6">
+        <div ref={catIn.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6">
 
           {/* Centered header */}
           <div className="text-center max-w-3xl mx-auto mb-14" style={revealStyle(catIn.inView, 0)}>
             <p className="text-[11px] font-black text-amber-500 uppercase tracking-[0.25em] mb-5">
               SHOP BY CATEGORY
             </p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[0.95] mb-5">
+            <h2 className="text-[26px] sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] sm:leading-[0.95] mb-5">
               Everything Electrical.<br />One Platform.
             </h2>
             <p className="text-lg text-gray-400 leading-relaxed">
@@ -1183,14 +1202,14 @@ export function HomePage() {
 
       {/* ─── Customers Saved ₹2.4 Crores (matches screenshot 6) ───────────── */}
       <section className="py-20 sm:py-28 bg-[#f5f3ef] border-t-2 border-primary-100">
-        <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-6">
+        <div ref={dealsIn.ref as any} className="max-w-6xl mx-auto px-4 sm:px-6">
 
           {/* Centered header */}
           <div className="text-center max-w-3xl mx-auto mb-14" style={revealStyle(dealsIn.inView, 0)}>
             <p className="text-[11px] font-black text-primary-500 uppercase tracking-[0.25em] mb-5">
               REAL RESULTS
             </p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-primary-950 tracking-tight leading-[0.95]">
+            <h2 className="text-[26px] sm:text-5xl lg:text-6xl font-black text-primary-950 tracking-tight leading-[1.1] sm:leading-[0.95]">
               Customers Saved ₹2.4 Crores.<br />
               This Month Alone.
             </h2>
@@ -1253,7 +1272,7 @@ export function HomePage() {
 
       {/* ─── Are You A Dealer? (matches screenshot 7) ─────────────────────── */}
       <section className="bg-primary-950 py-24 sm:py-32">
-        <div ref={whyIn.ref as any} className="max-w-4xl mx-auto px-6 text-center">
+        <div ref={whyIn.ref as any} className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <p
             className="text-[11px] font-black text-amber-500 uppercase tracking-[0.25em] mb-6"
             style={revealStyle(whyIn.inView, 0)}
@@ -1261,7 +1280,7 @@ export function HomePage() {
             FOR DEALERS
           </p>
           <h2
-            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight leading-[0.95]"
+            className="text-[26px] sm:text-5xl lg:text-6xl font-black text-white mb-4 sm:mb-6 tracking-tight leading-[1.1] sm:leading-[0.95]"
             style={revealStyle(whyIn.inView, 0.06)}
           >
             Are You A Dealer?<br />
@@ -1296,9 +1315,9 @@ export function HomePage() {
 
       {/* ─── Ready To Save Money? (matches screenshot 8 terracotta band) ───── */}
       <section className="bg-amber-600 py-20 sm:py-24">
-        <div ref={ctaIn.ref as any} className="max-w-4xl mx-auto px-6 text-center">
+        <div ref={ctaIn.ref as any} className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2
-            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight leading-[0.95]"
+            className="text-[26px] sm:text-5xl lg:text-6xl font-black text-white mb-4 sm:mb-6 tracking-tight leading-[1.1] sm:leading-[0.95]"
             style={revealStyle(ctaIn.inView, 0)}
           >
             Ready To Save Money?

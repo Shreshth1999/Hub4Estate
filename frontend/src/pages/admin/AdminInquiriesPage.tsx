@@ -195,7 +195,7 @@ export function AdminInquiriesPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-6 space-y-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-4">
         {/* Search */}
         <form onSubmit={handleSearch} className="flex gap-2">
           <div className="flex-1 relative">

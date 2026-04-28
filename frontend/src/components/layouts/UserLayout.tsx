@@ -164,9 +164,9 @@ export function UserLayout() {
         </Link>
         <button
           onClick={() => setSidebarOpen(true)}
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-md hover:bg-gray-100 transition-colors"
         >
-          <Menu className="w-4 h-4 text-gray-600" />
+          <Menu className="w-5 h-5 text-gray-600" />
         </button>
       </div>
 
@@ -180,7 +180,7 @@ export function UserLayout() {
 
       {/* Mobile Drawer */}
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 w-56 bg-white z-50 flex flex-col transform transition-transform duration-200 ${
+        className={`lg:hidden fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white z-50 flex flex-col transform transition-transform duration-200 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -188,9 +188,9 @@ export function UserLayout() {
           <span className="text-sm font-semibold text-gray-900">Menu</span>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100"
+            className="w-11 h-11 flex items-center justify-center rounded-md hover:bg-gray-100"
           >
-            <X className="w-4 h-4 text-gray-500" />
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
         <NavContent onItemClick={() => setSidebarOpen(false)} />
